@@ -1,0 +1,48 @@
+{
+  "name": "qshp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "sso:build": "pnpm run --filter SSO build",
+    "bbs:build": "pnpm run --filter bbs build",
+    "sso:test": "pnpm run --filter SSO test",
+    "bbs:test": "pnpm run --filter bbs test",
+    "sso:dev": "pnpm run --filter SSO dev",
+    "bbs:dev": "pnpm run --filter bbs dev",
+    "lint": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "format": "prettier --write \"./**/*.{html,tsx,ts,js,json,md}\""
+  },
+  "lint-staged": {
+    "./**/*.{js,ts,jsx,tsx}": [
+      "eslint . --ext .js,.ts,.jsx,.tsx --fix"
+    ],
+    "./**/*.{html,tsx,ts,js,json,md}": [
+      "prettier --write \"./**/*.{html,ts,js,json,md}\""
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.1",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

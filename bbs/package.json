@@ -1,0 +1,13 @@
+{
+  "name": "bbs",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "rocinate",
+  "license": "MIT"
+}
