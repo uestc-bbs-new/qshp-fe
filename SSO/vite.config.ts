@@ -7,7 +7,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default defineConfig({
   plugins: [react(), viteCompression(), visualizer()],
   server: {
-    port: 7564,
+    port: 7563,
     proxy: {
       '/dev': {
         target: 'http://121.4.126.180:8080',

@@ -3,7 +3,7 @@ import React from 'react'
 function App() {
   return (
     <div className="App">
-      <div>清水河畔</div>
+      <div>登录</div>
     </div>
   )
 }
