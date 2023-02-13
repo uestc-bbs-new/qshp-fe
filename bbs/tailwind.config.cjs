@@ -4,4 +4,9 @@ module.exports = {
     extend: {},
   },
   plugins: [require('@tailwindcss/line-clamp')],
+  corePlugins: {
+    // use with mui
+    preflight: false,
+  },
+  important: '#root',
 }
