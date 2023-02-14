@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+
 import {
   Box,
   Typography,
@@ -8,11 +10,9 @@ import {
   Badge,
 } from '@mui/material'
 
-import React, { useEffect, useState } from 'react'
 import { MarkunreadOutlined } from '@mui/icons-material'
 
 import { useAppState } from '@/states'
-// import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 
 // function TabPanel(props) {
 //   const { children, value, index, ...other } = props
@@ -33,16 +33,6 @@ import { useAppState } from '@/states'
 //     </div>
 //   )
 // }
-
-// 下拉窗口样式配置
-const paperProps = {
-  elevation: 0,
-  sx: {
-    // overflow: "visible",
-    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-    mt: 1.5,
-  },
-}
 
 const Message = () => {
   const [value, setValue] = useState(0)
@@ -70,7 +60,6 @@ const Message = () => {
 
       <Menu
         open={false}
-        PaperProps={paperProps}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >

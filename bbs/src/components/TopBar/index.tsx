@@ -1,18 +1,17 @@
 import { AppBar, Button, IconButton, Stack } from '@mui/material'
 
 import React from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import MenuIcon from '@mui/icons-material/Menu'
+
+import { Add, Menu } from '@mui/icons-material'
 
 import { Link } from 'react-router-dom'
 
 import { useAppState } from '@/states'
-// import UserMenu from './UserMenu'
+import UserMenu from './UserMenu'
 import Message from './Message'
 import SearchBar from './Search'
 
 const Options = () => {
-  const { state, dispatch } = useAppState()
   return (
     <Stack
       justifyContent="flex-end"
@@ -22,9 +21,9 @@ const Options = () => {
       <Message />
       {/* <AboutMe unread={state.messages.unread_count}/> */}
       <IconButton>
-        <AddIcon color="action" />
+        <Add color="action" />
       </IconButton>
-      {/* <UserMenu state={state} dispatch={dispatch} /> */}
+      <UserMenu />
     </Stack>
   )
 }
@@ -66,7 +65,7 @@ const TopBar = () => {
             sx={{ mr: 2 }}
             onClick={changeMenu}
           >
-            <MenuIcon />
+            <Menu />
           </IconButton>
           <Link to="/">logo 清水河畔</Link>
         </Stack>

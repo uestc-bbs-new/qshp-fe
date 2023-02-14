@@ -1,4 +1,4 @@
-import { InputBase, IconButton, Stack, Divider } from '@mui/material'
+import { IconButton, Stack, Divider } from '@mui/material'
 import React, { useState, useRef } from 'react'
 import { Search } from '@mui/icons-material'
 import { useNavigate, createSearchParams } from 'react-router-dom'
