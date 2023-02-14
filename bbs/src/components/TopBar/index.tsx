@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import { useAppState } from '@/states'
 // import UserMenu from './UserMenu'
 import Message from './Message'
-import Search from './Search'
+import SearchBar from './Search'
 
 const Options = () => {
   const { state, dispatch } = useAppState()
@@ -71,7 +71,7 @@ const TopBar = () => {
           <Link to="/">logo 清水河畔</Link>
         </Stack>
         <Stack direction="row" justifyContent="center" className="basis-1/2">
-          <Search />
+          <SearchBar />
         </Stack>
         {state.users.uid != 0 ? <Options /> : <LoginComponent />}
       </Stack>

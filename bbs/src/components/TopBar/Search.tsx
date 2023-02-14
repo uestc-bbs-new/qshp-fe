@@ -1,55 +1,55 @@
-import { InputBase, IconButton, Stack, Backdrop } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import { InputBase, IconButton, Stack, Divider } from '@mui/material'
+import React, { useState, useRef } from 'react'
+import { Search } from '@mui/icons-material'
+import { useNavigate, createSearchParams } from 'react-router-dom'
 
-import SearchIcon from '@mui/icons-material/Search'
-import MenuIcon from '@mui/icons-material/Menu'
-
-const Search = () => {
-  // const [] = useContext()
-
+const SearchBar = () => {
   const [searchText, setSearchText] = useState('')
-  const [timer, setTimer] = useState(null)
+  const navigate = useNavigate()
+  const inputComponent = useRef<HTMLInputElement | null>(null)
 
-  const search = () => {
-    console.log(searchText)
+  const handleSubmit = () => {
+    setSearchText('')
+    inputComponent.current?.blur()
+
+    if (searchText.length > 0) {
+      navigate({
+        pathname: '/search',
+        search: createSearchParams({
+          name: searchText,
+        }).toString(),
+      })
+    }
   }
 
-  useEffect(() => {
-    // 清除防抖定时
-    if (timer !== null) {
-      clearTimeout(timer)
-    }
-
-    // 进行搜索
-    // if (searchText !== '') {
-    //   setTimer(setTimeout(search, 500))
-    // }
-  }, [searchText])
-
   return (
-    <>
-      <Stack
-        direction="row"
-        className="bg-slate-300 focus-within:bg-white w-96 transition-colors rounded"
+    <Stack
+      direction="row"
+      alignItems="center"
+      className="bg-white/20 text-white focus-within:bg-white focus-within:text-black w-96 transition-colors rounded-lg"
+    >
+      <input
+        className="outline-none border-0 pl-4 flex-1 text-inherit bg-transparent decoration-transparent placeholder-current"
+        placeholder="搜索帖子"
+        ref={inputComponent}
+        value={searchText}
+        onChange={(event) => setSearchText(event.target.value)}
+        onKeyDown={(event) => {
+          event.key === 'Enter' && handleSubmit()
+        }}
+      />
+      <Divider orientation="vertical" variant="middle" flexItem></Divider>
+      <IconButton
+        className="text-inherit"
+        type="button"
+        sx={{ p: '10px' }}
+        aria-label="search"
+        onClick={handleSubmit}
       >
-        {/* <IconButton sx={{ p: "10px" }} aria-label="menu">
-          <MenuIcon />
-        </IconButton> */}
-        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-        <InputBase
-          fullWidth
-          placeholder="Search"
-          defaultValue={searchText}
-          onChange={(event) => setSearchText(event.target.value)}
-        />
-      </Stack>
-      {/* <Backdrop>
-        
-      </Backdrop> */}
-    </>
+        <Search className="text-inherit" />
+      </IconButton>
+    </Stack>
   )
 }
 
-export default Search
+export default SearchBar

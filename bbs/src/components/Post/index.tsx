@@ -15,7 +15,7 @@ import { Thread } from '@/common/interfaces/response'
 type PostProps = {
   data: Thread
   small?: boolean
-  className: string
+  className?: string
 }
 
 const Post = ({ data, small, className }: PostProps) => {

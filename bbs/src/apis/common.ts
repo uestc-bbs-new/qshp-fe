@@ -22,3 +22,10 @@ export const getHotThread = (params: object) => {
 export const getBBSInfo = () => {
   return request.get<null, BBSInfo>(`${commonUrl}/forum/bbs-info`)
 }
+
+export const searchThreads = (params: object) => {
+  return request.post<object, { resultNum: number; threads: Thread[] }>(
+    `${commonUrl}/thread/search`,
+    params
+  )
+}
