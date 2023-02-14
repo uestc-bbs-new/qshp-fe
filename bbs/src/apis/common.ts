@@ -1,9 +1,11 @@
 import request from '@/utils/request'
 
+import { ForumList, Thread, BBSInfo } from '@/common/interfaces/response'
+
 const commonUrl = 'read'
 
-export const getForumList = (params: object): object => {
-  return request.get(`${commonUrl}/forum/forum-list`, { params: params })
+export const getForumList = () => {
+  return request.get<null, ForumList>(`${commonUrl}/forum/forum-list`)
 }
 
 export const getBulletin = (params: object) => {
@@ -11,9 +13,12 @@ export const getBulletin = (params: object) => {
 }
 
 export const getHotThread = (params: object) => {
-  return request.post(`${commonUrl}/thread/hot`, params)
+  return request.post<object, { threads: Thread[] }>(
+    `${commonUrl}/thread/hot`,
+    params
+  )
 }
 
 export const getBBSInfo = () => {
-  return request.get(`${commonUrl}/forum/bbs-info`)
+  return request.get<null, BBSInfo>(`${commonUrl}/forum/bbs-info`)
 }

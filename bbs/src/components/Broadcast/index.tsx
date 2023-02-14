@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-const Search = () => {
+const Broadcast = () => {
   return <Box></Box>
 }
 
-export default Search
+export default Broadcast

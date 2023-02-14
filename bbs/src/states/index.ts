@@ -1,61 +1,10 @@
 import React, { createContext, useContext, useReducer } from 'react'
+import { stateReducer, StateAction, State } from './reducers/stateReducer'
 
-interface State {
-  messages: { unread_count: number }
-  drawer: boolean
-  navList: Array<object>
-  users: { uid: number; name: string }
-  theme: 'light' | 'dark'
-}
+export type Theme = 'light' | 'dark'
 
-interface Action {
-  readonly type: string
-  readonly payload?: any
-}
-
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'clear':
-      return {
-        ...state,
-        messages: { unread_count: 0 },
-        navList: [],
-        users: { uid: -1, name: 'nobody' },
-      }
-    case 'set user': {
-      return {
-        ...state,
-        users: action.payload,
-      }
-    }
-    case 'set messages': {
-      return {
-        ...state,
-        messages: { unread_count: action.payload },
-      }
-    }
-    // case 'read messages': {
-    //   const messages = [
-    //     ...action.payload.messages,
-    //     // ...state.rooms[action.payload.id].messages,
-    //   ]
-    //   return {
-    //     ...state,
-    //     messages: { unread_count: 0 },
-    //   }
-    // }
-    case 'set navList':
-      return { ...state, navList: action.payload }
-    case 'set theme':
-      return { ...state, theme: action.payload }
-    case 'set drawer':
-      return { ...state, drawer: !state.drawer }
-    default:
-      return state
-  }
-}
-
-const initialState: State = {
+// type AppContext = [state: State, dispatch: React.Dispatch<Action>]
+const initialState = {
   messages: {
     unread_count: 1,
   },
@@ -65,13 +14,23 @@ const initialState: State = {
     uid: 1,
     name: '',
   },
-  theme: 'light', // light, dark
+  theme: (localStorage.getItem('theme') as Theme) || 'light',
 }
 
-const useAppStateContext = () => useReducer(reducer, initialState)
+export const AppContext = createContext<{
+  state: State
+  dispatch: React.Dispatch<StateAction>
+}>({
+  state: initialState,
+  dispatch: () => null,
+})
 
-export const AppContext = createContext({})
+const useAppStateContext = () => useReducer(stateReducer, initialState)
 
-export const useAppState = () => useContext(AppContext)
+export const useAppState = () =>
+  useContext<{
+    state: State
+    dispatch: React.Dispatch<StateAction>
+  }>(AppContext)
 
 export default useAppStateContext

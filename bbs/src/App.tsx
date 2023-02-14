@@ -24,7 +24,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContext.Provider value={[state, dispatch]}>
+      <AppContext.Provider value={{ state, dispatch }}>
         <Theme theme={state.theme}>
           <Layout />
         </Theme>

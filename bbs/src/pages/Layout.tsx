@@ -6,19 +6,17 @@ import React, { useState } from 'react'
 // import {FormLi}
 import { useAppState } from '@/states'
 import { getForumList } from '@/apis/common'
-import { ForumList } from '@/common/interfaces/response'
-// import TopBar from '@/components/TopBar'
-// import Drawer from '@/components/Drawer'
-// import routes from '@/route'
+import TopBar from '@/components/TopBar'
+import Drawer from '@/components/Drawer'
+import routes from '@/routes'
 // import Announcement from '@/components/Announcement'
 
 const Layout = () => {
-  console.log(useAppState())
-  const [state, dispatch] = useAppState() as any[]
-  const { isLoading } = useQuery(['formList'], () => getForumList({}), {
+  const { state, dispatch } = useAppState()
+  const { isLoading } = useQuery(['formList'], () => getForumList(), {
     // catchTime: 60 * 1000,
     // staleTime: 30 * 1000
-    onSuccess: (data: ForumList) => {
+    onSuccess: (data) => {
       // 对板块信息进行处理，得到嵌套的板块关系
       dispatch({
         type: 'set navList',
@@ -29,7 +27,7 @@ const Layout = () => {
 
   return (
     <>
-      {/* <Box className="relative h-full flex">
+      <Box className="relative h-full flex">
         <TopBar />
         <Drawer />
         <Box
@@ -38,7 +36,7 @@ const Layout = () => {
         >
           <Toolbar />
           <Box className="p-3 w-full max-w-screen-xl flex-1">
-            <Announcement />
+            {/* <Announcement /> */}
             <Routes>
               {routes.map(({ path, component: Component }) => (
                 <Route path={path} element={<Component />} key={path} />
@@ -46,8 +44,7 @@ const Layout = () => {
             </Routes>
           </Box>
         </Box>
-      </Box> */}
-      <p>12312</p>
+      </Box>
     </>
   )
 }
