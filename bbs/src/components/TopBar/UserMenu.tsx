@@ -51,7 +51,7 @@ const UserMenu = () => {
   }
 
   const open = Boolean(anchorEl)
-  const id = open ? 'simple-popover' : undefined
+  const id = open ? 'user-menu' : undefined
 
   return (
     <>

@@ -4,7 +4,7 @@ import React from 'react'
 
 import { Add, Menu } from '@mui/icons-material'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, createSearchParams } from 'react-router-dom'
 
 import { useAppState } from '@/states'
 import UserMenu from './UserMenu'
@@ -12,6 +12,17 @@ import Message from './Message'
 import SearchBar from './Search'
 
 const Options = () => {
+  const navigate = useNavigate()
+
+  const goEdit = () => {
+    navigate({
+      pathname: '/edit',
+      search: createSearchParams({
+        mode: 'new',
+      }).toString(),
+    })
+  }
+
   return (
     <Stack
       justifyContent="flex-end"
@@ -20,10 +31,15 @@ const Options = () => {
     >
       <Message />
       {/* <AboutMe unread={state.messages.unread_count}/> */}
-      <IconButton>
-        <Add color="action" />
-      </IconButton>
       <UserMenu />
+      <Button
+        className="bg-white bg-opacity-40"
+        variant="contained"
+        startIcon={<Add />}
+        onClick={goEdit}
+      >
+        发帖
+      </Button>
     </Stack>
   )
 }
