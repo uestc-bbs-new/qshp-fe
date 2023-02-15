@@ -136,6 +136,11 @@ const LeftDrawer = ({ width }: { width: number }) => {
       <Drawer
         variant="persistent"
         open={state.drawer}
+        PaperProps={{
+          sx: {
+            border: 'none',
+          },
+        }}
         sx={{
           display: { xs: 'none', sm: 'block' },
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: width },

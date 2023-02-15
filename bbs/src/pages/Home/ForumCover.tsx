@@ -21,11 +21,11 @@ import {
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
 
-import moment from 'moment'
+import dayjs from 'dayjs/esm'
 
 import Chip from '@/components/Chip'
 import forumBg from '@/assets/login-bg1.jpg'
-// import UserCard from '@/components/UserCard'
+import UserCard from '@/components/UserCard'
 import { Forum } from '@/common/interfaces/response'
 
 type ForumData = {
@@ -94,7 +94,7 @@ const ForumCover = ({ data }: ForumData) => {
               </Link>
             </Stack>
             <Box>
-              {/* {moment(data.dateline * 1000).calendar()} <UserCard data={data} /> */}
+              {/* {dayjs(data.dateline * 1000).calendar()} <UserCard data={data} /> */}
             </Box>
           </Box>
         </Stack>

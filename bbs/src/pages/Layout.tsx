@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Box, Toolbar } from '@mui/material'
@@ -12,7 +12,7 @@ import routes from '@/routes'
 // import Announcement from '@/components/Announcement'
 
 const Layout = () => {
-  const { state, dispatch } = useAppState()
+  const { dispatch } = useAppState()
   const drawerWidth = 210
 
   // read partition
@@ -38,7 +38,7 @@ const Layout = () => {
           className="w-full h-full flex flex-col align-middle items-center transition-all"
           sx={{
             marginLeft: {
-              sm: `${state.drawer ? drawerWidth : 0}px`,
+              sm: `${drawerWidth}px`,
             },
           }}
         >

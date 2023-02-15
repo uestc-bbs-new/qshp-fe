@@ -1,6 +1,6 @@
-import React, { Box, Typography, Avatar, Stack } from '@mui/material'
-import { Link } from 'react-router-dom'
-import moment from 'moment'
+import React, { Box, Typography, Avatar, Stack, Link } from '@mui/material'
+
+import { chineseTime } from '@/utils/dayjs'
 
 import {
   RemoveRedEyeOutlined,
@@ -33,7 +33,7 @@ const Post = ({ data, small, className }: PostProps) => {
         <Box className="flex-1">
           <Stack justifyContent="space-between">
             <Stack direction="row">
-              <Link to={`/thread/${data.tid}`}>
+              <Link href={`/thread/${data.tid}`}>
                 <Box>
                   <Chip small={small} text="等级" />
                   {data.subject}
@@ -43,7 +43,7 @@ const Post = ({ data, small, className }: PostProps) => {
             <Stack direction="row">
               {/* <UserCard data={data} /> */}
               <Typography variant="subtitle2" className="pl-1">
-                {`· ${moment(data.dateline * 1000).calendar()}`}
+                {`· ${chineseTime(data.dateline * 1000)}`}
               </Typography>
             </Stack>
             {small ? (
@@ -95,9 +95,7 @@ const Post = ({ data, small, className }: PostProps) => {
                 <Typography className="pr-10">{`最新回复:`}</Typography>
               </Box>
               <Box>
-                <Typography>
-                  {moment(data.lastpost * 1000).calendar()}
-                </Typography>
+                <Typography>{chineseTime(data.lastpost * 1000)}</Typography>
               </Box>
             </Stack>
           </Box>

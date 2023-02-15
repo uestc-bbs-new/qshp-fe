@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Stack, Link } from '@mui/material'
+import { AppBar, Button, IconButton, Stack, Link, Toolbar } from '@mui/material'
 
 import React from 'react'
 
@@ -29,17 +29,19 @@ const Options = () => {
       direction="row"
       className="basis-1/4 text-right"
     >
-      <UserMenu />
-      <Message />
-      {/* <AboutMe unread={state.messages.unread_count}/> */}
-      <Button
-        className="bg-white bg-opacity-40 ml-6"
-        variant="contained"
-        startIcon={<Add />}
-        onClick={goEdit}
-      >
-        发帖
-      </Button>
+      <Toolbar>
+        <UserMenu />
+        <Message />
+        {/* <AboutMe unread={state.messages.unread_count}/> */}
+        <Button
+          className="bg-white bg-opacity-40 ml-6"
+          variant="contained"
+          startIcon={<Add />}
+          onClick={goEdit}
+        >
+          发帖
+        </Button>
+      </Toolbar>
     </Stack>
   )
 }
@@ -72,7 +74,7 @@ const TopBar = () => {
       position="fixed"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
-      <Stack direction="row" alignItems="center" className="h-16 py-2 px-6">
+      <Stack direction="row" alignItems="center" className="px-6">
         <Stack direction="row" className="basis-1/4" alignItems="center">
           <IconButton
             edge="start"

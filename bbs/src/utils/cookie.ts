@@ -1,5 +1,4 @@
-import moment from 'moment'
-import 'moment/dist/locale/zh-cn'
+import dayjs from 'dayjs/esm'
 
 const checkCookie = () => {
   const baseCache = localStorage.getItem('base_cache')
@@ -10,7 +9,7 @@ const checkCookie = () => {
 
   const expireTime = JSON.parse(baseCache).expire
 
-  if (moment(expireTime).isBefore(moment().add(1, 'h'))) {
+  if (dayjs(expireTime).isBefore(dayjs().add(1, 'h'))) {
     refreshCookie()
   }
 }
