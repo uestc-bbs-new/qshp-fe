@@ -43,7 +43,7 @@ const Layout = () => {
           }}
         >
           <Toolbar />
-          <Box className="p-3 w-full max-w-screen-xl flex-1">
+          <Box className="p-3 w-full h-full max-w-screen-xl flex-1">
             {/* <Announcement /> */}
             <Routes>
               {routes.map(({ path, component: Component }) => (

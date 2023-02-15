@@ -11,6 +11,7 @@ import {
   Drawer,
   Collapse,
   Link,
+  Typography,
 } from '@mui/material'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -22,7 +23,6 @@ type ForumData = {
   data: Forum
 }
 
-const menuFontStyle = { fontSize: '1rem', fontWeight: 'bold' }
 const Ordinate = ({ data }: ForumData) => {
   const [open, setOpen] = useState(false)
 
@@ -34,10 +34,11 @@ const Ordinate = ({ data }: ForumData) => {
     <>
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
-        <ListItemText
-          primary={data.name}
-          primaryTypographyProps={menuFontStyle}
-        />
+        <ListItemText>
+          <Typography color="inherit" className="font-bold">
+            {data.name}
+          </Typography>
+        </ListItemText>
         {open ? (
           <ExpandLess fontSize="inherit" />
         ) : (
@@ -55,10 +56,11 @@ const Ordinate = ({ data }: ForumData) => {
             >
               <ListItemButton sx={{ pl: 4 }}>
                 <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
-                <ListItemText
-                  primary={item.name}
-                  primaryTypographyProps={menuFontStyle}
-                />
+                <ListItemText>
+                  <Typography color="inherit" className="font-bold">
+                    {item.name}
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </Link>
           ))}
@@ -88,10 +90,11 @@ const Sections = ({ data }: { data: Forum[] }) => {
           <Link href="/" underline="none" color="inherit">
             <ListItemButton>
               <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
-              <ListItemText
-                primary="首页"
-                primaryTypographyProps={menuFontStyle}
-              />
+              <ListItemText>
+                <Typography color="inherit" className="font-bold">
+                  首页
+                </Typography>
+              </ListItemText>
             </ListItemButton>
           </Link>
           {data.map((item) => (

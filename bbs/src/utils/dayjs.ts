@@ -6,11 +6,11 @@ dayjs.extend(calendar)
 
 export const chineseTime = (time: number) => {
   return dayjs().calendar(time, {
-    sameDay: '[今天] h:mm A', // The same day ( Today at 2:30 AM )
-    nextDay: '[明天] h:mm A', // The next day ( Tomorrow at 2:30 AM )
-    nextWeek: 'dddd h:mm A', // The next week ( Sunday at 2:30 AM )
-    lastDay: '[昨天] h:mm A', // The day before ( Yesterday at 2:30 AM )
-    lastWeek: '[上周] dddd h:mm A', // Last week ( Last Monday at 2:30 AM )
-    sameElse: 'YYYY[年]MM[月]DD[日]', // Everything else ( 17/10/2011 )
+    sameDay: '[今天] hh:mm', // The same day ( Today at 2:30 AM )
+    nextDay: '[明天] hh:mm', // The next day ( Tomorrow at 2:30 AM )
+    nextWeek: 'dddd hh:mm', // The next week ( Sunday at 2:30 AM )
+    lastDay: '[昨天] hh:mm', // The day before ( Yesterday at 2:30 AM )
+    lastWeek: '[上周] dddd hh:mm', // Last week ( Last Monday at 2:30 AM )
+    sameElse: 'YYYY-MM-DD', // Everything else ( 17/10/2011 )
   })
 }

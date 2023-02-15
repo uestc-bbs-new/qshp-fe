@@ -1,10 +1,11 @@
 import React from 'react'
 
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
+const Home = React.lazy(() => import('@/pages/Home'))
+const Search = React.lazy(() => import('@/pages/Search'))
+const Edit = React.lazy(() => import('@/pages/Edit'))
+const Forum = React.lazy(() => import('@/pages/Forum'))
+const Thread = React.lazy(() => import('@/pages/Thread'))
 // import NotFound from '@/pages/ErrorPage'
-// import Forum from '@/pages/Forum'
-// import Thread from '@/pages/Thread'
 
 const routes = [
   {
@@ -15,26 +16,26 @@ const routes = [
     path: '/search',
     component: Search,
   },
-  //   {
-  //     path: '/home',
-  //     component: Home,
-  //   },
-  //   // {
-  //   //   path: "/edit",
-  //   //   component: Edit,
-  //   // },
+  {
+    path: '/home',
+    component: Home,
+  },
+  {
+    path: '/edit',
+    component: Edit,
+  },
   //   // {
   //   //   path: "/article",
   //   //   component: Article,
   //   // },
-  //   {
-  //     path: '/forum/:fid',
-  //     component: Forum,
-  //   },
-  //   {
-  //     path: '/thread/:tid',
-  //     component: Thread,
-  //   },
+  {
+    path: '/forum/:fid',
+    component: Forum,
+  },
+  {
+    path: '/thread/:tid',
+    component: Thread,
+  },
   //   {
   //     path: '*',
   //     component: NotFound,

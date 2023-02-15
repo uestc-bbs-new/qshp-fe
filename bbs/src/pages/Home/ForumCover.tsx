@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 
-import { Link } from 'react-router-dom'
-
 import {
   ListItemButton,
   ListItemText,
@@ -10,19 +8,20 @@ import {
   Grid,
   Typography,
   Stack,
+  Link,
+  Divider,
 } from '@mui/material'
 
 import {
   ExpandLess,
   ExpandMore,
-  RemoveRedEyeOutlined,
-  ModeCommentOutlined,
-  ThumbUpAltOutlined,
+  RemoveRedEye,
+  ModeComment,
+  ThumbUpAlt,
 } from '@mui/icons-material'
 
 import Avatar from '@/components/Avatar'
-import dayjs from 'dayjs/esm'
-
+import { chineseTime } from '@/utils/dayjs'
 import Chip from '@/components/Chip'
 import forumBg from '@/assets/login-bg1.jpg'
 import UserCard from '@/components/UserCard'
@@ -44,16 +43,22 @@ const ForumCover = ({ data }: ForumData) => {
     >
       <Box className="absolute bg-black rounded opacity-40 top-0 left-0 h-full w-full"></Box>
       <Box className="relative z-10">
-        <Typography>
-          <Link to={`/forum/${data.fid}`}>{data.name}</Link>
-        </Typography>
+        <Link
+          className="font-bold"
+          color="inherit"
+          underline="hover"
+          href={`/forum/${data.fid}`}
+        >
+          {data.name}
+        </Link>
+
         <Stack direction="row" className="mt-4">
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="space-between"
           >
-            <RemoveRedEyeOutlined />
+            <RemoveRedEye />
             <Typography className="pl-2 text-right">{data.views}</Typography>
           </Stack>
           <Stack
@@ -62,7 +67,7 @@ const ForumCover = ({ data }: ForumData) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <ModeCommentOutlined />
+            <ModeComment />
             <Typography className="pl-2">{data.replies}</Typography>
           </Stack>
           <Stack
@@ -71,7 +76,7 @@ const ForumCover = ({ data }: ForumData) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <ThumbUpAltOutlined />
+            <ThumbUpAlt />
             <Typography className="pl-2">{data.favtimes}</Typography>
           </Stack>
         </Stack>
@@ -86,16 +91,26 @@ const ForumCover = ({ data }: ForumData) => {
           </Box>
           <Box className="flex-1">
             <Stack direction="row">
-              <Link to={`/thread/${data.tid}`}>
+              <Link
+                color="inherit"
+                underline="hover"
+                href={`/thread/${data.tid}`}
+              >
                 <Box className="line-clamp-1">
                   <Chip text={data.name} />
                   {data.subject}
                 </Box>
               </Link>
             </Stack>
-            <Box>
-              {/* {dayjs(data.dateline * 1000).calendar()} <UserCard data={data} /> */}
-            </Box>
+            <Stack direction="row">
+              <Typography>{chineseTime(data.dateline * 1000)}</Typography>
+              <Typography className="mx-1">·</Typography>
+              <UserCard uid={data.authorid}>
+                <Link href="#" color="inherit">
+                  {data.author}
+                </Link>
+              </UserCard>
+            </Stack>
           </Box>
         </Stack>
       </Box>
