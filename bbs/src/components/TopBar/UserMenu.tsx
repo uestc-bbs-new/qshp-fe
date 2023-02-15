@@ -55,7 +55,7 @@ const UserMenu = () => {
 
   return (
     <>
-      <Button aria-describedby={id} onClick={handleClick}>
+      <Button aria-describedby={id} onClick={handleClick} className="min-w-min">
         <Avatar
           alt="Remy Sharp"
           src="https://mui.com/static/images/avatar/1.jpg"

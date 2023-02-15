@@ -1,10 +1,10 @@
-import { AppBar, Button, IconButton, Stack } from '@mui/material'
+import { AppBar, Button, IconButton, Stack, Link } from '@mui/material'
 
 import React from 'react'
 
 import { Add, Menu } from '@mui/icons-material'
 
-import { Link, useNavigate, createSearchParams } from 'react-router-dom'
+import { useNavigate, createSearchParams } from 'react-router-dom'
 
 import { useAppState } from '@/states'
 import UserMenu from './UserMenu'
@@ -29,11 +29,11 @@ const Options = () => {
       direction="row"
       className="basis-1/4 text-right"
     >
+      <UserMenu />
       <Message />
       {/* <AboutMe unread={state.messages.unread_count}/> */}
-      <UserMenu />
       <Button
-        className="bg-white bg-opacity-40"
+        className="bg-white bg-opacity-40 ml-6"
         variant="contained"
         startIcon={<Add />}
         onClick={goEdit}
@@ -83,7 +83,9 @@ const TopBar = () => {
           >
             <Menu />
           </IconButton>
-          <Link to="/">logo 清水河畔</Link>
+          <Link href="/" className="text-white">
+            logo 清水河畔
+          </Link>
         </Stack>
         <Stack direction="row" justifyContent="center" className="basis-1/2">
           <SearchBar />

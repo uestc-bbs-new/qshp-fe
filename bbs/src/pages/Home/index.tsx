@@ -1,11 +1,8 @@
-import { Box, Typography, List, Stack, Divider } from '@mui/material'
 import React from 'react'
+import { Box, Typography, List, Stack, Divider, Link } from '@mui/material'
 
 import { useQuery } from 'react-query'
 import { Whatshot } from '@mui/icons-material'
-
-import moment from 'moment'
-import { Link } from 'react-router-dom'
 
 import { ForumGroup } from './ForumCover'
 import { useAppState } from '@/states'
@@ -69,7 +66,9 @@ const Home = () => {
             ) : (
               info?.forums?.map((item) => (
                 <Typography key={item.name}>
-                  <Link to={`/forum/${item.fid}`}>{item.name}</Link>
+                  <Link href={`/forum/${item.fid}`} underline="hover">
+                    {item.name}
+                  </Link>
                 </Typography>
               ))
             )}

@@ -87,9 +87,9 @@ const MessagePopover = () => {
 
   return (
     <>
-      <Button aria-describedby={id} onClick={handleClick}>
-        <Badge badgeContent={state.messages.unread_count} color="primary">
-          <MarkunreadOutlined color="action" />
+      <Button className="min-w-min" aria-describedby={id} onClick={handleClick}>
+        <Badge badgeContent={state.messages.unread_count} color="warning">
+          <MarkunreadOutlined className="text-white" />
         </Badge>
       </Button>
 

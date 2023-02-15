@@ -1,5 +1,5 @@
 import moment from 'moment'
-import 'moment/locale/zh-cn'
+import 'moment/dist/locale/zh-cn'
 
 const checkCookie = () => {
   const baseCache = localStorage.getItem('base_cache')

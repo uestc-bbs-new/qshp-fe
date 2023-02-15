@@ -1,7 +1,7 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Box, Toolbar } from '@mui/material'
-import React, { useState } from 'react'
 
 // import {FormLi}
 import { useAppState } from '@/states'
@@ -13,7 +13,10 @@ import routes from '@/routes'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
-  const { isLoading } = useQuery(['formList'], () => getForumList(), {
+  const drawerWidth = 210
+
+  // read partition
+  useQuery(['formList'], () => getForumList(), {
     // catchTime: 60 * 1000,
     // staleTime: 30 * 1000
     onSuccess: (data) => {
@@ -29,10 +32,15 @@ const Layout = () => {
     <>
       <Box className="relative h-full flex">
         <TopBar />
-        <Drawer />
+        <Drawer width={drawerWidth} />
         <Box
           component="main"
-          className="w-full h-full flex flex-col align-middle items-center"
+          className="w-full h-full flex flex-col align-middle items-center transition-all"
+          sx={{
+            marginLeft: {
+              sm: `${state.drawer ? drawerWidth : 0}px`,
+            },
+          }}
         >
           <Toolbar />
           <Box className="p-3 w-full max-w-screen-xl flex-1">
