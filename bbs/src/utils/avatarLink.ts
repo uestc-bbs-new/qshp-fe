@@ -14,3 +14,8 @@ export const middleLink = (uid: number) => {
 export const largeLink = (uid: number) => {
   return `/uc_server/data/avatar/000${uidSplit(uid)}_avatar_big.jpg`
 }
+
+export const defaultLink = () => {
+  // return `/uc_server/data/avatar/default.png`
+  return 'https://mui.com/static/images/avatar/1.jpg'
+}

@@ -1,6 +1,7 @@
-import React, { Box, Typography, Avatar, Stack, Link } from '@mui/material'
+import React, { Box, Typography, Stack, Link } from '@mui/material'
 
 import { chineseTime } from '@/utils/dayjs'
+import Avatar from '../Avatar'
 
 import {
   RemoveRedEyeOutlined,

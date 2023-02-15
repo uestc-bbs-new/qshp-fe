@@ -10,7 +10,6 @@ import {
   Grid,
   Typography,
   Stack,
-  Avatar,
 } from '@mui/material'
 
 import {
@@ -21,6 +20,7 @@ import {
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
 
+import Avatar from '@/components/Avatar'
 import dayjs from 'dayjs/esm'
 
 import Chip from '@/components/Chip'

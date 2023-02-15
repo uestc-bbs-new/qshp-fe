@@ -1,5 +1,7 @@
 import React from 'react'
-import { Box, Stack, Avatar } from '@mui/material'
+import { Box, Stack } from '@mui/material'
+
+import Avatar from '@/components/Avatar'
 
 const Floor = () => {
   return (

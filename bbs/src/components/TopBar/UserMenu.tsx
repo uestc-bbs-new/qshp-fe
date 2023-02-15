@@ -1,13 +1,6 @@
 import React from 'react'
 
-import {
-  Menu,
-  Avatar,
-  MenuItem,
-  Divider,
-  ListItemIcon,
-  Button,
-} from '@mui/material'
+import { Menu, MenuItem, Divider, ListItemIcon, Button } from '@mui/material'
 
 import {
   TransferWithinAStation,
@@ -16,6 +9,7 @@ import {
   Logout,
 } from '@mui/icons-material'
 
+import Avatar from '../Avatar'
 import { useAppState, Theme } from '@/states'
 
 const UserMenu = () => {
@@ -57,8 +51,8 @@ const UserMenu = () => {
     <>
       <Button aria-describedby={id} onClick={handleClick} className="min-w-min">
         <Avatar
-          alt="Remy Sharp"
-          src="https://mui.com/static/images/avatar/1.jpg"
+          src="https://mui.com/static/avatar/1.jpg"
+          alt="1234"
           sx={{ width: 32, height: 32 }}
         />
       </Button>
