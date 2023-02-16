@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { BrowserRouter } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 
 import useAppStateContext, { AppContext } from './states'
-import Theme from './Theme'
 import { checkCookie } from './utils/cookie'
-import Layout from './pages/Layout'
+import Theme from './Theme'
+import router from './routes'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,15 +24,13 @@ function App() {
   })
 
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AppContext.Provider value={{ state, dispatch }}>
-          <Theme theme={state.theme}>
-            <Layout />
-          </Theme>
-        </AppContext.Provider>
-      </QueryClientProvider>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AppContext.Provider value={{ state, dispatch }}>
+        <Theme theme={state.theme}>
+          <RouterProvider router={router} />
+        </Theme>
+      </AppContext.Provider>
+    </QueryClientProvider>
   )
 }
 

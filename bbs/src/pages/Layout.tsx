@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Box, Toolbar } from '@mui/material'
+import { Outlet } from 'react-router-dom'
 
 // import {FormLi}
 import { useAppState } from '@/states'
 import { getForumList } from '@/apis/common'
 import TopBar from '@/components/TopBar'
 import Drawer from '@/components/Drawer'
-import routes from '@/routes'
 // import Announcement from '@/components/Announcement'
 
 const Layout = () => {
@@ -43,13 +42,9 @@ const Layout = () => {
           }}
         >
           <Toolbar />
-          <Box className="p-3 w-full h-full max-w-screen-xl flex-1">
+          <Box id="detail" className="p-3 w-full h-full max-w-screen-xl flex-1">
             {/* <Announcement /> */}
-            <Routes>
-              {routes.map(({ path, name, component: Component }) => (
-                <Route path={path} element={<Component />} key={name} />
-              ))}
-            </Routes>
+            <Outlet />
           </Box>
         </Box>
       </Box>
