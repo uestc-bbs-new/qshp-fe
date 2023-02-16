@@ -35,7 +35,7 @@ const Layout = () => {
         <Drawer width={drawerWidth} />
         <Box
           component="main"
-          className="w-full h-full flex flex-col align-middle items-center transition-all"
+          className="w-full flex flex-col align-middle items-center transition-all"
           sx={{
             marginLeft: {
               sm: `${drawerWidth}px`,
@@ -46,8 +46,8 @@ const Layout = () => {
           <Box className="p-3 w-full h-full max-w-screen-xl flex-1">
             {/* <Announcement /> */}
             <Routes>
-              {routes.map(({ path, component: Component }) => (
-                <Route path={path} element={<Component />} key={path} />
+              {routes.map(({ path, name, component: Component }) => (
+                <Route path={path} element={<Component />} key={name} />
               ))}
             </Routes>
           </Box>

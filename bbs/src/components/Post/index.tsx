@@ -9,7 +9,7 @@ import {
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
 
-// import UserCard from '@/components/UserCard'
+import UserCard from '@/components/UserCard'
 import Chip from '@/components/Chip'
 import { Thread } from '@/common/interfaces/response'
 
@@ -34,16 +34,23 @@ const Post = ({ data, small, className }: PostProps) => {
         <Box className="flex-1">
           <Stack justifyContent="space-between">
             <Stack direction="row">
-              <Link href={`/thread/${data.tid}`}>
+              <Link
+                href={`/thread/${data.tid}`}
+                color="inherit"
+                underline="hover"
+                className={small ? 'line-clamp-3' : 'line-clamp-2'}
+              >
                 <Box>
                   <Chip small={small} text="等级" />
                   {data.subject}
                 </Box>
               </Link>
             </Stack>
-            <Stack direction="row">
-              {/* <UserCard data={data} /> */}
-              <Typography variant="subtitle2" className="pl-1">
+            <Stack direction="row" alignItems="center" className="text-sm">
+              <UserCard uid={data.authorid}>
+                <Link color="inherit">{data.author}</Link>
+              </UserCard>
+              <Typography fontSize="inherit" className="pl-1">
                 {`· ${chineseTime(data.dateline * 1000)}`}
               </Typography>
             </Stack>

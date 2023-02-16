@@ -8,9 +8,11 @@ import {
   Grid,
   Typography,
   Stack,
-  Link,
   Divider,
+  Link,
 } from '@mui/material'
+
+// import {  } from 'react-router-dom'
 
 import {
   ExpandLess,
@@ -47,7 +49,7 @@ const ForumCover = ({ data }: ForumData) => {
           className="font-bold"
           color="inherit"
           underline="hover"
-          href={`/forum/${data.fid}`}
+          href={`forum/${data.fid}`}
         >
           {data.name}
         </Link>
@@ -106,9 +108,7 @@ const ForumCover = ({ data }: ForumData) => {
               <Typography>{chineseTime(data.dateline * 1000)}</Typography>
               <Typography className="mx-1">·</Typography>
               <UserCard uid={data.authorid}>
-                <Link href="#" color="inherit">
-                  {data.author}
-                </Link>
+                <Link color="inherit">{data.author}</Link>
               </UserCard>
             </Stack>
           </Box>

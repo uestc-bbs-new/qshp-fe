@@ -5,7 +5,7 @@ import Editor from '@/components/Editor'
 
 const Edit = () => {
   return (
-    <Box className="flex">
+    <Box className="flex flex-1">
       <Editor />
     </Box>
   )

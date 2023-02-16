@@ -54,6 +54,7 @@ const UserMenu = () => {
           src="https://mui.com/static/avatar/1.jpg"
           alt="1234"
           sx={{ width: 32, height: 32 }}
+          variant="rounded"
         />
       </Button>
 

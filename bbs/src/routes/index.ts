@@ -1,27 +1,26 @@
 import React from 'react'
 
-const Home = React.lazy(() => import('@/pages/Home'))
-const Search = React.lazy(() => import('@/pages/Search'))
-const Edit = React.lazy(() => import('@/pages/Edit'))
-const Forum = React.lazy(() => import('@/pages/Forum'))
-const Thread = React.lazy(() => import('@/pages/Thread'))
+import Home from '@/pages/Home'
+import Search from '@/pages/Search'
+import Edit from '@/pages/Edit'
+import Forum from '@/pages/Forum'
+import Thread from '@/pages/Thread'
 // import NotFound from '@/pages/ErrorPage'
 
 const routes = [
   {
     path: '/',
+    name: '首页',
     component: Home,
   },
   {
     path: '/search',
+    name: '搜索',
     component: Search,
   },
   {
-    path: '/home',
-    component: Home,
-  },
-  {
     path: '/edit',
+    name: '编辑',
     component: Edit,
   },
   //   // {
@@ -30,10 +29,12 @@ const routes = [
   //   // },
   {
     path: '/forum/:fid',
+    name: '论坛',
     component: Forum,
   },
   {
     path: '/thread/:tid',
+    name: '帖子',
     component: Thread,
   },
   //   {

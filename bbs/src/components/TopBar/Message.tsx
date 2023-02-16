@@ -50,12 +50,8 @@ const MessageTabs = () => {
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="帖子" />
+        <Tabs value={value} onChange={handleChange}>
+          <Tab label="@我的" />
           <Tab label="消息" />
         </Tabs>
       </Box>

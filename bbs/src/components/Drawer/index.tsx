@@ -125,7 +125,7 @@ const LeftDrawer = ({ width }: { width: number }) => {
     <>
       <Drawer
         variant="temporary"
-        open={state.drawer}
+        open={!state.drawer}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}

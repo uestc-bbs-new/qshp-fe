@@ -38,7 +38,7 @@ const Home = () => {
   )
 
   return (
-    <Box className="flex">
+    <Box className="flex flex-1">
       <Box className="flex-1">
         <List>
           {state.navList.map((item) => (
@@ -46,17 +46,19 @@ const Home = () => {
           ))}
         </List>
       </Box>
-      <Box className="hidden lg:block w-60 ml-6 ">
+      <Box className="lg:block w-60 ml-6 ">
         <Box className="rounded-lg drop-shadow-md mb-6">
-          <BoxHeader text="论坛统计" Icon={Whatshot} />
-          <Box className="p-3">
-            <Typography>
-              今日：{infoLoading ? <></> : info?.todayposts}
-            </Typography>
-            <Typography>
-              昨日：{infoLoading ? <></> : info?.yesterdayposts}
-            </Typography>
-          </Box>
+          <BoxHeader text="今日热门" Icon={Whatshot} />
+          <List>
+            {isLoading ? (
+              <Typography>none</Typography>
+            ) : (
+              // hot.threads.length
+              hot?.threads?.map((item) => (
+                <Post small data={item} key={item.tid} className="mb-4" />
+              ))
+            )}
+          </List>
         </Box>
         <Box className="rounded-lg drop-shadow-md">
           <BoxHeader text="热门分类" Icon={Whatshot} />
@@ -75,17 +77,15 @@ const Home = () => {
           </Box>
         </Box>
         <Box className="rounded-lg drop-shadow-md mb-6">
-          <BoxHeader text="今日热门" Icon={Whatshot} />
-          <List>
-            {isLoading ? (
-              <Typography>none</Typography>
-            ) : (
-              // hot.threads.length
-              hot?.threads?.map((item) => (
-                <Post small data={item} key={item.tid} className="mb-4" />
-              ))
-            )}
-          </List>
+          <BoxHeader text="论坛统计" Icon={Whatshot} />
+          <Box className="p-3">
+            <Typography>
+              今日：{infoLoading ? <></> : info?.todayposts}
+            </Typography>
+            <Typography>
+              昨日：{infoLoading ? <></> : info?.yesterdayposts}
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </Box>
