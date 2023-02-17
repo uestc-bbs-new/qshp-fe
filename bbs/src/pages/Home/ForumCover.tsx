@@ -8,8 +8,6 @@ import {
   Grid,
   Typography,
   Stack,
-  Divider,
-  Link,
 } from '@mui/material'
 
 // import {  } from 'react-router-dom'
@@ -22,6 +20,7 @@ import {
   ThumbUpAlt,
 } from '@mui/icons-material'
 
+import Link from '@/components/Link'
 import Avatar from '@/components/Avatar'
 import { chineseTime } from '@/utils/dayjs'
 import Chip from '@/components/Chip'
@@ -49,7 +48,7 @@ const ForumCover = ({ data }: ForumData) => {
           className="font-bold"
           color="inherit"
           underline="hover"
-          href={`forum/${data.fid}`}
+          to={`forum/${data.fid}`}
         >
           {data.name}
         </Link>
@@ -96,7 +95,7 @@ const ForumCover = ({ data }: ForumData) => {
               <Link
                 color="inherit"
                 underline="hover"
-                href={`/thread/${data.tid}`}
+                to={`/thread/${data.tid}`}
               >
                 <Box className="line-clamp-1">
                   <Chip text={data.name} />

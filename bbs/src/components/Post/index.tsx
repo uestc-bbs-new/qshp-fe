@@ -1,7 +1,8 @@
-import React, { Box, Typography, Stack, Link } from '@mui/material'
+import React, { Box, Typography, Stack } from '@mui/material'
 
 import { chineseTime } from '@/utils/dayjs'
 import Avatar from '../Avatar'
+import Link from '../Link'
 
 import {
   RemoveRedEyeOutlined,
@@ -35,7 +36,7 @@ const Post = ({ data, small, className }: PostProps) => {
           <Stack justifyContent="space-between">
             <Stack direction="row">
               <Link
-                href={`/thread/${data.tid}`}
+                to={`/thread/${data.tid}`}
                 color="inherit"
                 underline="hover"
                 className={small ? 'line-clamp-3' : 'line-clamp-2'}

@@ -1,12 +1,13 @@
-import { AppBar, Button, IconButton, Stack, Link, Toolbar } from '@mui/material'
-
 import React from 'react'
+
+import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'
 
 import { Add, Menu } from '@mui/icons-material'
 
 import { useNavigate, createSearchParams } from 'react-router-dom'
 
 import { useAppState } from '@/states'
+import Link from '@/components/Link'
 import UserMenu from './UserMenu'
 import Message from './Message'
 import SearchBar from './Search'
@@ -85,7 +86,7 @@ const TopBar = () => {
           >
             <Menu />
           </IconButton>
-          <Link href="/" className="text-white">
+          <Link to="/" className="text-white">
             logo 清水河畔
           </Link>
         </Stack>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, List, Stack, Divider, Link } from '@mui/material'
+import { Box, Typography, List, Stack, Divider } from '@mui/material'
 
 import { useQuery } from 'react-query'
 import { Whatshot } from '@mui/icons-material'
@@ -7,6 +7,7 @@ import { Whatshot } from '@mui/icons-material'
 import { ForumGroup } from './ForumCover'
 import { useAppState } from '@/states'
 import { getHotThread, getBBSInfo } from '@/apis/common'
+import Link from '@/components/Link'
 import Post from '@/components/Post'
 
 import SvgIcon from '@mui/material/SvgIcon'
@@ -68,7 +69,7 @@ const Home = () => {
             ) : (
               info?.forums?.map((item) => (
                 <Typography key={item.name}>
-                  <Link href={`/forum/${item.fid}`} underline="hover">
+                  <Link to={`/forum/${item.fid}`} underline="hover">
                     {item.name}
                   </Link>
                 </Typography>

@@ -13,7 +13,7 @@ import ScrollTop from '@/components/ScrollTop'
 // import Announcement from '@/components/Announcement'
 
 const Layout = () => {
-  const { dispatch } = useAppState()
+  const { state, dispatch } = useAppState()
   const drawerWidth = 210
 
   // read partition
@@ -39,7 +39,8 @@ const Layout = () => {
           className="w-full flex flex-col align-middle items-center transition-all"
           sx={{
             marginLeft: {
-              // sm: `${}px`,
+              sm: `${state.drawer ? 240 : 0}px`,
+              xl: `${0}px`,
             },
           }}
         >
