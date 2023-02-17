@@ -33,7 +33,10 @@ const Layout = () => {
 
   return (
     <>
-      <Box className="relative h-full flex">
+      <Box
+        className="relative h-full flex"
+        style={{ backgroundColor: '#f7f9fe' }}
+      >
         <TopBar />
         <Drawer width={drawerWidth} />
         <Box
@@ -46,7 +49,7 @@ const Layout = () => {
           }}
         >
           <Toolbar id="back-to-top-anchor" />
-          <Box id="detail" className="p-3 w-full h-full max-w-screen-xl flex-1">
+          <Box id="detail" className="p-4 w-full h-full max-w-screen-xl flex-1">
             {/* <Announcement /> */}
             <Outlet />
           </Box>

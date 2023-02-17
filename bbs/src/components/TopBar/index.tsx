@@ -15,15 +15,6 @@ import SearchBar from './Search'
 const Options = () => {
   const navigate = useNavigate()
 
-  const goEdit = () => {
-    navigate({
-      pathname: '/edit',
-      search: createSearchParams({
-        mode: 'new',
-      }).toString(),
-    })
-  }
-
   return (
     <Stack
       justifyContent="flex-end"
@@ -38,7 +29,7 @@ const Options = () => {
           className="bg-white bg-opacity-40 ml-6"
           variant="contained"
           startIcon={<Add />}
-          onClick={goEdit}
+          onClick={() => navigate('/edit')}
         >
           发帖
         </Button>
