@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { Box, Toolbar, Fab } from '@mui/material'
+import { Box, Toolbar, Fab, useMediaQuery } from '@mui/material'
 import { Outlet } from 'react-router-dom'
 import { KeyboardArrowUp } from '@mui/icons-material'
 
@@ -14,6 +14,8 @@ import ScrollTop from '@/components/ScrollTop'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
+  // 1720 comes from the content width 1280 plus 2 * drawer width 210
+  const matches = useMediaQuery('(min-width: 1720px)')
   const drawerWidth = 210
 
   // read partition
@@ -36,11 +38,10 @@ const Layout = () => {
         <Drawer width={drawerWidth} />
         <Box
           component="main"
-          className="w-full flex flex-col align-middle items-center transition-all"
+          className={`w-full flex flex-col align-middle transition-all items-center`}
           sx={{
             marginLeft: {
-              sm: `${state.drawer ? 240 : 0}px`,
-              xl: `${0}px`,
+              sm: `${state.drawer && !matches ? drawerWidth : 0}px`,
             },
           }}
         >
