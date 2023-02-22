@@ -35,7 +35,7 @@ const Layout = () => {
     <>
       <Box
         className="relative h-full flex"
-        style={{ backgroundColor: '#f7f9fe' }}
+        // style={{ backgroundColor: '#f7f9fe' }}
       >
         <TopBar />
         <Drawer width={drawerWidth} />

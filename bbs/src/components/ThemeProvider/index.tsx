@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   StyledEngineProvider,
-  ThemeProvider,
+  ThemeProvider as MuiTheme,
   createTheme,
 } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -23,15 +23,15 @@ const lightTheme = createTheme({
   },
 })
 
-const Theme = ({ children, theme }: ThemeProps) => {
+const ThemeProvider = ({ children, theme }: ThemeProps) => {
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+      <MuiTheme theme={theme === 'dark' ? darkTheme : lightTheme}>
         <CssBaseline />
         {children}
-      </ThemeProvider>
+      </MuiTheme>
     </StyledEngineProvider>
   )
 }
 
-export default Theme
+export default ThemeProvider

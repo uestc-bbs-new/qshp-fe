@@ -4,7 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 
 import useAppStateContext, { AppContext } from './states'
 import { checkCookie } from './utils/cookie'
-import Theme from './Theme'
+import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
 
 const queryClient = new QueryClient({
@@ -26,9 +26,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppContext.Provider value={{ state, dispatch }}>
-        <Theme theme={state.theme}>
+        <ThemeProvider theme={state.theme}>
           <RouterProvider router={router} />
-        </Theme>
+        </ThemeProvider>
       </AppContext.Provider>
     </QueryClientProvider>
   )

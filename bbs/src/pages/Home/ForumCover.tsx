@@ -19,6 +19,7 @@ import {
   ModeComment,
   ThumbUpAlt,
 } from '@mui/icons-material'
+import { useTheme } from '@mui/material/styles'
 
 import Link from '@/components/Link'
 import Avatar from '@/components/Avatar'
@@ -27,6 +28,7 @@ import Chip from '@/components/Chip'
 import forumBg from '@/assets/login-bg1.jpg'
 import UserCard from '@/components/UserCard'
 import { Forum } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 
 type ForumData = {
   data: Forum
@@ -120,6 +122,8 @@ const ForumCover = ({ data }: ForumData) => {
 const menuFontStyle = { fontSize: '1.2rem' }
 export const ForumGroup = ({ data }: ForumData) => {
   const [open, setOpen] = useState(true)
+  const { state } = useAppState()
+  const theme = useTheme()
 
   const handleClick = () => {
     setOpen(!open)
@@ -137,7 +141,12 @@ export const ForumGroup = ({ data }: ForumData) => {
         />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
-      <Box className="h-1 bg-blue-400 rounded-lg"></Box>
+      <Box
+        className="h-1 rounded-lg"
+        style={{
+          backgroundColor: theme.palette.primary.main,
+        }}
+      ></Box>
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
           {data?.forums?.map((item, index) => (
