@@ -1,17 +1,69 @@
-import React from 'react'
-import { Box, Input, Typography } from '@mui/material'
+import React, { useState } from 'react'
+import {
+  Box,
+  TextField,
+  Typography,
+  Stack,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Button,
+} from '@mui/material'
 
 import Editor from '@/components/Editor'
+import { useAppState } from '@/states'
+import { Forum } from '@/common/interfaces/response'
 
+// TODO：set default group and forums due to the route params
 const Edit = () => {
+  const { state } = useAppState()
+  const [group, setGroup] = useState('')
+  const [forum, setForum] = useState('')
+  const [groupItem, setGroupItem] = useState<Forum[]>([])
+
+  const handleGroupChange = (event: SelectChangeEvent) => {
+    setGroup(event.target.value)
+
+    const targetGroup: Forum | undefined = state.navList.find(
+      (item) => item.fid.toString() === event.target.value.toString()
+    )
+
+    if (targetGroup) {
+      setGroupItem(targetGroup.forums as Forum[])
+    }
+  }
+
+  const handleForumChange = (event: SelectChangeEvent) => {
+    setForum(event.target.value)
+  }
+
   return (
     <Box className="flex-1 flex relative flex-col">
       <Typography variant="h4" color="inherit">
         发布主题
       </Typography>
-      <Box className="p-4">
-        <Input placeholder="主题标题"></Input>
+      <Box className="p-4 rounded-lg bg-slate-200 shadow-md">
+        <Stack direction="row" className="pb-4">
+          <Select value={group} onChange={handleGroupChange}>
+            {state.navList.map((item) => (
+              <MenuItem key={item.name} value={item.fid}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <Select value={forum} onChange={handleForumChange}>
+            {groupItem.map((item) => (
+              <MenuItem key={item.name} value={item.fid}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField fullWidth hiddenLabel placeholder="主题标题" />
+        </Stack>
         <Editor />
+        <Box className="text-center">
+          <Button>发布主题</Button>
+        </Box>
       </Box>
     </Box>
   )
