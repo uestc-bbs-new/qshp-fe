@@ -1,3 +1,5 @@
+// TODO: How to take the @ user information to request?
+
 const options: IOptions = {
   height: 300,
   // change the z-index due to the mui base z-index = 1200
@@ -27,8 +29,8 @@ const options: IOptions = {
     linkToImgUrl: '/api/upload/fetch',
     filename(name) {
       return name
-        .replace(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, '')
-        .replace(/[?\\/:|<>*[]\()\$%\{\}@~]/g, '')
+        .replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\\.)]/g, '')
+        .replace(/[\\?\\/:|<>\\*\\[\]\\(\\)\\$%\\{\\}@~]/g, '')
         .replace('/\\s/g', '')
     },
   },
