@@ -2,8 +2,13 @@ import React from 'react'
 import { Box, Stack } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
+import Footer from './Footer'
 
-const Floor = () => {
+type props = {
+  children: React.ReactElement
+}
+
+const Floor = ({ children }: props) => {
   return (
     <Box className="py-2">
       <Stack direction="row">
@@ -16,7 +21,8 @@ const Floor = () => {
           />
           {/* <Typography  */}
         </Box>
-        <Box className="flex-1">21</Box>
+        <Box className="flex-1">{children}</Box>
+        <Footer floor={0} />
       </Stack>
     </Box>
   )

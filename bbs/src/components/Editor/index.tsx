@@ -5,15 +5,18 @@ import 'vditor/dist/index.css'
 
 import options from './config'
 
-const Editor = () => {
+type props = IOptions & {
+  setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
+}
+const Editor = ({ setVd, ...other }: props) => {
   const { state } = useAppState()
-  const [vd, setVd] = React.useState<Vditor>()
   useEffect(() => {
     const vditor = new Vditor('vditor', {
       after: () => {
         setVd(vditor)
       },
       ...options,
+      ...other,
     })
   }, [])
   return <div id="vditor" className="vditor flex-1" />

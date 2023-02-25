@@ -1,7 +1,6 @@
 // TODO: How to take the @ user information to request?
 
 const options: IOptions = {
-  height: 300,
   // change the z-index due to the mui base z-index = 1200
   fullscreen: { index: 1202 },
   hint: {

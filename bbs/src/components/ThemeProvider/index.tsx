@@ -2,26 +2,15 @@ import React from 'react'
 import {
   StyledEngineProvider,
   ThemeProvider as MuiTheme,
-  createTheme,
 } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import darkTheme from './Theme/dark'
+import lightTheme from './Theme/light'
 
 interface ThemeProps {
   children: React.ReactNode
   theme: string
 }
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-})
-
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-})
 
 const ThemeProvider = ({ children, theme }: ThemeProps) => {
   return (

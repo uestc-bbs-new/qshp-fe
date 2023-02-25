@@ -13,6 +13,7 @@ import {
 import Editor from '@/components/Editor'
 import { useAppState } from '@/states'
 import { Forum } from '@/common/interfaces/response'
+import Vditor from 'vditor'
 
 // TODO：set default group and forums due to the route params
 const Edit = () => {
@@ -20,6 +21,11 @@ const Edit = () => {
   const [group, setGroup] = useState('')
   const [forum, setForum] = useState('')
   const [groupItem, setGroupItem] = useState<Forum[]>([])
+  const [vd, setVd] = useState<Vditor>()
+
+  const handleSubmit = () => {
+    console.log(vd?.getValue())
+  }
 
   const handleGroupChange = (event: SelectChangeEvent) => {
     setGroup(event.target.value)
@@ -60,9 +66,9 @@ const Edit = () => {
           </Select>
           <TextField fullWidth hiddenLabel placeholder="主题标题" />
         </Stack>
-        <Editor />
+        <Editor minHeight={300} setVd={setVd} />
         <Box className="text-center">
-          <Button>发布主题</Button>
+          <Button onClick={handleSubmit}>发布主题</Button>
         </Box>
       </Box>
     </Box>
