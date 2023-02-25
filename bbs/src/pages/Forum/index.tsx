@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react'
-
 import { useParams } from 'react-router-dom'
 
-import { Box, Typography, List, Stack, Divider, Tabs, Tab } from '@mui/material'
-
 import { Whatshot } from '@mui/icons-material'
-
-import { useAppState } from '@/states'
+import { Box, Divider, List, Stack, Tab, Tabs, Typography } from '@mui/material'
+// import data from './test'
+import SvgIcon from '@mui/material/SvgIcon'
 
 // import { getThreadList } from '@/apis/common'
 import Post from '@/components/Post'
-// import data from './test'
+import { useAppState } from '@/states'
 
-import SvgIcon from '@mui/material/SvgIcon'
 type SvgIconComponent = typeof SvgIcon
 type BoxHeaderProps = {
   text: string
@@ -42,14 +39,14 @@ function Forum() {
 
   return (
     <Box className="flex">
-      <Box className="w-60 mr-6">
-        <Box className="bg-white rounded-lg drop-shadow-md mb-6">
+      <Box className="mr-6 w-60">
+        <Box className="mb-6 rounded-lg bg-white drop-shadow-md">
           <BoxHeader text="今日热门" Icon={Whatshot} />
           <List></List>
         </Box>
       </Box>
       <Box className="flex-1">
-        <Box className="bg-white rounded-lg drop-shadow-md">
+        <Box className="rounded-lg bg-white drop-shadow-md">
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs
               value={tabIndex}

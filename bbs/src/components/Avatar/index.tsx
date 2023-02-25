@@ -1,5 +1,6 @@
 import React from 'react'
-import { Avatar as MuiAvatar, AvatarProps } from '@mui/material'
+
+import { AvatarProps, Avatar as MuiAvatar } from '@mui/material'
 
 import { defaultLink } from '@/utils/avatarLink'
 

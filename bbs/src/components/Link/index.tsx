@@ -1,6 +1,7 @@
 import React from 'react'
-import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+
+import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 type LinkProps = MuiLinkProps & {
   to?: string

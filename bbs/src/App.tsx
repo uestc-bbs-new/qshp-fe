@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 
-import useAppStateContext, { AppContext } from './states'
-import { checkCookie } from './utils/cookie'
 import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
+import useAppStateContext, { AppContext } from './states'
+import { checkCookie } from './utils/cookie'
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react'
-import { stateReducer, StateAction, State } from './reducers/stateReducer'
+
+import { State, StateAction, stateReducer } from './reducers/stateReducer'
 
 export type Theme = 'light' | 'dark'
 

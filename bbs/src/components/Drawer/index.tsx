@@ -3,6 +3,7 @@ import React from 'react'
 import { Drawer, useMediaQuery } from '@mui/material'
 
 import { useAppState } from '@/states'
+
 import NavLinks from './NavLinks'
 
 // use different drawer variant due to the media

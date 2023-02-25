@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
-import { Typography, Button, Popover, Box, makeStyles } from '@mui/material'
-import avatarBg from '../assets/avatar-bg.jpg'
+import { Box, Button, Popover, Typography, makeStyles } from '@mui/material'
 
 import Chip from '../Chip'
+import avatarBg from '../assets/avatar-bg.jpg'
 
 type CardProps = {
   uid: number

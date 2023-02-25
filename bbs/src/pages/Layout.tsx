@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { Box, Toolbar, Fab, useMediaQuery } from '@mui/material'
 import { Outlet } from 'react-router-dom'
-import { KeyboardArrowUp } from '@mui/icons-material'
 
-// import {FormLi}
-import { useAppState } from '@/states'
+import { KeyboardArrowUp } from '@mui/icons-material'
+import { Box, Fab, Toolbar, useMediaQuery } from '@mui/material'
+
 import { getForumList } from '@/apis/common'
-import TopBar from '@/components/TopBar'
 import Drawer from '@/components/Drawer'
 import ScrollTop from '@/components/ScrollTop'
+import TopBar from '@/components/TopBar'
+// import {FormLi}
+import { useAppState } from '@/states'
+
 // import Announcement from '@/components/Announcement'
 
 const Layout = () => {
@@ -34,14 +36,14 @@ const Layout = () => {
   return (
     <>
       <Box
-        className="relative h-full flex"
+        className="relative flex h-full"
         // style={{ backgroundColor: '#f7f9fe' }}
       >
         <TopBar />
         <Drawer width={drawerWidth} />
         <Box
           component="main"
-          className={`w-full flex flex-col align-middle transition-all items-center`}
+          className={`flex w-full flex-col items-center align-middle transition-all`}
           sx={{
             marginLeft: {
               sm: `${state.drawer && !matches ? drawerWidth : 0}px`,
@@ -49,7 +51,7 @@ const Layout = () => {
           }}
         >
           <Toolbar id="back-to-top-anchor" />
-          <Box id="detail" className="p-4 w-full h-full max-w-screen-xl flex-1">
+          <Box id="detail" className="h-full w-full max-w-screen-xl flex-1 p-4">
             {/* <Announcement /> */}
             <Outlet />
           </Box>

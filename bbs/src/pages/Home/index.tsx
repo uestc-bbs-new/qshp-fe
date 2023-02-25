@@ -1,16 +1,17 @@
 import React from 'react'
-import { Box, Typography, List, Stack, Divider } from '@mui/material'
-
 import { useQuery } from 'react-query'
-import { Whatshot } from '@mui/icons-material'
 
-import { ForumGroup } from './ForumCover'
-import { useAppState } from '@/states'
-import { getHotThread, getBBSInfo } from '@/apis/common'
+import { Whatshot } from '@mui/icons-material'
+import { Box, Divider, List, Stack, Typography } from '@mui/material'
+import SvgIcon from '@mui/material/SvgIcon'
+
+import { getBBSInfo, getHotThread } from '@/apis/common'
 import Link from '@/components/Link'
 import Post from '@/components/Post'
+import { useAppState } from '@/states'
 
-import SvgIcon from '@mui/material/SvgIcon'
+import { ForumGroup } from './ForumCover'
+
 type SvgIconComponent = typeof SvgIcon
 type BoxHeaderProps = {
   text: string
@@ -47,8 +48,8 @@ const Home = () => {
           ))}
         </List>
       </Box>
-      <Box className="lg:block w-60 ml-6 ">
-        <Box className="rounded-lg drop-shadow-md mb-6">
+      <Box className="ml-6 w-60 lg:block ">
+        <Box className="mb-6 rounded-lg drop-shadow-md">
           <BoxHeader text="今日热门" Icon={Whatshot} />
           <List>
             {isLoading ? (
@@ -77,7 +78,7 @@ const Home = () => {
             )}
           </Box>
         </Box>
-        <Box className="rounded-lg drop-shadow-md mb-6">
+        <Box className="mb-6 rounded-lg drop-shadow-md">
           <BoxHeader text="论坛统计" Icon={Whatshot} />
           <Box className="p-3">
             <Typography>

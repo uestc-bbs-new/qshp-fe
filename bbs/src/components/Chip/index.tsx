@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Box, Typography } from '@mui/material'
 
 import chipColor from './color'
@@ -13,7 +14,7 @@ const Chip = ({ text, small, type = 'plate' }: Props) => {
   return (
     <Box className="inline-block">
       <Box
-        className={`text-white rounded mr-2`}
+        className={`mr-2 rounded text-white`}
         sx={{
           display: 'flex',
           alignItems: 'center',

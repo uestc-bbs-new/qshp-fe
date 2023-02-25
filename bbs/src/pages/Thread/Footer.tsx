@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Stack, Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 
 type FooterProps = {
   floor: number

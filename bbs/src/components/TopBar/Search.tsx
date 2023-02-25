@@ -1,7 +1,8 @@
-import { IconButton, Stack, Divider } from '@mui/material'
-import React, { useState, useRef } from 'react'
+import React, { useRef, useState } from 'react'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+
 import { Search } from '@mui/icons-material'
-import { useNavigate, createSearchParams } from 'react-router-dom'
+import { Divider, IconButton, Stack } from '@mui/material'
 
 const SearchBar = () => {
   const [searchText, setSearchText] = useState('')
@@ -26,10 +27,10 @@ const SearchBar = () => {
     <Stack
       direction="row"
       alignItems="center"
-      className="bg-white/20 text-white focus-within:bg-white focus-within:text-black w-96 transition-colors rounded-lg"
+      className="w-96 rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
     >
       <input
-        className="outline-none border-0 pl-4 flex-1 text-inherit bg-transparent decoration-transparent placeholder-current"
+        className="flex-1 border-0 bg-transparent pl-4 text-inherit decoration-transparent placeholder-current outline-none"
         placeholder="搜索帖子"
         ref={inputComponent}
         value={searchText}

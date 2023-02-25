@@ -1,16 +1,15 @@
 import React from 'react'
-
-import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import { Add, Menu } from '@mui/icons-material'
+import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'
 
-import { useNavigate, createSearchParams } from 'react-router-dom'
-
-import { useAppState } from '@/states'
 import Link from '@/components/Link'
-import UserMenu from './UserMenu'
+import { useAppState } from '@/states'
+
 import Message from './Message'
 import SearchBar from './Search'
+import UserMenu from './UserMenu'
 
 const Options = () => {
   const navigate = useNavigate()
@@ -26,7 +25,7 @@ const Options = () => {
         <Message />
         {/* <AboutMe unread={state.messages.unread_count}/> */}
         <Button
-          className="bg-white bg-opacity-40 ml-6"
+          className="ml-6 bg-white bg-opacity-40"
           variant="contained"
           startIcon={<Add />}
           onClick={() => navigate('/edit')}

@@ -1,19 +1,21 @@
+import Vditor from 'vditor'
+
 import React, { useState } from 'react'
+
 import {
   Box,
+  Button,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
   TextField,
   Typography,
-  Stack,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  Button,
 } from '@mui/material'
 
+import { Forum } from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import { useAppState } from '@/states'
-import { Forum } from '@/common/interfaces/response'
-import Vditor from 'vditor'
 
 // TODO：set default group and forums due to the route params
 const Edit = () => {
@@ -44,11 +46,11 @@ const Edit = () => {
   }
 
   return (
-    <Box className="flex-1 flex relative flex-col">
+    <Box className="relative flex flex-1 flex-col">
       <Typography variant="h4" color="inherit">
         发布主题
       </Typography>
-      <Box className="p-4 rounded-lg bg-slate-200 shadow-md">
+      <Box className="rounded-lg bg-slate-200 p-4 shadow-md">
         <Stack direction="row" className="pb-4">
           <Select value={group} onChange={handleGroupChange}>
             {state.navList.map((item) => (

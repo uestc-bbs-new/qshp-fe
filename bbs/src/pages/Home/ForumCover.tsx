@@ -1,34 +1,32 @@
 import React, { useState } from 'react'
 
-import {
-  ListItemButton,
-  ListItemText,
-  Box,
-  Collapse,
-  Grid,
-  Typography,
-  Stack,
-} from '@mui/material'
-
 // import {  } from 'react-router-dom'
-
 import {
   ExpandLess,
   ExpandMore,
-  RemoveRedEye,
   ModeComment,
+  RemoveRedEye,
   ThumbUpAlt,
 } from '@mui/icons-material'
+import {
+  Box,
+  Collapse,
+  Grid,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
-import Link from '@/components/Link'
-import Avatar from '@/components/Avatar'
-import { chineseTime } from '@/utils/dayjs'
-import Chip from '@/components/Chip'
 import forumBg from '@/assets/login-bg1.jpg'
-import UserCard from '@/components/UserCard'
 import { Forum } from '@/common/interfaces/response'
+import Avatar from '@/components/Avatar'
+import Chip from '@/components/Chip'
+import Link from '@/components/Link'
+import UserCard from '@/components/UserCard'
 import { useAppState } from '@/states'
+import { chineseTime } from '@/utils/dayjs'
 
 type ForumData = {
   data: Forum
@@ -37,14 +35,14 @@ type ForumData = {
 const ForumCover = ({ data }: ForumData) => {
   return (
     <Box
-      className="rounded p-4 relative text-white"
+      className="relative rounded p-4 text-white"
       style={{
         backgroundImage: `url(${forumBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      <Box className="absolute bg-black rounded opacity-40 top-0 left-0 h-full w-full"></Box>
+      <Box className="absolute top-0 left-0 h-full w-full rounded bg-black opacity-40"></Box>
       <Box className="relative z-10">
         <Link
           className="font-bold"
@@ -132,7 +130,7 @@ export const ForumGroup = ({ data }: ForumData) => {
   return (
     <>
       <ListItemButton
-        className="rounded-lg drop-shadow-md border-b-orange-50 border-b-2"
+        className="rounded-lg border-b-2 border-b-orange-50 drop-shadow-md"
         onClick={handleClick}
       >
         <ListItemText

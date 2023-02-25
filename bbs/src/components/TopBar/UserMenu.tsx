@@ -1,16 +1,16 @@
 import React from 'react'
 
-import { Menu, MenuItem, Divider, ListItemIcon, Button } from '@mui/material'
-
 import {
-  TransferWithinAStation,
-  LightMode,
   DarkMode,
+  LightMode,
   Logout,
+  TransferWithinAStation,
 } from '@mui/icons-material'
+import { Button, Divider, ListItemIcon, Menu, MenuItem } from '@mui/material'
+
+import { Theme, useAppState } from '@/states'
 
 import Avatar from '../Avatar'
-import { useAppState, Theme } from '@/states'
 
 const UserMenu = () => {
   const { state, dispatch } = useAppState()

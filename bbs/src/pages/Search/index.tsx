@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, Pagination, List } from '@mui/material'
 import { useQuery } from 'react-query'
 
-import Post from '@/components/Post'
+import { Box, List, Pagination, Typography } from '@mui/material'
+
 import { searchThreads } from '@/apis/common'
 import { Thread } from '@/common/interfaces/response'
+import Post from '@/components/Post'
 
 const EmptySearch = () => {
   return (

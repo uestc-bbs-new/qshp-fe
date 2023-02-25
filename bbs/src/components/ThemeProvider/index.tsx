@@ -1,9 +1,11 @@
 import React from 'react'
-import {
-  StyledEngineProvider,
-  ThemeProvider as MuiTheme,
-} from '@mui/material/styles'
+
 import CssBaseline from '@mui/material/CssBaseline'
+import {
+  ThemeProvider as MuiTheme,
+  StyledEngineProvider,
+} from '@mui/material/styles'
+
 import darkTheme from './Theme/dark'
 import lightTheme from './Theme/light'
 

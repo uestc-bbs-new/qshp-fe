@@ -1,6 +1,5 @@
+import { BBSInfo, ForumList, Thread } from '@/common/interfaces/response'
 import request from '@/utils/request'
-
-import { ForumList, Thread, BBSInfo } from '@/common/interfaces/response'
 
 const commonUrl = 'read'
 

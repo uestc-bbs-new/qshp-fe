@@ -1,6 +1,7 @@
 import dayjs from 'dayjs/esm'
 import 'dayjs/esm/locale/zh-cn'
 import calendar from 'dayjs/esm/plugin/calendar'
+
 dayjs.locale('zh-cn')
 dayjs.extend(calendar)
 

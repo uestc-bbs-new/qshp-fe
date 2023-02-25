@@ -1,18 +1,17 @@
-import React, { Box, Typography, Stack } from '@mui/material'
-
-import { chineseTime } from '@/utils/dayjs'
-import Avatar from '../Avatar'
-import Link from '../Link'
-
 import {
-  RemoveRedEyeOutlined,
   ModeCommentOutlined,
+  RemoveRedEyeOutlined,
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
+import React, { Box, Stack, Typography } from '@mui/material'
 
-import UserCard from '@/components/UserCard'
-import Chip from '@/components/Chip'
 import { Thread } from '@/common/interfaces/response'
+import Chip from '@/components/Chip'
+import UserCard from '@/components/UserCard'
+import { chineseTime } from '@/utils/dayjs'
+
+import Avatar from '../Avatar'
+import Link from '../Link'
 
 type PostProps = {
   data: Thread

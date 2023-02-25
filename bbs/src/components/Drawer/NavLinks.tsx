@@ -2,21 +2,20 @@ import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
+  Box,
+  Collapse,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
-  ListItemButton,
-  Box,
-  Toolbar,
   Skeleton,
-  Collapse,
+  Toolbar,
   Typography,
 } from '@mui/material'
 
-import Link from '@/components/Link'
 import { Forum } from '@/common/interfaces/response'
-
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
 
 type ForumData = {

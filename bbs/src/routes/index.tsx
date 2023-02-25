@@ -1,13 +1,13 @@
 import React from 'react'
+import { RouteObject, createBrowserRouter } from 'react-router-dom'
 
-import { createBrowserRouter, RouteObject } from 'react-router-dom'
-
-import Layout from '@/pages/Layout'
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
+import Home from '@/pages/Home'
+import Layout from '@/pages/Layout'
+import Search from '@/pages/Search'
 import Thread from '@/pages/Thread'
+
 // import NotFound from '@/pages/ErrorPage'
 
 type CustomRouteConfig = RouteObject & { name?: string }

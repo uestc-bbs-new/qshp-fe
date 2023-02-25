@@ -1,9 +1,10 @@
 /// <reference types="node" />
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import viteCompression from 'vite-plugin-compression'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { fileURLToPath, URL } from 'url'
+import { URL, fileURLToPath } from 'url'
+import { defineConfig } from 'vite'
+import viteCompression from 'vite-plugin-compression'
+
+import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({

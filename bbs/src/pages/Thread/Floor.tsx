@@ -1,7 +1,9 @@
 import React from 'react'
+
 import { Box, Stack } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
+
 import Footer from './Footer'
 
 type props = {
@@ -12,7 +14,7 @@ const Floor = ({ children }: props) => {
   return (
     <Box className="py-2">
       <Stack direction="row">
-        <Box className="px-2 w-40">
+        <Box className="w-40 px-2">
           <Avatar
             alt="Remy Sharp"
             src="https://mui.com/static/images/avatar/1.jpg"

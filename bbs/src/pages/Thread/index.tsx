@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
-import { Box, Typography, Divider, Stack, Button } from '@mui/material'
+import Vditor from 'vditor'
 
 import { default as BBCodePreview } from 'bbcode-to-react'
+import React, { useState } from 'react'
+
+import { Box, Button, Divider, Stack, Typography } from '@mui/material'
+
+import Avatar from '@/components/Avatar'
+import Chip from '@/components/Chip'
+import Editor from '@/components/Editor'
+import UserCard from '@/components/UserCard'
 
 import Floor from './Floor'
 import Footer from './Footer'
-import Editor from '@/components/Editor'
-import Chip from '@/components/Chip'
-import Avatar from '@/components/Avatar'
-import UserCard from '@/components/UserCard'
-import Vditor from 'vditor'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
@@ -27,11 +29,11 @@ function Thread() {
         </Box>
         <Typography>TagIcon, Time, Author</Typography>
       </Box>
-      <Box className="bg-white p-4 shadow mb-4">
+      <Box className="mb-4 bg-white p-4 shadow">
         <Box>content</Box>
         <Footer floor={0} />
       </Box>
-      <Box className="bg-white rounded drop-shadow-md p-3">
+      <Box className="rounded bg-white p-3 drop-shadow-md">
         <Floor>
           <p>sadfsa</p>
         </Floor>
