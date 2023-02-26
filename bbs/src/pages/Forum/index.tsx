@@ -2,10 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Whatshot } from '@mui/icons-material'
-import { Box, Divider, List, Stack, Tab, Tabs, Typography } from '@mui/material'
-// import data from './test'
-import SvgIcon from '@mui/material/SvgIcon'
+import {
+  Box,
+  Divider,
+  List,
+  Stack,
+  SvgIcon,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material'
 
+// import data from './test'
 // import { getThreadList } from '@/apis/common'
 import Post from '@/components/Post'
 import { useAppState } from '@/states'

@@ -1,6 +1,6 @@
+import { default as BBCodePreview } from 'bbcode-to-react'
 import Vditor from 'vditor'
 
-import { default as BBCodePreview } from 'bbcode-to-react'
 import React, { useState } from 'react'
 
 import { Box, Button, Divider, Stack, Typography } from '@mui/material'

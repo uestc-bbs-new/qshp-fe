@@ -1,7 +1,7 @@
 module.exports = {
   singleQuote: true,
   semi: false,
-  importOrder: ['react', '^@mui/(.*)$', '^@/(.*)$', '^[./]'],
+  importOrder: ['^react', '^@mui/(.*)$', '^@/(.*)$', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
   plugins: [
