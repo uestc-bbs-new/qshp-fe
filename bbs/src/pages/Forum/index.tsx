@@ -47,12 +47,6 @@ function Forum() {
 
   return (
     <Box className="flex">
-      <Box className="mr-6 w-60">
-        <Box className="mb-6 rounded-lg bg-white drop-shadow-md">
-          <BoxHeader text="今日热门" Icon={Whatshot} />
-          <List></List>
-        </Box>
-      </Box>
       <Box className="flex-1">
         <Box className="rounded-lg bg-white drop-shadow-md">
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -71,6 +65,12 @@ function Forum() {
               <Post data={item} key={item.id} />
             ))} */}
           </List>
+        </Box>
+      </Box>
+      <Box className="ml-6 w-60">
+        <Box className="mb-6 rounded-lg bg-white drop-shadow-md">
+          <BoxHeader text="今日热门" Icon={Whatshot} />
+          <List></List>
         </Box>
       </Box>
     </Box>

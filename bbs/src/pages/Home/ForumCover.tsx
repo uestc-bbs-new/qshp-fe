@@ -16,8 +16,8 @@ import {
   ListItemText,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 
 import forumBg from '@/assets/login-bg1.jpg'
 import { Forum } from '@/common/interfaces/response'
@@ -52,6 +52,10 @@ const ForumCover = ({ data }: ForumData) => {
         >
           {data.name}
         </Link>
+
+        <Stack direction="row">
+          <UserCard uid={12}>管理员</UserCard>
+        </Stack>
 
         <Stack direction="row" className="mt-4">
           <Stack
@@ -148,7 +152,7 @@ export const ForumGroup = ({ data }: ForumData) => {
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
           {data?.forums?.map((item, index) => (
-            <Grid item xs={4} key={index}>
+            <Grid item md={6} xl={4} key={index}>
               <ForumCover data={item} />
             </Grid>
           ))}

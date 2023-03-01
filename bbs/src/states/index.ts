@@ -9,7 +9,7 @@ const initialState = {
   messages: {
     unread_count: 1,
   },
-  drawer: true, //侧边栏是否打开
+  drawer: false, //侧边栏是否打开
   navList: [],
   users: {
     uid: 1,

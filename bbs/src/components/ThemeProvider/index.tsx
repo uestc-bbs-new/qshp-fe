@@ -1,11 +1,13 @@
 import React from 'react'
 
-import CssBaseline from '@mui/material/CssBaseline'
+import { CssBaseline, useMediaQuery } from '@mui/material'
 import {
   ThemeProvider as MuiTheme,
   StyledEngineProvider,
 } from '@mui/material/styles'
 
+// custom theme
+// https://mui.com/material-ui/customization/default-theme
 import darkTheme from './Theme/dark'
 import lightTheme from './Theme/light'
 

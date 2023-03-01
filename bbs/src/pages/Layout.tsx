@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useQuery } from 'react-query'
 import { Outlet } from 'react-router-dom'
 
@@ -9,8 +9,9 @@ import { getForumList } from '@/apis/common'
 import Drawer from '@/components/Drawer'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
-// import {FormLi}
 import { useAppState } from '@/states'
+
+import Aside from '../components/Aside'
 
 // import Announcement from '@/components/Announcement'
 
@@ -51,9 +52,13 @@ const Layout = () => {
           }}
         >
           <Toolbar id="back-to-top-anchor" />
-          <Box id="detail" className="h-full w-full max-w-screen-xl flex-1 p-4">
+          <Box
+            id="detail"
+            className="h-full w-full max-w-screen-xl flex flex-1 p-4"
+          >
             {/* <Announcement /> */}
             <Outlet />
+            <Aside />
           </Box>
         </Box>
         <ScrollTop>
