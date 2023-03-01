@@ -11,6 +11,7 @@ import {
 import {
   Box,
   Collapse,
+  Divider,
   Grid,
   ListItemButton,
   ListItemText,
@@ -136,12 +137,10 @@ export const ForumGroup = ({ data }: ForumData) => {
         <ListItemText>{data.name}</ListItemText>
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
-      <Box
-        className="h-1 rounded-lg"
-        style={{
-          backgroundColor: theme.palette.primary.main,
-        }}
-      ></Box>
+      <Divider
+        className="border-b-4 rounded-lg"
+        style={{ borderBottomColor: theme.palette.primary.main }}
+      />
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
           {data?.forums?.map((item, index) => (

@@ -1,6 +1,7 @@
 import Vditor from 'vditor'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import {
   Box,
@@ -10,7 +11,6 @@ import {
   SelectChangeEvent,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material'
 
 import { Forum } from '@/common/interfaces/response'
@@ -24,7 +24,12 @@ const Edit = () => {
   const [group, setGroup] = useState('')
   const [forum, setForum] = useState('')
   const [groupItem, setGroupItem] = useState<Forum[]>([])
-  const [vd, setVd] = useState<Vditor>()
+  const [vd, setVd] = useState<Vditor>() // editor ref
+  const routeParam = useParams()
+
+  useEffect(() => {
+    // default init group and forums to 水手之家 if no route params found
+  }, [])
 
   const handleSubmit = () => {
     console.log(vd?.getValue())
@@ -59,11 +64,15 @@ const Edit = () => {
               ))}
             </Select>
             <Select value={forum} onChange={handleForumChange}>
-              {groupItem.map((item) => (
-                <MenuItem key={item.name} value={item.fid}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {groupItem.length > 0 ? (
+                groupItem.map((item) => (
+                  <MenuItem key={item.name} value={item.fid}>
+                    {item.name}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem value="">请选择板块</MenuItem>
+              )}
             </Select>
             <TextField fullWidth hiddenLabel placeholder="主题标题" />
           </Stack>
