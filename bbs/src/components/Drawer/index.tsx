@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Drawer, useMediaQuery } from '@mui/material'
+import { Drawer, useMediaQuery, useTheme } from '@mui/material'
 
 import { useAppState } from '@/states'
 
@@ -9,6 +9,7 @@ import NavLinks from './NavLinks'
 // use different drawer variant due to the media
 const LeftDrawer = ({ width }: { width: number }) => {
   const { state } = useAppState()
+  const theme = useTheme()
 
   // change drawer variant based on screen size
   const matchesMobile = useMediaQuery('(max-width:640px)')
@@ -25,6 +26,7 @@ const LeftDrawer = ({ width }: { width: number }) => {
         PaperProps={{
           sx: {
             border: 'none',
+            background: theme.palette.background.default,
           },
         }}
         sx={{

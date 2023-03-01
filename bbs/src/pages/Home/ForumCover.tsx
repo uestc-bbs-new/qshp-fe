@@ -121,7 +121,6 @@ const ForumCover = ({ data }: ForumData) => {
   )
 }
 
-const menuFontStyle = { fontSize: '1.2rem' }
 export const ForumGroup = ({ data }: ForumData) => {
   const [open, setOpen] = useState(true)
   const { state } = useAppState()
@@ -133,14 +132,8 @@ export const ForumGroup = ({ data }: ForumData) => {
 
   return (
     <>
-      <ListItemButton
-        className="rounded-lg border-b-2 border-b-orange-50 drop-shadow-md"
-        onClick={handleClick}
-      >
-        <ListItemText
-          primary={data.name}
-          primaryTypographyProps={menuFontStyle}
-        />
+      <ListItemButton onClick={handleClick}>
+        <ListItemText>{data.name}</ListItemText>
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Box

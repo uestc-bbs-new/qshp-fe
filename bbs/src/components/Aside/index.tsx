@@ -12,13 +12,13 @@ import Static from './Static'
 
 const Aside = () => {
   const location = useLocation()
+
   const { data: hot, isLoading } = useQuery(['hotThread'], () =>
     getHotThread({ forum_id: 0 })
   )
-  console.log(location)
 
   return (
-    <Box className="ml-6 w-60 lg:block ">
+    <Box className="ml-6 w-60">
       <Card tiny>
         <List>
           {isLoading ? (

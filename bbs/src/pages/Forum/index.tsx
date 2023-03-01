@@ -1,44 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Whatshot } from '@mui/icons-material'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
-  Divider,
+  Collapse,
   List,
-  Stack,
-  SvgIcon,
+  ListItem,
+  ListItemButton,
+  ListItemSecondaryAction,
+  ListItemText,
   Tab,
   Tabs,
-  Typography,
+  useTheme,
 } from '@mui/material'
 
+import Card from '@/components/Card'
 // import data from './test'
 // import { getThreadList } from '@/apis/common'
 import Post from '@/components/Post'
 import { useAppState } from '@/states'
 
-type SvgIconComponent = typeof SvgIcon
-type BoxHeaderProps = {
-  text: string
-  Icon: SvgIconComponent
-}
-const BoxHeader = ({ text, Icon }: BoxHeaderProps) => {
-  return (
-    <Box>
-      <Stack direction="row" className="p-3">
-        <Icon sx={{ mr: 2 }} />
-        <Typography>{text}</Typography>
-      </Stack>
-      <Divider />
-    </Box>
-  )
-}
-
 function Forum() {
-  const { state, dispatch } = useAppState()
   const [tabIndex, setTabIndex] = useState(0)
+  const [isTopOpen, setTopOpen] = useState(true)
   const routeParam = useParams()
+  const theme = useTheme()
+
+  const handleClick = () => {
+    setTopOpen(!isTopOpen)
+  }
   // const {data: threadList, isLoading} = useQuery(['getThread', () => getThreadList({forum_id: routeParam.fid})])
 
   const handleTabClick = (event: React.SyntheticEvent, newValue: number) => {
@@ -46,33 +37,51 @@ function Forum() {
   }
 
   return (
-    <Box className="flex">
-      <Box className="flex-1">
-        <Box className="rounded-lg bg-white drop-shadow-md">
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-              value={tabIndex}
-              onChange={handleTabClick}
-              aria-label="basic tabs"
-            >
-              <Tab label="最新发表" />
-              <Tab label="最新回复" />
-              <Tab label="精华展示" />
-            </Tabs>
-          </Box>
+    <Box className="flex-1">
+      <Card>
+        <Box>
+          <ListItemButton
+            // disableGutters
+            onClick={handleClick}
+          >
+            <ListItemText>置顶主题</ListItemText>
+            {isTopOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Box
+            className="h-1 rounded-lg"
+            style={{
+              backgroundColor: theme.palette.primary.main,
+            }}
+          ></Box>
+          <Collapse in={isTopOpen} timeout="auto" unmountOnExit>
+            {'指定'}
+          </Collapse>
+
+          <ListItem>
+            <ListItemText>普通主题</ListItemText>
+          </ListItem>
+          <Box
+            className="h-1 rounded-lg"
+            style={{
+              backgroundColor: theme.palette.primary.main,
+            }}
+          ></Box>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabClick}
+            aria-label="basic tabs"
+          >
+            <Tab label="最新发表" />
+            <Tab label="最新回复" />
+            <Tab label="精华展示" />
+          </Tabs>
           <List>
             {/* {data.data.map((item) => (
               <Post data={item} key={item.id} />
             ))} */}
           </List>
         </Box>
-      </Box>
-      <Box className="ml-6 w-60">
-        <Box className="mb-6 rounded-lg bg-white drop-shadow-md">
-          <BoxHeader text="今日热门" Icon={Whatshot} />
-          <List></List>
-        </Box>
-      </Box>
+      </Card>
     </Box>
   )
 }

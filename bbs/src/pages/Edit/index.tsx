@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 
 import { Forum } from '@/common/interfaces/response'
+import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { useAppState } from '@/states'
 
@@ -46,33 +47,32 @@ const Edit = () => {
   }
 
   return (
-    <Box className="relative flex flex-1 flex-col">
-      <Typography variant="h4" color="inherit">
-        发布主题
-      </Typography>
-      <Box className="rounded-lg bg-slate-200 p-4 shadow-md">
-        <Stack direction="row" className="pb-4">
-          <Select value={group} onChange={handleGroupChange}>
-            {state.navList.map((item) => (
-              <MenuItem key={item.name} value={item.fid}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <Select value={forum} onChange={handleForumChange}>
-            {groupItem.map((item) => (
-              <MenuItem key={item.name} value={item.fid}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField fullWidth hiddenLabel placeholder="主题标题" />
-        </Stack>
-        <Editor minHeight={300} setVd={setVd} />
-        <Box className="text-center">
-          <Button onClick={handleSubmit}>发布主题</Button>
-        </Box>
-      </Box>
+    <Box className="flex-1">
+      <Card>
+        <>
+          <Stack direction="row" className="pb-4">
+            <Select value={group} onChange={handleGroupChange}>
+              {state.navList.map((item) => (
+                <MenuItem key={item.name} value={item.fid}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <Select value={forum} onChange={handleForumChange}>
+              {groupItem.map((item) => (
+                <MenuItem key={item.name} value={item.fid}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField fullWidth hiddenLabel placeholder="主题标题" />
+          </Stack>
+          <Editor minHeight={300} setVd={setVd} />
+          <Box className="text-center">
+            <Button onClick={handleSubmit}>发布主题</Button>
+          </Box>
+        </>
+      </Card>
     </Box>
   )
 }
