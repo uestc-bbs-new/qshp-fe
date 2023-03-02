@@ -16,6 +16,8 @@ importers:
       '@types/node': ^18.13.0
       '@types/react': ^18.0.27
       '@types/react-dom': ^18.0.10
+      '@types/react-swipeable-views': ^0.13.1
+      '@types/react-swipeable-views-utils': ^0.13.4
       '@typescript-eslint/eslint-plugin': ^5.51.0
       '@typescript-eslint/parser': ^5.51.0
       '@vitejs/plugin-react': ^3.1.0
@@ -39,6 +41,8 @@ importers:
       react-hook-form: ^7.43.1
       react-query: ^3.39.3
       react-router-dom: ^6.8.1
+      react-swipeable-views: ^0.14.0
+      react-swipeable-views-utils: ^0.14.0
       rollup-plugin-visualizer: ^5.9.0
       tailwindcss: ^3.2.6
       typescript: ^4.9.3
@@ -61,6 +65,7 @@ importers:
       react-hook-form: registry.npmmirror.com/react-hook-form/7.43.1_react@18.2.0
       react-query: registry.npmmirror.com/react-query/3.39.3_biqbaboplfbrettd7655fr4n2y
       react-router-dom: registry.npmmirror.com/react-router-dom/6.8.1_biqbaboplfbrettd7655fr4n2y
+      react-swipeable-views: registry.npmmirror.com/react-swipeable-views/0.14.0_react@18.2.0
       vditor: registry.npmmirror.com/vditor/3.9.0
     devDependencies:
       '@tailwindcss/line-clamp': registry.npmmirror.com/@tailwindcss/line-clamp/0.4.2_tailwindcss@3.2.6
@@ -69,6 +74,8 @@ importers:
       '@types/node': registry.npmmirror.com/@types/node/18.13.0
       '@types/react': registry.npmmirror.com/@types/react/18.0.27
       '@types/react-dom': registry.npmmirror.com/@types/react-dom/18.0.10
+      '@types/react-swipeable-views': registry.npmmirror.com/@types/react-swipeable-views/0.13.1
+      '@types/react-swipeable-views-utils': registry.npmmirror.com/@types/react-swipeable-views-utils/0.13.4
       '@typescript-eslint/eslint-plugin': 5.51.0_b635kmla6dsb4frxfihkw4m47e
       '@typescript-eslint/parser': 5.51.0_4vsywjlpuriuw3tl5oq6zy5a64
       '@vitejs/plugin-react': registry.npmmirror.com/@vitejs/plugin-react/3.1.0_vite@4.1.1
@@ -83,6 +90,7 @@ importers:
       postcss: registry.npmmirror.com/postcss/8.4.21
       prettier: 2.8.4
       prettier-plugin-tailwindcss: registry.npmmirror.com/prettier-plugin-tailwindcss/0.2.3_zmkqdpv3ldc45e6wei6qtrbrca
+      react-swipeable-views-utils: registry.npmmirror.com/react-swipeable-views-utils/0.14.0_react@18.2.0
       rollup-plugin-visualizer: registry.npmmirror.com/rollup-plugin-visualizer/5.9.0
       tailwindcss: registry.npmmirror.com/tailwindcss/3.2.6_postcss@8.4.21
       typescript: registry.npmmirror.com/typescript/4.9.5
@@ -1638,6 +1646,13 @@ packages:
       '@babel/helper-plugin-utils': registry.npmmirror.com/@babel/helper-plugin-utils/7.20.2
     dev: true
 
+  registry.npmmirror.com/@babel/runtime/7.0.0:
+    resolution: {integrity: sha512-7hGhzlcmg01CvH1EHdSPVXYX1aJ8KCEyz6I9xYIi/asDtzBPMyMhVibhM/K6g/5qnKBwjZtp10bNZIEFTRW1MA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/runtime/-/runtime-7.0.0.tgz}
+    name: '@babel/runtime'
+    version: 7.0.0
+    dependencies:
+      regenerator-runtime: registry.npmmirror.com/regenerator-runtime/0.12.1
+
   registry.npmmirror.com/@babel/runtime/7.20.13:
     resolution: {integrity: sha512-gt3PKXs0DBoL9xCvOIIZ2NEqAGZqHjAnmVbfQtB620V0uReIQutpel14KcneZuer7UioY8ALKZ7iocavvzTNFA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/runtime/-/runtime-7.20.13.tgz}
     name: '@babel/runtime'
@@ -1645,7 +1660,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: registry.npmmirror.com/regenerator-runtime/0.13.11
-    dev: false
 
   registry.npmmirror.com/@babel/template/7.20.7:
     resolution: {integrity: sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/template/-/template-7.20.7.tgz}
@@ -2170,6 +2184,14 @@ packages:
       '@jridgewell/sourcemap-codec': registry.npmmirror.com/@jridgewell/sourcemap-codec/1.4.14
     dev: true
 
+  registry.npmmirror.com/@material-ui/types/4.1.1:
+    resolution: {integrity: sha512-AN+GZNXytX9yxGi0JOfxHrRTbhFybjUJ05rnsBVjcB+16e466Z0Xe5IxawuOayVZgTBNDxmPKo5j4V6OnMtaSQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@material-ui/types/-/types-4.1.1.tgz}
+    name: '@material-ui/types'
+    version: 4.1.1
+    dependencies:
+      '@types/react': registry.npmmirror.com/@types/react/18.0.27
+    dev: true
+
   registry.npmmirror.com/@mui/base/5.0.0-alpha.117_5ndqzdd6t4rivxsukjv3i3ak2q:
     resolution: {integrity: sha512-3GlRSZdSrvDQ4k03dSV2rM+97JbNWimFOqGsE7n7Mi8WuBSYCgnPe56bQp3E5cShOrTn11dGH8FRCmVMcCEXqQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@mui/base/-/base-5.0.0-alpha.117.tgz}
     id: registry.npmmirror.com/@mui/base/5.0.0-alpha.117
@@ -2485,6 +2507,24 @@ packages:
     dependencies:
       '@types/react': registry.npmmirror.com/@types/react/18.0.27
     dev: false
+
+  registry.npmmirror.com/@types/react-swipeable-views-utils/0.13.4:
+    resolution: {integrity: sha512-v0nDk6mMIPAu/kaEnqQpDz2Z7O8ewqy2in7xwobcAAkUKKsdw3MSWFW1BkQ+dPgTrBnj/KXUzx3ZIS6UYviwyA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/react-swipeable-views-utils/-/react-swipeable-views-utils-0.13.4.tgz}
+    name: '@types/react-swipeable-views-utils'
+    version: 0.13.4
+    dependencies:
+      '@material-ui/types': registry.npmmirror.com/@material-ui/types/4.1.1
+      '@types/react': registry.npmmirror.com/@types/react/18.0.27
+      '@types/react-swipeable-views': registry.npmmirror.com/@types/react-swipeable-views/0.13.1
+    dev: true
+
+  registry.npmmirror.com/@types/react-swipeable-views/0.13.1:
+    resolution: {integrity: sha512-Nuvywkv9CkwcUgItOCBszkc/pc8YSdiKV5E1AzOJ/p32Db50LgwhJFi5b1ANPgyWxB0Q5yn69aMURHyGi3MLyg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/react-swipeable-views/-/react-swipeable-views-0.13.1.tgz}
+    name: '@types/react-swipeable-views'
+    version: 0.13.1
+    dependencies:
+      '@types/react': registry.npmmirror.com/@types/react/18.0.27
+    dev: true
 
   registry.npmmirror.com/@types/react-transition-group/4.4.5:
     resolution: {integrity: sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/react-transition-group/-/react-transition-group-4.4.5.tgz}
@@ -3573,6 +3613,11 @@ packages:
       graceful-fs: registry.npmmirror.com/graceful-fs/4.2.10
     dev: true
 
+  registry.npmmirror.com/keycode/2.2.1:
+    resolution: {integrity: sha512-Rdgz9Hl9Iv4QKi8b0OlCRQEzp4AgVxyCtz5S/+VIHezDmrDhkp2N2TqBWOLz0/gbeREXOOiI9/4b8BY9uw2vFg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/keycode/-/keycode-2.2.1.tgz}
+    name: keycode
+    version: 2.2.1
+
   registry.npmmirror.com/lilconfig/2.0.6:
     resolution: {integrity: sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lilconfig/-/lilconfig-2.0.6.tgz}
     name: lilconfig
@@ -4121,7 +4166,6 @@ packages:
       loose-envify: registry.npmmirror.com/loose-envify/1.4.0
       object-assign: registry.npmmirror.com/object-assign/4.1.1
       react-is: registry.npmmirror.com/react-is/16.13.1
-    dev: false
 
   registry.npmmirror.com/proxy-from-env/1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz}
@@ -4167,6 +4211,19 @@ packages:
       react: registry.npmmirror.com/react/18.2.0
       scheduler: registry.npmmirror.com/scheduler/0.23.0
     dev: false
+
+  registry.npmmirror.com/react-event-listener/0.6.6_react@18.2.0:
+    resolution: {integrity: sha512-+hCNqfy7o9wvO6UgjqFmBzARJS7qrNoda0VqzvOuioEpoEXKutiKuv92dSz6kP7rYLmyHPyYNLesi5t/aH1gfw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-event-listener/-/react-event-listener-0.6.6.tgz}
+    id: registry.npmmirror.com/react-event-listener/0.6.6
+    name: react-event-listener
+    version: 0.6.6
+    peerDependencies:
+      react: ^16.3.0
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.20.13
+      prop-types: registry.npmmirror.com/prop-types/15.8.1
+      react: registry.npmmirror.com/react/18.2.0
+      warning: registry.npmmirror.com/warning/4.0.3
 
   registry.npmmirror.com/react-google-recaptcha/2.1.0_react@18.2.0:
     resolution: {integrity: sha512-K9jr7e0CWFigi8KxC3WPvNqZZ47df2RrMAta6KmRoE4RUi7Ys6NmNjytpXpg4HI/svmQJLKR+PncEPaNJ98DqQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-google-recaptcha/-/react-google-recaptcha-2.1.0.tgz}
@@ -4262,6 +4319,48 @@ packages:
       react: registry.npmmirror.com/react/18.2.0
     dev: false
 
+  registry.npmmirror.com/react-swipeable-views-core/0.14.0:
+    resolution: {integrity: sha512-0W/e9uPweNEOSPjmYtuKSC/SvKKg1sfo+WtPdnxeLF3t2L82h7jjszuOHz9C23fzkvLfdgkaOmcbAxE9w2GEjA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-swipeable-views-core/-/react-swipeable-views-core-0.14.0.tgz}
+    name: react-swipeable-views-core
+    version: 0.14.0
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.0.0
+      warning: registry.npmmirror.com/warning/4.0.3
+
+  registry.npmmirror.com/react-swipeable-views-utils/0.14.0_react@18.2.0:
+    resolution: {integrity: sha512-W+fXBOsDqgFK1/g7MzRMVcDurp3LqO3ksC8UgInh2P/tKgb5DusuuB1geKHFc6o1wKl+4oyER4Zh3Lxmr8xbXA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-swipeable-views-utils/-/react-swipeable-views-utils-0.14.0.tgz}
+    id: registry.npmmirror.com/react-swipeable-views-utils/0.14.0
+    name: react-swipeable-views-utils
+    version: 0.14.0
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.0.0
+      keycode: registry.npmmirror.com/keycode/2.2.1
+      prop-types: registry.npmmirror.com/prop-types/15.8.1
+      react-event-listener: registry.npmmirror.com/react-event-listener/0.6.6_react@18.2.0
+      react-swipeable-views-core: registry.npmmirror.com/react-swipeable-views-core/0.14.0
+      shallow-equal: registry.npmmirror.com/shallow-equal/1.2.1
+    transitivePeerDependencies:
+      - react
+
+  registry.npmmirror.com/react-swipeable-views/0.14.0_react@18.2.0:
+    resolution: {integrity: sha512-wrTT6bi2nC3JbmyNAsPXffUXLn0DVT9SbbcFr36gKpbaCgEp7rX/OFxsu5hPc/NBsUhHyoSRGvwqJNNrWTwCww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-swipeable-views/-/react-swipeable-views-0.14.0.tgz}
+    id: registry.npmmirror.com/react-swipeable-views/0.14.0
+    name: react-swipeable-views
+    version: 0.14.0
+    engines: {node: '>=6.0.0'}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.0.0
+      prop-types: registry.npmmirror.com/prop-types/15.8.1
+      react: registry.npmmirror.com/react/18.2.0
+      react-swipeable-views-core: registry.npmmirror.com/react-swipeable-views-core/0.14.0
+      react-swipeable-views-utils: registry.npmmirror.com/react-swipeable-views-utils/0.14.0_react@18.2.0
+      warning: registry.npmmirror.com/warning/4.0.3
+    dev: false
+
   registry.npmmirror.com/react-transition-group/4.4.5_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-transition-group/-/react-transition-group-4.4.5.tgz}
     id: registry.npmmirror.com/react-transition-group/4.4.5
@@ -4286,7 +4385,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: registry.npmmirror.com/loose-envify/1.4.0
-    dev: false
 
   registry.npmmirror.com/read-cache/1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/read-cache/-/read-cache-1.0.0.tgz}
@@ -4305,11 +4403,15 @@ packages:
       picomatch: registry.npmmirror.com/picomatch/2.3.1
     dev: true
 
+  registry.npmmirror.com/regenerator-runtime/0.12.1:
+    resolution: {integrity: sha512-odxIc1/vDlo4iZcfXqRYFj0vpXFNoGdKMAUieAlFYO6m/nl5e9KR/beGf41z4a1FI+aQgtjhuaSlDxQ0hmkrHg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz}
+    name: regenerator-runtime
+    version: 0.12.1
+
   registry.npmmirror.com/regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz}
     name: regenerator-runtime
     version: 0.13.11
-    dev: false
 
   registry.npmmirror.com/remove-accents/0.4.2:
     resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/remove-accents/-/remove-accents-0.4.2.tgz}
@@ -4429,6 +4531,11 @@ packages:
     version: 6.3.0
     hasBin: true
     dev: true
+
+  registry.npmmirror.com/shallow-equal/1.2.1:
+    resolution: {integrity: sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/shallow-equal/-/shallow-equal-1.2.1.tgz}
+    name: shallow-equal
+    version: 1.2.1
 
   registry.npmmirror.com/shebang-command/2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/shebang-command/-/shebang-command-2.0.0.tgz}
@@ -4769,6 +4876,13 @@ packages:
     optionalDependencies:
       fsevents: registry.npmmirror.com/fsevents/2.3.2
     dev: true
+
+  registry.npmmirror.com/warning/4.0.3:
+    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/warning/-/warning-4.0.3.tgz}
+    name: warning
+    version: 4.0.3
+    dependencies:
+      loose-envify: registry.npmmirror.com/loose-envify/1.4.0
 
   registry.npmmirror.com/which/2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/which/-/which-2.0.2.tgz}

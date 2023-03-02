@@ -62,21 +62,15 @@ const options: IOptions = {
     'insert-after',
     'insert-before',
     '|',
-    'upload',
     'link',
+    'upload',
+    // TODO: reveal later
     // 'record',
     'preview',
     '|',
     'undo',
     'redo',
     'fullscreen',
-    // '|',
-    // 'code-theme',
-    // 'content-theme',
-    // 'br',
-    // 'export',
-    // 'devtools',
-    // 'info',
   ],
 }
 

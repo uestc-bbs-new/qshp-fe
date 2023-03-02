@@ -2,17 +2,16 @@ import { useQuery } from 'react-query'
 import { Outlet } from 'react-router-dom'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
-import { Box, Fab, Toolbar, useMediaQuery } from '@mui/material'
+import { Box, Fab, Stack, Toolbar, useMediaQuery } from '@mui/material'
 
 import { getForumList } from '@/apis/common'
+import Announcement from '@/components/Announcement'
 import Drawer from '@/components/Drawer'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { useAppState } from '@/states'
 
 import Aside from '../components/Aside'
-
-// import Announcement from '@/components/Announcement'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
@@ -51,13 +50,12 @@ const Layout = () => {
           }}
         >
           <Toolbar id="back-to-top-anchor" />
-          <Box
-            id="detail"
-            className="h-full w-full max-w-screen-xl flex flex-1 p-4"
-          >
-            {/* <Announcement /> */}
-            <Outlet />
-            <Aside />
+          <Box id="detail" className="h-full w-full max-w-screen-xl flex-1 p-4">
+            <Announcement />
+            <Stack direction="row">
+              <Outlet />
+              <Aside />
+            </Stack>
           </Box>
         </Box>
         <ScrollTop>

@@ -19,6 +19,11 @@ const Editor = ({ setVd, ...other }: props) => {
       },
       ...options,
       ...other,
+      // TODO: the theme only useful when init, can't response to the state.theme change
+      // consider setTheme() instead
+      theme: state.theme === 'light' ? 'classic' : 'dark',
+      // TODO: the content theme should be changed when it's dark
+      // contentTheme: state.theme === 'light' ? 'classic' : 'dark',
     })
   }, [])
   return <div id="vditor" className="vditor flex-1" />

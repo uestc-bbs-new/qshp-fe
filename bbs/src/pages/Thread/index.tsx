@@ -28,20 +28,20 @@ function Thread() {
         </Box>
         <Typography>TagIcon, Time, Author</Typography>
       </Box>
-      <Card>
+      <Card className="mb-4 py-4">
         <>
           <Box>content</Box>
           <Footer floor={0} />
         </>
       </Card>
-      <Card>
+      <Card className="mb-4">
         <>
           <Floor>
             <p>sadfsa</p>
           </Floor>
         </>
       </Card>
-      <Card>
+      <Card className="py-4">
         <Stack direction="row">
           <Avatar
             className="mr-4"
@@ -53,7 +53,9 @@ function Thread() {
           <Box className="flex-1">
             <Editor setVd={setVd} minHeight={150} />
             <Box className="text-right">
-              <Button onClick={handleSubmit}>回复帖子</Button>
+              <Button variant="text" onClick={handleSubmit}>
+                回复帖子
+              </Button>
             </Box>
           </Box>
         </Stack>

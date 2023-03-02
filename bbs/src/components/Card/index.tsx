@@ -4,6 +4,7 @@ type props = {
   children: React.ReactElement
   header?: string
   tiny?: boolean
+  className?: string
 }
 
 const CardHead = ({ header }: { header: string }) => {
@@ -17,11 +18,11 @@ const CardHead = ({ header }: { header: string }) => {
   )
 }
 
-const Card = ({ children, header, tiny }: props) => {
+const Card = ({ children, header, tiny, className }: props) => {
   const theme = useTheme()
   return (
     <Box
-      className={`rounded-lg shadow-lg ${tiny ? 'px-2' : 'px-4'}`}
+      className={`rounded-lg shadow-lg ${tiny ? 'px-2' : 'px-4'} ${className}`}
       style={{
         backgroundColor: theme.palette.background.paper,
       }}

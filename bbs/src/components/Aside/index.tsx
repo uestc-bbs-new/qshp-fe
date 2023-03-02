@@ -18,7 +18,7 @@ const Aside = () => {
 
   return (
     <Box className="ml-6 w-60">
-      <Card tiny>
+      <Card className="mb-4" tiny>
         <List>
           {isLoading ? (
             <Typography>none</Typography>

@@ -11,8 +11,12 @@ const Footer = ({ floor }: FooterProps) => {
   }
   return (
     <Stack direction="row" className="justify-end">
-      <Button>收藏</Button>
-      <Button onClick={handleReplyClick}>回复</Button>
+      <Button variant="text" className="mr-2">
+        收藏
+      </Button>
+      <Button variant="text" onClick={handleReplyClick}>
+        回复
+      </Button>
     </Stack>
   )
 }
