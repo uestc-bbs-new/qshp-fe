@@ -15,9 +15,9 @@ const Link = ({ to, ...other }: LinkProps) => {
   }
 
   return (
-    <span onClick={routerNavigate}>
+    <div onClick={routerNavigate} className="cursor-pointer">
       <MuiLink {...other} />
-    </span>
+    </div>
   )
 }
 

@@ -35,16 +35,17 @@ type ForumData = {
 
 const ForumCover = ({ data }: ForumData) => {
   return (
-    <Box
-      className="relative rounded p-4 text-white"
-      style={{
-        backgroundImage: `url(${forumBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      <Box className="absolute top-0 left-0 h-full w-full rounded bg-black opacity-40"></Box>
-      <Box className="relative z-10">
+    <Box className="relative rounded text-white overflow-hidden">
+      <Box
+        className="absolute top-0 left-0 h-full w-full"
+        style={{
+          backgroundImage: `url(${forumBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      ></Box>
+      <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
+      <Box className="relative z-10 p-4">
         <Link
           className="font-bold"
           color="inherit"
@@ -55,7 +56,9 @@ const ForumCover = ({ data }: ForumData) => {
         </Link>
 
         <Stack direction="row">
-          <UserCard uid={12}>管理员</UserCard>
+          <UserCard uid={12}>
+            <>管理员</>
+          </UserCard>
         </Stack>
 
         <Stack direction="row" className="mt-4">
@@ -89,8 +92,8 @@ const ForumCover = ({ data }: ForumData) => {
         <Stack direction="row" className="mt-4">
           <Box className="mr-4">
             <Avatar
-              alt="Remy Sharp"
-              src="https://mui.com/static/images/avatar/1.jpg"
+              alt={data.author}
+              uid={data.authorid}
               sx={{ width: 40, height: 40 }}
               variant="rounded"
             />

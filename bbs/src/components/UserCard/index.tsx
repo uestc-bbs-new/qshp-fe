@@ -1,59 +1,121 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Box, Button, Popover, Typography, makeStyles } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
+import coverDark from '@/assets/cover-dark.jpg'
+import coverLight from '@/assets/cover-light.jpg'
+import { useAppState } from '@/states'
+
+import Avatar from '../Avatar'
 import Chip from '../Chip'
-import avatarBg from '../assets/avatar-bg.jpg'
+
+type ItemProps = {
+  title: string
+  count: number
+}
+const GridItem = ({ title, count }: ItemProps) => {
+  const theme = useTheme()
+
+  return (
+    <Grid item xs={3}>
+      <Box className="p-4 text-center">
+        <Typography fontSize="inherit" color={theme.palette.text.secondary}>
+          {title}
+        </Typography>
+        <Typography fontSize="inherit" color={theme.palette.text.primary}>
+          {count}
+        </Typography>
+      </Box>
+    </Grid>
+  )
+}
+
+const Cover = ({ uid }: { uid: number }) => {
+  const { state } = useAppState()
+  useEffect(() => {
+    console.log(state.theme)
+  }, [])
+  return (
+    <Box style={{ width: '400px' }} className="text-sm">
+      <Box
+        className="p-4 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${
+            state.theme === 'light' ? coverLight : coverDark
+          })`,
+        }}
+      >
+        <Stack direction="row">
+          <Avatar
+            uid={uid}
+            alt="avatar"
+            className="mr-4"
+            sx={{ width: 100, height: 100 }}
+            variant="rounded"
+          />
+          <Box className="flex-1">
+            <Typography>{123123}</Typography>
+            <Chip className="mb-2" text="test" />
+            <Box className="rounded-lg p-4 bg-opacity-40 bg-black">
+              <Typography fontSize="inherit">注册： 2020/01/20</Typography>
+              <Typography fontSize="inherit" className="mt-2">
+                在线时长： 20小时
+              </Typography>
+            </Box>
+          </Box>
+        </Stack>
+      </Box>
+      <Divider variant="middle" />
+      <Grid container>
+        <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} />
+      </Grid>
+      <Divider variant="middle" />
+      {/* <Box className="p-4">
+        <Button variant="outlined">私信</Button>
+      </Box> */}
+    </Box>
+  )
+}
 
 type CardProps = {
   uid: number
-  children: React.ReactNode
+  children: React.ReactElement
 }
-
+// the tooltip component children need to be wrapped in div
+// https://mui.com/material-ui/react-tooltip/#custom-child-element
 const UserCard = ({ uid, children }: CardProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-
+  const theme = useTheme()
   return (
     <>
-      <Box
-        color="inherit"
-        aria-owns={open ? 'mouse-over-popover' : undefined}
-        aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
+      <Tooltip
+        title={<Cover uid={uid} />}
+        PopperProps={{
+          sx: {
+            '& .MuiTooltip-tooltip': {
+              backgroundColor: theme.palette.background.paper,
+              padding: 0,
+              maxWidth: 400,
+              maxHeight: 'fit',
+              boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px;',
+            },
+          },
+        }}
       >
-        {children}
-      </Box>
-      <Popover
-        id="mouse-over-popover"
-        sx={{
-          pointerEvents: 'none',
-        }}
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        onClose={handlePopoverClose}
-        // disableRestoreFocus
-      >
-        The content of the Popover.
-      </Popover>
+        <div>{children}</div>
+      </Tooltip>
     </>
   )
 }

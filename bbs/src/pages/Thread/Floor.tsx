@@ -14,10 +14,10 @@ const Floor = ({ children }: props) => {
   return (
     <Box className="py-2">
       <Stack direction="row">
-        <Box className="w-40 px-2">
+        <Box className="w-40">
           <Avatar
             alt="Remy Sharp"
-            src="https://mui.com/static/images/avatar/1.jpg"
+            uid={2}
             sx={{ width: 120, height: 120 }}
             variant="rounded"
           />

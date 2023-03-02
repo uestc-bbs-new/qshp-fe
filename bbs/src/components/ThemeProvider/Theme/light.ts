@@ -1,5 +1,7 @@
 import { createTheme } from '@mui/material'
 
+import baseComponent from './base'
+
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
@@ -10,6 +12,9 @@ const lightTheme = createTheme({
     primary: {
       main: '#2174f1',
     },
+  },
+  components: {
+    ...baseComponent,
   },
 })
 

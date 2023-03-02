@@ -25,8 +25,8 @@ const Post = ({ data, small, className }: PostProps) => {
       <Stack direction="row">
         <Box sx={{ mr: 2 }}>
           <Avatar
-            alt="Remy Sharp"
-            src="https://mui.com/static/images/avatar/1.jpg"
+            alt={data.author}
+            uid={data.authorid}
             sx={small ? { width: 35, height: 35 } : { width: 54, height: 54 }}
             variant="rounded"
           />

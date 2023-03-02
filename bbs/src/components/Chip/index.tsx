@@ -8,11 +8,12 @@ interface Props {
   text: string
   small?: boolean
   type?: string
+  className?: string
 }
 
-const Chip = ({ text, small, type = 'plate' }: Props) => {
+const Chip = ({ text, small, type = 'plate', className }: Props) => {
   return (
-    <Box className="inline-block">
+    <Box className={`inline-block ${className}`}>
       <Box
         className={`mr-2 rounded text-white`}
         sx={{

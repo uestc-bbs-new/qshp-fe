@@ -1,5 +1,7 @@
 import { createTheme } from '@mui/material'
 
+import baseComponent from './base'
+
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -10,6 +12,9 @@ const darkTheme = createTheme({
     primary: {
       main: '#313742',
     },
+  },
+  components: {
+    ...baseComponent,
   },
 })
 

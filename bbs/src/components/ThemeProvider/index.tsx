@@ -12,7 +12,7 @@ import darkTheme from './Theme/dark'
 import lightTheme from './Theme/light'
 
 interface ThemeProps {
-  children: React.ReactNode
+  children: React.ReactElement
   theme: string
 }
 
