@@ -20,7 +20,6 @@ import {
   useTheme,
 } from '@mui/material'
 
-import forumBg from '@/assets/login-bg1.jpg'
 import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
@@ -34,12 +33,18 @@ type ForumData = {
 }
 
 const ForumCover = ({ data }: ForumData) => {
+  const imgUrl = new URL(
+    `../../assets/forumCover/${data.name}.jpg`,
+    import.meta.url
+  ).href
+
+  console.log(imgUrl)
   return (
     <Box className="relative rounded text-white overflow-hidden">
       <Box
         className="absolute top-0 left-0 h-full w-full"
         style={{
-          backgroundImage: `url(${forumBg})`,
+          backgroundImage: `url(${imgUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
