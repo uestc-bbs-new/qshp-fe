@@ -27,6 +27,7 @@ importers:
       eslint-config-prettier: ^8.6.0
       eslint-plugin-prettier: ^4.2.1
       eslint-plugin-react: ^7.32.2
+      eslint-plugin-unused-imports: ^2.0.0
       husky: ^8.0.3
       lint-staged: ^13.1.1
       postcss: ^8.4.21
@@ -76,6 +77,7 @@ importers:
       eslint-config-prettier: 8.6.0_eslint@8.33.0
       eslint-plugin-prettier: 4.2.1_qa2thblfovmfepmgrc7z2owbo4
       eslint-plugin-react: 7.32.2_eslint@8.33.0
+      eslint-plugin-unused-imports: registry.npmmirror.com/eslint-plugin-unused-imports/2.0.0_nvprg6vkh5ygsdwfa2izsa3vfm
       husky: registry.npmmirror.com/husky/8.0.3
       lint-staged: registry.npmmirror.com/lint-staged/13.1.1
       postcss: registry.npmmirror.com/postcss/8.4.21
@@ -3143,6 +3145,31 @@ packages:
     version: 4.0.0
     engines: {node: '>=10'}
     dev: false
+
+  registry.npmmirror.com/eslint-plugin-unused-imports/2.0.0_nvprg6vkh5ygsdwfa2izsa3vfm:
+    resolution: {integrity: sha512-3APeS/tQlTrFa167ThtP0Zm0vctjr4M44HMpeg1P4bK6wItarumq0Ma82xorMKdFsWpphQBlRPzw/pxiVELX1A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-unused-imports/-/eslint-plugin-unused-imports-2.0.0.tgz}
+    id: registry.npmmirror.com/eslint-plugin-unused-imports/2.0.0
+    name: eslint-plugin-unused-imports
+    version: 2.0.0
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^5.0.0
+      eslint: ^8.0.0
+    peerDependenciesMeta:
+      '@typescript-eslint/eslint-plugin':
+        optional: true
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 5.51.0_b635kmla6dsb4frxfihkw4m47e
+      eslint: 8.33.0
+      eslint-rule-composer: registry.npmmirror.com/eslint-rule-composer/0.3.0
+    dev: true
+
+  registry.npmmirror.com/eslint-rule-composer/0.3.0:
+    resolution: {integrity: sha512-bt+Sh8CtDmn2OajxvNO+BX7Wn4CIWMpTRm3MaiKPCQcnnlm0CS2mhui6QaoeQugs+3Kj2ESKEEGJUdVafwhiCg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-rule-composer/-/eslint-rule-composer-0.3.0.tgz}
+    name: eslint-rule-composer
+    version: 0.3.0
+    engines: {node: '>=4.0.0'}
+    dev: true
 
   registry.npmmirror.com/execa/6.1.0:
     resolution: {integrity: sha512-QVWlX2e50heYJcCPG0iWtf8r0xjEYfz/OYLGDYH+IyjWezzPNxz63qNFOu0l4YftGWuizFVZHHs8PrLU5p2IDA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/execa/-/execa-6.1.0.tgz}

@@ -1,15 +1,7 @@
 import React, { useState } from 'react'
 
 import { MarkunreadOutlined } from '@mui/icons-material'
-import {
-  Badge,
-  Box,
-  Button,
-  Popover,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material'
+import { Badge, Box, Tab, Tabs, Typography } from '@mui/material'
 
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'

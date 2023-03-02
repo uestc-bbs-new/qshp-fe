@@ -1,5 +1,5 @@
 import React from 'react'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Add, Menu } from '@mui/icons-material'
 import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'

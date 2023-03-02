@@ -13,9 +13,6 @@ module.exports = {
     'plugin:prettier/recommended',
     'eslint-config-prettier',
   ],
-  plugins: {
-    react,
-  },
   settings: {
     react: {
       version: 'detect',
@@ -30,8 +27,11 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint', 'prettier'],
+  plugins: ['react', '@typescript-eslint', 'prettier', 'unused-imports'],
   rules: {
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'unused-imports/no-unused-imports': 'error',
     'prettier/prettier': [
       'error',
       {

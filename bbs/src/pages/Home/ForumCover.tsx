@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 // import {  } from 'react-router-dom'
 import {
@@ -38,7 +38,6 @@ const ForumCover = ({ data }: ForumData) => {
     import.meta.url
   ).href
 
-  console.log(imgUrl)
   return (
     <Box className="relative rounded text-white overflow-hidden">
       <Box

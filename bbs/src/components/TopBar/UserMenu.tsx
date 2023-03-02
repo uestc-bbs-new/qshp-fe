@@ -6,7 +6,7 @@ import {
   Logout,
   TransferWithinAStation,
 } from '@mui/icons-material'
-import { Box, Divider, ListItemIcon, Menu, MenuItem } from '@mui/material'
+import { Box, Divider, ListItemIcon, MenuItem } from '@mui/material'
 
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
