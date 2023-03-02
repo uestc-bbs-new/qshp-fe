@@ -25,7 +25,7 @@ const Options = () => {
         <Message />
         {/* <AboutMe unread={state.messages.unread_count}/> */}
         <Button
-          className="ml-6 bg-white bg-opacity-40"
+          className="ml-3 bg-white bg-opacity-40"
           variant="contained"
           startIcon={<Add />}
           onClick={() => navigate('/edit')}

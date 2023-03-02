@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 
 interface TabPanelProps {
@@ -67,37 +68,17 @@ const MessageTabs = () => {
 const MessagePopover = () => {
   const { state } = useAppState()
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'user-message' : undefined
-
   return (
     <>
-      <Button className="min-w-min" aria-describedby={id} onClick={handleClick}>
-        <Badge badgeContent={state.messages.unread_count} color="warning">
+      <Tooltip title={<MessageTabs />}>
+        <Badge
+          badgeContent={state.messages.unread_count}
+          className="mx-3"
+          color="warning"
+        >
           <MarkunreadOutlined className="text-white" />
         </Badge>
-      </Button>
-
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      >
-        <MessageTabs />
-      </Popover>
+      </Tooltip>
     </>
   )
 }

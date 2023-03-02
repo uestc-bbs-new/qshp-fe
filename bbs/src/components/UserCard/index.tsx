@@ -1,18 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
 
 import coverDark from '@/assets/cover-dark.jpg'
 import coverLight from '@/assets/cover-light.jpg'
+import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 
 import Avatar from '../Avatar'
@@ -45,7 +37,7 @@ const Cover = ({ uid }: { uid: number }) => {
     console.log(state.theme)
   }, [])
   return (
-    <Box style={{ width: '400px' }} className="text-sm">
+    <Box style={{ width: '400px' }} className="text-sm text-white">
       <Box
         className="p-4 bg-cover bg-center"
         style={{
@@ -94,28 +86,11 @@ type CardProps = {
   uid: number
   children: React.ReactElement
 }
-// the tooltip component children need to be wrapped in div
-// https://mui.com/material-ui/react-tooltip/#custom-child-element
+
 const UserCard = ({ uid, children }: CardProps) => {
-  const theme = useTheme()
   return (
     <>
-      <Tooltip
-        title={<Cover uid={uid} />}
-        PopperProps={{
-          sx: {
-            '& .MuiTooltip-tooltip': {
-              backgroundColor: theme.palette.background.paper,
-              padding: 0,
-              maxWidth: 400,
-              maxHeight: 'fit',
-              boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px;',
-            },
-          },
-        }}
-      >
-        <div>{children}</div>
-      </Tooltip>
+      <Tooltip title={<Cover uid={uid} />}>{children}</Tooltip>
     </>
   )
 }

@@ -6,14 +6,16 @@ import {
   Logout,
   TransferWithinAStation,
 } from '@mui/icons-material'
-import { Button, Divider, ListItemIcon, Menu, MenuItem } from '@mui/material'
+import { Box, Divider, ListItemIcon, Menu, MenuItem } from '@mui/material'
 
+import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
 
 import Avatar from '../Avatar'
 
-const UserMenu = () => {
+const MenuContent = () => {
   const { state, dispatch } = useAppState()
+
   const logout = () => {
     dispatch({
       type: 'clear',
@@ -33,70 +35,47 @@ const UserMenu = () => {
       })
     }
   }
+  return (
+    <Box className="py-2">
+      <MenuItem onClick={themeChange}>
+        <ListItemIcon>
+          {state.theme === 'light' ? (
+            <DarkMode fontSize="small" />
+          ) : (
+            <LightMode fontSize="small" />
+          )}
+        </ListItemIcon>
+        {state.theme === 'light' ? '暗黑' : 'light'}模式
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
+      <MenuItem>
+        <ListItemIcon>
+          <TransferWithinAStation fontSize="small" />
+        </ListItemIcon>
+        切换账号
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
+      <MenuItem onClick={logout}>
+        <ListItemIcon>
+          <Logout fontSize="small" />
+        </ListItemIcon>
+        登出
+      </MenuItem>
+    </Box>
+  )
+}
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'user-menu' : undefined
-
+const UserMenu = () => {
   return (
     <>
-      <Button aria-describedby={id} onClick={handleClick} className="min-w-min">
+      <Tooltip title={<MenuContent />}>
         <Avatar
-          // fid={id}
+          className="mx-3"
           uid={0}
           sx={{ width: 32, height: 32 }}
           variant="rounded"
         />
-      </Button>
-
-      <Menu
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <MenuItem onClick={themeChange}>
-          <ListItemIcon>
-            {state.theme === 'light' ? (
-              <DarkMode fontSize="small" />
-            ) : (
-              <LightMode fontSize="small" />
-            )}
-          </ListItemIcon>
-          {state.theme === 'light' ? '暗黑' : 'light'}模式
-        </MenuItem>
-        <Divider variant="middle" flexItem></Divider>
-        <MenuItem>
-          <ListItemIcon>
-            <TransferWithinAStation fontSize="small" />
-          </ListItemIcon>
-          切换账号
-        </MenuItem>
-        <Divider variant="middle" flexItem></Divider>
-        <MenuItem onClick={logout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          登出
-        </MenuItem>
-      </Menu>
+      </Tooltip>
     </>
   )
 }
