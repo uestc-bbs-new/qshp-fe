@@ -1,4 +1,3 @@
-import React from 'react'
 import { RouteObject, createBrowserRouter } from 'react-router-dom'
 
 import Edit from '@/pages/Edit'

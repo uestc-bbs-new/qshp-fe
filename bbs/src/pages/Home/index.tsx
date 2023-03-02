@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, List } from '@mui/material'
 
 import { useAppState } from '@/states'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -18,9 +18,8 @@ import {
 } from '@mui/material'
 
 import Card from '@/components/Card'
+
 // import { getThreadList } from '@/apis/common'
-import Post from '@/components/Post'
-import { useAppState } from '@/states'
 
 type TopProps = {
   children: React.ReactElement

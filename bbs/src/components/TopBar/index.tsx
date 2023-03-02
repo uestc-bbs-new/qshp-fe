@@ -1,4 +1,3 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Add, Menu } from '@mui/icons-material'

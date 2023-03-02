@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, Divider, Typography, useTheme } from '@mui/material'
 
 type props = {

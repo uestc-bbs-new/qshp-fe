@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Tooltip as MuiToolTip, TooltipProps, useTheme } from '@mui/material'
 
 // the tooltip component children need to be wrapped in div

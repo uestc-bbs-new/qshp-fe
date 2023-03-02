@@ -1,15 +1,13 @@
-import { default as BBCodePreview } from 'bbcode-to-react'
 import Vditor from 'vditor'
 
 import React, { useState } from 'react'
 
-import { Box, Button, Divider, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'
 import Editor from '@/components/Editor'
-import UserCard from '@/components/UserCard'
 
 import Floor from './Floor'
 import Footer from './Footer'

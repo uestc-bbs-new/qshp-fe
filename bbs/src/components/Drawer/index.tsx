@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Drawer, useMediaQuery, useTheme } from '@mui/material'
 
 import { useAppState } from '@/states'

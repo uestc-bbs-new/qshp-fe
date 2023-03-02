@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Avatar as MuiAvatar, AvatarProps as MuiProps } from '@mui/material'
 
 import defaultAvatar from '@/assets/avatar-default.png'

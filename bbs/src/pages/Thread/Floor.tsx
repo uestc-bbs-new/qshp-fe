@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, Stack } from '@mui/material'
 
 import Avatar from '@/components/Avatar'

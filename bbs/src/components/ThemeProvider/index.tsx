@@ -1,6 +1,4 @@
-import React from 'react'
-
-import { CssBaseline, useMediaQuery } from '@mui/material'
+import { CssBaseline } from '@mui/material'
 import {
   ThemeProvider as MuiTheme,
   StyledEngineProvider,
