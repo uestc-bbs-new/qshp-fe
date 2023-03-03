@@ -9,12 +9,12 @@ import Post from '@/components/Post'
 
 const EmptySearch = () => {
   return (
-    <>
+    <Box className="flex-1">
       <Typography>清水河畔</Typography>
       <Box className="shadow">
         <Typography>没有发现任何搜索结果。</Typography>
       </Box>
-    </>
+    </Box>
   )
 }
 
@@ -33,7 +33,7 @@ const SearchResult = ({
   setPage,
 }: resultProps) => {
   return (
-    <>
+    <Box className="flex-1">
       <Typography>搜索结果: {name}</Typography>
       <Box>
         <List>
@@ -48,7 +48,7 @@ const SearchResult = ({
         count={Math.ceil(total / pageSize)}
         onChange={(e, value) => setPage(value)}
       ></Pagination>
-    </>
+    </Box>
   )
 }
 
@@ -86,7 +86,11 @@ const Search = () => {
   } else if (name?.length === 0 || (data && data.resultNum === 0)) {
     return <EmptySearch />
   } else {
-    return <Typography>Loading...</Typography>
+    return (
+      <Box className="flex-1">
+        <Typography>Loading...</Typography>
+      </Box>
+    )
   }
 }
 

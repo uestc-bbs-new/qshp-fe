@@ -11,6 +11,7 @@ import {
   ListItemButton,
   ListItemText,
   MenuItem,
+  Pagination,
   Select,
   SelectChangeEvent,
   Skeleton,
@@ -84,8 +85,12 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 function Forum() {
   const [sortBy, setSort] = useState('1') // thread sort rule
   const routeParam = useParams()
+  const params = new URLSearchParams(window.location.search)
+  // const [page, setPage] = useState(parseInt(params.get('page') || 1))
+  const pageSize = 10
 
   // const {data: threadList, isLoading} = useQuery(['getThread', () => getThreadList({forum_id: routeParam.fid})])
+  // const handlePageChange =
 
   const handleSortChange = (event: SelectChangeEvent) => {
     setSort(event.target.value)
@@ -93,6 +98,7 @@ function Forum() {
 
   return (
     <Box className="flex-1">
+      <Pagination count={10} variant="outlined" shape="rounded" />
       <Card>
         <>
           <Top>
@@ -111,6 +117,13 @@ function Forum() {
           </Normal>
         </>
       </Card>
+      <Pagination
+        // page={page}
+        // onChange={handlePageChange}
+        count={10}
+        variant="outlined"
+        shape="rounded"
+      />
     </Box>
   )
 }
