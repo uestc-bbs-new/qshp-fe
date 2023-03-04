@@ -33,10 +33,22 @@ type ForumData = {
 }
 
 const ForumCover = ({ data }: ForumData) => {
-  const imgUrl = new URL(
+  const coverImg = new URL(
     `../../assets/forumCover/${data.name}.jpg`,
     import.meta.url
-  ).href
+  )
+
+  const defaultImg = new URL(
+    `../../assets/forumCover/default.jpg`,
+    import.meta.url
+  )
+
+  let imgUrl
+  if (coverImg.pathname === '/undefined') {
+    imgUrl = defaultImg.href
+  } else {
+    imgUrl = coverImg.href
+  }
 
   return (
     <Box className="relative rounded text-white overflow-hidden">

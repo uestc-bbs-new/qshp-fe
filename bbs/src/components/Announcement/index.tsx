@@ -1,3 +1,4 @@
+// TODO: this carousel component should be replaced due to long time no maintain
 import React, { useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 import { autoPlay } from 'react-swipeable-views-utils'
@@ -8,7 +9,12 @@ import { Box, Stack, Typography, useTheme } from '@mui/material'
 import Link from '../Link'
 import SlidePagination from './SlidePagination'
 
-const Slide = ({ children }: { children: React.ReactElement | string }) => {
+type SlideProps = {
+  children: React.ReactElement | string
+  tid: number
+}
+
+const Slide = ({ children, tid }: SlideProps) => {
   const theme = useTheme()
   return (
     <Stack
@@ -29,7 +35,9 @@ const Slide = ({ children }: { children: React.ReactElement | string }) => {
       <Box className="p-4 flex-1 overflow-hidden">
         <Typography className="line-clamp-2">
           {children}
-          <Link underline="none">【点我查看】</Link>
+          <Link to={`/thread/${tid}`} underline="none">
+            【点我查看】
+          </Link>
         </Typography>
       </Box>
     </Stack>
@@ -58,9 +66,9 @@ const Announcement = () => {
         index={index}
         onChangeIndex={handleIndexChange}
       >
-        <Slide>text0text0tex</Slide>
-        <Slide>text1</Slide>
-        <Slide>text2</Slide>
+        <Slide tid={0}>text0text0tex</Slide>
+        <Slide tid={0}>text1</Slide>
+        <Slide tid={0}>text2</Slide>
       </AutoPlay>
       <SlidePagination count={3} setIndex={handleIndexChange} index={index} />
     </Box>

@@ -98,7 +98,7 @@ function Forum() {
 
   return (
     <Box className="flex-1">
-      <Pagination count={10} variant="outlined" shape="rounded" />
+      <Pagination size="small" count={10} variant="outlined" shape="rounded" />
       <Card>
         <>
           <Top>
@@ -118,6 +118,7 @@ function Forum() {
         </>
       </Card>
       <Pagination
+        size="small"
         // page={page}
         // onChange={handlePageChange}
         count={10}

@@ -5,8 +5,12 @@ import Link from '../Link'
 const Breadcrumbs = () => {
   return (
     <MuiBreadcrumbs>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
+      <Link underline="none" to="/" color="inherit">
+        Home
+      </Link>
+      <Link underline="none" to="/about" color="inherit">
+        About
+      </Link>
     </MuiBreadcrumbs>
   )
 }
