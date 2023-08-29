@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
+import { useLocation } from 'react-router-dom'
 
 import { Box, List, Pagination, Typography } from '@mui/material'
 
@@ -57,7 +58,6 @@ const Search = () => {
   const name = params.get('name')
   const [page, setPage] = useState(params.get('page') || 1)
   const pageSize = 10
-
   const { data, refetch } = useQuery(
     ['search'],
     () => searchThreads({ keyWord: name, pageNum: page, pageSize: 10 }),
@@ -66,13 +66,12 @@ const Search = () => {
       enabled: false,
     }
   )
-
+  
+  let location = useLocation();
   useEffect(() => {
-    if (name && name.length > 0) {
-      refetch()
-    }
-  }, [])
-
+    refetch()
+  }, [location, page]);
+  
   if (name && data && data.resultNum > 0) {
     return (
       <SearchResult

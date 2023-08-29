@@ -95,3 +95,8 @@ export type BBSInfo = {
   yesterdayposts: number
   forums: Array<Forum>
 }
+
+export type Users ={
+  user_id: number
+  username: string
+}
