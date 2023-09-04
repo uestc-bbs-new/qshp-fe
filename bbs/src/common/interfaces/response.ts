@@ -100,3 +100,22 @@ export type Users ={
   user_id: number
   username: string
 }
+
+export type UserInfo = {
+  dateline: number
+  user_id: number
+  username: string
+  user_group: number
+  admin_group: number
+  points: number
+  droplets: number
+  prestiges: number
+  essence: number
+  medals: number[]
+  popularity: number
+  sign: string
+  title: string
+  online_time: number
+  registered_at: string
+  last_login_at: string
+}

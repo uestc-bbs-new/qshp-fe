@@ -11,7 +11,7 @@ interface Props {
 
 const Chip = ({ text, small, type = 'plate', className }: Props) => {
   return (
-    <Box className={`inline-block ${className}`}>
+    <Box className={`inline-block ${className} pl-2`}>
       <Box
         className={`mr-2 rounded text-white`}
         sx={{

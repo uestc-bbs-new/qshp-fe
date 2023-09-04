@@ -1,25 +1,53 @@
 import { List, Box, Typography, useTheme, MenuItem, Stack } from '@mui/material'
 
 import { Users } from '@/common/interfaces/response'
-import Link from '../Link'
 import Avatar from '../Avatar'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
 
 type resultUserProps = {
   status: string
   data: Users[]
   total: number
+  show: boolean
+  setshow: React.Dispatch<React.SetStateAction<boolean>>
 }
 const SearchResultUser = ({
   status,
   data,
-  total,
+  show,
+  setshow,
 }: resultUserProps) => {
   const theme = useTheme()
+  const navigate = useNavigate()
+  const boxRef = useRef();
+  const handleSubmit = (item: Users) => {
+    navigate({
+      pathname: '/search',
+      search: createSearchParams({
+        type: "user",
+        name: item.username,
+      }).toString(),
+    })
+  }
 
-  if (data.length == 0 || status == 'post')
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setshow(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [boxRef])
+
+  if (data.length == 0 || status == 'post' || !show)
     return <></>
   return (
     <Box
+      ref={boxRef}
       className={`rounded-lg shadow-lg p-2`}
       style={{
         width: 300,
@@ -30,23 +58,17 @@ const SearchResultUser = ({
     >
       <List>
         {data.map((item) => (
-          <Box key={item.user_id}>
-            <MenuItem >
-              <Link
-                to={`/thread/${item.username}`}
-                color="inherit"
-                underline="hover"
-              >
-                <Stack direction="row" >
-                  <Avatar
-                    className="mx-3"
-                    uid={0}
-                    sx={{ width: 32, height: 32 }}
-                    variant="rounded"
-                  />
-                  <Typography color="text.secondary">{item.username}</Typography>
-                </Stack>
-              </Link>
+          <Box key={item.user_id} >
+            <MenuItem onClick={(e) => handleSubmit(item)}>
+              <Stack direction="row" >
+                <Avatar
+                  className="mx-3"
+                  uid={0}
+                  sx={{ width: 32, height: 32 }}
+                  variant="rounded"
+                />
+                <Typography color="text.secondary">{item.username}</Typography>
+              </Stack>
             </MenuItem>
           </Box>
         ))}

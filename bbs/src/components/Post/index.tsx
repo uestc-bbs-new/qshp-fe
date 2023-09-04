@@ -22,13 +22,13 @@ type PostProps = {
 const Post = ({ data, small, className }: PostProps) => {
   const theme = useTheme()
   return (
-    <Box className={small ? className : `${className} p-3`}>
-      <Box 
+    <Box className={small ? className : `${className} p-2`}>
+      <Box
         className={`rounded-lg shadow-lg p-6 ${className}`}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
-        >
+      >
         <Stack direction="row">
           <Box sx={{ mr: 2 }}>
             <Avatar

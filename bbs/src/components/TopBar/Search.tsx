@@ -1,47 +1,51 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
-import { Search } from '@mui/icons-material'
-import { Divider, IconButton, Stack, Button, Box } from '@mui/material'
-import { set } from 'react-hook-form'
-import { h } from 'vue'
+import { BorderBottom, Search } from '@mui/icons-material'
+import { Divider, IconButton, Stack, MenuItem, FormControl, InputLabel } from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import { Users } from '@/common/interfaces/response'
 import SearchResultUser from './SearchUsers'
+import { searchUsers_at } from '@/apis/common'
 
 let timeout: any
 const SearchBar = () => {
-  const [searchType, setSearchType] = useState<'post' | 'user'>('post')
+  const [searchType, setSearchType] = useState('post')
   const [searchText, setSearchText] = useState('')
+  const [show, setShow] = useState(true)
   const [data, setData] = useState<{ total: number; rows: Users[]; } | undefined>(undefined);
 
   const navigate = useNavigate()
   const inputComponent = useRef<HTMLInputElement | null>(null)
 
+  const handleSelect = (event: SelectChangeEvent) => {
+    setSearchType(event.target.value)
+    setData(undefined)
+  }
+
   const handleSubmit = () => {
     setSearchText('')
     inputComponent.current?.blur()
-
+    setShow(false)
     if (searchText.length > 0) {
       navigate({
         pathname: '/search',
         search: createSearchParams({
+          type: searchType,
           name: searchText,
         }).toString(),
       })
     }
   }
 
-
-  const handleSearchType = () => {
-    const fetchData = async () => {
-      const response = await fetch(`http://127.0.0.1:4523/m1/1045892-0-default/forum/api/global/search/at`);
-      const data = await response.json();
-      setData(data.data);
-    };
+  const handleSearchUser = () => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
-      fetchData();
+      searchUsers_at({ page: 1, pagesize: 20, username: searchText }).then((res) => {
+        setData(res);
+        setShow(true);
+      })
     }, 1000)
   }
 
@@ -53,30 +57,34 @@ const SearchBar = () => {
           alignItems="center"
           className="w-96 rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
         >
-          <Button
-            className="ml-3 bg-opacity-40"
-            variant="contained"
-            style={{
-              backgroundColor: searchType == 'post' ? '#89a9f6' : '#e6b3ff',
-              marginRight: '10px',
-            }}
-            onClick={() => {
-              setSearchType(searchType === 'post' ? 'user' : 'post')
-              setData(undefined)
-            }}
-          >
-            搜索{searchType == 'post' ? '帖子' : '用户'}
-          </Button>
+
+          <FormControl sx={{ m: 1, minWidth: 80 }} size="small" variant="standard">
+            {/* <InputLabel className='text-white'>搜索</InputLabel> */}
+            <Select
+              className="text-inherit"
+              style={{
+                textAlign: "center",
+                marginBottom: '-4px',
+                marginRight: '10px',
+              }}
+              disableUnderline={true}
+              value={searchType}
+              onChange={handleSelect}
+              label="Search"
+            >
+              <MenuItem value="post">帖子</MenuItem>
+              <MenuItem value="user">用户</MenuItem>
+            </Select>
+          </FormControl>
 
           <Divider orientation="vertical" variant="middle" flexItem></Divider>
-
           <input
             className="flex-1 border-0 bg-transparent pl-4 text-inherit decoration-transparent placeholder-current outline-none"
             ref={inputComponent}
             value={searchText}
             onChange={(event) => {
               setSearchText(event.target.value)
-              if (searchType == 'user') handleSearchType()
+              if (searchType == 'user') handleSearchUser()
             }}
             onKeyDown={(event) => {
               event.key === 'Enter' && handleSubmit()
@@ -99,8 +107,10 @@ const SearchBar = () => {
           status={searchType}
           data={data?.rows || []}
           total={data?.total || 0}
+          show={show}
+          setshow={setShow}
         />
-      </Stack>
+      </Stack >
     </>
   )
 }
