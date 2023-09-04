@@ -95,3 +95,30 @@ export type BBSInfo = {
   yesterdayposts: number
   forums: Array<Forum>
 }
+
+export interface PostDetails {
+  page: number
+  pagesize: number
+  total: number
+  rows: PostFloor[]
+}
+
+export interface PostFloor {
+  id: number
+  plate_id: number
+  thread_id: number
+  is_first: number
+  author: string
+  author_id: number
+  subject: string
+  publish_time: number
+  message: string
+  is_anonymous: number
+  is_markdown: number
+  attachment: number
+  position: number
+  reply: string
+  replies: number
+  reply_to: number
+  ReplyPosts: any
+}

@@ -1,16 +1,18 @@
 import Vditor from 'vditor'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import { useQuery } from 'react-query'
+import { useLocation } from 'react-router-dom'
 
 import { Box, Button, Stack, Typography } from '@mui/material'
 
+import { getThreadsInfo } from '@/apis/thread'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'
 import Editor from '@/components/Editor'
 
 import Floor from './Floor'
-import Footer from './Footer'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
@@ -19,28 +21,56 @@ function Thread() {
     console.log(vd?.getValue())
   }
 
+  const reply_floor = useRef(0)
+  const set_reply = (data: number) => {
+    reply_floor.current = data
+  }
+
+  const location = useLocation()
+  const thread_id = location.pathname.split('/').pop()!
+  const page = new URLSearchParams(location.search).get('page')
+  const { data: info, isLoading: infoLoading } = useQuery(
+    ['postDetails'],
+    () => {
+      console.log(666)
+      return getThreadsInfo(thread_id, Number(page || '1'))
+    }
+  )
+
   return (
     <Box className="flex-1">
       <Box className="mb-6">
         <Box>
           <Chip text={'123'} />
-          {'title'}
+          {info?.rows[0].subject || 'xxxx'}
         </Box>
-        <Typography>TagIcon, Time, Author</Typography>
+        <Typography>TagIcon, Time, {info?.rows[0].author || 'xxxx'}</Typography>
       </Box>
       <Card className="mb-4 py-4">
         <>
-          <Box>content</Box>
-          <Footer floor={0} />
+          <Box>{info?.rows[0].message || 'xxxx'}</Box>
+          {/* <Footer floor={0} set_reply={set_reply} /> */}
         </>
       </Card>
       <Card className="mb-4">
         <>
-          <Floor>
-            <p>sadfsa</p>
+          <Floor floor={1} set_reply={set_reply}>
+            <p>xxxx</p>
           </Floor>
         </>
       </Card>
+      {info?.rows.map((item, index) => {
+        return (
+          <Card className="mb-4" key={item.position}>
+            <>
+              <Floor floor={item.position} set_reply={set_reply}>
+                <p>item.message</p>
+              </Floor>
+            </>
+          </Card>
+        )
+      })}
+
       <Card className="py-4">
         <Stack direction="row">
           <Avatar

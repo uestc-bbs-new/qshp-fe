@@ -7,9 +7,11 @@ import Footer from './Footer'
 
 type props = {
   children: React.ReactElement
+  floor: number
+  set_reply: (data: number) => void
 }
 
-const Floor = ({ children }: props) => {
+const Floor = ({ children, floor, set_reply }: props) => {
   return (
     <Box className="py-4">
       <Stack direction="row">
@@ -26,7 +28,7 @@ const Floor = ({ children }: props) => {
         </Box>
         <Box className="flex-1">{children}</Box>
       </Stack>
-      <Footer floor={0} />
+      <Footer floor={floor} set_reply={set_reply} />
     </Box>
   )
 }
