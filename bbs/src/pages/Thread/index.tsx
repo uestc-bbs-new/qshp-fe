@@ -21,21 +21,23 @@ function Thread() {
     console.log(vd?.getValue())
   }
 
-  const reply_floor = useRef(0)
-  const set_reply = (data: number) => {
-    reply_floor.current = data
-  }
-
   const location = useLocation()
-  const thread_id = location.pathname.split('/').pop()!
+  const thread_id = location.pathname.split('/').pop()
   const page = new URLSearchParams(location.search).get('page')
   const { data: info, isLoading: infoLoading } = useQuery(
     ['postDetails'],
     () => {
-      console.log(666)
-      return getThreadsInfo(thread_id, Number(page || '1'))
+      return getThreadsInfo(thread_id!, Number(page || '1'))
     }
   )
+
+  const reply_floor = useRef(0)
+  const set_reply = (floor: number) => {
+    reply_floor.current = floor
+    vd?.setValue(
+      '> ' + info?.rows.find((item) => item.position === floor)?.message || ''
+    )
+  }
 
   return (
     <Box className="flex-1">
