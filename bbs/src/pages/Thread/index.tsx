@@ -22,12 +22,12 @@ function Thread() {
   }
 
   const location = useLocation()
-  const thread_id = location.pathname.split('/').pop()
+  const thread_id = location.pathname.split('/').pop() as string
   const page = new URLSearchParams(location.search).get('page')
   const { data: info, isLoading: infoLoading } = useQuery(
     ['postDetails'],
     () => {
-      return getThreadsInfo(thread_id!, Number(page || '1'))
+      return getThreadsInfo(thread_id, Number(page || '1'))
     }
   )
 
