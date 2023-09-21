@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 7564,
+    port: 8080,
     proxy: {
       '/dev': {
         target: 'http://121.4.126.180:8080',
