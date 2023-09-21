@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-
+import { useQuery } from 'react-query'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -17,16 +17,15 @@ import {
   Skeleton,
   useTheme,
 } from '@mui/material'
-
+import Post from '@/components/Post'
 import Card from '@/components/Card'
-
-// import { getThreadList } from '@/apis/common'
+import { getThreadList } from '@/apis/common'
 
 type TopProps = {
   children: React.ReactElement
 }
 const Top = ({ children }: TopProps) => {
-  const [isTopOpen, setTopOpen] = useState(true) //置顶收缩
+  const [isTopOpen, setTopOpen] = useState(true) 
   const theme = useTheme()
   const handleClick = () => {
     setTopOpen(!isTopOpen)
@@ -45,7 +44,8 @@ const Top = ({ children }: TopProps) => {
         style={{ borderBottomColor: theme.palette.primary.main }}
       />
       <Collapse in={isTopOpen} timeout="auto" unmountOnExit>
-        <Skeleton></Skeleton>
+        {/* <Skeleton></Skeleton> */}
+        {isTopOpen && children}
       </Collapse>
     </>
   )
@@ -84,46 +84,78 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 
 function Forum() {
   const [sortBy, setSort] = useState('1') // thread sort rule
+  //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
-  // const [page, setPage] = useState(parseInt(params.get('page') || 1))
-  const pageSize = 10
-
-  // const {data: threadList, isLoading} = useQuery(['getThread', () => getThreadList({forum_id: routeParam.fid})])
-  // const handlePageChange =
-
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0);
+  const [query, setQuery] = useState({
+    page: 1,
+    type: 1,
+    forum_id: routeParam.id,
+  })
+  const pageSize = 20;
+  const { data: threadList, isLoading, refetch } = useQuery(['getThread', query], () =>
+    getThreadList(query),
+    {
+      onSuccess:(data: any)=>{
+        if (data && data.total) {
+          setTotal(Math.ceil(data.total / pageSize));
+        }
+      }
+    }
+  );
+  useEffect(() => { refetch() }, [query.type, query.page])
+  
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSort(event.target.value)
+    setSort(event.target.value);
+    setPage(1);
+    const value = event.target.value;
+    setQuery({...query, page: 1, type: parseInt(value, 10)});
+  }
+
+  const handlePageChange = (event: any, value: number) => {
+    setPage(value);
+    setQuery({...query, page: Number(value)});
   }
 
   return (
     <Box className="flex-1">
-      <Pagination size="small" count={10} variant="outlined" shape="rounded" />
+      <Pagination size="small" 
+        page={page}
+        onChange={handlePageChange}
+        count={total} 
+        variant="outlined" 
+        shape="rounded" 
+        style={{ marginBottom: '20px' }}/>
       <Card>
         <>
+        {threadList?.rows?.some((item: any) => item.is_highlight !== "0") && (
           <Top>
             <List>
-              {/* {data.data.map((item) => (
-              <Post data={item} key={item.id} />
-            ))} */}
+              {threadList?.rows?.filter((item:any) => item.is_highlight !== "0").map((item:any) => (
+              <Post data={item} key={item.thread_id} />
+            ))}
             </List>
           </Top>
+        )}
           <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
             <List>
-              {/* {data.data.map((item) => (
-              <Post data={item} key={item.id} />
-            ))} */}
+              {threadList?.rows?.filter((item:any) => item.is_highlight == "0").map((item:any) => (
+              <Post data={item} key={item.thread_id} />
+            ))}
             </List>
           </Normal>
         </>
       </Card>
       <Pagination
         size="small"
-        // page={page}
-        // onChange={handlePageChange}
-        count={10}
+        page={page}
+        onChange={handlePageChange}
+        count={total}
         variant="outlined"
         shape="rounded"
+        style={{ marginTop: '20px' }}
       />
     </Box>
   )

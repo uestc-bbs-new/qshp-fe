@@ -95,3 +95,40 @@ export type BBSInfo = {
   yesterdayposts: number
   forums: Array<Forum>
 }
+
+export type ThreadList = {
+  total:number
+  rows: Array<Thread2>
+}
+
+export type Thread2 = {
+  thread_id: string
+  forum_id: string
+  post_id: string
+  type_id: string
+  sort_id: string
+  author: string
+  author_id: number
+  subject: string
+  dateline: number
+  last_post: number
+  last_poster: string
+  views: string
+  replies: string
+  display_order: string
+  is_highlight: string
+  is_digest: string
+  is_rate: string
+  special: string
+  attachment: string
+  is_moderated: string
+  is_closed: string
+  is_stick_reply: string
+  recommends: string
+  recommend_add: string
+  recommend_sub: string
+  heats: string
+  status: string
+  favorite_times: string
+  share_times: string
+}
