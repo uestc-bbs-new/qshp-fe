@@ -7,6 +7,7 @@ import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import EmptySearch from './EmptySearch'
 import PostUsers from '@/components/PostUsers'
+import { useAppState } from '@/states'
 
 type resultProps = {
   name: string | null
@@ -22,31 +23,41 @@ const RersultForUsers = ({
   setName,
   setPage,
 }: resultProps) => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const location = useLocation()
+  const [currentName, setCurrentName] = useState(name)
   const { data, refetch } = useQuery(
     ['search'],
-    () => searchUsers({ keyWord: name, pageNum: page, pageSize: 10 }),
+    () => searchUsers({ username: currentName, page: currentPage }),
     {
       // close auto fetch when preload
       enabled: true,
     }
   )
 
-  let location = useLocation();
   useEffect(() => {
-    setName(location.search.split('=')[2])
     if (location.search.split('=')[1].split('&')[0] == 'user') {
       refetch()
     }
-  }, [location, page]);
+  }, [currentPage, currentName]);
+
+  useEffect(() => {
+    console.log(currentName)
+    setCurrentName(decodeURI(location.search.split('=')[2]))
+    setCurrentPage(1)
+  }, [location])
+  // const startIndex = (currentPage - 1) * pageSize;
+  // const endIndex = startIndex + pageSize;
+  // const displayedData = data?.rows.slice(startIndex, endIndex);
 
   if (name && data && data.total > 0) {
     return (
       <Box className="flex-1">
         <Typography>搜索结果: {name}</Typography>
         <Box>
-          <Grid container spacing={1}>
-            {data.rows.map((item, index) => (
-              <Grid item md={6} xl={4} key={index}>
+          <Grid container spacing={0.5}>
+            {data?.rows.map((item, index) => (
+              <Grid item md={6} xl={6} key={index}>
                 <PostUsers data={item} key={item.user_id} />
               </Grid>
             ))}
@@ -58,7 +69,9 @@ const RersultForUsers = ({
             variant="outlined"
             shape="rounded"
             count={Math.ceil(data.total / pageSize)}
-            onChange={(e, value) => setPage(value)}
+            onChange={(e, value) => {
+              setCurrentPage(value)
+            }}
           ></Pagination>
         </Stack>
       </Box>

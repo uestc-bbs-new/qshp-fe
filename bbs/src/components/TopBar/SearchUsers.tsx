@@ -22,6 +22,7 @@ const SearchResultUser = ({
   const navigate = useNavigate()
   const boxRef = useRef();
   const handleSubmit = (item: Users) => {
+    setshow(false)
     navigate({
       pathname: '/search',
       search: createSearchParams({
@@ -63,7 +64,7 @@ const SearchResultUser = ({
               <Stack direction="row" >
                 <Avatar
                   className="mx-3"
-                  uid={0}
+                  uid={item.user_id}
                   sx={{ width: 32, height: 32 }}
                   variant="rounded"
                 />

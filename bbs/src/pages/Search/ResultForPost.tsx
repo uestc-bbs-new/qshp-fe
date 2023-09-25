@@ -47,7 +47,7 @@ const RersultForPost = ({
         <Box>
           <List>
             {data.threads.map((item) => (
-              <Post data={item} key={item.tid} />
+              <Post data={item} key={item.thread_id} />
             ))}
           </List>
         </Box>

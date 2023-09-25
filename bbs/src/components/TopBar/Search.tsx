@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import { BorderBottom, Search } from '@mui/icons-material'
@@ -39,10 +39,14 @@ const SearchBar = () => {
     }
   }
 
+  useEffect(() => {
+    if (searchType == 'user') handleSearchUser()
+  }, [searchText])
+
   const handleSearchUser = () => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
-      searchUsers_at({ page: 1, pagesize: 20, username: searchText }).then((res) => {
+      searchUsers_at({ page: 1, pagesize: 10, username: searchText }).then((res) => {
         setData(res);
         setShow(true);
       })
@@ -84,7 +88,7 @@ const SearchBar = () => {
             value={searchText}
             onChange={(event) => {
               setSearchText(event.target.value)
-              if (searchType == 'user') handleSearchUser()
+              // if (searchType == 'user') handleSearchUser()
             }}
             onKeyDown={(event) => {
               event.key === 'Enter' && handleSubmit()

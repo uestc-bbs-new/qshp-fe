@@ -19,7 +19,8 @@ type AvatarProps = MuiProps & {
 // set default avatar due to mui avatar fallbacks
 const Avatar = ({ uid, size, alt, sx, ...other }: AvatarProps) => {
   let src = ''
-  if (uid.toString().length === 6) {
+  // if (uid.toString().length === 6) {
+  if (uid) {
     src = transform(size, uid)
   }
   return (

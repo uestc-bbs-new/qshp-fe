@@ -32,15 +32,12 @@ const Layout = () => {
       })
     },
   })
-  // if (query.isLoading) {
-  //   return <div>loading</div>
-  // }
 
   return (
     <>
       <Box
         className="relative flex h-full"
-        // style={{ backgroundColor: '#f7f9fe' }}
+      // style={{ backgroundColor: '#f7f9fe' }}
       >
         <TopBar />
         <Drawer width={drawerWidth} />

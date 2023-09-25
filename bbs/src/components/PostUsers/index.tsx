@@ -26,7 +26,7 @@ const PostUsers = ({ data, small, className }: PostProps) => {
           <Box sx={{ mr: 2 }}>
             <Avatar
               alt={data.username}
-              uid={1}
+              uid={data.user_id}
               sx={small ? { width: 35, height: 35 } : { width: 54, height: 54 }}
               variant="rounded"
             />
@@ -41,10 +41,13 @@ const PostUsers = ({ data, small, className }: PostProps) => {
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
                 >
                   <Stack direction={'row'}>
-                    <UserCard uid={data.user_id}>
+                    <Link color="inherit">{data.username}</Link>
+                    {/* <UserCard uid={data.user_id}>
                       <Link color="inherit">{data.username}</Link>
-                    </UserCard>
-                    <Chip small={small} text={data.title} />
+                    </UserCard> */}
+                    <Box className="line-clamp-1">
+                      <Chip text={`lv.${data.user_group}`} />
+                    </Box>
                   </Stack>
                 </Link>
               </Stack>
@@ -52,7 +55,7 @@ const PostUsers = ({ data, small, className }: PostProps) => {
                 <></>
               ) : (
                 <Stack>
-                  <Typography variant="subtitle2">威望：{data.prestiges}</Typography>
+                  <Typography variant="subtitle2">积分：{data.credits}</Typography>
                 </Stack>
               )}
             </Stack>

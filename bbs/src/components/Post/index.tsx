@@ -5,7 +5,7 @@ import {
 } from '@mui/icons-material'
 import React, { Box, Stack, Typography, useTheme } from '@mui/material'
 
-import { Thread } from '@/common/interfaces/response'
+import { ForumAside, Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
@@ -22,19 +22,19 @@ type PostProps = {
 const Post = ({ data, small, className }: PostProps) => {
   const theme = useTheme()
   return (
-    <Box className={small ? className : `${className} p-2`}>
+    <Box className={small ? className : `${className} p-0.5`}>
       <Box
-        className={`rounded-lg shadow-lg p-6 ${className}`}
+        className={`rounded-lg ${small ? 'p-1' : 'shadow-lg p-4'} ${className} `}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
       >
         <Stack direction="row">
-          <Box sx={{ mr: 2 }}>
+          <Box sx={small ? { mr: 0.7 } : { mr: 2 }}>
             <Avatar
               alt={data.author}
-              uid={data.authorid}
-              sx={small ? { width: 35, height: 35 } : { width: 54, height: 54 }}
+              uid={data.author_id}
+              sx={small ? { width: 30, height: 30 } : { width: 54, height: 54 }}
               variant="rounded"
             />
           </Box>
@@ -42,21 +42,22 @@ const Post = ({ data, small, className }: PostProps) => {
             <Stack justifyContent="space-between">
               <Stack direction="row">
                 <Link
-                  to={`/thread/${data.tid}`}
+                  to={`/thread/${data.thread_id}`}
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
                 >
                   <Box>
-                    <Chip small={small} text="等级" />
+                    <Chip small={small} text={data.name} />
                     {data.subject}
                   </Box>
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
-                <UserCard uid={data.authorid}>
+                <Link color="inherit">{data.author}</Link>
+                {/* <UserCard uid={data.author_id}>
                   <Link color="inherit">{data.author}</Link>
-                </UserCard>
+                </UserCard> */}
                 <Typography fontSize="inherit" className="pl-1">
                   {`· ${chineseTime(data.dateline * 1000)}`}
                 </Typography>
@@ -102,16 +103,14 @@ const Post = ({ data, small, className }: PostProps) => {
                   justifyContent="space-between"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography className="pl-2">{data.favtimes}</Typography>
+                  <Typography className="pl-2">{data.favorite_times}</Typography>
                 </Stack>
               </Stack>
               <Stack direction="row">
                 <Box>
                   <Typography className="pr-10">{`最新回复:`}</Typography>
                 </Box>
-                <Box>
-                  <Typography>{chineseTime(data.lastpost * 1000)}</Typography>
-                </Box>
+                <Typography>{chineseTime(data.last_post * 1000)}</Typography>
               </Stack>
             </Box>
           )}

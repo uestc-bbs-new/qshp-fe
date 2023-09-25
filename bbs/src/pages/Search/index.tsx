@@ -10,12 +10,13 @@ const Search = () => {
   const [name, setName] = useState(params.get('name') || null)
   const [type, setType] = useState(params.get('type') || 'post')
   const [page, setPage] = useState(params.get('page') || 1)
-  const pageSize = 10
+  const pageSize = 18
 
   let location = useLocation();
   useEffect(() => {
     setName(location.search.split('=')[2])
     setType(location.search.split('=')[1].split('&')[0])
+    console.log(location.search.split('=')[2])
     // setPage(location.search.split('=')[3])
   }, [location]);
 
