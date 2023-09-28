@@ -26,7 +26,7 @@ export default defineConfig({
     port: 7564,
     proxy: {
       '/dev': {
-        target: 'http://121.4.126.180:8080',
+        target: 'http://222.197.183.89:65342',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dev/, ''),
       },
