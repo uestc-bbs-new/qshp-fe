@@ -118,11 +118,10 @@ export type BBSInfo = {
   threads: Array<Thread>
 }
 
-export type Users ={
+export type Users = {
   user_id: number
   username: string
 }
-
 
 export type UserInfo = {
   user_id: number
@@ -133,7 +132,7 @@ export type UserInfo = {
 }
 
 export type ThreadList = {
-  total:number
+  total: number
   rows: Array<Thread2>
 }
 

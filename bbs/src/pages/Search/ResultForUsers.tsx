@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-
-import { Box, Grid, List, Pagination, Stack, Typography } from '@mui/material'
-
-import { searchUsers } from '@/apis/common'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
-import EmptySearch from './EmptySearch'
+
+import { Box, Grid, Pagination, Stack, Typography } from '@mui/material'
+
+import { searchUsers } from '@/apis/common'
 import PostUsers from '@/components/PostUsers'
-import { useAppState } from '@/states'
+
+import EmptySearch from './EmptySearch'
 
 type resultProps = {
   name: string | null
@@ -39,7 +39,7 @@ const RersultForUsers = ({
     if (location.search.split('=')[1].split('&')[0] == 'user') {
       refetch()
     }
-  }, [currentPage, currentName]);
+  }, [currentPage, currentName])
 
   useEffect(() => {
     console.log(currentName)
@@ -65,7 +65,7 @@ const RersultForUsers = ({
         </Box>
         <Stack alignItems="center">
           <Pagination
-            className='mt-10'
+            className="mt-10"
             variant="outlined"
             shape="rounded"
             count={Math.ceil(data.total / pageSize)}
