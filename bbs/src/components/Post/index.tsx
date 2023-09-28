@@ -3,13 +3,10 @@ import {
   RemoveRedEyeOutlined,
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
-
 import React, { Box, Stack, Typography, useTheme } from '@mui/material'
 
-import { ForumAside, Thread } from '@/common/interfaces/response'
-
+import { Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
-import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 
 import Avatar from '../Avatar'
@@ -26,7 +23,9 @@ const Post = ({ data, small, className }: PostProps) => {
   return (
     <Box className={small ? className : `${className} p-0.5`}>
       <Box
-        className={`rounded-lg ${small ? 'p-1' : 'shadow-lg p-4'} ${className} `}
+        className={`rounded-lg ${
+          small ? 'p-1' : 'shadow-lg p-4'
+        } ${className} `}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
@@ -105,7 +104,9 @@ const Post = ({ data, small, className }: PostProps) => {
                   justifyContent="space-between"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography className="pl-2">{data.favorite_times}</Typography>
+                  <Typography className="pl-2">
+                    {data.favorite_times}
+                  </Typography>
                 </Stack>
               </Stack>
               <Stack direction="row">

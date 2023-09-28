@@ -24,7 +24,6 @@ import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
-import UserCard from '@/components/UserCard'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -163,11 +162,13 @@ export const ForumGroup = ({ data }: ForumData) => {
       />
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
-          {data?.forums?.filter(item => item.name).map((item, index) => (
-            <Grid item md={6} xl={4} key={index}>
-              <ForumCover data={item} />
-            </Grid>
-          ))}
+          {data?.forums
+            ?.filter((item) => item.name)
+            .map((item, index) => (
+              <Grid item md={6} xl={4} key={index}>
+                <ForumCover data={item} />
+              </Grid>
+            ))}
         </Grid>
       </Collapse>
     </>

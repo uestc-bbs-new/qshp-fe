@@ -12,9 +12,7 @@ import Static from './Static'
 const Aside = () => {
   const location = useLocation()
 
-  const { data: hot, isLoading } = useQuery(['hotThread'], () =>
-    getBBSInfo()
-  )
+  const { data: hot, isLoading } = useQuery(['hotThread'], () => getBBSInfo())
 
   return (
     <Box className="ml-2 w-60">

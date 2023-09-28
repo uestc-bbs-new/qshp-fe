@@ -1,11 +1,10 @@
 import React, { Box, Stack, Typography, useTheme } from '@mui/material'
 
+import { UserInfo } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
-import UserCard from '@/components/UserCard'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
-import { UserInfo } from '@/common/interfaces/response'
 
 type PostProps = {
   data: UserInfo
@@ -55,7 +54,9 @@ const PostUsers = ({ data, small, className }: PostProps) => {
                 <></>
               ) : (
                 <Stack>
-                  <Typography variant="subtitle2">积分：{data.credits}</Typography>
+                  <Typography variant="subtitle2">
+                    积分：{data.credits}
+                  </Typography>
                 </Stack>
               )}
             </Stack>

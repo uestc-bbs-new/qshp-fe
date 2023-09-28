@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import ResultForPost from './ResultForPost'
 import ResultForUsers from './ResultForUsers'
-import { useLocation } from 'react-router-dom'
 
 const Search = () => {
   const params = new URLSearchParams(window.location.search)
@@ -12,13 +12,13 @@ const Search = () => {
   const [page, setPage] = useState(params.get('page') || 1)
   const pageSize = 18
 
-  let location = useLocation();
+  const location = useLocation()
   useEffect(() => {
     setName(location.search.split('=')[2])
     setType(location.search.split('=')[1].split('&')[0])
     console.log(location.search.split('=')[2])
     // setPage(location.search.split('=')[3])
-  }, [location]);
+  }, [location])
 
   if (type == 'post') {
     return (
@@ -30,8 +30,7 @@ const Search = () => {
         setName={setName}
       />
     )
-  }
-  else {
+  } else {
     return (
       <ResultForUsers
         name={name}
