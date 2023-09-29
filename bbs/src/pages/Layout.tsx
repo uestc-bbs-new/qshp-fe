@@ -20,7 +20,7 @@ const Layout = () => {
   const drawerWidth = 210
 
   // read partition
-  useQuery(['formList'], () => getForumList(), {
+  const query = useQuery(['formList'], () => getForumList(), {
     // catchTime: 60 * 1000,
     // staleTime: 30 * 1000
     onSuccess: (data) => {
