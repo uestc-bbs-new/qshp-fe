@@ -24,7 +24,7 @@ const options: IOptions = {
   upload: {
     accept: 'image/*,.mp3, .wav, .rar',
     token: 'test',
-    url: '/api/upload/editor',
+    url: '/star/discuz/publish/attachment',
     linkToImgUrl: '/api/upload/fetch',
     filename(name) {
       return name
