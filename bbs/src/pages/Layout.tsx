@@ -1,6 +1,5 @@
 import { useQuery } from 'react-query'
 import { Outlet } from 'react-router-dom'
-import { useEffect } from 'react'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
 import { Box, Fab, Stack, Toolbar, useMediaQuery } from '@mui/material'
@@ -37,7 +36,7 @@ const Layout = () => {
     <>
       <Box
         className="relative flex h-full"
-      // style={{ backgroundColor: '#f7f9fe' }}
+        // style={{ backgroundColor: '#f7f9fe' }}
       >
         <TopBar />
         <Drawer width={drawerWidth} />

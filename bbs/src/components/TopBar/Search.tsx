@@ -1,20 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
-import { BorderBottom, Search } from '@mui/icons-material'
-import { Divider, IconButton, Stack, MenuItem, FormControl, InputLabel } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Search } from '@mui/icons-material'
+import {
+  Divider,
+  FormControl,
+  IconButton,
+  MenuItem,
+  Stack,
+} from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
-import { Users } from '@/common/interfaces/response'
-import SearchResultUser from './SearchUsers'
 import { searchUsers_at } from '@/apis/common'
+import { Users } from '@/common/interfaces/response'
+
+import SearchResultUser from './SearchUsers'
 
 let timeout: any
 const SearchBar = () => {
   const [searchType, setSearchType] = useState('post')
   const [searchText, setSearchText] = useState('')
   const [show, setShow] = useState(true)
-  const [data, setData] = useState<{ total: number; rows: Users[]; } | undefined>(undefined);
+  const [data, setData] = useState<
+    { total: number; rows: Users[] } | undefined
+  >(undefined)
 
   const navigate = useNavigate()
   const inputComponent = useRef<HTMLInputElement | null>(null)
@@ -46,10 +55,12 @@ const SearchBar = () => {
   const handleSearchUser = () => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
-      searchUsers_at({ page: 1, pagesize: 10, username: searchText }).then((res) => {
-        setData(res);
-        setShow(true);
-      })
+      searchUsers_at({ page: 1, pagesize: 10, username: searchText }).then(
+        (res) => {
+          setData(res)
+          setShow(true)
+        }
+      )
     }, 1000)
   }
 
@@ -61,13 +72,16 @@ const SearchBar = () => {
           alignItems="center"
           className="w-96 rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
         >
-
-          <FormControl sx={{ m: 1, minWidth: 80 }} size="small" variant="standard">
+          <FormControl
+            sx={{ m: 1, minWidth: 80 }}
+            size="small"
+            variant="standard"
+          >
             {/* <InputLabel className='text-white'>搜索</InputLabel> */}
             <Select
               className="text-inherit"
               style={{
-                textAlign: "center",
+                textAlign: 'center',
                 marginBottom: '-4px',
                 marginRight: '10px',
               }}
@@ -114,7 +128,7 @@ const SearchBar = () => {
           show={show}
           setshow={setShow}
         />
-      </Stack >
+      </Stack>
     </>
   )
 }

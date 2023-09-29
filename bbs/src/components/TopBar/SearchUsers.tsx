@@ -1,9 +1,11 @@
-import { List, Box, Typography, useTheme, MenuItem, Stack } from '@mui/material'
+import { useEffect, useRef } from 'react'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+
+import { Box, List, MenuItem, Stack, Typography, useTheme } from '@mui/material'
 
 import { Users } from '@/common/interfaces/response'
+
 import Avatar from '../Avatar'
-import { createSearchParams, useNavigate } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
 
 type resultUserProps = {
   status: string
@@ -12,21 +14,16 @@ type resultUserProps = {
   show: boolean
   setshow: React.Dispatch<React.SetStateAction<boolean>>
 }
-const SearchResultUser = ({
-  status,
-  data,
-  show,
-  setshow,
-}: resultUserProps) => {
+const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
   const theme = useTheme()
   const navigate = useNavigate()
-  const boxRef = useRef();
+  const boxRef = useRef()
   const handleSubmit = (item: Users) => {
     setshow(false)
     navigate({
       pathname: '/search',
       search: createSearchParams({
-        type: "user",
+        type: 'user',
         name: item.username,
       }).toString(),
     })
@@ -38,14 +35,13 @@ const SearchResultUser = ({
         setshow(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [boxRef])
 
-  if (data.length == 0 || status == 'post' || !show)
-    return <></>
+  if (data.length == 0 || status == 'post' || !show) return <></>
   return (
     <Box
       ref={boxRef}
@@ -59,9 +55,9 @@ const SearchResultUser = ({
     >
       <List>
         {data.map((item) => (
-          <Box key={item.user_id} >
+          <Box key={item.user_id}>
             <MenuItem onClick={(e) => handleSubmit(item)}>
-              <Stack direction="row" >
+              <Stack direction="row">
                 <Avatar
                   className="mx-3"
                   uid={item.user_id}
@@ -77,6 +73,5 @@ const SearchResultUser = ({
     </Box>
   )
 }
-
 
 export default SearchResultUser

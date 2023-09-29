@@ -1,4 +1,4 @@
-import { Box, List, Pagination, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 const EmptySearch = () => {
   return (

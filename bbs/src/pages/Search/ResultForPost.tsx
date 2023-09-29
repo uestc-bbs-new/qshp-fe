@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { useQuery } from 'react-query'
+import { useLocation } from 'react-router-dom'
 
 import { Box, List, Pagination, Stack, Typography } from '@mui/material'
 
-import Post from '@/components/Post'
 import { searchThreads } from '@/apis/common'
-import { useQuery } from 'react-query'
-import { useLocation } from 'react-router-dom'
+import Post from '@/components/Post'
+
 import EmptySearch from './EmptySearch'
 
 type resultProps = {
@@ -31,14 +32,12 @@ const RersultForPost = ({
     }
   )
 
-  let location = useLocation();
+  const location = useLocation()
   useEffect(() => {
     setName(location.search.split('=')[2])
-    if (location.search.split('=')[1].split('&')[0] == 'post')
-      refetch()
+    if (location.search.split('=')[1].split('&')[0] == 'post') refetch()
     // console.log(page)
-  }, [location, page]);
-
+  }, [location, page])
 
   if (name && data && data.resultNum > 0) {
     return (
@@ -53,14 +52,13 @@ const RersultForPost = ({
         </Box>
         <Stack alignItems="center">
           <Pagination
-            className='mt-4'
+            className="mt-4"
             variant="outlined"
             shape="rounded"
             count={Math.ceil(data.resultNum / pageSize)}
             onChange={(e, value) => setPage(value)}
           ></Pagination>
         </Stack>
-
       </Box>
     )
   } else if (name?.length === 0 || (data && data.resultNum === 0)) {
