@@ -24,7 +24,6 @@ import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
-import UserCard from '@/components/UserCard'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -71,11 +70,11 @@ const ForumCover = ({ data }: ForumData) => {
           {data.name}
         </Link>
 
-        <Stack direction="row">
+        {/* <Stack direction="row">
           <UserCard uid={12}>
             <>管理员</>
           </UserCard>
-        </Stack>
+        </Stack> */}
 
         <Stack direction="row" className="mt-4">
           <Stack
@@ -130,9 +129,10 @@ const ForumCover = ({ data }: ForumData) => {
             <Stack direction="row">
               <Typography>{chineseTime(data.dateline * 1000)}</Typography>
               <Typography className="mx-1">·</Typography>
-              <UserCard uid={data.authorid}>
+              <Link color="inherit">{data.author}</Link>
+              {/* <UserCard uid={data.authorid}>
                 <Link color="inherit">{data.author}</Link>
-              </UserCard>
+              </UserCard> */}
             </Stack>
           </Box>
         </Stack>
@@ -162,11 +162,13 @@ export const ForumGroup = ({ data }: ForumData) => {
       />
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
-          {data?.forums?.map((item, index) => (
-            <Grid item md={6} xl={4} key={index}>
-              <ForumCover data={item} />
-            </Grid>
-          ))}
+          {data?.forums
+            ?.filter((item) => item.name)
+            .map((item, index) => (
+              <Grid item md={6} xl={4} key={index}>
+                <ForumCover data={item} />
+              </Grid>
+            ))}
         </Grid>
       </Collapse>
     </>
