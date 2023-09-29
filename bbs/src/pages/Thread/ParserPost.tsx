@@ -9,7 +9,7 @@ export type PropsType = {
 }
 
 function ParseCode({ message }: Omit<PropsType, 'isMd'>) {
-  return
+  return <div className="parse">{parser.toReact(message)}</div>
 }
 
 function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
@@ -23,8 +23,7 @@ function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
 export function ParsePost({ message, isMd }: PropsType) {
   return (
     <>
-      {/* {isMd ? <ParseMd message={message} /> : <ParseCode message={message} />} */}
-      <div className="parse">{parser.toReact(message)}</div>
+      {isMd ? <ParseMd message={message} /> : <ParseCode message={message} />}
     </>
   )
 }

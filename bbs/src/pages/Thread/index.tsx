@@ -22,7 +22,9 @@ function Thread() {
     if (vd?.getValue()) {
       await replyThreads(
         Number(thread_id),
-        reply_floor.current.post_id,
+        reply_floor.current.post_id === -1
+          ? info?.rows[0].post_id
+          : reply_floor.current.post_id,
         vd?.getValue()
       )
     }
@@ -41,7 +43,7 @@ function Thread() {
 
   const reply_floor = useRef({
     floor: 1,
-    post_id: 1,
+    post_id: -1,
   })
   const set_reply = (floor: number) => {
     reply_floor.current.floor = floor
