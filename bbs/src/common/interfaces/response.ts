@@ -167,3 +167,43 @@ export type Thread2 = {
   favorite_times: string
   share_times: string
 }
+
+export interface PostDetails {
+  page: number
+  pagesize: number
+  total: number
+  rows: PostFloor[]
+}
+
+export interface PostFloor {
+  post_id: number
+  forum_id: number
+  thread_id: number
+  position: number
+  is_first: number
+  subject: string
+  support: number
+  oppose: number
+  message: string
+  dateline: number
+  is_anonymous: number
+  is_markdown: number
+  replies: number
+  reply_to: number
+  is_edited: number
+  author: string
+  author_id: number
+  user_group: number
+  admin_group: number
+  credits: number
+  droplets: number
+  prestiges: number
+  essences: number
+  medals: number[]
+  friends: number
+  sign: string
+  title: string
+  online_time: number
+  registered_at: number
+  last_login_at: number
+}

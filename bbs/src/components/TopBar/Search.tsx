@@ -20,6 +20,7 @@ let timeout: any
 const SearchBar = () => {
   const [searchType, setSearchType] = useState('post')
   const [searchText, setSearchText] = useState('')
+  const [ifClick, setIfClick] = useState(0)
   const [show, setShow] = useState(true)
   const [data, setData] = useState<
     { total: number; rows: Users[] } | undefined
@@ -49,6 +50,12 @@ const SearchBar = () => {
   }
 
   useEffect(() => {
+    if (!ifClick) return
+    const field = document.querySelector('input')
+    document.getElementById('topbar-search')?.focus()
+  }, [ifClick])
+
+  useEffect(() => {
     if (searchType == 'user') handleSearchUser()
   }, [searchText])
 
@@ -62,6 +69,10 @@ const SearchBar = () => {
         }
       )
     }, 1000)
+  }
+
+  const handleFocus = () => {
+    setIfClick(ifClick + 1)
   }
 
   return (
@@ -90,14 +101,19 @@ const SearchBar = () => {
               onChange={handleSelect}
               label="Search"
             >
-              <MenuItem value="post">帖子</MenuItem>
-              <MenuItem value="user">用户</MenuItem>
+              <MenuItem value="post" onClick={handleFocus}>
+                帖子
+              </MenuItem>
+              <MenuItem value="user" onClick={handleFocus}>
+                用户
+              </MenuItem>
             </Select>
           </FormControl>
 
           <Divider orientation="vertical" variant="middle" flexItem></Divider>
           <input
             className="flex-1 border-0 bg-transparent pl-4 text-inherit decoration-transparent placeholder-current outline-none"
+            id="topbar-search"
             ref={inputComponent}
             value={searchText}
             onChange={(event) => {

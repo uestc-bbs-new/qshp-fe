@@ -17,7 +17,7 @@ type resultUserProps = {
 const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
   const theme = useTheme()
   const navigate = useNavigate()
-  const boxRef = useRef()
+  const boxRef = useRef<HTMLDivElement | null>(null)
   const handleSubmit = (item: Users) => {
     setshow(false)
     navigate({
@@ -30,7 +30,7 @@ const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
   }
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: any) {
       if (boxRef.current && !boxRef.current.contains(event.target)) {
         setshow(false)
       }
