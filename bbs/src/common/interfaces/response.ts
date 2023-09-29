@@ -104,21 +104,34 @@ export interface PostDetails {
 }
 
 export interface PostFloor {
-  id: number
-  plate_id: number
+  post_id: number
+  forum_id: number
   thread_id: number
+  position: number
   is_first: number
-  author: string
-  author_id: number
   subject: string
-  publish_time: number
+  support: number
+  oppose: number
   message: string
+  dateline: number
   is_anonymous: number
   is_markdown: number
-  attachment: number
-  position: number
-  reply: string
   replies: number
   reply_to: number
-  ReplyPosts: any
+  is_edited: number
+  author: string
+  author_id: number
+  user_group: number
+  admin_group: number
+  credits: number
+  droplets: number
+  prestiges: number
+  essences: number
+  medals: number[]
+  friends: number
+  sign: string
+  title: string
+  online_time: number
+  registered_at: number
+  last_login_at: number
 }
