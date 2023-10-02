@@ -42,15 +42,11 @@ const RersultForUsers = ({
   }, [currentPage, currentName])
 
   useEffect(() => {
-    console.log(currentName)
     setCurrentName(decodeURI(location.search.split('=')[2]))
     setCurrentPage(1)
   }, [location])
-  // const startIndex = (currentPage - 1) * pageSize;
-  // const endIndex = startIndex + pageSize;
-  // const displayedData = data?.rows.slice(startIndex, endIndex);
 
-  if (name && data && data.total > 0) {
+  if (currentName && data && data.total > 0) {
     return (
       <Box className="flex-1">
         <Typography>搜索结果: {name}</Typography>
@@ -76,7 +72,7 @@ const RersultForUsers = ({
         </Stack>
       </Box>
     )
-  } else if (name?.length === 0 || (data && data.total === 0)) {
+  } else if (currentName?.length === 0 || (data && data.total === 0)) {
     return <EmptySearch />
   } else {
     return (

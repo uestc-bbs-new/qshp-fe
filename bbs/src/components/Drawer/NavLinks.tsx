@@ -72,7 +72,7 @@ const Ordinate = ({ data }: ForumData) => {
 const Sections = ({ data }: { data: Forum[] }) => {
   return (
     <>
-      {data.length === 0 ? (
+      {!data || data.length === 0 ? (
         <List>
           <ListItem>
             <Skeleton className="w-full" height={32}></Skeleton>

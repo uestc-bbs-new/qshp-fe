@@ -2,12 +2,13 @@ import { Button, Stack } from '@mui/material'
 
 type FooterProps = {
   floor: number
+  set_reply: (data: number) => void
 }
 
-const Footer = ({ floor }: FooterProps) => {
+const Footer = ({ floor, set_reply }: FooterProps) => {
   const handleReplyClick = () => {
-    console.log(floor)
     window.location.hash = 'vditor'
+    set_reply(floor)
   }
   return (
     <Stack direction="row" className="justify-end">
