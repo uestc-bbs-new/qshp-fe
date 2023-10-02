@@ -19,6 +19,17 @@ type PostProps = {
   className?: string
 }
 
+const formatNumber = (num:any) => {
+  if (num >= 1000 && num < 1000000) {
+    const formattedNum = (num / 1000).toFixed(1) + 'K';
+    return formattedNum;
+  }else if(num >= 1000000){
+    const formattedNum = (num / 1000000).toFixed(1) + 'M';
+    return formattedNum;
+  }
+  return num.toString();
+}
+
 const Post = ({ data, small, className }: PostProps) => {
   return (
     <Box className={small ? className : `${className} p-6`}>
@@ -71,17 +82,17 @@ const Post = ({ data, small, className }: PostProps) => {
           <></>
         ) : (
           <Box>
-            <Stack direction="row" justifyContent="flex-start" sx={{ width: 400, height:35}}>
+            <Stack direction="row" justifyContent="flex-start" sx={{ width: 300, height:35}}>
               {/* 浏览次数 */}
               <Stack
                 direction="row"
                 className="w-1/3"
-                alignItems="flex-start"
-                justifyContent="flex-start"
+                alignItems="center"
+                justifyContent="flex-end"
               >
                 <RemoveRedEyeOutlined /> {/* 浏览次数图标 */}
                 <Typography noWrap className="pl-2 text-right">
-                  {data.views} {/* 浏览次数 */}
+                  {formatNumber(data.views)} {/* 浏览次数 */}
                 </Typography>
               </Stack>
               {/* 回复数 */}
@@ -89,20 +100,24 @@ const Post = ({ data, small, className }: PostProps) => {
                 direction="row"
                 className="w-1/3 pl-6"
                 alignItems="center"
-                justifyContent="flex-start"
+                justifyContent="flex-end"
               >
                 <ModeCommentOutlined /> {/* 回复数图标 */}
-                <Typography noWrap className="pl-2">{data.replies}</Typography> {/* 回复数 */}
+                <Typography noWrap className="pl-2">
+                  {formatNumber(data.replies)}
+                </Typography> {/* 回复数 */}
               </Stack>
               {/* 点赞数 */}
               <Stack
                 direction="row"
                 className="w-1/3 pl-6"
                 alignItems="center"
-                justifyContent="flex-start"
+                justifyContent="flex-end"
               >
                 <ThumbUpAltOutlined /> {/* 点赞数图标 */}
-                <Typography noWrap className="pl-2">{data.favorite_times}</Typography> {/* 点赞数 */}
+                <Typography noWrap className="pl-2">
+                  {formatNumber(data.favorite_times)}
+                  </Typography> {/* 点赞数 */}
               </Stack>
             </Stack>
             {/* 最新回复 */}
