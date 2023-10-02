@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -17,15 +17,16 @@ import {
   Skeleton,
   useTheme,
 } from '@mui/material'
-import Post from '@/components/Post'
-import Card from '@/components/Card'
+
 import { getThreadList } from '@/apis/common'
+import Card from '@/components/Card'
+import Post from '@/components/Post'
 
 type TopProps = {
   children: React.ReactElement
 }
 const Top = ({ children }: TopProps) => {
-  const [isTopOpen, setTopOpen] = useState(true) 
+  const [isTopOpen, setTopOpen] = useState(true)
   const theme = useTheme()
   const handleClick = () => {
     setTopOpen(!isTopOpen)
@@ -88,50 +89,59 @@ function Forum() {
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
   const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(0)
   const [query, setQuery] = useState({
     page: 1,
     type: 1,
     forum_id: routeParam.id,
   })
-  const pageSize = 20;
-  const { data: threadList, isLoading, refetch, isFetching  } = useQuery(['getThread', query], () =>
-    getThreadList(query),
-    {
-      onSuccess:(data: any)=>{
-        if (data && data.total) {
-          setTotal(Math.ceil(data.total / pageSize));
-        }
+
+  const pageSize = 20
+  const {
+    data: threadList,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery(['getThread', query], () => getThreadList(query), {
+    onSuccess: (data: any) => {
+      if (data && data.total) {
+        setTotal(Math.ceil(data.total / pageSize))
+
       }
-    }
-  );
-  useEffect(() => { refetch() }, [query.type, query.page])
-  
+    },
+  })
+  useEffect(() => {
+    refetch()
+  }, [query.type, query.page])
+
   const handleSortChange = (event: SelectChangeEvent) => {
     window.scrollTo(0, 0);
-    setSort(event.target.value);
-    setPage(1);
-    const value = event.target.value;
-    setQuery({...query, page: 1, type: parseInt(value, 10)});
+    setSort(event.target.value)
+    setPage(1)
+    const value = event.target.value
+    setQuery({ ...query, page: 1, type: parseInt(value, 10) })
   }
 
   const handlePageChange = (event: any, value: number) => {
     window.scrollTo(0, 0);
-    setPage(value);
-    setQuery({...query, page: Number(value)});
+    setPage(value)
+    setQuery({ ...query, page: Number(value) })
   }
 
   return (
     <Box className="flex-1">
-      <Pagination size="small" 
+      <Pagination
+        size="small"
         page={page}
         onChange={handlePageChange}
-        count={total} 
-        variant="outlined" 
-        shape="rounded" 
-        style={{ marginBottom: '20px' }}/>
+        count={total}
+        variant="outlined"
+        shape="rounded"
+        style={{ marginBottom: '20px' }}
+      />
       <Card>
         <>
+
         {threadList?.rows?.some((item: any) => item.is_highlight !== "0") && (
           <Top>
             {isFetching ? (
@@ -142,9 +152,11 @@ function Forum() {
               </List>
             ) : (
               <List>
-                {threadList?.rows?.filter((item:any) => item.is_highlight !== "0").map((item:any) => (
-                <Post data={item} key={item.thread_id} />
-              ))}
+                {threadList?.rows
+                  ?.filter((item: any) => item.is_highlight !== '0')
+                  .map((item: any) => (
+                    <Post data={item} key={item.thread_id} />
+                  ))}         
               </List>
             )}
           </Top>
@@ -179,11 +191,14 @@ function Forum() {
               </List>
             ) : (
               <List>
-                {threadList?.rows?.filter((item:any) => item.is_highlight == "0").map((item:any) => (
+                {threadList?.rows
+                  ?.filter((item:any) => item.is_highlight == "0")
+                  .map((item:any) => (
                 <Post data={item} key={item.thread_id} />
               ))}
               </List>
             )}
+
           </Normal>
         </>
       </Card>

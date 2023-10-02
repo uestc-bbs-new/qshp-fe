@@ -40,6 +40,22 @@ export type Forum = {
   forums?: Array<Forum>
 }
 
+export type ForumAside = {
+  fid: number
+  fup: number
+  type: string
+  name: string
+  status: boolean
+  threads: number
+  posts: number
+  todayposts: number
+  yesterdayposts: number
+  autoclose: number
+  modworks: number
+  favtimes: number
+  sharetimes: number
+}
+
 export type ForumList = {
   group: Array<{
     fid: number
@@ -60,44 +76,63 @@ export type ForumList = {
 }
 
 export type Thread = {
-  tid: number
-  fid: number
-  typeid: number
+  thread_id: number
+  forum_id: number
+  post_id: number
+  type_id: number
+  sort_id: number
   author: string
-  authorid: number
+  author_id: number
+  name: string
   subject: string
   dateline: number
-  lastpost: number
+  last_post: number
+  last_poster: string
   views: number
   replies: number
-  highlight: number
-  digest: number
-  rate: number
+  dis_playorder: number
+  is_highlight: number
+  is_digest: number
+  is_rate: number
   special: boolean
   attachment: number
-  moderated: boolean
-  closed: boolean
-  stickreply: boolean
+  is_moderated: boolean
+  is_closed: boolean
+  is_stick_reply: boolean
   recommends: number
   recommend_add: number
   recommend_sub: number
   heats: number
-  favtimes: number
-  sharetimes: number
+  status: number
+  favorite_times: number
+  share_times: number
   cover: number
-  replycredit: number
-  maxposition: number
+  reply_credit: number
+  max_position: number
   comments: number
 }
 
 export type BBSInfo = {
   todayposts: number
   yesterdayposts: number
-  forums: Array<Forum>
+  threads: Array<Thread>
+}
+
+export type Users = {
+  user_id: number
+  username: string
+}
+
+export type UserInfo = {
+  user_id: number
+  username: string
+  user_group: number
+  credits: number
+  last_login_at: number
 }
 
 export type ThreadList = {
-  total:number
+  total: number
   rows: Array<Thread2>
 }
 
@@ -131,4 +166,44 @@ export type Thread2 = {
   status: string
   favorite_times: string
   share_times: string
+}
+
+export interface PostDetails {
+  page: number
+  pagesize: number
+  total: number
+  rows: PostFloor[]
+}
+
+export interface PostFloor {
+  post_id: number
+  forum_id: number
+  thread_id: number
+  position: number
+  is_first: number
+  subject: string
+  support: number
+  oppose: number
+  message: string
+  dateline: number
+  is_anonymous: number
+  is_markdown: number
+  replies: number
+  reply_to: number
+  is_edited: number
+  author: string
+  author_id: number
+  user_group: number
+  admin_group: number
+  credits: number
+  droplets: number
+  prestiges: number
+  essences: number
+  medals: number[]
+  friends: number
+  sign: string
+  title: string
+  online_time: number
+  registered_at: number
+  last_login_at: number
 }
