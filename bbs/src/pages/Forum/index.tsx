@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
-
+import React, { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
+import { useLocation, useParams } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -18,15 +18,15 @@ import {
   useTheme,
 } from '@mui/material'
 
+import { getThreadList } from '@/apis/common'
 import Card from '@/components/Card'
-
-// import { getThreadList } from '@/apis/common'
+import Post from '@/components/Post'
 
 type TopProps = {
   children: React.ReactElement
 }
 const Top = ({ children }: TopProps) => {
-  const [isTopOpen, setTopOpen] = useState(true) //置顶收缩
+  const [isTopOpen, setTopOpen] = useState(true)
   const theme = useTheme()
   const handleClick = () => {
     setTopOpen(!isTopOpen)
@@ -45,7 +45,8 @@ const Top = ({ children }: TopProps) => {
         style={{ borderBottomColor: theme.palette.primary.main }}
       />
       <Collapse in={isTopOpen} timeout="auto" unmountOnExit>
-        <Skeleton></Skeleton>
+        {/* <Skeleton></Skeleton> */}
+        {isTopOpen && children}
       </Collapse>
     </>
   )
@@ -68,9 +69,9 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
           value={sortBy}
           onChange={handleSortChange}
         >
-          <MenuItem value="1">最新发表</MenuItem>
-          <MenuItem value="2">最新回复</MenuItem>
-          <MenuItem value="3">精华展示</MenuItem>
+          <MenuItem value="1">最热主题</MenuItem>
+          <MenuItem value="2">最新发表</MenuItem>
+          <MenuItem value="3">最新回复</MenuItem>
         </Select>
       </ListItem>
       <Divider
@@ -84,46 +85,130 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 
 function Forum() {
   const [sortBy, setSort] = useState('1') // thread sort rule
+  //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
-  // const [page, setPage] = useState(parseInt(params.get('page') || 1))
-  const pageSize = 10
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [query, setQuery] = useState({
+    page: 1,
+    type: 1,
+    forum_id: routeParam.id,
+  })
 
-  // const {data: threadList, isLoading} = useQuery(['getThread', () => getThreadList({forum_id: routeParam.fid})])
-  // const handlePageChange =
+  const pageSize = 20
+  const {
+    data: threadList,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery(['getThread', query], () => getThreadList(query), {
+    onSuccess: (data: any) => {
+      if (data && data.total) {
+        setTotal(Math.ceil(data.total / pageSize))
+
+      }
+    },
+  })
+
+  const location = useLocation()
+
+  useEffect(() => {
+    setQuery({
+      ...query,
+      forum_id: routeParam.id,
+    })
+    refetch()
+  }, [query.type, query.page, location])
 
   const handleSortChange = (event: SelectChangeEvent) => {
+    window.scrollTo(0, 0);
     setSort(event.target.value)
+    setPage(1)
+    const value = event.target.value
+    setQuery({ ...query, page: 1, type: parseInt(value, 10) })
+  }
+
+  const handlePageChange = (event: any, value: number) => {
+    window.scrollTo(0, 0);
+    setPage(value)
+    setQuery({ ...query, page: Number(value) })
   }
 
   return (
     <Box className="flex-1">
-      <Pagination size="small" count={10} variant="outlined" shape="rounded" />
       <Card>
         <>
+
+        {threadList?.rows?.some((item: any) => item.is_highlight !== "0") && (
           <Top>
-            <List>
-              {/* {data.data.map((item) => (
-              <Post data={item} key={item.id} />
-            ))} */}
-            </List>
+            {isFetching ? (
+              <List>
+                <ListItem>
+                  <Skeleton className="w-full" height={81}></Skeleton>
+                </ListItem>
+              </List>
+            ) : (
+              <List>
+                {threadList?.rows
+                  ?.filter((item: any) => item.is_highlight !== '0')
+                  .map((item: any) => (
+                    <Post data={item} key={item.thread_id} />
+                  ))}         
+              </List>
+            )}
           </Top>
+        )}
           <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
-            <List>
-              {/* {data.data.map((item) => (
-              <Post data={item} key={item.id} />
-            ))} */}
-            </List>
+          {isFetching || !threadList?.rows?.length ? (
+              <List>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>  
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+              </List>
+            ) : (
+              <List>
+                {threadList?.rows
+                  ?.filter((item:any) => item.is_highlight == "0")
+                  .map((item:any) => (
+                <Post data={item} key={item.thread_id} />
+              ))}
+              </List>
+            )}
+
           </Normal>
         </>
       </Card>
       <Pagination
         size="small"
-        // page={page}
-        // onChange={handlePageChange}
-        count={10}
+        page={page}
+        onChange={handlePageChange}
+        count={total}
         variant="outlined"
         shape="rounded"
+        style={{ marginTop: '20px' }}
+        sx={{ display: 'flex', justifyContent: 'center' }}
       />
     </Box>
   )
