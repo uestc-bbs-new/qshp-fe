@@ -17,12 +17,12 @@ const Floor = ({ children, item, set_reply }: props) => {
     <Box className="py-4">
       <Stack direction="row">
         <Box className="w-40 flex justify-center pr-4">
-          <UserCard uid={2}>
+          <UserCard uid={item.author_id}>
             <div>
               <Avatar
                 className="m-auto"
                 alt="Remy Sharp"
-                uid={2}
+                uid={item.author_id}
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
               />
