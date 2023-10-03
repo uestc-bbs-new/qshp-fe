@@ -89,38 +89,38 @@ const Post = ({ data, small, className }: PostProps) => {
             <Box>
               <Stack 
                 direction="row"
-                justifyContent="flex-start"
-                sx={{ width: 270, height:35}}>
+                justifyContent="space-between"
+                sx={{ width: 265, height:35}}>
                 <Stack
                   direction="row"
-                  className="w-1/3"
+                  className="w-1/3 pr-2"
                   alignItems="center"
-                  justifyContent="flex-end"
+                  justifyContent="space-between"
                 >
                   <RemoveRedEyeOutlined />
-                  <Typography className="pl-2" sx={{ width: 30 }}>
+                  <Typography>
                     {formatNumber(data.views)}
                   </Typography>
                 </Stack>
                 <Stack
                   direction="row"
-                  className="w-1/3 pl-6"
+                  className="w-1/3 pl-3"
                   alignItems="center"
-                  justifyContent="flex-end"
+                  justifyContent="space-between"
                 >
                   <ModeCommentOutlined />
-                  <Typography className="pl-2" sx={{ width: 30 }}>
+                  <Typography>
                     {formatNumber(data.replies)}
                   </Typography>
                 </Stack>
                 <Stack
                   direction="row"
-                  className="w-1/3 pl-6"
+                  className="w-1/3 pl-5"
                   alignItems="center"
-                  justifyContent="flex-end"
+                  justifyContent="space-between"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography className="pl-2" sx={{ width: 30 }}>
+                  <Typography>
                     {formatNumber(data.favorite_times)}
                   </Typography>
                 </Stack>
