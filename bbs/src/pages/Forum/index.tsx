@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -110,9 +110,16 @@ function Forum() {
       }
     },
   })
+
+  const location = useLocation()
+
   useEffect(() => {
+    setQuery({
+      ...query,
+      forum_id: routeParam.id,
+    })
     refetch()
-  }, [query.type, query.page])
+  }, [query.type, query.page, location])
 
   const handleSortChange = (event: SelectChangeEvent) => {
     window.scrollTo(0, 0);
@@ -130,15 +137,6 @@ function Forum() {
 
   return (
     <Box className="flex-1">
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ marginBottom: '20px' }}
-      />
       <Card>
         <>
 
@@ -210,6 +208,7 @@ function Forum() {
         variant="outlined"
         shape="rounded"
         style={{ marginTop: '20px' }}
+        sx={{ display: 'flex', justifyContent: 'center' }}
       />
     </Box>
   )
