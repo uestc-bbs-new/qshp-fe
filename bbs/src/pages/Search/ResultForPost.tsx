@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { set } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
@@ -23,26 +24,38 @@ const RersultForPost = ({
   setPage,
   setName,
 }: resultProps) => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [currentName, setCurrentName] = useState(name)
   const { data, refetch } = useQuery(
     ['search'],
-    () => searchThreads({ keyWord: name, pageNum: page, pageSize: 10 }),
+    () =>
+      searchThreads({
+        pageSize: 10,
+        pageNum: currentPage,
+        keyWord: currentName,
+      }),
     {
       // close auto fetch when preload
-      enabled: false,
+      enabled: true,
     }
   )
 
   const location = useLocation()
   useEffect(() => {
-    setName(location.search.split('=')[2])
-    if (location.search.split('=')[1].split('&')[0] == 'post') refetch()
-    // console.log(page)
-  }, [location, page])
+    setCurrentName(decodeURI(location.search.split('=')[2]))
+    setCurrentPage(1)
+  }, [location])
 
-  if (name && data && data.resultNum > 0) {
+  useEffect(() => {
+    if (location.search.split('=')[1].split('&')[0] == 'post') {
+      refetch()
+    }
+  }, [currentPage, currentName])
+
+  if (currentName && data && data.resultNum > 0) {
     return (
       <Box className="flex-1">
-        <Typography>搜索结果: {name}</Typography>
+        <Typography>搜索结果: {currentName}</Typography>
         <Box>
           <List>
             {data.threads.map((item) => (
@@ -56,12 +69,12 @@ const RersultForPost = ({
             variant="outlined"
             shape="rounded"
             count={Math.ceil(data.resultNum / pageSize)}
-            onChange={(e, value) => setPage(value)}
+            onChange={(e, value) => setCurrentPage(value)}
           ></Pagination>
         </Stack>
       </Box>
     )
-  } else if (name?.length === 0 || (data && data.resultNum === 0)) {
+  } else if (currentName?.length === 0 || (data && data.resultNum === 0)) {
     return <EmptySearch />
   } else {
     return (

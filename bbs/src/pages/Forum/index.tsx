@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
-
+import { useLocation, useParams } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -15,6 +14,7 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
+  Skeleton,
   useTheme,
 } from '@mui/material'
 
@@ -69,9 +69,9 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
           value={sortBy}
           onChange={handleSortChange}
         >
-          <MenuItem value="1">最新发表</MenuItem>
-          <MenuItem value="2">最新回复</MenuItem>
-          <MenuItem value="3">精华展示</MenuItem>
+          <MenuItem value="1">最热主题</MenuItem>
+          <MenuItem value="2">最新发表</MenuItem>
+          <MenuItem value="3">最新回复</MenuItem>
         </Select>
       </ListItem>
       <Divider
@@ -95,23 +95,34 @@ function Forum() {
     type: 1,
     forum_id: routeParam.id,
   })
+
   const pageSize = 20
   const {
     data: threadList,
     isLoading,
     refetch,
+    isFetching,
   } = useQuery(['getThread', query], () => getThreadList(query), {
     onSuccess: (data: any) => {
       if (data && data.total) {
         setTotal(Math.ceil(data.total / pageSize))
+
       }
     },
   })
+
+  const location = useLocation()
+
   useEffect(() => {
+    setQuery({
+      ...query,
+      forum_id: routeParam.id,
+    })
     refetch()
-  }, [query.type, query.page])
+  }, [query.type, query.page, location])
 
   const handleSortChange = (event: SelectChangeEvent) => {
+    window.scrollTo(0, 0);
     setSort(event.target.value)
     setPage(1)
     const value = event.target.value
@@ -119,42 +130,73 @@ function Forum() {
   }
 
   const handlePageChange = (event: any, value: number) => {
+    window.scrollTo(0, 0);
     setPage(value)
     setQuery({ ...query, page: Number(value) })
   }
 
   return (
     <Box className="flex-1">
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ marginBottom: '20px' }}
-      />
       <Card>
         <>
-          {threadList?.rows?.some((item: any) => item.is_highlight !== '0') && (
-            <Top>
+
+        {threadList?.rows?.some((item: any) => item.is_highlight !== "0") && (
+          <Top>
+            {isFetching ? (
+              <List>
+                <ListItem>
+                  <Skeleton className="w-full" height={81}></Skeleton>
+                </ListItem>
+              </List>
+            ) : (
               <List>
                 {threadList?.rows
                   ?.filter((item: any) => item.is_highlight !== '0')
                   .map((item: any) => (
                     <Post data={item} key={item.thread_id} />
-                  ))}
+                  ))}         
               </List>
-            </Top>
-          )}
+            )}
+          </Top>
+        )}
           <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
-            <List>
-              {threadList?.rows
-                ?.filter((item: any) => item.is_highlight == '0')
-                .map((item: any) => (
-                  <Post data={item} key={item.thread_id} />
-                ))}
-            </List>
+          {isFetching || !threadList?.rows?.length ? (
+              <List>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>  
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
+                </ListItem>
+              </List>
+            ) : (
+              <List>
+                {threadList?.rows
+                  ?.filter((item:any) => item.is_highlight == "0")
+                  .map((item:any) => (
+                <Post data={item} key={item.thread_id} />
+              ))}
+              </List>
+            )}
+
           </Normal>
         </>
       </Card>
@@ -166,6 +208,7 @@ function Forum() {
         variant="outlined"
         shape="rounded"
         style={{ marginTop: '20px' }}
+        sx={{ display: 'flex', justifyContent: 'center' }}
       />
     </Box>
   )

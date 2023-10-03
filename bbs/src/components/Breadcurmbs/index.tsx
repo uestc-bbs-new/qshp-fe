@@ -1,16 +1,36 @@
-import { Breadcrumbs as MuiBreadcrumbs } from '@mui/material'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 
-import Link from '../Link'
+import { Breadcrumbs as MuiBreadcrumbs } from '@mui/material'
+import { styled } from '@mui/material/styles'
+
+const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
+  textDecoration: 'none',
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+}))
 
 const Breadcrumbs = () => {
+  const location = useLocation()
+  const pathnames = location.pathname.split('/').filter((x) => x)
+
   return (
     <MuiBreadcrumbs>
-      <Link underline="none" to="/" color="inherit">
+      <StyledRouterLink color="inherit" to="/">
         Home
-      </Link>
-      <Link underline="none" to="/about" color="inherit">
-        About
-      </Link>
+      </StyledRouterLink>
+      {pathnames.map((name, index) => {
+        const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`
+        const isLast = index === pathnames.length - 1
+
+        return isLast ? (
+          <span key={routeTo}>{name}</span>
+        ) : (
+          <StyledRouterLink key={routeTo} color="inherit" to={routeTo}>
+            {name}
+          </StyledRouterLink>
+        )
+      })}
     </MuiBreadcrumbs>
   )
 }

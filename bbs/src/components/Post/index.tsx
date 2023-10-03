@@ -18,6 +18,17 @@ type PostProps = {
   className?: string
 }
 
+const formatNumber = (num:any) => {
+  if (num >= 1000 && num < 1000000) {
+    const formattedNum = (num / 1000).toFixed(1) + 'K';
+    return formattedNum;
+  }else if(num >= 1000000){
+    const formattedNum = (num / 1000000).toFixed(1) + 'M';
+    return formattedNum;
+  }
+  return num.toString();
+}
+
 const Post = ({ data, small, className }: PostProps) => {
   const theme = useTheme()
   return (
@@ -40,8 +51,8 @@ const Post = ({ data, small, className }: PostProps) => {
             />
           </Box>
           <Box className="flex-1">
-            <Stack justifyContent="space-between">
-              <Stack direction="row">
+            <Stack justifyContent="space-between" direction="column" sx={{ minWidth: 350 }}>
+              <Stack direction="row" >
                 <Link
                   to={`/thread/${data.thread_id}`}
                   color="inherit"
@@ -67,7 +78,7 @@ const Post = ({ data, small, className }: PostProps) => {
                 <></>
               ) : (
                 <Stack>
-                  <Typography variant="subtitle2">{data.subject}</Typography>
+                  {/* <Typography variant="subtitle2">{data.subject}</Typography> */}
                 </Stack>
               )}
             </Stack>
@@ -76,42 +87,49 @@ const Post = ({ data, small, className }: PostProps) => {
             <></>
           ) : (
             <Box>
-              <Stack direction="row">
+              <Stack 
+                direction="row"
+                justifyContent="space-between"
+                sx={{ width: 265, height:35}}>
                 <Stack
                   direction="row"
-                  className="w-1/3"
+                  className="w-1/3 pr-2"
                   alignItems="center"
                   justifyContent="space-between"
                 >
                   <RemoveRedEyeOutlined />
-                  <Typography className="pl-2 text-right">
-                    {data.views}
+                  <Typography>
+                    {formatNumber(data.views)}
                   </Typography>
                 </Stack>
                 <Stack
                   direction="row"
-                  className="w-1/3 pl-6"
+                  className="w-1/3 pl-3"
                   alignItems="center"
                   justifyContent="space-between"
                 >
                   <ModeCommentOutlined />
-                  <Typography className="pl-2">{data.replies}</Typography>
+                  <Typography>
+                    {formatNumber(data.replies)}
+                  </Typography>
                 </Stack>
                 <Stack
                   direction="row"
-                  className="w-1/3 pl-6"
+                  className="w-1/3 pl-5"
                   alignItems="center"
                   justifyContent="space-between"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography className="pl-2">
-                    {data.favorite_times}
+                  <Typography>
+                    {formatNumber(data.favorite_times)}
                   </Typography>
                 </Stack>
               </Stack>
-              <Stack direction="row">
+              <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography className="pr-10">{`最新回复:`}</Typography>
+                  <Typography className="pr-10">
+                    {`最新回复:`}{data.last_poster}
+                  </Typography>
                 </Box>
                 <Typography>{chineseTime(data.last_post * 1000)}</Typography>
               </Stack>
