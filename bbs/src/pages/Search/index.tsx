@@ -14,9 +14,8 @@ const Search = () => {
 
   const location = useLocation()
   useEffect(() => {
-    setName(location.search.split('=')[2])
+    setName(decodeURI(location.search.split('=')[2]))
     setType(location.search.split('=')[1].split('&')[0])
-    console.log(location.search.split('=')[2])
     // setPage(location.search.split('=')[3])
   }, [location])
 

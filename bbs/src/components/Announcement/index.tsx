@@ -1,10 +1,13 @@
 // TODO: this carousel component should be replaced due to long time no maintain
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import SwipeableViews from 'react-swipeable-views'
 import { autoPlay } from 'react-swipeable-views-utils'
 
 import { Campaign } from '@mui/icons-material'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
+
+import { getAnnouncement } from '@/apis/common'
 
 import Link from '../Link'
 import SlidePagination from './SlidePagination'
@@ -49,30 +52,53 @@ const AutoPlay = autoPlay(SwipeableViews)
 const Announcement = () => {
   const theme = useTheme()
   const [index, setIndex] = useState(0)
+  const { data, refetch } = useQuery(
+    ['announcement'],
+    () => getAnnouncement(),
+    {
+      enabled: true,
+      onSuccess: (data) => {
+        console.log('Data fetched successfully:', data)
+      },
+      onError: (error) => {
+        console.error('Error fetching data:', error)
+      },
+    }
+  )
 
   const handleIndexChange = (index: number) => {
     setIndex(index)
   }
 
-  return (
-    <Box className="relative">
-      <AutoPlay
-        interval={5000}
-        style={{
-          border: '2px solid black',
-          borderColor: theme.palette.primary.main,
-        }}
-        className="mb-4"
-        index={index}
-        onChangeIndex={handleIndexChange}
-      >
-        <Slide tid={0}>text0text0tex</Slide>
-        <Slide tid={0}>text1</Slide>
-        <Slide tid={0}>text2</Slide>
-      </AutoPlay>
-      <SlidePagination count={3} setIndex={handleIndexChange} index={index} />
-    </Box>
-  )
+  if (data) {
+    return (
+      <Box className="relative">
+        <AutoPlay
+          interval={5000}
+          style={{
+            border: '2px solid black',
+            borderColor: theme.palette.primary.main,
+          }}
+          className="mb-4"
+          index={index}
+          onChangeIndex={handleIndexChange}
+        >
+          {data.map((item) => (
+            <Slide key={item.thread_id} tid={item.thread_id}>
+              {item.subject}
+            </Slide>
+          ))}
+        </AutoPlay>
+        <SlidePagination
+          count={data.length}
+          setIndex={handleIndexChange}
+          index={index}
+        />
+      </Box>
+    )
+  } else {
+    return <></>
+  }
 }
 
 export default Announcement
