@@ -52,7 +52,7 @@ const Post = ({ data, small, className }: PostProps) => {
           </Box>
           <Box className="flex-1">
             <Stack justifyContent="space-between" direction="column" sx={{ minWidth: 350 }}>
-              <Stack direction="row">
+              <Stack direction="row" >
                 <Link
                   to={`/thread/${data.thread_id}`}
                   color="inherit"
@@ -95,10 +95,10 @@ const Post = ({ data, small, className }: PostProps) => {
                   direction="row"
                   className="w-1/3"
                   alignItems="center"
-                  justifyContent="flex-start"
+                  justifyContent="flex-end"
                 >
                   <RemoveRedEyeOutlined />
-                  <Typography className="pl-2 text-right">
+                  <Typography className="pl-2" sx={{ width: 30 }}>
                     {formatNumber(data.views)}
                   </Typography>
                 </Stack>
@@ -106,10 +106,10 @@ const Post = ({ data, small, className }: PostProps) => {
                   direction="row"
                   className="w-1/3 pl-6"
                   alignItems="center"
-                  justifyContent="flex-start"
+                  justifyContent="flex-end"
                 >
                   <ModeCommentOutlined />
-                  <Typography className="pl-2">
+                  <Typography className="pl-2" sx={{ width: 30 }}>
                     {formatNumber(data.replies)}
                   </Typography>
                 </Stack>
@@ -117,10 +117,10 @@ const Post = ({ data, small, className }: PostProps) => {
                   direction="row"
                   className="w-1/3 pl-6"
                   alignItems="center"
-                  justifyContent="flex-start"
+                  justifyContent="flex-end"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography className="pl-2">
+                  <Typography className="pl-2" sx={{ width: 30 }}>
                     {formatNumber(data.favorite_times)}
                   </Typography>
                 </Stack>
