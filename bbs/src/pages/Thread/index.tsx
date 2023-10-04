@@ -22,11 +22,12 @@ function Thread() {
     if (vd?.getValue()) {
       await replyThreads(
         Number(thread_id),
+        vd?.getValue(),
         reply_floor.current.post_id === -1
-          ? info?.rows[0].post_id
-          : reply_floor.current.post_id,
-        vd?.getValue()
+          ? undefined
+          : reply_floor.current.post_id
       )
+      vd?.setValue('')
     }
   }
 

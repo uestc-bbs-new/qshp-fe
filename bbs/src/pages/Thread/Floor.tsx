@@ -17,7 +17,7 @@ const Floor = ({ children, item, set_reply }: props) => {
     <Box className="py-4">
       <Stack direction="row">
         <Box className="w-40 flex justify-center pr-4">
-          <UserCard uid={item.author_id}>
+          <UserCard item={item}>
             <div>
               <Avatar
                 className="m-auto"
