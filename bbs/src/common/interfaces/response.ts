@@ -207,3 +207,37 @@ export interface PostFloor {
   registered_at: number
   last_login_at: number
 }
+
+export interface UserInfos {
+  views: number
+  emailstatus: boolean
+  videophotostatus: boolean
+  title: string
+  sign: string
+  bio: string
+  friends: number
+  threads: number
+  albums: number
+  sharings: number
+  doings: number
+  posts: number
+  gender: boolean
+  birthday: string
+  education: string
+  birthprovince: string
+  birthcity: string
+  resideprovince: string
+  residecity: string
+  medals: string
+  admin_group: number
+  user_group: number
+  online_time: number
+  registered_at: number
+  last_login_at: number
+  lastactivity: number
+  lastpost: number
+  zone: number
+  credits: number
+  droplets: number
+  prestiges: number
+}
