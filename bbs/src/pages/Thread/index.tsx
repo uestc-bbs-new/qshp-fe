@@ -68,7 +68,7 @@ function Thread() {
   return (
     <Box className="flex-1">
       <Pagination
-        count={info?.total ? Math.floor(info?.total / 20) : 10}
+        count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(`page=${value}`)
@@ -83,6 +83,7 @@ function Thread() {
                 <section id={item.position.toString()}>
                   <Floor item={item} set_reply={set_reply}>
                     <>
+                      <strong>{item.subject}</strong>
                       <div className="text-sm text-slate-300 flex justify-between">
                         <div>{dayjs(item.dateline * 1000).format()}</div>
                         <div className="flex flex-row gap-3 justify-between">
@@ -112,6 +113,8 @@ function Thread() {
             </Card>
           )
         })
+      ) : infoLoading ? (
+        <>请求帖子详细信息中</>
       ) : (
         <>帖子详细信息获取错误</>
       )}

@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import React, { useEffect, useState } from 'react'
 
 import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
@@ -13,7 +15,7 @@ import Chip from '../Chip'
 
 type ItemProps = {
   title: string
-  count: number
+  count: number | string
 }
 const GridItem = ({ title, count }: ItemProps) => {
   const theme = useTheme()
@@ -66,10 +68,13 @@ const Cover = ({ item }: { item: PostFloor }) => {
             <Chip className="mb-2" text="test" />
             <Box className="rounded-lg p-4 bg-opacity-40 bg-black">
               <Typography fontSize="inherit">
-                注册： {item.registered_at}
+                注册：{dayjs(item.registered_at * 1000).format()}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
                 在线时长： {item.online_time}
+              </Typography>
+              <Typography fontSize="inherit" className="mt-2">
+                上次登录: {dayjs(item.last_login_at * 1000).format()}
               </Typography>
             </Box>
           </Box>
@@ -79,9 +84,12 @@ const Cover = ({ item }: { item: PostFloor }) => {
       <Grid container>
         <GridItem title="水滴" count={item.droplets} />
         <GridItem title="用户组" count={item.user_group} />
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
+        {/* <GridItem
+          title=""
+          count={}
+        /> */}
+        {/* <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} /> */}
       </Grid>
       <Divider variant="middle" />
       {/* <Box className="p-4">
