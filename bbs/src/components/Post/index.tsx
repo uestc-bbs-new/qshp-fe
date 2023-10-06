@@ -18,15 +18,15 @@ type PostProps = {
   className?: string
 }
 
-const formatNumber = (num:any) => {
+const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
-    const formattedNum = (num / 1000).toFixed(1) + 'K';
-    return formattedNum;
-  }else if(num >= 1000000){
-    const formattedNum = (num / 1000000).toFixed(1) + 'M';
-    return formattedNum;
+    const formattedNum = (num / 1000).toFixed(1) + 'K'
+    return formattedNum
+  } else if (num >= 1000000) {
+    const formattedNum = (num / 1000000).toFixed(1) + 'M'
+    return formattedNum
   }
-  return num.toString();
+  return num
 }
 
 const Post = ({ data, small, className }: PostProps) => {
@@ -51,18 +51,29 @@ const Post = ({ data, small, className }: PostProps) => {
             />
           </Box>
           <Box className="flex-1">
-            <Stack justifyContent="space-between" direction="column" sx={{ minWidth: 350 }}>
-              <Stack direction="row" >
+            <Stack
+              justifyContent="space-between"
+              direction="column"
+              sx={{ minWidth: 350 }}
+            >
+              <Stack direction="row">
                 <Link
                   to={`/thread/${data.thread_id}`}
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
                 >
-                  <Box>
-                    <Chip small={small} text={data.name} />
-                    {data.subject}
-                  </Box>
+                  {small ? (
+                    <Box
+                      width={150}
+                      style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
+                    >
+                      <Chip text={data.name} />
+                      {data.subject}
+                    </Box>
+                  ) : (
+                    <Box>{data.subject}</Box>
+                  )}
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
@@ -87,10 +98,11 @@ const Post = ({ data, small, className }: PostProps) => {
             <></>
           ) : (
             <Box>
-              <Stack 
+              <Stack
                 direction="row"
                 justifyContent="space-between"
-                sx={{ width: 265, height:35}}>
+                sx={{ width: 265, height: 35 }}
+              >
                 <Stack
                   direction="row"
                   className="w-1/3 pr-2"
@@ -98,9 +110,7 @@ const Post = ({ data, small, className }: PostProps) => {
                   justifyContent="space-between"
                 >
                   <RemoveRedEyeOutlined />
-                  <Typography>
-                    {formatNumber(data.views)}
-                  </Typography>
+                  <Typography>{formatNumber(data.views)}</Typography>
                 </Stack>
                 <Stack
                   direction="row"
@@ -109,9 +119,7 @@ const Post = ({ data, small, className }: PostProps) => {
                   justifyContent="space-between"
                 >
                   <ModeCommentOutlined />
-                  <Typography>
-                    {formatNumber(data.replies)}
-                  </Typography>
+                  <Typography>{formatNumber(data.replies)}</Typography>
                 </Stack>
                 <Stack
                   direction="row"
@@ -120,15 +128,14 @@ const Post = ({ data, small, className }: PostProps) => {
                   justifyContent="space-between"
                 >
                   <ThumbUpAltOutlined />
-                  <Typography>
-                    {formatNumber(data.favorite_times)}
-                  </Typography>
+                  <Typography>{formatNumber(data.favorite_times)}</Typography>
                 </Stack>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
                   <Typography className="pr-10">
-                    {`最新回复:`}{data.last_poster}
+                    {`最新回复:`}
+                    {data.last_poster}
                   </Typography>
                 </Box>
                 <Typography>{chineseTime(data.last_post * 1000)}</Typography>

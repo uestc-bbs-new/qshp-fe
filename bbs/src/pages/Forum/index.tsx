@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams } from 'react-router-dom'
+
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
@@ -84,7 +85,7 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 }
 
 function Forum() {
-  const [sortBy, setSort] = useState('1') // thread sort rule
+  const [sortBy, setSort] = useState('1')
   //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
@@ -106,7 +107,6 @@ function Forum() {
     onSuccess: (data: any) => {
       if (data && data.total) {
         setTotal(Math.ceil(data.total / pageSize))
-
       }
     },
   })
@@ -119,10 +119,10 @@ function Forum() {
       forum_id: routeParam.id,
     })
     refetch()
-  }, [query.type, query.page, location])
+  }, [query.type, query.page])
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0)
     setSort(event.target.value)
     setPage(1)
     const value = event.target.value
@@ -130,73 +130,103 @@ function Forum() {
   }
 
   const handlePageChange = (event: any, value: number) => {
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0)
     setPage(value)
     setQuery({ ...query, page: Number(value) })
   }
 
   return (
-    <Box className="flex-1">
+    <Box className="flex-1" style={{ marginTop: '20px' }}>
       <Card>
         <>
-
-        {threadList?.rows?.some((item: any) => item.is_highlight !== "0") && (
-          <Top>
-            {isFetching ? (
+          {threadList?.rows?.some((item: any) => item.is_highlight !== '0') && (
+            <Top>
+              {isFetching ? (
+                <List>
+                  <ListItem>
+                    <Skeleton className="w-full" height={81}></Skeleton>
+                  </ListItem>
+                </List>
+              ) : (
+                <List>
+                  {threadList?.rows
+                    ?.filter((item: any) => item.is_highlight !== '0')
+                    .map((item: any) => (
+                      <Post data={item} key={item.thread_id} />
+                    ))}
+                </List>
+              )}
+            </Top>
+          )}
+          <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
+            {isFetching || !threadList?.rows?.length ? (
               <List>
                 <ListItem>
-                  <Skeleton className="w-full" height={81}></Skeleton>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
+                </ListItem>
+                <ListItem>
+                  <Skeleton
+                    className="w-full"
+                    width={961}
+                    height={81}
+                  ></Skeleton>
                 </ListItem>
               </List>
             ) : (
               <List>
                 {threadList?.rows
-                  ?.filter((item: any) => item.is_highlight !== '0')
+                  ?.filter((item: any) => item.is_highlight == '0')
                   .map((item: any) => (
                     <Post data={item} key={item.thread_id} />
-                  ))}         
+                  ))}
               </List>
             )}
-          </Top>
-        )}
-          <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
-          {isFetching || !threadList?.rows?.length ? (
-              <List>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>  
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton className="w-full" width={961} height={81}></Skeleton>
-                </ListItem>
-              </List>
-            ) : (
-              <List>
-                {threadList?.rows
-                  ?.filter((item:any) => item.is_highlight == "0")
-                  .map((item:any) => (
-                <Post data={item} key={item.thread_id} />
-              ))}
-              </List>
-            )}
-
           </Normal>
         </>
       </Card>
