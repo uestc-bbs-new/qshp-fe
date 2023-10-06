@@ -1,4 +1,4 @@
-import { Box, List, ListItem, Skeleton } from '@mui/material'
+import { Box, List, Skeleton } from '@mui/material'
 
 import { useAppState } from '@/states'
 
