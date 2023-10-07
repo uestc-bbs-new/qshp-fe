@@ -8,7 +8,7 @@ import {
 } from '@/common/interfaces/response'
 import request from '@/utils/request'
 
-const commonUrl = 'http://222.197.183.89:65342/star/api/forum/v1'
+const commonUrl = '/star/api/forum/v1'
 
 export const getForumList = () => {
   return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)
