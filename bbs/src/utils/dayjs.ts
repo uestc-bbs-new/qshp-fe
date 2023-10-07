@@ -6,8 +6,6 @@ dayjs.locale('zh-cn')
 dayjs.extend(calendar)
 
 export const chineseTime = (time: number) => {
-  console.log('time:', time)
-
   return dayjs(time).calendar(null, {
     sameDay: '[今天] hh:mm', // The same day ( Today at 2:30 AM )
     nextDay: '[明天] hh:mm', // The next day ( Tomorrow at 2:30 AM )

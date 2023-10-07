@@ -57,12 +57,6 @@ const Announcement = () => {
     () => getAnnouncement(),
     {
       enabled: true,
-      onSuccess: (data) => {
-        console.log('Data fetched successfully:', data)
-      },
-      onError: (error) => {
-        console.error('Error fetching data:', error)
-      },
     }
   )
 
