@@ -1,7 +1,6 @@
-import dayjs from 'dayjs'
 import Vditor from 'vditor'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
@@ -11,12 +10,32 @@ import { getThreadsInfo, replyThreads } from '@/apis/thread'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
+import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
+  const location = useLocation()
+  const [thread_id, setTread_id] = useState(
+    location.pathname.split('/').pop() as string
+  )
+
+  const [query, setQuery] = useState({
+    thread_id: thread_id,
+    page: 1,
+  })
+
+  const {
+    data: info,
+    isLoading: infoLoading,
+    refetch,
+  } = useQuery([query], () => {
+    return getThreadsInfo(thread_id, page)
+  })
 
   const handleSubmit = async () => {
     if (vd?.getValue()) {
@@ -31,23 +50,29 @@ function Thread() {
     }
   }
 
-  const location = useLocation()
-
-  const thread_id = location.pathname.split('/').pop() as string
-
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
-
-  const { data: info, isLoading: infoLoading } = useQuery([page], () => {
-    console.log('请求帖子详情')
-    return getThreadsInfo(thread_id, page)
-  })
+  useEffect(() => {
+    if ((location.pathname.split('/').pop() as string) !== thread_id) {
+      setTread_id(location.pathname.split('/').pop() as string)
+      set_page(1)
+      setQuery({
+        ...query,
+        page: 1,
+        thread_id: thread_id,
+      })
+    } else {
+      setQuery({
+        ...query,
+        page: page,
+      })
+    }
+    refetch()
+  }, [location])
 
   const reply_floor = useRef({
     floor: 1,
     post_id: -1,
   })
+
   const set_reply = (floor: number) => {
     reply_floor.current.floor = floor
     const reply_item = info?.rows.find((item) => item.position === floor)
