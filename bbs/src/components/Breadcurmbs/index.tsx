@@ -8,6 +8,7 @@ const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   '&:hover': {
     textDecoration: 'underline',
   },
+  color: theme.palette.primary.main,
 }))
 
 const Breadcrumbs = () => {
