@@ -9,6 +9,7 @@ import {
 import request from '@/utils/request'
 
 const commonUrl = ''
+// const commonUrl = ''
 
 export const getForumList = () => {
   return request.get<null, ForumList>(
@@ -41,7 +42,6 @@ export const searchThreads = (params: FormData) => {
 }
 
 export const searchUsers = (params: object) => {
-  console.log(`${commonUrl}/star/api/forum/v1/global/search`)
   return request.get<object, { total: number; rows: UserInfo[] }>(
     `${commonUrl}/star/api/forum/v1/global/search`,
     { params: params }
