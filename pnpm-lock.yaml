@@ -57,8 +57,8 @@ importers:
         specifier: ^0.14.0
         version: registry.npmmirror.com/react-swipeable-views@0.14.0(react@18.2.0)
       vditor:
-        specifier: ^3.9.0
-        version: registry.npmmirror.com/vditor@3.9.0
+        specifier: ^3.9.6
+        version: registry.npmmirror.com/vditor@3.9.6
     devDependencies:
       '@tailwindcss/line-clamp':
         specifier: ^0.4.2
@@ -4831,10 +4831,10 @@ packages:
     version: 1.0.2
     dev: true
 
-  registry.npmmirror.com/vditor@3.9.0:
-    resolution: {integrity: sha512-CLLtrexUY/LGN1Lp1iu242Uq9GuNP98UTXFRY9hjTNFkpVH9L4M3jrQ9yIZ711zYwsl78GxKeskuU7WieA96ow==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vditor/-/vditor-3.9.0.tgz}
+  registry.npmmirror.com/vditor@3.9.6:
+    resolution: {integrity: sha512-97sPNHnBpfEFnk5WARCpmdKxgUiPtp0/fPLAUmzZ+axFFf7kExWHRNIUO7OTQzEUMJP/rcXESQTlYGhgKYrsOQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vditor/-/vditor-3.9.6.tgz}
     name: vditor
-    version: 3.9.0
+    version: 3.9.6
     dependencies:
       diff-match-patch: registry.npmmirror.com/diff-match-patch@1.0.5
     dev: false
