@@ -36,6 +36,7 @@ const RersultForUsers = ({
   )
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (location.search.split('=')[1].split('&')[0] == 'user') {
       refetch()
     }

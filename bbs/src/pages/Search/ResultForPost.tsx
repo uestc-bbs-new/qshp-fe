@@ -46,6 +46,7 @@ const RersultForPost = ({
   }, [location])
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (location.search.split('=')[1].split('&')[0] == 'post') {
       refetch()
     }

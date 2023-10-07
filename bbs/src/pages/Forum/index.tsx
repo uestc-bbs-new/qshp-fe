@@ -119,7 +119,17 @@ function Forum() {
       forum_id: routeParam.id,
     })
     refetch()
-  }, [query.type, query.page, location])
+  }, [query.type, query.page])
+
+  useEffect(() => {
+    setQuery({
+      ...query,
+      page: 1,
+      type: 1,
+      forum_id: routeParam.id,
+    })
+    refetch()
+  }, [location])
 
   const handleSortChange = (event: SelectChangeEvent) => {
     window.scrollTo(0, 0)
