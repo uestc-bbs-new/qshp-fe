@@ -15,7 +15,7 @@
 import { smilies_array, smilies_type } from './config'
 
 var EXTRAFUNC = [],
-  allowhtml = true,
+  allowhtml = false,
   allowsmilies = true,
   parsetype = 0,
   allowbbcode = true,

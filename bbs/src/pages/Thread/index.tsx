@@ -109,7 +109,7 @@ function Thread() {
                   <>
                     <strong>{item.subject}</strong>
                     <div className="text-sm text-slate-300 flex justify-between">
-                      <div>{dayjs(item.dateline * 1000).format()}</div>
+                      <div>{chineseTime(item.dateline * 1000)}</div>
                       <div className="flex flex-row gap-3 justify-between">
                         <div
                           className="hover:text-blue-500"
