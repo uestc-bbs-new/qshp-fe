@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { set } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
@@ -47,6 +46,7 @@ const RersultForPost = ({
   }, [location])
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     if (location.search.split('=')[1].split('&')[0] == 'post') {
       refetch()
     }
