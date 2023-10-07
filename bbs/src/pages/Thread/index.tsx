@@ -104,37 +104,35 @@ function Thread() {
         info?.rows.map((item, index) => {
           return (
             <Card className="mb-4" key={item.position}>
-              <>
-                <section id={item.position.toString()}>
-                  <Floor item={item} set_reply={set_reply}>
-                    <>
-                      <strong>{item.subject}</strong>
-                      <div className="text-sm text-slate-300 flex justify-between">
-                        <div>{chineseTime(item.dateline * 1000)}</div>
-                        <div className="flex flex-row gap-3 justify-between">
-                          <div
-                            className="hover:text-blue-500"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                window.location.href.split('#')[0] +
-                                  '#' +
-                                  item.position
-                              )
-                            }}
-                          >
-                            分享
-                          </div>
-                          <div>#{item.position}</div>
+              <section id={item.position.toString()}>
+                <Floor item={item} set_reply={set_reply}>
+                  <>
+                    <strong>{item.subject}</strong>
+                    <div className="text-sm text-slate-300 flex justify-between">
+                      <div>{dayjs(item.dateline * 1000).format()}</div>
+                      <div className="flex flex-row gap-3 justify-between">
+                        <div
+                          className="hover:text-blue-500"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              window.location.href.split('#')[0] +
+                                '#' +
+                                item.position
+                            )
+                          }}
+                        >
+                          分享
                         </div>
+                        <div>#{item.position}</div>
                       </div>
-                      <ParsePost
-                        message={item.message}
-                        isMd={item.is_markdown}
-                      ></ParsePost>
-                    </>
-                  </Floor>
-                </section>
-              </>
+                    </div>
+                    <ParsePost
+                      message={item.message}
+                      isMd={item.is_markdown}
+                    ></ParsePost>
+                  </>
+                </Floor>
+              </section>
             </Card>
           )
         })
