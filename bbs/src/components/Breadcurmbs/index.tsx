@@ -3,6 +3,8 @@ import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { Breadcrumbs as MuiBreadcrumbs } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
+import { useAppState } from '@/states'
+
 const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   textDecoration: 'none',
   '&:hover': {
@@ -71,6 +73,8 @@ const Breadcrumbs = () => {
   const location = useLocation()
   const pathnames = location.pathname.split('/').filter((x) => x)
 
+  const { state } = useAppState()
+
   return (
     <MuiBreadcrumbs>
       <StyledRouterLink color="inherit" to="/">
@@ -86,12 +90,21 @@ const Breadcrumbs = () => {
         if (isSecondLast) {
           return null // 跳过倒数第二个面包屑导航链接
         }
-        return isLast ? (
-          <span key={routeTo}>{displayName}</span>
+
+        if (!isLast) {
+          return (
+            <StyledRouterLink key={routeTo} color="inherit" to={routeTo}>
+              {displayName}
+            </StyledRouterLink>
+          )
+        }
+
+        return Number(name) > 500 ? (
+          <span key={routeTo}>
+            {state.selectedPost ? state.selectedPost : name}
+          </span>
         ) : (
-          <StyledRouterLink key={routeTo} color="inherit" to={routeTo}>
-            {displayName}
-          </StyledRouterLink>
+          <span key={routeTo}>{displayName}</span>
         )
       })}
     </MuiBreadcrumbs>

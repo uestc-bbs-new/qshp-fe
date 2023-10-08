@@ -7,6 +7,7 @@ import React, { Box, Stack, Typography, useTheme } from '@mui/material'
 
 import { Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
 import Avatar from '../Avatar'
@@ -31,6 +32,12 @@ const formatNumber = (num: any) => {
 
 const Post = ({ data, small, className }: PostProps) => {
   const theme = useTheme()
+
+  const { dispatch } = useAppState()
+  const handleClick = () => {
+    dispatch({ type: 'set post', payload: data.subject })
+  }
+
   return (
     <Box className={small ? className : `${className} p-0.5`}>
       <Box
@@ -61,6 +68,7 @@ const Post = ({ data, small, className }: PostProps) => {
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
+                  onClick={handleClick}
                 >
                   <Box>
                     <Chip small={small} text={data.name} />

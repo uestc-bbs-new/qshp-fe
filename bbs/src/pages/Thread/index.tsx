@@ -10,6 +10,7 @@ import { getThreadsInfo, replyThreads } from '@/apis/thread'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
@@ -29,13 +30,25 @@ function Thread() {
     page: 1,
   })
 
+  const { dispatch } = useAppState()
   const {
     data: info,
     isLoading: infoLoading,
     refetch,
-  } = useQuery([query], () => {
-    return getThreadsInfo(thread_id, page)
-  })
+  } = useQuery(
+    [query],
+    () => {
+      return getThreadsInfo(thread_id, page)
+    },
+    {
+      onSuccess: (data) => {
+        if (data && data.total > 0) {
+          const subject = data.rows[0].subject
+          dispatch({ type: 'set post', payload: subject })
+        }
+      },
+    }
+  )
 
   const handleSubmit = async () => {
     if (vd?.getValue()) {
