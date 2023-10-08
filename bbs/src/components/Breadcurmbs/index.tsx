@@ -75,6 +75,11 @@ const Breadcrumbs = () => {
 
   const { state } = useAppState()
 
+  const searchParams = new URLSearchParams(location.search)
+  const searchName = searchParams.get('name')
+  if (searchName) {
+    pathnames.push(searchName)
+  }
   return (
     <MuiBreadcrumbs>
       <StyledRouterLink color="inherit" to="/">
@@ -88,7 +93,9 @@ const Breadcrumbs = () => {
         const displayName = dictionary[name] || name
 
         if (isSecondLast) {
-          return null // 跳过倒数第二个面包屑导航链接
+          return pathnames[index] !== 'search' ? null : (
+            <span key={routeTo}>{displayName}</span>
+          )
         }
 
         if (!isLast) {
