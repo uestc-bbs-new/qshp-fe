@@ -54,7 +54,7 @@ const Post = ({ data, small, className }: PostProps) => {
             <Stack
               justifyContent="space-between"
               direction="column"
-              sx={{ minWidth: 350 }}
+              sx={small ? { minWidth: 0 } : { minWidth: 350 }}
             >
               <Stack direction="row">
                 <Link
@@ -63,17 +63,10 @@ const Post = ({ data, small, className }: PostProps) => {
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
                 >
-                  {small ? (
-                    <Box
-                      width={150}
-                      style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                    >
-                      <Chip text={data.name} />
-                      {data.subject}
-                    </Box>
-                  ) : (
-                    <Box>{data.subject}</Box>
-                  )}
+                  <Box>
+                    {data.name && <Chip small={small} text={data.name} />}
+                    {data.subject}
+                  </Box>
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">

@@ -85,7 +85,7 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 }
 
 function Forum() {
-  const [sortBy, setSort] = useState('1')
+  const [sortBy, setSort] = useState('3')
   //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
@@ -93,7 +93,7 @@ function Forum() {
   const [total, setTotal] = useState(0)
   const [query, setQuery] = useState({
     page: 1,
-    type: 1,
+    type: 3,
     forum_id: routeParam.id,
   })
 

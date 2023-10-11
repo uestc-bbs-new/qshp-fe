@@ -8,8 +8,8 @@ import {
 } from '@/common/interfaces/response'
 import request from '@/utils/request'
 
-const commonUrl = 'http://222.197.183.89:65342'
-// const commonUrl = ''
+//const commonUrl = 'http://222.197.183.89:65342'
+const commonUrl = ''
 
 export const getForumList = () => {
   return request.get<null, ForumList>(
