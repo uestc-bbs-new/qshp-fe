@@ -22,24 +22,27 @@ function Thread() {
     if (vd?.getValue()) {
       await replyThreads(
         Number(thread_id),
+        vd?.getValue(),
         reply_floor.current.post_id === -1
-          ? info?.rows[0].post_id
-          : reply_floor.current.post_id,
-        vd?.getValue()
+          ? undefined
+          : reply_floor.current.post_id
       )
+      vd?.setValue('')
     }
   }
 
   const location = useLocation()
 
   const thread_id = location.pathname.split('/').pop() as string
+
   const [searchParams, setSearchParams] = useSearchParams()
-  const { data: info, isLoading: infoLoading } = useQuery(
-    ['postDetails'],
-    () => {
-      return getThreadsInfo(thread_id, Number(searchParams.get('page') || '1'))
-    }
-  )
+
+  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
+
+  const { data: info, isLoading: infoLoading } = useQuery([page], () => {
+    console.log('请求帖子详情')
+    return getThreadsInfo(thread_id, page)
+  })
 
   const reply_floor = useRef({
     floor: 1,
@@ -64,65 +67,57 @@ function Thread() {
 
   return (
     <Box className="flex-1">
-      {/* <Box className="mb-6">
-        <Box>
-          <Chip text={'123'} />
-          {info?.rows[0].subject || 'xxxx'}
-        </Box>
-        <Typography>TagIcon, Time, {info?.rows[0].author || 'xxxx'}</Typography>
-      </Box> */}
-      {/* <Card className="mb-4 py-4">
-        <Box>{info?.rows[0].message || 'xxxx'}</Box>
-      </Card>
-      <Card className="mb-4">
-        <Floor floor={1} set_reply={set_reply}>
-          <p>xxxx</p>
-        </Floor>
-      </Card> */}
       <Pagination
-        count={10}
+        count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(`page=${value}`)
-          window.location.reload()
+          set_page(value)
         }}
       />
-      {info?.rows.map((item, index) => {
-        return (
-          <Card className="mb-4" key={item.position}>
-            <>
-              <section id={item.position.toString()}>
-                <Floor item={item} set_reply={set_reply}>
-                  <>
-                    <div className="text-sm text-slate-300 flex justify-between">
-                      <div>{dayjs(item.dateline * 1000).format()}</div>
-                      <div className="flex flex-row gap-3 justify-between">
-                        <div
-                          className="hover:text-blue-500"
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              window.location.href.split('#')[0] +
-                                '#' +
-                                item.position
-                            )
-                          }}
-                        >
-                          分享
+      {info?.rows ? (
+        info?.rows.map((item, index) => {
+          return (
+            <Card className="mb-4" key={item.position}>
+              <>
+                <section id={item.position.toString()}>
+                  <Floor item={item} set_reply={set_reply}>
+                    <>
+                      <strong>{item.subject}</strong>
+                      <div className="text-sm text-slate-300 flex justify-between">
+                        <div>{dayjs(item.dateline * 1000).format()}</div>
+                        <div className="flex flex-row gap-3 justify-between">
+                          <div
+                            className="hover:text-blue-500"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                window.location.href.split('#')[0] +
+                                  '#' +
+                                  item.position
+                              )
+                            }}
+                          >
+                            分享
+                          </div>
+                          <div>#{item.position}</div>
                         </div>
-                        <div>#{item.position}</div>
                       </div>
-                    </div>
-                    <ParsePost
-                      message={item.message}
-                      isMd={item.is_markdown}
-                    ></ParsePost>
-                  </>
-                </Floor>
-              </section>
-            </>
-          </Card>
-        )
-      })}
+                      <ParsePost
+                        message={item.message}
+                        isMd={item.is_markdown}
+                      ></ParsePost>
+                    </>
+                  </Floor>
+                </section>
+              </>
+            </Card>
+          )
+        })
+      ) : infoLoading ? (
+        <>请求帖子详细信息中</>
+      ) : (
+        <>帖子详细信息获取错误</>
+      )}
 
       <Card className="py-4">
         <Stack direction="row">

@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react'
+import dayjs from 'dayjs'
+
+import React, { useEffect, useState } from 'react'
 
 import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
 
 import coverDark from '@/assets/cover-dark.jpg'
 import coverLight from '@/assets/cover-light.jpg'
+import { PostFloor } from '@/common/interfaces/response'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 
@@ -12,7 +15,7 @@ import Chip from '../Chip'
 
 type ItemProps = {
   title: string
-  count: number
+  count: number | string
 }
 const GridItem = ({ title, count }: ItemProps) => {
   const theme = useTheme()
@@ -31,11 +34,17 @@ const GridItem = ({ title, count }: ItemProps) => {
   )
 }
 
-const Cover = ({ uid }: { uid: number }) => {
+const Cover = ({ item }: { item: PostFloor }) => {
   const { state } = useAppState()
+  const [data, set_data] = useState({})
   useEffect(() => {
     console.log(state.theme)
+    console.log(item)
   }, [])
+  // const { data: info, isLoading: infoLoading } = useQuery([], () => {
+  //   console.log('请求个人信息详情')
+  //   return getUserInfo(uid)
+  // })
   return (
     <Box style={{ width: '400px' }} className="text-sm text-white">
       <Box
@@ -48,19 +57,24 @@ const Cover = ({ uid }: { uid: number }) => {
       >
         <Stack direction="row">
           <Avatar
-            uid={uid}
+            uid={item.author_id}
             alt="avatar"
             className="mr-4"
             sx={{ width: 100, height: 100 }}
             variant="rounded"
           />
           <Box className="flex-1">
-            <Typography>{123123}</Typography>
+            <Typography>{item.author}</Typography>
             <Chip className="mb-2" text="test" />
             <Box className="rounded-lg p-4 bg-opacity-40 bg-black">
-              <Typography fontSize="inherit">注册： 2020/01/20</Typography>
+              <Typography fontSize="inherit">
+                注册：{dayjs(item.registered_at * 1000).format()}
+              </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时长： 20小时
+                在线时长： {item.online_time}
+              </Typography>
+              <Typography fontSize="inherit" className="mt-2">
+                上次登录: {dayjs(item.last_login_at * 1000).format()}
               </Typography>
             </Box>
           </Box>
@@ -68,11 +82,14 @@ const Cover = ({ uid }: { uid: number }) => {
       </Box>
       <Divider variant="middle" />
       <Grid container>
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={item.droplets} />
+        <GridItem title="用户组" count={item.user_group} />
+        {/* <GridItem
+          title=""
+          count={}
+        /> */}
+        {/* <GridItem title="水滴" count={1} />
+        <GridItem title="水滴" count={1} /> */}
       </Grid>
       <Divider variant="middle" />
       {/* <Box className="p-4">
@@ -83,14 +100,14 @@ const Cover = ({ uid }: { uid: number }) => {
 }
 
 type CardProps = {
-  uid: number
+  item: PostFloor
   children: React.ReactElement
 }
 
-const UserCard = ({ uid, children }: CardProps) => {
+const UserCard = ({ item, children }: CardProps) => {
   return (
     <>
-      <Tooltip title={<Cover uid={uid} />}>{children}</Tooltip>
+      <Tooltip title={<Cover item={item} />}>{children}</Tooltip>
     </>
   )
 }
