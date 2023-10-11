@@ -5,10 +5,15 @@ import { Box, Stack, Typography, useTheme } from '@mui/material'
 import Banner from '../Banner'
 import Breadcrumbs from '../Breadcurmbs'
 
+const headerImg = new URL(
+  `../../assets/header.jpg`,
+  import.meta.url
+).href.toString()
+
 const WelcomeBanner = () => {
   const theme = useTheme()
   return (
-    <Banner src="https://www.minebbs.com/data/img/bg-grass.png">
+    <Banner src={headerImg}>
       <Box className="text-white text-center">
         <Typography variant="h4">清水河畔</Typography>
         <Typography color={theme.palette.grey[400]}>

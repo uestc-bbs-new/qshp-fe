@@ -46,23 +46,25 @@ const Ordinate = ({ data }: ForumData) => {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {data?.forums?.map((item) => (
-            <Link
-              to={`/forum/${item.fid}`}
-              key={item.name}
-              underline="none"
-              color="inherit"
-            >
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
-                <ListItemText>
-                  <Typography color="inherit" className="font-bold">
-                    {item.name}
-                  </Typography>
-                </ListItemText>
-              </ListItemButton>
-            </Link>
-          ))}
+          {data?.forums
+            ?.filter((item: any) => item.fid !== 0)
+            .map((item) => (
+              <Link
+                to={`/forum/${item.fid}`}
+                key={item.name}
+                underline="none"
+                color="inherit"
+              >
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
+                  <ListItemText>
+                    <Typography color="inherit" className="font-bold">
+                      {item.name}
+                    </Typography>
+                  </ListItemText>
+                </ListItemButton>
+              </Link>
+            ))}
         </List>
       </Collapse>
     </>

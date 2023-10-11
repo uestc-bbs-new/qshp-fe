@@ -59,6 +59,11 @@ const TopBar = () => {
     })
   }
 
+  const logoImg = new URL(
+    `../../assets/qshp-logo.png`,
+    import.meta.url
+  ).href.toString()
+
   return (
     <AppBar
       position="fixed"
@@ -76,7 +81,11 @@ const TopBar = () => {
             <Menu />
           </IconButton>
           <Link to="/" className="text-white">
-            logo 清水河畔
+            <img
+              src={logoImg}
+              alt="logo"
+              style={{ height: '50px', width: 'auto', marginRight: '8px' }}
+            />
           </Link>
         </Stack>
         <Stack direction="row" justifyContent="center" className="basis-1/2">
