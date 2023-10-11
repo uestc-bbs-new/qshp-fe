@@ -71,7 +71,7 @@ const Cover = ({ item }: { item: PostFloor }) => {
                 注册：{dayjs(item.registered_at * 1000).format()}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时长： {item.online_time}
+                在线时长： {item.online_time} 小时
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
                 上次登录: {dayjs(item.last_login_at * 1000).format()}
@@ -82,7 +82,7 @@ const Cover = ({ item }: { item: PostFloor }) => {
       </Box>
       <Divider variant="middle" />
       <Grid container>
-        <GridItem title="水滴" count={item.droplets} />
+        <GridItem title="水滴" count={`${item.droplets} 滴`} />
         <GridItem title="用户组" count={item.user_group} />
         {/* <GridItem
           title=""

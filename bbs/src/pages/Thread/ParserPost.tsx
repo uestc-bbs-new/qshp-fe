@@ -2,6 +2,8 @@ import Vditor from 'vditor'
 
 import { useEffect, useRef } from 'react'
 
+import { Typography } from '@mui/material'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
@@ -25,7 +27,7 @@ function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
   useEffect(() => {
     Vditor.preview(el.current as unknown as HTMLDivElement, message)
   }, [])
-  return <div ref={el}></div>
+  return <Typography color="text.primary" ref={el}></Typography>
 }
 
 export function ParsePost({ message, isMd }: PropsType) {

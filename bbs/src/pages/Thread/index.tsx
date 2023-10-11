@@ -126,6 +126,7 @@ function Thread() {
                       <div className="flex flex-row gap-3 justify-between">
                         <div
                           className="hover:text-blue-500"
+                          style={{ cursor: 'pointer' }}
                           onClick={() => {
                             navigator.clipboard.writeText(
                               window.location.href.split('#')[0] +
