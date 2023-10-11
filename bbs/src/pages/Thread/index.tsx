@@ -1,7 +1,6 @@
-import dayjs from 'dayjs'
 import Vditor from 'vditor'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
@@ -11,12 +10,45 @@ import { getThreadsInfo, replyThreads } from '@/apis/thread'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
+import { useAppState } from '@/states'
+import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
+  const location = useLocation()
+  const [thread_id, setTread_id] = useState(
+    location.pathname.split('/').pop() as string
+  )
+
+  const [query, setQuery] = useState({
+    thread_id: thread_id,
+    page: 1,
+  })
+
+  const { dispatch } = useAppState()
+  const {
+    data: info,
+    isLoading: infoLoading,
+    refetch,
+  } = useQuery(
+    [query],
+    () => {
+      return getThreadsInfo(thread_id, page)
+    },
+    {
+      onSuccess: (data) => {
+        if (data && data.total > 0) {
+          const subject = data.rows[0].subject
+          dispatch({ type: 'set post', payload: subject })
+        }
+      },
+    }
+  )
 
   const handleSubmit = async () => {
     if (vd?.getValue()) {
@@ -31,23 +63,29 @@ function Thread() {
     }
   }
 
-  const location = useLocation()
-
-  const thread_id = location.pathname.split('/').pop() as string
-
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
-
-  const { data: info, isLoading: infoLoading } = useQuery([page], () => {
-    console.log('请求帖子详情')
-    return getThreadsInfo(thread_id, page)
-  })
+  useEffect(() => {
+    if ((location.pathname.split('/').pop() as string) !== thread_id) {
+      setTread_id(location.pathname.split('/').pop() as string)
+      set_page(1)
+      setQuery({
+        ...query,
+        page: 1,
+        thread_id: thread_id,
+      })
+    } else {
+      setQuery({
+        ...query,
+        page: page,
+      })
+    }
+    refetch()
+  }, [location])
 
   const reply_floor = useRef({
     floor: 1,
     post_id: -1,
   })
+
   const set_reply = (floor: number) => {
     reply_floor.current.floor = floor
     const reply_item = info?.rows.find((item) => item.position === floor)
@@ -79,37 +117,35 @@ function Thread() {
         info?.rows.map((item, index) => {
           return (
             <Card className="mb-4" key={item.position}>
-              <>
-                <section id={item.position.toString()}>
-                  <Floor item={item} set_reply={set_reply}>
-                    <>
-                      <strong>{item.subject}</strong>
-                      <div className="text-sm text-slate-300 flex justify-between">
-                        <div>{dayjs(item.dateline * 1000).format()}</div>
-                        <div className="flex flex-row gap-3 justify-between">
-                          <div
-                            className="hover:text-blue-500"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                window.location.href.split('#')[0] +
-                                  '#' +
-                                  item.position
-                              )
-                            }}
-                          >
-                            分享
-                          </div>
-                          <div>#{item.position}</div>
+              <section id={item.position.toString()}>
+                <Floor item={item} set_reply={set_reply}>
+                  <>
+                    <strong>{item.subject}</strong>
+                    <div className="text-sm text-slate-300 flex justify-between">
+                      <div>{chineseTime(item.dateline * 1000)}</div>
+                      <div className="flex flex-row gap-3 justify-between">
+                        <div
+                          className="hover:text-blue-500"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              window.location.href.split('#')[0] +
+                                '#' +
+                                item.position
+                            )
+                          }}
+                        >
+                          分享
                         </div>
+                        <div>#{item.position}</div>
                       </div>
-                      <ParsePost
-                        message={item.message}
-                        isMd={item.is_markdown}
-                      ></ParsePost>
-                    </>
-                  </Floor>
-                </section>
-              </>
+                    </div>
+                    <ParsePost
+                      message={item.message}
+                      isMd={item.is_markdown}
+                    ></ParsePost>
+                  </>
+                </Floor>
+              </section>
             </Card>
           )
         })

@@ -1,6 +1,7 @@
 import { Forum } from '@/common/interfaces/response'
 
 export type State = {
+  selectedPost: string
   messages: { unread_count: number }
   drawer: boolean
   navList: Forum[]
@@ -50,6 +51,8 @@ export const stateReducer = (state: State, action: StateAction) => {
       return { ...state, theme: action.payload }
     case 'set drawer':
       return { ...state, drawer: !state.drawer }
+    case 'set post':
+      return { ...state, selectedPost: action.payload }
     default:
       return state
   }

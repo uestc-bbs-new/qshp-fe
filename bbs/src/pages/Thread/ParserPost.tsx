@@ -1,7 +1,10 @@
-import parser from 'bbcode-to-react'
 import Vditor from 'vditor'
 
 import { useEffect, useRef } from 'react'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import bbcode2html from '@/utils/bbcode/bbcode'
 
 export type PropsType = {
   message: string
@@ -9,7 +12,12 @@ export type PropsType = {
 }
 
 function ParseCode({ message }: Omit<PropsType, 'isMd'>) {
-  return <div className="parse">{parser.toReact(message)}</div>
+  return (
+    <div
+      className="parse"
+      dangerouslySetInnerHTML={{ __html: bbcode2html(message) }}
+    ></div>
+  )
 }
 
 function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
