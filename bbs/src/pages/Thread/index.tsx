@@ -18,6 +18,7 @@ import { ParsePost } from './ParserPost'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
+
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
   const [thread_id, setTread_id] = useState(

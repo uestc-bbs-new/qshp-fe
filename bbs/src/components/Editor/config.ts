@@ -1,4 +1,5 @@
 // TODO: How to take the @ user information to request?
+import { getUsername } from '@/apis/thread'
 
 const options: IOptions = {
   // change the z-index due to the mui base z-index = 1200
@@ -7,18 +8,14 @@ const options: IOptions = {
     extend: [
       {
         key: '@',
-        hint: (key: string) => {
-          // request username
-          // return a array which has all relative username and image
-          if ('vanessa'.indexOf(key.toLocaleLowerCase()) > -1) {
-            return [
-              {
-                value: '@Vanessa',
-                html: '<img src="https://avatars0.githubusercontent.com/u/970828?s=60&v=4"/> Vanessa',
-              },
-            ]
-          }
-          return []
+        hint: async (key: string) => {
+          const data = await getUsername(key)
+          return data?.rows.map((item) => {
+            return {
+              html: item.username,
+              value: `@${item.username}`,
+            }
+          })
         },
       },
     ],
