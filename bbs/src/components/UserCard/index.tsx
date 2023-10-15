@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
 
@@ -35,14 +35,6 @@ const GridItem = ({ title, count }: ItemProps) => {
 const Cover = ({ item }: { item: PostFloor }) => {
   const { state } = useAppState()
   const [data, set_data] = useState({})
-  useEffect(() => {
-    console.log(state.theme)
-    console.log(item)
-  }, [])
-  // const { data: info, isLoading: infoLoading } = useQuery([], () => {
-  //   console.log('请求个人信息详情')
-  //   return getUserInfo(uid)
-  // })
   return (
     <Box style={{ width: '400px' }} className="text-sm text-white">
       <Box
