@@ -8,6 +8,8 @@ const options: IOptions = {
       {
         key: '@',
         hint: (key: string) => {
+          // request username
+          // return a array which has all relative username and image
           if ('vanessa'.indexOf(key.toLocaleLowerCase()) > -1) {
             return [
               {
