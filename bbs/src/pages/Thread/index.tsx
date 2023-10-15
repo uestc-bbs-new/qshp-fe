@@ -73,6 +73,14 @@ function Thread() {
   }
 
   useEffect(() => {
+    if (location.hash) {
+      const hash_position = location.hash.slice(1)
+      const dom = document.getElementById(hash_position)
+      dom?.scrollIntoView()
+    }
+  }, [info])
+
+  useEffect(() => {
     if ((location.pathname.split('/').pop() as string) !== thread_id) {
       setTread_id(location.pathname.split('/').pop() as string)
       setQuery({
