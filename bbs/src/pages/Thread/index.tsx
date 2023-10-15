@@ -67,6 +67,7 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
+      setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
     }
   }
 
@@ -175,7 +176,7 @@ function Thread() {
             variant="rounded"
           />
           <Box className="flex-1">
-            <Editor setVd={setVd} minHeight={150} />
+            <Editor setVd={setVd} minHeight={300} />
             <Box className="text-right">
               <Button variant="text" onClick={handleSubmit}>
                 回复帖子
