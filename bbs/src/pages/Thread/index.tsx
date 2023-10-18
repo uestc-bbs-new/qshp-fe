@@ -18,19 +18,27 @@ import { ParsePost } from './ParserPost'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
+
   const [searchParams, setSearchParams] = useSearchParams()
-  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
   const location = useLocation()
   const [thread_id, setTread_id] = useState(
     location.pathname.split('/').pop() as string
   )
 
-  const [query, setQuery] = useState({
-    thread_id: thread_id,
-    page: 1,
-  })
+  /**
+   * 用于记录页面的 query 参数
+   * @typedef {{ thread_id: number, page: number}} Query
+   */
+  const [query, setQuery] = useState(
+    /** @type {Query} */
+    {
+      thread_id: thread_id,
+      page: 1,
+    }
+  )
 
   const { dispatch } = useAppState()
+
   const {
     data: info,
     isLoading: infoLoading,
@@ -38,7 +46,7 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, page)
+      return getThreadsInfo(thread_id, query.page)
     },
     {
       onSuccess: (data) => {
@@ -60,13 +68,21 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
+      setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
     }
   }
 
   useEffect(() => {
+    if (location.hash) {
+      const hash_position = location.hash.slice(1)
+      const dom = document.getElementById(hash_position)
+      dom?.scrollIntoView()
+    }
+  }, [info])
+
+  useEffect(() => {
     if ((location.pathname.split('/').pop() as string) !== thread_id) {
       setTread_id(location.pathname.split('/').pop() as string)
-      set_page(1)
       setQuery({
         ...query,
         page: 1,
@@ -75,7 +91,7 @@ function Thread() {
     } else {
       setQuery({
         ...query,
-        page: page,
+        page: Number(searchParams.get('page')) || 1,
       })
     }
     refetch()
@@ -110,7 +126,10 @@ function Thread() {
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(`page=${value}`)
-          set_page(value)
+          setQuery({
+            ...query,
+            page: value,
+          })
         }}
       />
       {info?.rows ? (
@@ -166,7 +185,7 @@ function Thread() {
             variant="rounded"
           />
           <Box className="flex-1">
-            <Editor setVd={setVd} minHeight={150} />
+            <Editor setVd={setVd} minHeight={300} />
             <Box className="text-right">
               <Button variant="text" onClick={handleSubmit}>
                 回复帖子

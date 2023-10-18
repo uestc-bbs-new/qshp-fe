@@ -241,3 +241,13 @@ export interface UserInfos {
   droplets: number
   prestiges: number
 }
+
+export interface UserName {
+  user_id: number
+  username: string
+}
+
+export interface UserNameFind {
+  total: number
+  rows: UserName[]
+}
