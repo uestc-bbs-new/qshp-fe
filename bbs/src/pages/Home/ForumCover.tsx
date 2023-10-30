@@ -50,7 +50,10 @@ const ForumCover = ({ data }: ForumData) => {
   }
 
   return (
-    <Box className="relative rounded text-white overflow-hidden">
+    <Box
+      className="relative rounded text-white overflow-hidden"
+      style={{ width: '100%' }}
+    >
       <Box
         className="absolute top-0 left-0 h-full w-full"
         style={{
@@ -165,7 +168,7 @@ export const ForumGroup = ({ data }: ForumData) => {
           {data?.forums
             ?.filter((item) => item.name)
             .map((item, index) => (
-              <Grid item md={6} xl={4} key={index}>
+              <Grid item md={6} xl={4} key={index} style={{ width: '100%' }}>
                 <ForumCover data={item} />
               </Grid>
             ))}
