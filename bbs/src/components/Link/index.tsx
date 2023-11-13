@@ -9,13 +9,16 @@ type LinkProps = MuiLinkProps & {
 const Link = ({ to, ...other }: LinkProps) => {
   const navigate = useNavigate()
 
-  const routerNavigate = () => {
-    to && navigate(to)
+  const routerNavigate = (e) => {
+    if (to) {
+      navigate(to)
+      e.preventDefault()
+    }
   }
 
   return (
     <span onClick={routerNavigate} className="cursor-pointer">
-      <MuiLink {...other} />
+      <MuiLink href={to} {...other} />
     </span>
   )
 }
