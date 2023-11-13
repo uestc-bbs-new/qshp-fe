@@ -64,14 +64,17 @@ const ForumCover = ({ data }: ForumData) => {
       ></Box>
       <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
       <Box className="relative z-10 p-4">
-        <Link
-          className="font-bold"
-          color="inherit"
-          underline="hover"
-          to={`forum/${data.fid}`}
-        >
-          {data.name}
-        </Link>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Link
+            className="font-bold"
+            color="inherit"
+            underline="hover"
+            to={`forum/${data.fid}`}
+          >
+            <Typography variant="h6">{data.name}</Typography>
+          </Link>
+          <Typography>{data.todayposts || ''}</Typography>
+        </Stack>
 
         {/* <Stack direction="row">
           <UserCard uid={12}>
@@ -79,34 +82,6 @@ const ForumCover = ({ data }: ForumData) => {
           </UserCard>
         </Stack> */}
 
-        <Stack direction="row" className="mt-4">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <RemoveRedEye />
-            <Typography className="pl-2 text-right">{data.views}</Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            className="pl-6"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <ModeComment />
-            <Typography className="pl-2">{data.replies}</Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            className="pl-6"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <ThumbUpAlt />
-            <Typography className="pl-2">{data.favtimes}</Typography>
-          </Stack>
-        </Stack>
         <Stack direction="row" className="mt-4">
           <Box className="mr-4">
             <Avatar
@@ -124,7 +99,6 @@ const ForumCover = ({ data }: ForumData) => {
                 to={`/thread/${data.tid}`}
               >
                 <Box className="line-clamp-1">
-                  <Chip text={data.name} />
                   {data.subject}
                 </Box>
               </Link>
