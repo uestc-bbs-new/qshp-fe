@@ -134,7 +134,6 @@ export const ForumGroup = ({ data }: ForumData) => {
       <ListItemButton onClick={handleClick}>
         <ListItemText>{data.name}</ListItemText>
         <Stack direction="row" alignItems="baseline">
-          {moderators.length}
           {moderators.length > 0 && <Typography>分区版主：</Typography>}
           {moderators.map((moderator, index) => [
             <Link key={index} color="inherit" variant="subtitle2" to={`/user/name/${moderator}`}>{moderator}</Link>,
