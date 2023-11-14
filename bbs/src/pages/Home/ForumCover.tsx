@@ -83,35 +83,36 @@ const ForumCover = ({ data }: ForumData) => {
         </Stack> */}
 
         <Stack direction="row" className="mt-4">
-          <Box className="mr-4">
+          {!data.latest_thread && <Box>暂无新帖</Box>}
+          <Box className="mr-4" visibility={data.latest_thread ? 'visible' : 'hidden'}>
             <Avatar
-              alt={data.author}
-              uid={data.authorid}
+              alt={data.latest_thread?.lastpost_author}
+              uid={data.latest_thread?.lastpost_authorid}
               sx={{ width: 40, height: 40 }}
               variant="rounded"
             />
           </Box>
-          <Box className="flex-1">
+          {data.latest_thread && <Box className="flex-1">
             <Stack direction="row">
               <Link
                 color="inherit"
                 underline="hover"
-                to={`/thread/${data.tid}`}
+                to={`/thread/${data.latest_thread?.thread_id}`}
               >
                 <Box className="line-clamp-1">
-                  {data.subject}
+                  {data.latest_thread?.subject}
                 </Box>
               </Link>
             </Stack>
             <Stack direction="row">
-              <Typography>{chineseTime(data.dateline * 1000)}</Typography>
+              <Typography>{chineseTime(data.latest_thread?.lastpost_time * 1000)}</Typography>
               <Typography className="mx-1">·</Typography>
-              <Link color="inherit">{data.author}</Link>
+              <Link color="inherit">{data.latest_thread?.lastpost_author}</Link>
               {/* <UserCard uid={data.authorid}>
                 <Link color="inherit">{data.author}</Link>
               </UserCard> */}
             </Stack>
-          </Box>
+          </Box>}
         </Stack>
       </Box>
     </Box>
@@ -139,7 +140,7 @@ export const ForumGroup = ({ data }: ForumData) => {
       />
       <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
         <Grid container spacing={2}>
-          {data?.forums
+          {data?.children
             ?.filter((item) => item.name)
             .map((item, index) => (
               <Grid item md={6} xl={4} key={index} style={{ width: '100%' }}>

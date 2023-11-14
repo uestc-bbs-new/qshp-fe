@@ -27,7 +27,7 @@ const Layout = () => {
       // 对板块信息进行处理，得到嵌套的板块关系
       dispatch({
         type: 'set navList',
-        payload: data.group,
+        payload: data,
       })
     },
   })

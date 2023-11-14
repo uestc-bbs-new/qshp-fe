@@ -1,3 +1,10 @@
+type ForumLastestThread = {
+  thread_id: number
+  subject: string
+  lastpost_time: number
+  lastpost_author: string
+  lastpost_authorid: number
+}
 export type Forum = {
   fid: number
   fup: number
@@ -37,7 +44,9 @@ export type Forum = {
   replycredit: number
   maxposition: number
   comments: number
-  forums?: Array<Forum>
+  latest_thread: ForumLastestThread
+  moderators?: Array<string>
+  children?: Array<Forum>
 }
 
 export type ForumAside = {
