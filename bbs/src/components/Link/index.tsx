@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
+import { MouseEvent, MouseEventHandler, SyntheticEvent } from 'react'
 
 type LinkProps = MuiLinkProps & {
   to?: string
@@ -9,7 +10,7 @@ type LinkProps = MuiLinkProps & {
 const Link = ({ to, ...other }: LinkProps) => {
   const navigate = useNavigate()
 
-  const routerNavigate = (e) => {
+  const routerNavigate = (e: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>) => {
     if (to) {
       navigate(to)
       e.preventDefault()
