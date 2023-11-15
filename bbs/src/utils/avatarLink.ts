@@ -1,4 +1,4 @@
-const prefix = import.meta.env.DEV ? 'http://bbs.uestc.edu.cn' : ''
+const prefix = import.meta.env.DEV ? 'https://bbs.uestc.edu.cn' : ''
 
 const padNumber = (value: number, length: number) => {
   return value.toString().padStart(length, '0')
