@@ -17,6 +17,7 @@ const Editor = ({ setVd, ...other }: props) => {
     const vd = new Vditor('vditor', {
       after: () => {
         setVditor(vd)
+        setVd(vd)
       },
       ...options,
       ...other,
