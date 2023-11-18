@@ -15,7 +15,6 @@
 import { smilies_array, smilies_type } from './config'
 
 var EXTRAFUNC = [],
-  allowhtml = false,
   allowsmilies = true,
   parsetype = 0,
   allowbbcode = true,
@@ -23,16 +22,8 @@ var EXTRAFUNC = [],
   EXTRASTR = '',
   wysiwyg = 1
 
-var permission = {
-  bbcodeoff: false,
-  allowimgurl: true,
-  htmlon: true,
-  parseurloff: false,
-  smileyoff: false,
-}
-
 // 资源文件地址
-var STATICURL = 'static/' // 站点静态文件路径，“/”结尾
+var STATICURL = (import.meta.env.DEV ? 'https://bbs.uestc.edu.cn' : '') + '/static/' // 站点静态文件路径，“/”结尾
 
 var $ = function (id) {
   return typeof id === 'string' ? document.getElementById(id) : id
@@ -273,10 +264,6 @@ function parsecode(text) {
   return '[\tDISCUZ_CODE_' + DISCUZCODE['num'] + '\t]'
 }
 
-function fetchCheckbox(func) {
-  return permission[func]
-}
-
 function preg_replace(search, replace, str, regswitch) {
   var regswitch = !regswitch ? 'ig' : regswitch
   var len = search.length
@@ -302,7 +289,7 @@ function htmlspecialchars(str) {
   )
 }
 
-export default function bbcode2html(str) {
+export default function bbcode2html(str, options) {
   if (str == '') {
     return ''
   }
@@ -311,25 +298,23 @@ export default function bbcode2html(str) {
     parsetype = 0
   }
 
-  if (!fetchCheckbox('bbcodeoff') && allowbbcode && parsetype != 1) {
+  if (!options.bbcodeoff && allowbbcode && parsetype != 1) {
     str = str.replace(/\[code\]([\s\S]+?)\[\/code\]/gi, function ($1, $2) {
       return parsecode($2)
     })
   }
 
-  if (fetchCheckbox('allowimgurl')) {
+  if (options.allowimgurl) {
     str = str.replace(
       /([^>=\]"'\/]|^)((((https?|ftp):\/\/)|www\.)([\w\-]+\.)*[\w\-\u4e00-\u9fa5]+\.([\.a-zA-Z0-9]+|\u4E2D\u56FD|\u7F51\u7EDC|\u516C\u53F8)((\?|\/|:)+[\w\.\/=\?%\-&~`@':+!]*)+\.(jpg|gif|png|bmp))/gi,
       '$1[img]$2[/img]'
     )
   }
 
-  if (!allowhtml || !fetchCheckbox('htmlon')) {
-    str = str.replace(/</g, '&lt;')
-    str = str.replace(/>/g, '&gt;')
-    if (!fetchCheckbox('parseurloff')) {
-      str = parseurl(str, 'html', false)
-    }
+  str = str.replace(/</g, '&lt;')
+  str = str.replace(/>/g, '&gt;')
+  if (!options.parseurloff) {
+    str = parseurl(str, 'html', false)
   }
 
   for (i in EXTRAFUNC['bbcode2html']) {
@@ -339,7 +324,7 @@ export default function bbcode2html(str) {
     } catch (e) {}
   }
 
-  if (!fetchCheckbox('smileyoff') && allowsmilies) {
+  if (!options.smileyoff && allowsmilies) {
     if (typeof smilies_type == 'object') {
       for (var typeid in smilies_array) {
         for (var page in smilies_array[typeid]) {
@@ -365,7 +350,7 @@ export default function bbcode2html(str) {
     }
   }
 
-  if (!fetchCheckbox('bbcodeoff') && allowbbcode) {
+  if (!options.bbcodeoff && allowbbcode) {
     str = clearcode(str)
     str = str.replace(
       /\[url\]\s*((https?|ftp|gopher|news|telnet|rtsp|mms|callto|bctp|thunder|qqdl|synacast){1}:\/\/|www\.)([^\[\"']+?)\s*\[\/url\]/gi,
@@ -498,7 +483,7 @@ export default function bbcode2html(str) {
     )
   }
 
-  if (!fetchCheckbox('bbcodeoff')) {
+  if (!options.bbcodeoff) {
     if (allowimgcode) {
       str = str.replace(
         /\[img\]\s*([^\[\"\<\r\n]+?)\s*\[\/img\]/gi,
@@ -554,29 +539,21 @@ export default function bbcode2html(str) {
     }
   }
 
-  for (var i = 0; i <= DISCUZCODE['num']; i++) {
-    str = str.replace('[\tDISCUZ_CODE_' + i + '\t]', DISCUZCODE['html'][i])
-  }
-
-  if (!allowhtml || !fetchCheckbox('htmlon')) {
-    str = str.replace(/(^|>)([^<]+)(?=<|$)/gi, function ($1, $2, $3) {
-      return (
-        $2 +
-        preg_replace(
-          ['\t', '   ', '  ', '(\r\n|\n|\r)'],
-          [
-            '&nbsp; &nbsp; &nbsp; &nbsp; ',
-            '&nbsp; &nbsp;',
-            '&nbsp;&nbsp;',
-            '<br />',
-          ],
-          $3
-        )
+  str = str.replace(/(^|>)([^<]+)(?=<|$)/gi, function ($1, $2, $3) {
+    return (
+      $2 +
+      preg_replace(
+        ['\t', '   ', '  ', '(\r\n|\n|\r)'],
+        [
+          '&nbsp; &nbsp; &nbsp; &nbsp; ',
+          '&nbsp; &nbsp;',
+          '&nbsp;&nbsp;',
+          '<br />',
+        ],
+        $3
       )
-    })
-  } else {
-    str = str.replace(/<script[^\>]*?>([^\x00]*?)<\/script>/gi, '')
-  }
+    )
+  })
 
   return str
 }

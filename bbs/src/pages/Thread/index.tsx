@@ -159,10 +159,7 @@ function Thread() {
                         <div>#{item.position}</div>
                       </div>
                     </div>
-                    <ParsePost
-                      message={item.message}
-                      format={item.format}
-                    ></ParsePost>
+                    <ParsePost post={item} />
                   </>
                 </Floor>
               </section>
