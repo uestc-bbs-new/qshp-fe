@@ -22,7 +22,7 @@ export const replyThreads = (
     thread_id,
     post_id,
     message,
-    is_markdown: 1,
+    format: 2,
   })
 }
 

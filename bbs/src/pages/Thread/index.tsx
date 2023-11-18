@@ -161,7 +161,7 @@ function Thread() {
                     </div>
                     <ParsePost
                       message={item.message}
-                      isMd={item.is_markdown}
+                      format={item.format}
                     ></ParsePost>
                   </>
                 </Floor>

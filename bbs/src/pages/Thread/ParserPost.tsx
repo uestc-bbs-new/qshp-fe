@@ -10,10 +10,10 @@ import bbcode2html from '@/utils/bbcode/bbcode'
 
 export type PropsType = {
   message: string
-  isMd: boolean | number
+  format: number
 }
 
-function ParseCode({ message }: Omit<PropsType, 'isMd'>) {
+function ParseCode({ message }: Omit<PropsType, 'format'>) {
   return (
     <div
       className="parse"
@@ -22,7 +22,7 @@ function ParseCode({ message }: Omit<PropsType, 'isMd'>) {
   )
 }
 
-function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
+function ParseMd({ message }: Omit<PropsType, 'format'>) {
   const el = useRef(null)
   useEffect(() => {
     Vditor.preview(el.current as unknown as HTMLDivElement, message)
@@ -30,10 +30,10 @@ function ParseMd({ message }: Omit<PropsType, 'isMd'>) {
   return <Typography color="text.primary" ref={el}></Typography>
 }
 
-export function ParsePost({ message, isMd }: PropsType) {
+export function ParsePost({ message, format }: PropsType) {
   return (
     <>
-      {isMd ? <ParseMd message={message} /> : <ParseCode message={message} />}
+      {format == 2 ? <ParseMd message={message} /> : format == 0 ? <ParseCode message={message} /> : <Typography color="text.primary" component="pre">{message}</Typography>}
     </>
   )
 }

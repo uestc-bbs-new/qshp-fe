@@ -196,7 +196,7 @@ export interface PostFloor {
   message: string
   dateline: number
   is_anonymous: number
-  is_markdown: number
+  format: number
   replies: number
   reply_to: number
   is_edited: number
