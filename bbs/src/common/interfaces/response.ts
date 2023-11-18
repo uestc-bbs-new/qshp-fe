@@ -196,10 +196,11 @@ export interface PostFloor {
   message: string
   dateline: number
   is_anonymous: number
+  usesig: number
   format: number
-  replies: number
-  reply_to: number
-  is_edited: number
+  smileyoff: number
+  parseurloff: number
+  lastedit_id: number
   author: string
   author_id: number
   user_group: number
