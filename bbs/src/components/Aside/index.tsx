@@ -22,7 +22,7 @@ const Aside = () => {
             <Typography>none</Typography>
           ) : (
             hot?.threads?.map((item) => (
-              <Post small data={item} key={item.thread_id} className="mb-4" />
+              <Post small data={item} key={item.thread_id} className="mb-4"/>
             ))
           )}
         </List>

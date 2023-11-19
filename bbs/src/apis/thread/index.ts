@@ -1,4 +1,8 @@
-import { PostDetails, UserInfos } from '@/common/interfaces/response'
+import {
+  PostDetails,
+  UserInfos,
+  UserNameFind,
+} from '@/common/interfaces/response'
 import request from '@/utils/request'
 
 /** 获取帖子详情信息 */
@@ -18,11 +22,18 @@ export const replyThreads = (
     thread_id,
     post_id,
     message,
-    is_markdown: 1,
+    format: 2,
   })
 }
 
 /** 获取用户信息 */
 export const getUserInfo = (uid: number) => {
   return request.get<null, UserInfos>(`/star/api/forum/v1/view/profile/` + uid)
+}
+
+/** 模糊查询用户名 */
+export const getUsername = (key: string) => {
+  return request.get<null, UserNameFind>(
+    `/star/api/forum/v1/global/search/at?username=${key}&page=${1}&pagesize=${20}`
+  )
 }

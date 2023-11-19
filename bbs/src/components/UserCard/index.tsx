@@ -1,6 +1,4 @@
-import dayjs from 'dayjs'
-
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
 
@@ -9,9 +7,9 @@ import coverLight from '@/assets/cover-light.jpg'
 import { PostFloor } from '@/common/interfaces/response'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
+import { chineseTime } from '@/utils/dayjs'
 
 import Avatar from '../Avatar'
-import Chip from '../Chip'
 
 type ItemProps = {
   title: string
@@ -37,14 +35,6 @@ const GridItem = ({ title, count }: ItemProps) => {
 const Cover = ({ item }: { item: PostFloor }) => {
   const { state } = useAppState()
   const [data, set_data] = useState({})
-  useEffect(() => {
-    console.log(state.theme)
-    console.log(item)
-  }, [])
-  // const { data: info, isLoading: infoLoading } = useQuery([], () => {
-  //   console.log('请求个人信息详情')
-  //   return getUserInfo(uid)
-  // })
   return (
     <Box style={{ width: '400px' }} className="text-sm text-white">
       <Box
@@ -64,17 +54,17 @@ const Cover = ({ item }: { item: PostFloor }) => {
             variant="rounded"
           />
           <Box className="flex-1">
-            <Typography>{item.author}</Typography>
-            <Chip className="mb-2" text="test" />
+            <Typography color={'black'}>{item.author}</Typography>
+            {/* <Chip className="mb-2" text="test" /> */}
             <Box className="rounded-lg p-4 bg-opacity-40 bg-black">
               <Typography fontSize="inherit">
-                注册：{dayjs(item.registered_at * 1000).format()}
+                注册：{chineseTime(item.registered_at * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时长： {item.online_time}
+                在线时长： {item.online_time} 小时
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                上次登录: {dayjs(item.last_login_at * 1000).format()}
+                上次登录: {chineseTime(item.last_login_at * 1000)}
               </Typography>
             </Box>
           </Box>
@@ -82,7 +72,7 @@ const Cover = ({ item }: { item: PostFloor }) => {
       </Box>
       <Divider variant="middle" />
       <Grid container>
-        <GridItem title="水滴" count={item.droplets} />
+        <GridItem title="水滴" count={`${item.droplets} 滴`} />
         <GridItem title="用户组" count={item.user_group} />
         {/* <GridItem
           title=""

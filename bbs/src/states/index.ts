@@ -16,6 +16,7 @@ const initialState = {
     name: '',
   },
   theme: (localStorage.getItem('theme') as Theme) || 'light',
+  selectedPost: '',
 }
 
 export const AppContext = createContext<{
