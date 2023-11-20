@@ -1,4 +1,5 @@
 import { Link as RouterLink } from 'react-router-dom'
+
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 type LinkProps = MuiLinkProps & {
@@ -8,7 +9,11 @@ type LinkProps = MuiLinkProps & {
 const Link = ({ to, ...other }: LinkProps) => {
   return (
     <>
-      {to ? <MuiLink component={RouterLink} to={to} {...other} /> : <MuiLink {...other} />}
+      {to ? (
+        <MuiLink component={RouterLink} to={to} {...other} />
+      ) : (
+        <MuiLink {...other} />
+      )}
     </>
   )
 }

@@ -71,7 +71,9 @@ const Post = ({ data, small, className }: PostProps) => {
                   onClick={handleClick}
                 >
                   <Box>
-                    {!small && data.name && <Chip small={small} text={data.name} />}
+                    {!small && data.name && (
+                      <Chip small={small} text={data.name} />
+                    )}
                     <Typography textAlign="justify">{data.subject}</Typography>
                   </Box>
                 </Link>

@@ -81,7 +81,8 @@ const SearchBar = () => {
         <Stack
           direction="row"
           alignItems="center"
-          className="w-96 rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
+          className="rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
+          sx={{ minWidth: 420 }}
         >
           <FormControl
             sx={{ m: 1, minWidth: 80 }}

@@ -1,7 +1,15 @@
 import { useNavigate } from 'react-router-dom'
 
 import { Add, Menu } from '@mui/icons-material'
-import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'
+import { MeetingRoomTwoTone } from '@mui/icons-material'
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
@@ -84,14 +92,31 @@ const TopBar = () => {
             <img
               src={logoImg}
               alt="logo"
-              style={{ height: '50px', width: 'auto', marginRight: '8px' }}
+              style={{ height: '50px', width: 'auto', marginRight: '30px' }}
             />
           </Link>
-        </Stack>
-        <Stack direction="row" justifyContent="center" className="basis-1/2">
           <SearchBar />
         </Stack>
+        <Stack sx={{ flexGrow: 1 }}></Stack>
         {state.users.uid != 0 ? <Options /> : <LoginComponent />}
+        <Link
+          to="https://bbs.uestc.edu.cn/forum.php?mod=viewthread&tid=1812091"
+          className="text-white"
+          underline="none"
+          sx={{ mr: 1, ml: -1.5 }}
+        >
+          <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
+        </Link>
+        <Link
+          to="https://bbs.uestc.edu.cn/"
+          className="text-white"
+          underline="none"
+        >
+          <Stack direction="row" alignItems="center">
+            <MeetingRoomTwoTone fontSize="small" />
+            <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
+          </Stack>
+        </Link>
       </Stack>
     </AppBar>
   )
