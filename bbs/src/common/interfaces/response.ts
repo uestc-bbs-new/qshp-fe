@@ -146,35 +146,35 @@ export type ThreadList = {
 }
 
 export type Thread2 = {
-  thread_id: string
-  forum_id: string
-  post_id: string
-  type_id: string
-  sort_id: string
+  thread_id: number
+  forum_id: number
+  post_id: number
+  type_id: number
+  sort_id: number
   author: string
   author_id: number
   subject: string
   dateline: number
   last_post: number
   last_poster: string
-  views: string
-  replies: string
-  display_order: string
-  is_highlight: string
-  is_digest: string
-  is_rate: string
-  special: string
-  attachment: string
-  is_moderated: string
-  is_closed: string
-  is_stick_reply: string
-  recommends: string
-  recommend_add: string
-  recommend_sub: string
-  heats: string
-  status: string
-  favorite_times: string
-  share_times: string
+  views: number
+  replies: number
+  display_order: number
+  highlight: number
+  digest: number
+  is_rated: number
+  special: number
+  attachment: number
+  is_moderated: number
+  is_closed: number
+  has_stick_reply: number
+  recommends: number
+  recommend_add: number
+  recommend_sub: number
+  heats: number
+  status: number
+  favorite_times: number
+  share_times: number
 }
 
 export interface PostDetails {

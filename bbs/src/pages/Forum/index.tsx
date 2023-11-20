@@ -149,7 +149,7 @@ function Forum() {
     <Box className="flex-1">
       <Card>
         <>
-          {threadList?.rows?.some((item: any) => item.is_highlight !== '0') && (
+          {threadList?.rows?.some((item: any) => item.display_order > 0) && (
             <Top>
               {isFetching ? (
                 <List>
@@ -160,7 +160,7 @@ function Forum() {
               ) : (
                 <List>
                   {threadList?.rows
-                    ?.filter((item: any) => item.is_highlight !== '0')
+                    ?.filter((item: any) => item.display_order > 0)
                     .map((item: any) => (
                       <Post data={item} key={item.thread_id} />
                     ))}
@@ -231,7 +231,7 @@ function Forum() {
             ) : (
               <List>
                 {threadList?.rows
-                  ?.filter((item: any) => item.is_highlight == '0')
+                  ?.filter((item: any) => item.display_order === 0)
                   .map((item: any) => (
                     <Post data={item} key={item.thread_id} />
                   ))}
