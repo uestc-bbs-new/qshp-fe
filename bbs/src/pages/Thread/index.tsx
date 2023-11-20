@@ -159,10 +159,7 @@ function Thread() {
                         <div>#{item.position}</div>
                       </div>
                     </div>
-                    <ParsePost
-                      message={item.message}
-                      isMd={item.is_markdown}
-                    ></ParsePost>
+                    <ParsePost post={item} />
                   </>
                 </Floor>
               </section>

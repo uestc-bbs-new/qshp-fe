@@ -70,9 +70,9 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
           value={sortBy}
           onChange={handleSortChange}
         >
-          <MenuItem value="1">最热主题</MenuItem>
+          <MenuItem value="1">最新回复</MenuItem>
           <MenuItem value="2">最新发表</MenuItem>
-          <MenuItem value="3">最新回复</MenuItem>
+          <MenuItem value="3">最热主题</MenuItem>
         </Select>
       </ListItem>
       <Divider

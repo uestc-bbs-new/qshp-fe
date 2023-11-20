@@ -46,7 +46,7 @@ const Ordinate = ({ data }: ForumData) => {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {data?.forums
+          {data?.children
             ?.filter((item: any) => item.fid !== 0)
             .map((item) => (
               <Link
