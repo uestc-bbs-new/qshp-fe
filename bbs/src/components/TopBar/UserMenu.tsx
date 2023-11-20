@@ -4,6 +4,7 @@ import {
   Logout,
   Person,
   SavedSearch,
+  Settings,
   TransferWithinAStation,
 } from '@mui/icons-material'
 import { Box, Divider, ListItemIcon, MenuItem } from '@mui/material'
@@ -72,6 +73,13 @@ const MenuContent = () => {
           <TransferWithinAStation fontSize="small" />
         </ListItemIcon>
         切换账号
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
+      <MenuItem>
+        <ListItemIcon>
+          <Settings fontSize="small" />
+        </ListItemIcon>
+        设置
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem onClick={logout}>
