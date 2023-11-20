@@ -32,9 +32,10 @@ const Search = () => {
   } else {
     return (
       <ResultForUsers
-        name={name}
+        target={name}
         page={page}
         pageSize={pageSize}
+        searchType={type}
         setPage={setPage}
         setName={setName}
       />
