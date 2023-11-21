@@ -1,13 +1,7 @@
 import { useState } from 'react'
 
 // import {  } from 'react-router-dom'
-import {
-  ExpandLess,
-  ExpandMore,
-  ModeComment,
-  RemoveRedEye,
-  ThumbUpAlt,
-} from '@mui/icons-material'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
   Collapse,
@@ -22,7 +16,6 @@ import {
 
 import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
-import Chip from '@/components/Chip'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
@@ -64,7 +57,11 @@ const ForumCover = ({ data }: ForumData) => {
       ></Box>
       <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
       <Box className="relative z-10 p-4">
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Link
             className="font-bold"
             color="inherit"
@@ -84,7 +81,10 @@ const ForumCover = ({ data }: ForumData) => {
 
         <Stack direction="row" className="mt-4">
           {!data.latest_thread && <Box>暂无新帖</Box>}
-          <Box className="mr-4" visibility={data.latest_thread ? 'visible' : 'hidden'}>
+          <Box
+            className="mr-4"
+            visibility={data.latest_thread ? 'visible' : 'hidden'}
+          >
             <Avatar
               alt={data.latest_thread?.lastpost_author}
               uid={data.latest_thread?.lastpost_authorid}
@@ -92,27 +92,33 @@ const ForumCover = ({ data }: ForumData) => {
               variant="rounded"
             />
           </Box>
-          {data.latest_thread && <Box className="flex-1">
-            <Stack direction="row">
-              <Link
-                color="inherit"
-                underline="hover"
-                to={`/thread/${data.latest_thread?.thread_id}`}
-              >
-                <Box className="line-clamp-1">
-                  {data.latest_thread?.subject}
-                </Box>
-              </Link>
-            </Stack>
-            <Stack direction="row">
-              <Typography>{chineseTime(data.latest_thread?.lastpost_time * 1000)}</Typography>
-              <Typography className="mx-1">·</Typography>
-              <Link color="inherit">{data.latest_thread?.lastpost_author}</Link>
-              {/* <UserCard uid={data.authorid}>
+          {data.latest_thread && (
+            <Box className="flex-1">
+              <Stack direction="row">
+                <Link
+                  color="inherit"
+                  underline="hover"
+                  to={`/thread/${data.latest_thread?.thread_id}`}
+                >
+                  <Box className="line-clamp-1">
+                    {data.latest_thread?.subject}
+                  </Box>
+                </Link>
+              </Stack>
+              <Stack direction="row">
+                <Typography>
+                  {chineseTime(data.latest_thread?.lastpost_time * 1000)}
+                </Typography>
+                <Typography className="mx-1">·</Typography>
+                <Link color="inherit">
+                  {data.latest_thread?.lastpost_author}
+                </Link>
+                {/* <UserCard uid={data.authorid}>
                 <Link color="inherit">{data.author}</Link>
               </UserCard> */}
-            </Stack>
-          </Box>}
+              </Stack>
+            </Box>
+          )}
         </Stack>
       </Box>
     </Box>
@@ -136,8 +142,19 @@ export const ForumGroup = ({ data }: ForumData) => {
         <Stack direction="row" alignItems="baseline">
           {moderators.length > 0 && <Typography>分区版主：</Typography>}
           {moderators.map((moderator, index) => [
-            <Link key={index} color="inherit" variant="subtitle2" to={`/user/name/${moderator}`}>{moderator}</Link>,
-            index < moderators.length - 1 ? <Typography marginRight="0.35em">,</Typography> : <></>
+            <Link
+              key={index}
+              color="inherit"
+              variant="subtitle2"
+              to={`/user/name/${moderator}`}
+            >
+              {moderator}
+            </Link>,
+            index < moderators.length - 1 ? (
+              <Typography marginRight="0.35em">,</Typography>
+            ) : (
+              <></>
+            ),
           ])}
         </Stack>
         {open ? <ExpandLess /> : <ExpandMore />}

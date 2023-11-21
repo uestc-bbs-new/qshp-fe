@@ -45,11 +45,11 @@ const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
   return (
     <Box
       ref={boxRef}
-      className={`rounded-lg shadow-lg p-2`}
+      className={`rounded-lg shadow-lg`}
       style={{
-        width: 300,
+        width: 250,
         position: 'absolute',
-        top: 70,
+        top: 60,
         backgroundColor: theme.palette.background.paper,
       }}
     >
@@ -59,7 +59,7 @@ const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
             <MenuItem onClick={(e) => handleSubmit(item)}>
               <Stack direction="row">
                 <Avatar
-                  className="mx-3"
+                  className="mr-3"
                   uid={item.user_id}
                   sx={{ width: 32, height: 32 }}
                   variant="rounded"

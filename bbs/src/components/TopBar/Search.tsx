@@ -6,6 +6,7 @@ import {
   Divider,
   FormControl,
   IconButton,
+  Menu,
   MenuItem,
   Stack,
 } from '@mui/material'
@@ -25,6 +26,8 @@ const SearchBar = () => {
   const [data, setData] = useState<
     { total: number; rows: Users[] } | undefined
   >(undefined)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [open, setOpen] = useState(false)
 
   const navigate = useNavigate()
   const inputComponent = useRef<HTMLInputElement | null>(null)
@@ -51,12 +54,11 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (!ifClick) return
-    const field = document.querySelector('input')
     document.getElementById('topbar-search')?.focus()
   }, [ifClick])
 
   useEffect(() => {
-    if (searchType == 'user') handleSearchUser()
+    if (searchType == 'username') handleSearchUser()
   }, [searchText])
 
   const handleSearchUser = () => {
@@ -73,15 +75,24 @@ const SearchBar = () => {
 
   const handleFocus = () => {
     setIfClick(ifClick + 1)
+    setAnchorEl(null)
+    setOpen(false)
+  }
+  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
   }
 
+  const handleMouseLeave = () => {
+    setAnchorEl(null)
+  }
   return (
     <>
       <Stack direction="column">
         <Stack
           direction="row"
           alignItems="center"
-          className="w-96 rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
+          className="rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
+          sx={{ minWidth: 420 }}
         >
           <FormControl
             sx={{ m: 1, minWidth: 80 }}
@@ -90,6 +101,9 @@ const SearchBar = () => {
           >
             {/* <InputLabel className='text-white'>搜索</InputLabel> */}
             <Select
+              open={open}
+              onOpen={() => setOpen(true)}
+              onClose={() => setOpen(false)}
               className="text-inherit"
               style={{
                 textAlign: 'center',
@@ -104,9 +118,38 @@ const SearchBar = () => {
               <MenuItem value="post" onClick={handleFocus}>
                 帖子
               </MenuItem>
-              <MenuItem value="user" onClick={handleFocus}>
-                用户
+              <MenuItem onMouseEnter={handleMouseEnter}>用户</MenuItem>
+              <MenuItem value="username" sx={{ display: 'none' }}>
+                用户名
               </MenuItem>
+              <MenuItem value="uid" sx={{ display: 'none' }}>
+                UID
+              </MenuItem>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMouseLeave}
+                MenuListProps={{
+                  onMouseLeave: handleMouseLeave,
+                }}
+              >
+                <MenuItem
+                  value="username"
+                  onClick={() => {
+                    setSearchType('username'), handleFocus()
+                  }}
+                >
+                  用户名
+                </MenuItem>
+                <MenuItem
+                  value="uid"
+                  onClick={() => {
+                    setSearchType('uid'), handleFocus()
+                  }}
+                >
+                  UID
+                </MenuItem>
+              </Menu>
             </Select>
           </FormControl>
 

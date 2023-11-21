@@ -2,6 +2,9 @@ import {
   DarkMode,
   LightMode,
   Logout,
+  Person,
+  SavedSearch,
+  Settings,
   TransferWithinAStation,
 } from '@mui/icons-material'
 import { Box, Divider, ListItemIcon, MenuItem } from '@mui/material'
@@ -35,6 +38,25 @@ const MenuContent = () => {
   }
   return (
     <Box className="py-2">
+      <MenuItem>
+        <ListItemIcon>
+          <Person fontSize="small" />
+        </ListItemIcon>
+        个人空间
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
+      <MenuItem
+        onClick={() =>
+          (window.location.href =
+            'https://bbs.uestc.edu.cn/forum.php?mod=collection')
+        }
+      >
+        <ListItemIcon>
+          <SavedSearch fontSize="small" />
+        </ListItemIcon>
+        淘帖
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
       <MenuItem onClick={themeChange}>
         <ListItemIcon>
           {state.theme === 'light' ? (
@@ -51,6 +73,13 @@ const MenuContent = () => {
           <TransferWithinAStation fontSize="small" />
         </ListItemIcon>
         切换账号
+      </MenuItem>
+      <Divider variant="middle" flexItem></Divider>
+      <MenuItem>
+        <ListItemIcon>
+          <Settings fontSize="small" />
+        </ListItemIcon>
+        设置
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem onClick={logout}>
