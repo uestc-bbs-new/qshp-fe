@@ -18,11 +18,46 @@ import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 
-type ForumData = {
-  data: Forum
+type ForumData<T extends boolean> = {
+  data: T extends true ? { link: string; name: string }[] : Forum
+  isDefault: T //true时显示论坛服务部分
 }
 
-const Ordinate = ({ data }: ForumData) => {
+const listServiceItems: { link: string; name: string }[] = [
+  {
+    link: 'https://bbs.uestc.edu.cn/graduate_bind/frontend/index.html',
+    name: '学号换绑',
+  },
+  {
+    link: 'https://bbs.uestc.edu.cn/member.php?mod=relevance',
+    name: '实名关联',
+  },
+  {
+    link: 'https://bbs.uestc.edu.cn/plugin.php?id=ahome_fv:index',
+    name: '亲密认证',
+  },
+  { link: 'https://bbs.uestc.edu.cn/home.php?mod=medal', name: '勋章中心' },
+  { link: 'https://bbs.uestc.edu.cn/home.php?mod=magic', name: '道具商店' },
+  {
+    link: 'https://bbs.uestc.edu.cn/home.php?mod=spacecp&ac=credit&op=exchange',
+    name: '论坛货币兑换',
+  },
+]
+
+const renderLink = (link: string, name: string, key: string | number) => (
+  <Link to={link} key={key} underline="none" color="inherit">
+    <ListItemButton sx={{ pl: 4 }}>
+      <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
+      <ListItemText>
+        <Typography color="inherit" className="font-bold">
+          {name}
+        </Typography>
+      </ListItemText>
+    </ListItemButton>
+  </Link>
+)
+
+const Ordinate = ({ data, isDefault }: ForumData<boolean>) => {
   const [open, setOpen] = useState(false)
 
   const handleClick = () => {
@@ -35,7 +70,7 @@ const Ordinate = ({ data }: ForumData) => {
         <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className="font-bold">
-            {data.name}
+            {isDefault ? '论坛服务' : (data as Forum).name}
           </Typography>
         </ListItemText>
         {open ? (
@@ -46,25 +81,15 @@ const Ordinate = ({ data }: ForumData) => {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {data?.children
-            ?.filter((item: any) => item.fid !== 0)
-            .map((item) => (
-              <Link
-                to={`/forum/${item.fid}`}
-                key={item.name}
-                underline="none"
-                color="inherit"
-              >
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
-                  <ListItemText>
-                    <Typography color="inherit" className="font-bold">
-                      {item.name}
-                    </Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </Link>
-            ))}
+          {isDefault
+            ? (data as { link: string; name: string }[]).map((item) =>
+                renderLink(item.link, item.name, item.name)
+              )
+            : (data as Forum)?.children
+                ?.filter((item: any) => item.fid !== 0)
+                .map((item: any) =>
+                  renderLink(`/forum/${item.fid}`, item.name, item.name)
+                )}
         </List>
       </Collapse>
     </>
@@ -98,8 +123,9 @@ const Sections = ({ data }: { data: Forum[] }) => {
               </ListItemText>
             </ListItemButton>
           </Link>
+          <Ordinate data={listServiceItems} isDefault={true} />
           {data.map((item) => (
-            <Ordinate key={item.name} data={item} />
+            <Ordinate key={item.name} data={item} isDefault={false} />
           ))}
         </List>
       )}
