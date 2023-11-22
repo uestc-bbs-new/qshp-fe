@@ -18,9 +18,9 @@ import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 
-type ForumData<T extends boolean> = {
-  data: T extends true ? { link: string; name: string }[] : Forum
-  isDefault: T //true时显示论坛服务部分
+type NavData<T extends boolean> = {
+  data: T extends true ? Forum : { link: string; name: string }[]
+  isForum: T //true时显示Forum部分
 }
 
 const listServiceItems: { link: string; name: string }[] = [
@@ -57,7 +57,7 @@ const renderLink = (link: string, name: string, key: string | number) => (
   </Link>
 )
 
-const Ordinate = ({ data, isDefault }: ForumData<boolean>) => {
+const Ordinate = ({ data, isForum }: NavData<boolean>) => {
   const [open, setOpen] = useState(false)
 
   const handleClick = () => {
@@ -70,7 +70,7 @@ const Ordinate = ({ data, isDefault }: ForumData<boolean>) => {
         <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className="font-bold">
-            {isDefault ? '论坛服务' : (data as Forum).name}
+            {isForum ? (data as Forum).name : '论坛服务'}
           </Typography>
         </ListItemText>
         {open ? (
@@ -81,15 +81,15 @@ const Ordinate = ({ data, isDefault }: ForumData<boolean>) => {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {isDefault
-            ? (data as { link: string; name: string }[]).map((item) =>
-                renderLink(item.link, item.name, item.name)
-              )
-            : (data as Forum)?.children
+          {isForum
+            ? (data as Forum)?.children
                 ?.filter((item: any) => item.fid !== 0)
                 .map((item: any) =>
                   renderLink(`/forum/${item.fid}`, item.name, item.name)
-                )}
+                )
+            : (data as { link: string; name: string }[]).map((item) =>
+                renderLink(item.link, item.name, item.name)
+              )}
         </List>
       </Collapse>
     </>
@@ -123,9 +123,9 @@ const Sections = ({ data }: { data: Forum[] }) => {
               </ListItemText>
             </ListItemButton>
           </Link>
-          <Ordinate data={listServiceItems} isDefault={true} />
+          <Ordinate data={listServiceItems} isForum={false} />
           {data.map((item) => (
-            <Ordinate key={item.name} data={item} isDefault={false} />
+            <Ordinate key={item.name} data={item} isForum={true} />
           ))}
         </List>
       )}
