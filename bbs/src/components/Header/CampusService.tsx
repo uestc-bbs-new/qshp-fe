@@ -14,15 +14,24 @@ const boatWheelImg = new URL(
   import.meta.url
 ).href.toString()
 const listServiceItems: { link: string; name: string }[] = [
-  { link: '', name: '校车时刻表' },
-  { link: '', name: '失物招领' },
-  { link: '', name: '校历' },
-  { link: '', name: '网上报修' },
-  { link: '', name: '一卡通查询' },
-  { link: '', name: '信息门户' },
-  { link: '', name: '后勤建议' },
-  { link: '', name: '校园地图' },
-  { link: '', name: '图书馆' },
+  {
+    link: 'thread/1430861',
+    name: '校车时刻表',
+  },
+  { link: '/forum/305', name: '失物招领' },
+  { link: 'thread/1493930', name: '校历' },
+  {
+    link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
+    name: '网上报修',
+  },
+  { link: 'http://ecard.uestc.edu.cn/', name: '一卡通查询' },
+  { link: 'http://portal.uestc.edu.cn/', name: '信息门户' },
+  {
+    link: 'https://hq.uestc.edu.cn/yzs/commentSite/commentSiteIndex',
+    name: '后勤建议',
+  },
+  { link: 'http://gis.uestc.edu.cn/', name: '校园地图' },
+  { link: 'http://www.lib.uestc.edu.cn/', name: '图书馆' },
 ]
 const renderLink = (link: string, name: string, key: string) => {
   return (
