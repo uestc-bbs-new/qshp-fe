@@ -50,6 +50,15 @@ export const searchUsers_at = (params: object) => {
   )
 }
 
+export const searchUsers_uid = (params: object) => {
+  return request.get<object, { total: number; rows: UserInfo[] }>(
+    `${commonUrl}/global/search/uid`,
+    {
+      params: params,
+    }
+  )
+}
+
 export const getThreadList = (params: object) => {
   return request.get<null, ThreadList>(`${commonUrl}/view/thread/threads`, {
     params: params,
