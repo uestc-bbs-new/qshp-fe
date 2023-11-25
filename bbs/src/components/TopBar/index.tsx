@@ -13,6 +13,7 @@ import {
 
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import siteRoot from '@/utils/siteRoot'
 
 import Message from './Message'
 import SearchBar from './Search'
@@ -100,7 +101,7 @@ const TopBar = () => {
         <Stack sx={{ flexGrow: 1 }}></Stack>
         {state.users.uid != 0 ? <Options /> : <LoginComponent />}
         <Link
-          to="https://bbs.uestc.edu.cn/forum.php?mod=viewthread&tid=1812091"
+          to="/thread/1812091"
           className="text-white"
           underline="none"
           sx={{ mr: 1, ml: -1.5 }}
@@ -108,7 +109,9 @@ const TopBar = () => {
           <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
         </Link>
         <Link
-          to="https://bbs.uestc.edu.cn/"
+          to={`${siteRoot}/forum.php`}
+          external
+          target='_blank'
           className="text-white"
           underline="none"
         >
