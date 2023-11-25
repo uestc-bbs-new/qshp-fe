@@ -108,7 +108,6 @@ function Forum() {
     isFetching,
   } = useQuery(['getThread', query], () => getThreadList(query), {
     onSuccess: (data: any) => {
-      console.log(data.forum)
       if (data && data.total) {
         setTotal(Math.ceil(data.total / pageSize))
       }
@@ -141,7 +140,15 @@ function Forum() {
 
   return (
     <Box className="flex-1" style={{ marginTop: '20px' }}>
-      <Head data={threadList?.forum}></Head>
+      {isFetching ? (
+        <List>
+          <ListItem>
+            <Skeleton className="w-full" height={81}></Skeleton>
+          </ListItem>
+        </List>
+      ) : (
+        <Head data={threadList?.forum}></Head>
+      )}
       <Pagination
         size="small"
         page={page}

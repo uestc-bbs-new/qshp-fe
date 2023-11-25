@@ -83,7 +83,6 @@ export type Thread = {
   sort_id: number
   author: string
   author_id: number
-  // name: string
   subject: string
   dateline: number
   last_post: number
