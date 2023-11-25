@@ -120,7 +120,7 @@ function Thread() {
   }
 
   return (
-    <Box className="flex-1">
+    <Box className="flex-1" minWidth="1em">
       <Pagination
         count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
