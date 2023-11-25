@@ -16,6 +16,12 @@ import { chineseTime } from '@/utils/dayjs'
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 
+const kPageSize = 20;
+
+function searchParamsAssign(value: URLSearchParams, kvList: object) {
+  return new URLSearchParams(Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList)))
+}
+
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
 
@@ -67,7 +73,10 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
-      setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
+      setSearchParams(searchParamsAssign(searchParams, {
+        // total + 1 because a new reply was posted just now and info is not yet refreshed.
+        page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
+      }))
       setReplyRefresh(replyRefresh + 1)
     }
   }
@@ -116,7 +125,7 @@ function Thread() {
         count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
-          setSearchParams(`page=${value}`)
+          setSearchParams(searchParamsAssign(searchParams, {page: value}))
         }}
       />
       {info?.rows ? (
