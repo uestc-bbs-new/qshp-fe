@@ -72,7 +72,7 @@ const Post = ({ data, small, className }: PostProps) => {
                   onClick={handleClick}
                 >
                   <Box>
-                    {data.name && <Chip small={small} text={data.name} />}
+                    {data.author && <Chip small={small} text={data.author} />}
                     {data.subject}
                   </Box>
                 </Link>

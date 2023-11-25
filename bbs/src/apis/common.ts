@@ -8,8 +8,8 @@ import {
 } from '@/common/interfaces/response'
 import request from '@/utils/request'
 
-//const commonUrl = '/star/api/forum/v1'
-const commonUrl = ''
+const commonUrl = '/star/api/forum/v1'
+// const commonUrl = ''
 
 export const getForumList = () => {
   return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)

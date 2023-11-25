@@ -23,6 +23,8 @@ import { getThreadList } from '@/apis/common'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
 
+import Head from './ForumHead'
+
 type TopProps = {
   children: React.ReactElement
 }
@@ -95,6 +97,7 @@ function Forum() {
     page: 1,
     type: 3,
     forum_id: routeParam.id,
+    forum_details: 1,
   })
 
   const pageSize = 20
@@ -105,6 +108,7 @@ function Forum() {
     isFetching,
   } = useQuery(['getThread', query], () => getThreadList(query), {
     onSuccess: (data: any) => {
+      console.log(data.forum)
       if (data && data.total) {
         setTotal(Math.ceil(data.total / pageSize))
       }
@@ -137,9 +141,20 @@ function Forum() {
 
   return (
     <Box className="flex-1" style={{ marginTop: '20px' }}>
+      <Head data={threadList?.forum}></Head>
+      <Pagination
+        size="small"
+        page={page}
+        onChange={handlePageChange}
+        count={total}
+        variant="outlined"
+        shape="rounded"
+        style={{ margin: '20px' }}
+        sx={{ display: 'flex', justifyContent: 'center' }}
+      />
       <Card>
         <>
-          {threadList?.rows?.some((item: any) => item.is_highlight !== '0') && (
+          {threadList?.rows?.some((item: any) => item.highlight !== 0) && (
             <Top>
               {isFetching ? (
                 <List>
@@ -150,7 +165,7 @@ function Forum() {
               ) : (
                 <List>
                   {threadList?.rows
-                    ?.filter((item: any) => item.is_highlight !== '0')
+                    ?.filter((item: any) => item.highlight !== 0)
                     .map((item: any) => (
                       <Post data={item} key={item.thread_id} />
                     ))}
@@ -165,49 +180,49 @@ function Forum() {
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
@@ -221,7 +236,7 @@ function Forum() {
             ) : (
               <List>
                 {threadList?.rows
-                  ?.filter((item: any) => item.is_highlight == '0')
+                  ?.filter((item: any) => item.highlight == 0)
                   .map((item: any) => (
                     <Post data={item} key={item.thread_id} />
                   ))}
@@ -240,6 +255,7 @@ function Forum() {
         style={{ marginTop: '20px' }}
         sx={{ display: 'flex', justifyContent: 'center' }}
       />
+      {/* <Edit></Edit> */}
     </Box>
   )
 }
