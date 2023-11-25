@@ -22,6 +22,7 @@ function Thread() {
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
   const thread_id = useParams()['id'] as string
+  const [replyRefresh, setReplyRefresh] = useState(0)
 
   /**
    * 用于记录页面的 query 参数
@@ -67,6 +68,7 @@ function Thread() {
       )
       vd?.setValue('')
       setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
+      setReplyRefresh(replyRefresh + 1)
     }
   }
 
@@ -84,7 +86,7 @@ function Thread() {
       page: Number(searchParams.get('page')) || 1,
     })
     refetch()
-  }, [searchParams, thread_id])
+  }, [searchParams, thread_id, replyRefresh])
 
   const reply_floor = useRef({
     floor: 1,
