@@ -1,5 +1,12 @@
 .rich-text-content {
+  text-align: justify;
+  text-wrap: pretty;
   overflow-wrap: break-word;
+}
+
+.rich-text-content img,
+.rich-text-content video {
+  max-width: 100%;
 }
 
 .rich-text-content blockquote {

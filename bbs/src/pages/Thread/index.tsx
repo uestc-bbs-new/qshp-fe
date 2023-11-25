@@ -155,7 +155,9 @@ function Thread() {
                         <div>#{item.position}</div>
                       </div>
                     </div>
-                    <ParsePost post={item} />
+                    <Box paddingRight="1.5em">
+                      <ParsePost post={item} />
+                    </Box>
                   </>
                 </Floor>
               </section>
