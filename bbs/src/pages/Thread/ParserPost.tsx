@@ -22,13 +22,12 @@ function ParseLegacy({ post }: { post: PostFloor }) {
         __html: bbcode2html(post.message, {
           allowimgurl: true,
           bbcodeoff: post.format != 0,
-          parseurloff: false, //post.parseurloff,
-          smileyoff: false, //post.smileyoff,
+          parseurloff: post.parseurloff,
+          smileyoff: post.smileyoff,
         }),
       }}
     ></div>
   )
-  // return <Typography color="text.primary" component="pre">{post.message}</Typography>;
 }
 
 function ParseMd({ message }: { message: string }) {
