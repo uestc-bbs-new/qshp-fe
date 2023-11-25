@@ -177,10 +177,15 @@ export type Thread2 = {
   share_times: number
 }
 
+export interface ThreadDetails {
+  subject: string
+}
+
 export interface PostDetails {
   page: number
   pagesize: number
   total: number
+  thread: ThreadDetails
   rows: PostFloor[]
 }
 

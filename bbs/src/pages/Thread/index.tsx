@@ -15,6 +15,7 @@ import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
+import { ThreadDetails } from '@/common/interfaces/response'
 
 const kPageSize = 20;
 
@@ -29,6 +30,7 @@ function Thread() {
   const location = useLocation()
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
+  const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
 
   /**
    * 用于记录页面的 query 参数
@@ -51,13 +53,13 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, query.page)
+      return getThreadsInfo(thread_id, query.page, !threadDetails)
     },
     {
       onSuccess: (data) => {
-        if (data && data.total > 0) {
-          const subject = data.rows[0].subject
-          dispatch({ type: 'set post', payload: subject })
+        if (data && data.thread) {
+          setThreadDetails(data.thread)
+          dispatch({ type: 'set post', payload: data.thread.subject })
         }
       },
     }
