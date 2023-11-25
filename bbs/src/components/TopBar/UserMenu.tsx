@@ -11,6 +11,7 @@ import { Box, Divider, ListItemIcon, MenuItem } from '@mui/material'
 
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
+import siteRoot from '@/utils/siteRoot'
 
 import Avatar from '../Avatar'
 
@@ -48,7 +49,7 @@ const MenuContent = () => {
       <MenuItem
         onClick={() =>
           (window.location.href =
-            'https://bbs.uestc.edu.cn/forum.php?mod=collection')
+            `${siteRoot}/forum.php?mod=collection`)
         }
       >
         <ListItemIcon>
