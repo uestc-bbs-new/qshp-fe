@@ -2,7 +2,7 @@ import Vditor from 'vditor'
 
 import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import { Box, Button, Pagination, Stack } from '@mui/material'
 
@@ -21,9 +21,7 @@ function Thread() {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
-  const [thread_id, setTread_id] = useState(
-    location.pathname.split('/').pop() as string
-  )
+  const thread_id = useParams()['id'] as string
 
   /**
    * 用于记录页面的 query 参数
@@ -81,21 +79,12 @@ function Thread() {
   }, [info])
 
   useEffect(() => {
-    if ((location.pathname.split('/').pop() as string) !== thread_id) {
-      setTread_id(location.pathname.split('/').pop() as string)
-      setQuery({
-        ...query,
-        page: 1,
-        thread_id: thread_id,
-      })
-    } else {
-      setQuery({
-        ...query,
-        page: Number(searchParams.get('page')) || 1,
-      })
-    }
+    setQuery({
+      ...query,
+      page: Number(searchParams.get('page')) || 1,
+    })
     refetch()
-  }, [location])
+  }, [searchParams, thread_id])
 
   const reply_floor = useRef({
     floor: 1,
@@ -126,10 +115,6 @@ function Thread() {
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(`page=${value}`)
-          setQuery({
-            ...query,
-            page: value,
-          })
         }}
       />
       {info?.rows ? (
