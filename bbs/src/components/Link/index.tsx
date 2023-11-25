@@ -1,23 +1,21 @@
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 type LinkProps = MuiLinkProps & {
   to?: string
+  external?: boolean
 }
 
-const Link = ({ to, ...other }: LinkProps) => {
-  const navigate = useNavigate()
-
-  const routerNavigate = () => {
-    to && navigate(to)
+const Link = ({ to, external, ...other }: LinkProps) => {
+  if (!to) {
+    return <MuiLink {...other} />
   }
-
-  return (
-    <span onClick={routerNavigate} className="cursor-pointer">
-      <MuiLink {...other} />
-    </span>
-  )
+  if (external) {
+    return <MuiLink component="a" href={to} {...other} />
+  }
+  return <MuiLink component={RouterLink} to={to} {...other} />
 }
 
 export default Link

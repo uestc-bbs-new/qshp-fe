@@ -1,7 +1,7 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useAppState } from '@/states'
 
@@ -12,20 +12,27 @@ type props = IOptions & {
 }
 const Editor = ({ setVd, ...other }: props) => {
   const { state } = useAppState()
+  const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
   useEffect(() => {
-    const vditor = new Vditor('vditor', {
+    const vd = new Vditor('vditor', {
       after: () => {
-        setVd(vditor)
+        setVditor(vd)
+        setVd(vd)
       },
       ...options,
       ...other,
-      // TODO: the theme only useful when init, can't response to the state.theme change
-      // consider setTheme() instead
       theme: state.theme === 'light' ? 'classic' : 'dark',
-      // TODO: the content theme should be changed when it's dark
-      // contentTheme: state.theme === 'light' ? 'classic' : 'dark',
     })
-  }, [])
+  }, [state.theme])
+
+  useEffect(() => {
+    if (vditor) {
+      vditor.setTheme(
+        state.theme === 'light' ? 'classic' : 'dark',
+        state.theme === 'light' ? 'classic' : 'dark'
+      )
+    }
+  }, [state.theme, vditor])
   return <div id="vditor" className="vditor flex-1" />
 }
 

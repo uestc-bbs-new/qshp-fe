@@ -10,22 +10,24 @@ import PostUsers from '@/components/PostUsers'
 import EmptySearch from './EmptySearch'
 
 type resultProps = {
-  name: string | null
+  target: string | null
   page: number | string
   pageSize: number
+  searchType: string
   setName: React.Dispatch<React.SetStateAction<string | null>>
   setPage: React.Dispatch<React.SetStateAction<string | number>>
 }
 const RersultForUsers = ({
-  name,
+  target,
   page,
   pageSize,
+  searchType,
   setName,
   setPage,
 }: resultProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const location = useLocation()
-  const [currentName, setCurrentName] = useState(name)
+  const [currentName, setCurrentName] = useState(target)
   const { data, refetch } = useQuery(
     ['search'],
     () => searchUsers({ username: currentName, page: currentPage }),
@@ -50,7 +52,7 @@ const RersultForUsers = ({
   if (currentName && data && data.total > 0) {
     return (
       <Box className="flex-1">
-        <Typography>搜索结果: {name}</Typography>
+        <Typography>搜索结果: {target}</Typography>
         <Box>
           <Grid container spacing={0.5}>
             {data?.rows.map((item, index) => (

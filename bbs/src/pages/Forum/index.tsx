@@ -72,9 +72,9 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
           value={sortBy}
           onChange={handleSortChange}
         >
-          <MenuItem value="1">最热主题</MenuItem>
+          <MenuItem value="1">最新回复</MenuItem>
           <MenuItem value="2">最新发表</MenuItem>
-          <MenuItem value="3">最新回复</MenuItem>
+          <MenuItem value="3">最热主题</MenuItem>
         </Select>
       </ListItem>
       <Divider
@@ -161,7 +161,7 @@ function Forum() {
       />
       <Card>
         <>
-          {threadList?.rows?.some((item: any) => item.highlight !== 0) && (
+          {threadList?.rows?.some((item: any) => item.display_order > 0) && (
             <Top>
               {isFetching ? (
                 <List>
@@ -172,7 +172,7 @@ function Forum() {
               ) : (
                 <List>
                   {threadList?.rows
-                    ?.filter((item: any) => item.highlight !== 0)
+                    ?.filter((item: any) => item.display_order > 0)
                     .map((item: any) => (
                       <Post data={item} key={item.thread_id} />
                     ))}
@@ -243,7 +243,7 @@ function Forum() {
             ) : (
               <List>
                 {threadList?.rows
-                  ?.filter((item: any) => item.highlight == 0)
+                  ?.filter((item: any) => item.display_order === 0)
                   .map((item: any) => (
                     <Post data={item} key={item.thread_id} />
                   ))}

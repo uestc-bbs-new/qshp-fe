@@ -26,7 +26,9 @@ export default defineConfig({
     port: 7564,
     proxy: {
       '/dev': {
-        target: 'http://222.197.183.89:65342',
+        target:
+          process.env['UESTC_BBS_BACKEND_SERVER'] ||
+          'http://222.197.183.89:65342',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dev/, ''),
       },

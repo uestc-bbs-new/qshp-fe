@@ -1,10 +1,19 @@
 import { useNavigate } from 'react-router-dom'
 
 import { Add, Menu } from '@mui/icons-material'
-import { AppBar, Button, IconButton, Stack, Toolbar } from '@mui/material'
+import { MeetingRoomTwoTone } from '@mui/icons-material'
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import siteRoot from '@/utils/siteRoot'
 
 import Message from './Message'
 import SearchBar from './Search'
@@ -59,6 +68,11 @@ const TopBar = () => {
     })
   }
 
+  const logoImg = new URL(
+    `../../assets/qshp-logo.png`,
+    import.meta.url
+  ).href.toString()
+
   return (
     <AppBar
       position="fixed"
@@ -76,13 +90,36 @@ const TopBar = () => {
             <Menu />
           </IconButton>
           <Link to="/" className="text-white">
-            logo 清水河畔
+            <img
+              src={logoImg}
+              alt="logo"
+              style={{ height: '50px', width: 'auto', marginRight: '30px' }}
+            />
           </Link>
-        </Stack>
-        <Stack direction="row" justifyContent="center" className="basis-1/2">
           <SearchBar />
         </Stack>
+        <Stack sx={{ flexGrow: 1 }}></Stack>
         {state.users.uid != 0 ? <Options /> : <LoginComponent />}
+        <Link
+          to="/thread/1812091"
+          className="text-white"
+          underline="none"
+          sx={{ mr: 1, ml: -1.5 }}
+        >
+          <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
+        </Link>
+        <Link
+          to={`${siteRoot}/forum.php`}
+          external
+          target='_blank'
+          className="text-white"
+          underline="none"
+        >
+          <Stack direction="row" alignItems="center">
+            <MeetingRoomTwoTone fontSize="small" />
+            <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
+          </Stack>
+        </Link>
       </Stack>
     </AppBar>
   )

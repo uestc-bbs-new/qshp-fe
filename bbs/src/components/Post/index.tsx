@@ -49,7 +49,7 @@ const Post = ({ data, small, className }: PostProps) => {
         }}
       >
         <Stack direction="row">
-          <Box sx={small ? { mr: 0.7 } : { mr: 2 }}>
+          <Box sx={small ? { mr: 1.2 } : { mr: 2 }}>
             <Avatar
               alt={data.author}
               uid={data.author_id}
@@ -72,8 +72,10 @@ const Post = ({ data, small, className }: PostProps) => {
                   onClick={handleClick}
                 >
                   <Box>
-                    {data.author && <Chip small={small} text={data.author} />}
-                    {data.subject}
+                    {!small && data.name && (
+                      <Chip small={small} text={data.name} />
+                    )}
+                    <Typography textAlign="justify">{data.subject}</Typography>
                   </Box>
                 </Link>
               </Stack>

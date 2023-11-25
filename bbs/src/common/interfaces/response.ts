@@ -1,3 +1,10 @@
+type ForumLastestThread = {
+  thread_id: number
+  subject: string
+  lastpost_time: number
+  lastpost_author: string
+  lastpost_authorid: number
+}
 export type Forum = {
   fid: number
   fup: number
@@ -37,7 +44,9 @@ export type Forum = {
   replycredit: number
   maxposition: number
   comments: number
-  forums?: Array<Forum>
+  latest_thread: ForumLastestThread
+  moderators?: Array<string>
+  children?: Array<Forum>
 }
 
 export type ForumAside = {
@@ -155,10 +164,11 @@ export interface PostFloor {
   message: string
   dateline: number
   is_anonymous: number
-  is_markdown: number
-  replies: number
-  reply_to: number
-  is_edited: number
+  usesig: number
+  format: number
+  smileyoff: number
+  parseurloff: number
+  lastedit_id: number
   author: string
   author_id: number
   user_group: number
@@ -245,4 +255,14 @@ export type ThreadType = {
   typeid: number
   name: string
   moderators_only: boolean
+}
+
+export interface UserName {
+  user_id: number
+  username: string
+}
+
+export interface UserNameFind {
+  total: number
+  rows: UserName[]
 }

@@ -43,7 +43,7 @@ const Edit = () => {
     )
 
     if (targetGroup) {
-      setGroupItem(targetGroup.forums as Forum[])
+      setGroupItem(targetGroup.children as Forum[])
     }
   }
 

@@ -16,7 +16,8 @@ const LeftDrawer = ({ width }: { width: number }) => {
     <>
       <Drawer
         variant={matchesMobile ? 'temporary' : 'persistent'}
-        open={matchesMobile ? !state.drawer : state.drawer}
+        // open={matchesMobile ? !state.drawer : state.drawer}
+        open={state.drawer}
         ModalProps={{
           // Better open performance on mobile.
           keepMounted: matchesMobile,

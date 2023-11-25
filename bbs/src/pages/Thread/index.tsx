@@ -2,7 +2,7 @@ import Vditor from 'vditor'
 
 import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import { Box, Button, Pagination, Stack } from '@mui/material'
 
@@ -18,19 +18,25 @@ import { ParsePost } from './ParserPost'
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
+
   const [searchParams, setSearchParams] = useSearchParams()
-  const [page, set_page] = useState(Number(searchParams.get('page') || 1))
   const location = useLocation()
-  const [thread_id, setTread_id] = useState(
-    location.pathname.split('/').pop() as string
+  const thread_id = useParams()['id'] as string
+
+  /**
+   * 用于记录页面的 query 参数
+   * @typedef {{ thread_id: number, page: number}} Query
+   */
+  const [query, setQuery] = useState(
+    /** @type {Query} */
+    {
+      thread_id: thread_id,
+      page: 1,
+    }
   )
 
-  const [query, setQuery] = useState({
-    thread_id: thread_id,
-    page: 1,
-  })
-
   const { dispatch } = useAppState()
+
   const {
     data: info,
     isLoading: infoLoading,
@@ -38,7 +44,7 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, page)
+      return getThreadsInfo(thread_id, query.page)
     },
     {
       onSuccess: (data) => {
@@ -60,26 +66,25 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
+      setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
     }
   }
 
   useEffect(() => {
-    if ((location.pathname.split('/').pop() as string) !== thread_id) {
-      setTread_id(location.pathname.split('/').pop() as string)
-      set_page(1)
-      setQuery({
-        ...query,
-        page: 1,
-        thread_id: thread_id,
-      })
-    } else {
-      setQuery({
-        ...query,
-        page: page,
-      })
+    if (location.hash) {
+      const hash_position = location.hash.slice(1)
+      const dom = document.getElementById(hash_position)
+      dom?.scrollIntoView()
     }
+  }, [info])
+
+  useEffect(() => {
+    setQuery({
+      ...query,
+      page: Number(searchParams.get('page')) || 1,
+    })
     refetch()
-  }, [location])
+  }, [searchParams, thread_id])
 
   const reply_floor = useRef({
     floor: 1,
@@ -110,7 +115,6 @@ function Thread() {
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(`page=${value}`)
-          set_page(value)
         }}
       />
       {info?.rows ? (
@@ -126,6 +130,7 @@ function Thread() {
                       <div className="flex flex-row gap-3 justify-between">
                         <div
                           className="hover:text-blue-500"
+                          style={{ cursor: 'pointer' }}
                           onClick={() => {
                             navigator.clipboard.writeText(
                               window.location.href.split('#')[0] +
@@ -139,10 +144,7 @@ function Thread() {
                         <div>#{item.position}</div>
                       </div>
                     </div>
-                    <ParsePost
-                      message={item.message}
-                      isMd={item.is_markdown}
-                    ></ParsePost>
+                    <ParsePost post={item} />
                   </>
                 </Floor>
               </section>
@@ -165,7 +167,7 @@ function Thread() {
             variant="rounded"
           />
           <Box className="flex-1">
-            <Editor setVd={setVd} minHeight={150} />
+            <Editor setVd={setVd} minHeight={300} />
             <Box className="text-right">
               <Button variant="text" onClick={handleSubmit}>
                 回复帖子
