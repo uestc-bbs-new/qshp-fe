@@ -17,6 +17,7 @@ import {
 import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
+import Separated from '@/components/Separated'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -141,21 +142,20 @@ export const ForumGroup = ({ data }: ForumData) => {
         <ListItemText>{data.name}</ListItemText>
         <Stack direction="row" alignItems="baseline">
           {moderators.length > 0 && <Typography>分区版主：</Typography>}
-          {moderators.map((moderator, index) => [
-            <Link
-              key={index}
-              color="inherit"
-              variant="subtitle2"
-              to={`/user/name/${moderator}`}
-            >
-              {moderator}
-            </Link>,
-            index < moderators.length - 1 ? (
-              <Typography marginRight="0.35em">,</Typography>
-            ) : (
-              <></>
-            ),
-          ])}
+          <Separated
+            separator={<Typography marginRight="0.35em">,</Typography>}
+          >
+            {moderators.map((moderator, index) => (
+              <Link
+                key={index}
+                color="inherit"
+                variant="subtitle2"
+                to={`/user/name/${moderator}`}
+              >
+                {moderator}
+              </Link>
+            ))}
+          </Separated>
         </Stack>
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
