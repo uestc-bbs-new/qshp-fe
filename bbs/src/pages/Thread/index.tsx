@@ -15,6 +15,13 @@ import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
+import { ThreadDetails } from '@/common/interfaces/response'
+
+const kPageSize = 20;
+
+function searchParamsAssign(value: URLSearchParams, kvList: object) {
+  return new URLSearchParams(Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList)))
+}
 
 function Thread() {
   const [vd, setVd] = useState<Vditor>()
@@ -22,6 +29,8 @@ function Thread() {
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
   const thread_id = useParams()['id'] as string
+  const [replyRefresh, setReplyRefresh] = useState(0)
+  const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
 
   /**
    * 用于记录页面的 query 参数
@@ -44,13 +53,13 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, query.page)
+      return getThreadsInfo(thread_id, query.page, !threadDetails)
     },
     {
       onSuccess: (data) => {
-        if (data && data.total > 0) {
-          const subject = data.rows[0].subject
-          dispatch({ type: 'set post', payload: subject })
+        if (data && data.thread) {
+          setThreadDetails(data.thread)
+          dispatch({ type: 'set post', payload: data.thread.subject })
         }
       },
     }
@@ -66,7 +75,11 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
-      setSearchParams(`page=${info?.total ? Math.ceil(info?.total / 20) : 10}`)
+      setSearchParams(searchParamsAssign(searchParams, {
+        // total + 1 because a new reply was posted just now and info is not yet refreshed.
+        page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
+      }))
+      setReplyRefresh(replyRefresh + 1)
     }
   }
 
@@ -84,7 +97,7 @@ function Thread() {
       page: Number(searchParams.get('page')) || 1,
     })
     refetch()
-  }, [searchParams, thread_id])
+  }, [searchParams, thread_id, replyRefresh])
 
   const reply_floor = useRef({
     floor: 1,
@@ -109,12 +122,12 @@ function Thread() {
   }
 
   return (
-    <Box className="flex-1">
+    <Box className="flex-1" minWidth="1em">
       <Pagination
         count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
-          setSearchParams(`page=${value}`)
+          setSearchParams(searchParamsAssign(searchParams, {page: value}))
         }}
       />
       {info?.rows ? (
@@ -144,7 +157,9 @@ function Thread() {
                         <div>#{item.position}</div>
                       </div>
                     </div>
-                    <ParsePost post={item} />
+                    <Box paddingRight="1.5em">
+                      <ParsePost post={item} />
+                    </Box>
                   </>
                 </Floor>
               </section>

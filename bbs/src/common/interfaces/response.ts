@@ -145,10 +145,15 @@ export type ThreadList = {
   rows: Array<Thread>
 }
 
+export interface ThreadDetails {
+  subject: string
+}
+
 export interface PostDetails {
   page: number
   pagesize: number
   total: number
+  thread: ThreadDetails
   rows: PostFloor[]
 }
 

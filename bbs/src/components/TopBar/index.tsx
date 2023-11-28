@@ -13,11 +13,11 @@ import {
 
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
-import siteRoot from '@/utils/siteRoot'
 
 import Message from './Message'
 import SearchBar from './Search'
 import UserMenu from './UserMenu'
+import { useDiscuzLink } from '@/utils/discuz_link_map'
 
 const Options = () => {
   const navigate = useNavigate()
@@ -61,6 +61,7 @@ const LoginComponent = () => {
 
 const TopBar = () => {
   const { state, dispatch } = useAppState()
+  const legacyUrl = useDiscuzLink()
 
   const changeMenu = () => {
     dispatch({
@@ -109,7 +110,7 @@ const TopBar = () => {
           <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
         </Link>
         <Link
-          to={`${siteRoot}/forum.php`}
+          to={legacyUrl}
           external
           target='_blank'
           className="text-white"

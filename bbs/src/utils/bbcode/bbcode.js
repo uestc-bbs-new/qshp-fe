@@ -13,6 +13,7 @@
 	$Id: bbcode.js 36359 2017-01-20 05:06:45Z nemohou $
 */
 import { smilies_array, smilies_type } from './config'
+import siteRoot from '@/utils/siteRoot';
 
 var EXTRAFUNC = [],
   allowsmilies = true,
@@ -23,8 +24,7 @@ var EXTRAFUNC = [],
   wysiwyg = 1
 
 // 资源文件地址
-var STATICURL =
-  (import.meta.env.DEV ? 'https://bbs.uestc.edu.cn' : '') + '/static/' // 站点静态文件路径，“/”结尾
+var STATICURL = siteRoot + '/static/' // 站点静态文件路径，“/”结尾
 
 var $ = function (id) {
   return typeof id === 'string' ? document.getElementById(id) : id

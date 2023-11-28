@@ -12,11 +12,3 @@ html {
   font-size: 14px;
   scroll-behavior: smooth;
 }
-
-.parse blockquote{
-  background-color: rgb(241,243,250);
-  padding: 12px 15px;
-  border-left: rgb(59, 115, 235) 2px solid;
-  margin: 0;
-  margin-bottom: 12px;
-}
