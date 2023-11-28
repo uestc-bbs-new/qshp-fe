@@ -13,8 +13,8 @@ import {
 } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/response'
-
-// import { ParsePost } from '@/pages/Thread/ParserPost'
+import Link from '@/components/Link'
+import Separated from '@/components/Separated'
 
 type HeadProps = {
   data: ForumDetails
@@ -26,9 +26,10 @@ const Head = ({ data }: HeadProps) => {
   const handleClick = () => {
     setHeadOpen(!isHeadOpen)
   }
+  const moderators = data?.moderators || []
   return (
     <>
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMore />}>
           <Box>
             <Stack
@@ -57,14 +58,28 @@ const Head = ({ data }: HeadProps) => {
               </Stack>
             </Stack>
             <Stack direction="row">
-              <Typography>版主：</Typography>
-              <Stack direction="row" alignItems="center">
-                {data?.moderators.map((item: any) => (
+              {moderators.length > 0 && <Typography>版主：</Typography>}
+              {/* <Stack direction="row" alignItems="center">
+                {moderators.map((item: any) => (
                   <Typography className="pr-5" key={item}>
                     {item},
                   </Typography>
                 ))}
-              </Stack>
+              </Stack> */}
+              <Separated
+                separator={<Typography marginRight="0.35em">,</Typography>}
+              >
+                {moderators.map((moderator, index) => (
+                  <Link
+                    key={index}
+                    color="inherit"
+                    variant="subtitle2"
+                    to={`/user/name/${moderator}`}
+                  >
+                    {moderator}
+                  </Link>
+                ))}
+              </Separated>
             </Stack>
           </Box>
         </AccordionSummary>

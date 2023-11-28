@@ -87,7 +87,7 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
 }
 
 function Forum() {
-  const [sortBy, setSort] = useState('3')
+  const [sortBy, setSort] = useState('1') // thread sort rule
   //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
   const routeParam = useParams()
   const params = new URLSearchParams(window.location.search)
@@ -95,7 +95,7 @@ function Forum() {
   const [total, setTotal] = useState(0)
   const [query, setQuery] = useState({
     page: 1,
-    type: 3,
+    type: 1,
     forum_id: routeParam.id,
     forum_details: 1,
   })
@@ -141,14 +141,16 @@ function Forum() {
   return (
     <Box className="flex-1" style={{ marginTop: '20px' }}>
       {isFetching ? (
-        <List>
-          <ListItem>
-            <Skeleton className="w-full" height={81}></Skeleton>
-          </ListItem>
-        </List>
-      ) : (
+        <Card>
+          <List>
+            <ListItem>
+              <Skeleton className="w-full" height={81}></Skeleton>
+            </ListItem>
+          </List>
+        </Card>
+      ) : threadList?.forum ? (
         <Head data={threadList?.forum}></Head>
-      )}
+      ) : null}
       <Pagination
         size="small"
         page={page}
