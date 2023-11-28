@@ -48,8 +48,7 @@ const MenuContent = () => {
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
         onClick={() =>
-          (window.location.href =
-            `${siteRoot}/forum.php?mod=collection`)
+          (window.location.href = `${siteRoot}/forum.php?mod=collection`)
         }
       >
         <ListItemIcon>

@@ -1,6 +1,5 @@
-import router from "@/routes";
-import { useEffect, useState } from "react";
-import { useLocation, useMatches } from "react-router-dom";
+import { useEffect, useState } from 'react'
+import { useLocation, useMatches } from 'react-router-dom'
 
 const kIndexUrl = '/forum.php'
 export const useDiscuzLink = () => {
@@ -10,7 +9,7 @@ export const useDiscuzLink = () => {
   useEffect(() => {
     if (matches.length > 0) {
       const match = matches[matches.length - 1]
-      switch(match.id) {
+      switch (match.id) {
         case 'forum':
           setLegacyUrl(`/forum.php?mod=forumdisplay&fid=${match.params.id}`)
           break

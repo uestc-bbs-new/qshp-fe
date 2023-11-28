@@ -13,11 +13,11 @@ import {
 
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import { useDiscuzLink } from '@/utils/discuz_link_map'
 
 import Message from './Message'
 import SearchBar from './Search'
 import UserMenu from './UserMenu'
-import { useDiscuzLink } from '@/utils/discuz_link_map'
 
 const Options = () => {
   const navigate = useNavigate()
@@ -112,7 +112,7 @@ const TopBar = () => {
         <Link
           to={legacyUrl}
           external
-          target='_blank'
+          target="_blank"
           className="text-white"
           underline="none"
         >

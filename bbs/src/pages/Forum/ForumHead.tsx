@@ -59,13 +59,6 @@ const Head = ({ data }: HeadProps) => {
             </Stack>
             <Stack direction="row">
               {moderators.length > 0 && <Typography>版主：</Typography>}
-              {/* <Stack direction="row" alignItems="center">
-                {moderators.map((item: any) => (
-                  <Typography className="pr-5" key={item}>
-                    {item},
-                  </Typography>
-                ))}
-              </Stack> */}
               <Separated
                 separator={<Typography marginRight="0.35em">,</Typography>}
               >

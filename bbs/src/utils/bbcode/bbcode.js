@@ -12,8 +12,9 @@
 
 	$Id: bbcode.js 36359 2017-01-20 05:06:45Z nemohou $
 */
+import siteRoot from '@/utils/siteRoot'
+
 import { smilies_array, smilies_type } from './config'
-import siteRoot from '@/utils/siteRoot';
 
 var EXTRAFUNC = [],
   allowsmilies = true,
