@@ -32,7 +32,9 @@ const Floor = ({ children, item, set_reply }: props) => {
 
           {/* <Typography  */}
         </Box>
-        <Box className="flex-1">{children}</Box>
+        <Box className="flex-1" minWidth="1em">
+          {children}
+        </Box>
       </Stack>
       <Footer floor={item.position} set_reply={set_reply} />
     </Box>

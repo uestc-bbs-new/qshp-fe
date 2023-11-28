@@ -19,7 +19,7 @@ type PostProps = {
   className?: string
 }
 
-const formatNumber = (num: any) => {
+const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
     const formattedNum = (num / 1000).toFixed(1) + 'K'
     return formattedNum
@@ -27,7 +27,7 @@ const formatNumber = (num: any) => {
     const formattedNum = (num / 1000000).toFixed(1) + 'M'
     return formattedNum
   }
-  return num.toString()
+  return num
 }
 
 const Post = ({ data, small, className }: PostProps) => {
@@ -60,6 +60,7 @@ const Post = ({ data, small, className }: PostProps) => {
           <Box className="flex-1">
             <Stack
               justifyContent="space-between"
+              direction="column"
               sx={small ? { minWidth: 0 } : { minWidth: 350 }}
             >
               <Stack direction="row">

@@ -1,4 +1,4 @@
-const prefix = import.meta.env.DEV ? 'https://bbs.uestc.edu.cn' : ''
+import prefix from './siteRoot'
 
 const padNumber = (value: number, length: number) => {
   return value.toString().padStart(length, '0')

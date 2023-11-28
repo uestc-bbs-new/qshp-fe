@@ -92,7 +92,6 @@ export type Thread = {
   sort_id: number
   author: string
   author_id: number
-  name: string
   subject: string
   dateline: number
   last_post: number
@@ -100,14 +99,14 @@ export type Thread = {
   views: number
   replies: number
   dis_playorder: number
-  is_highlight: number
-  is_digest: number
+  highlight: number
+  digest: number
   is_rate: number
   special: boolean
   attachment: number
   is_moderated: boolean
   is_closed: boolean
-  is_stick_reply: boolean
+  has_stick_reply: boolean
   recommends: number
   recommend_add: number
   recommend_sub: number
@@ -119,6 +118,7 @@ export type Thread = {
   reply_credit: number
   max_position: number
   comments: number
+  message: string
 }
 
 export type BBSInfo = {
@@ -142,45 +142,18 @@ export type UserInfo = {
 
 export type ThreadList = {
   total: number
-  rows: Array<Thread2>
+  rows: Array<Thread>
 }
 
-export type Thread2 = {
-  thread_id: string
-  forum_id: string
-  post_id: string
-  type_id: string
-  sort_id: string
-  author: string
-  author_id: number
+export interface ThreadDetails {
   subject: string
-  dateline: number
-  last_post: number
-  last_poster: string
-  views: string
-  replies: string
-  display_order: string
-  is_highlight: string
-  is_digest: string
-  is_rate: string
-  special: string
-  attachment: string
-  is_moderated: string
-  is_closed: string
-  is_stick_reply: string
-  recommends: string
-  recommend_add: string
-  recommend_sub: string
-  heats: string
-  status: string
-  favorite_times: string
-  share_times: string
 }
 
 export interface PostDetails {
   page: number
   pagesize: number
   total: number
+  thread: ThreadDetails
   rows: PostFloor[]
 }
 
@@ -250,6 +223,43 @@ export interface UserInfos {
   credits: number
   droplets: number
   prestiges: number
+}
+
+export type ForumDetails = {
+  name: string
+  threads: number
+  todayposts: number
+  moderators: Array<string>
+  children: Array<ForumType>
+  parents: Array<ForumType>
+  thread_types: Array<ThreadType>
+  announcement: string
+  announcement_format: string
+  post_notice_format: string
+}
+
+export type ForumType = {
+  fid: number
+  fup: number
+  type: string
+  name: string
+  threads: number
+  posts: number
+  todayposts: number
+  yesterdayposts: number
+  latest_thread: Array<{
+    thread_id: number
+    subject: string
+    lastpost_time: number
+    lastpost_author: string
+    lastpost_authorid: number
+  }>
+}
+
+export type ThreadType = {
+  typeid: number
+  name: string
+  moderators_only: boolean
 }
 
 export interface UserName {
