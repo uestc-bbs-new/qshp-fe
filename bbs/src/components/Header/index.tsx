@@ -6,6 +6,7 @@ import Banner from '../Banner'
 import Breadcrumbs from '../Breadcurmbs'
 import CampusService from './CampusService'
 import HeaderCards from './HeaderCards'
+import OverviewInfo from './OverviewInfo'
 
 const headerImg = new URL(
   `../../assets/header.jpg`,
@@ -24,6 +25,7 @@ const WelcomeBanner = () => {
           </Typography>
         </Box>
       </Banner>
+      <OverviewInfo />
       <HeaderCards />
       <CampusService />
     </>
