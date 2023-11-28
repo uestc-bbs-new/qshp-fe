@@ -5,6 +5,7 @@ import { Box, Stack, Typography, useTheme } from '@mui/material'
 import Banner from '../Banner'
 import Breadcrumbs from '../Breadcurmbs'
 import CampusService from './CampusService'
+import HeaderCards from './HeaderCards'
 
 const headerImg = new URL(
   `../../assets/header.jpg`,
@@ -23,6 +24,7 @@ const WelcomeBanner = () => {
           </Typography>
         </Box>
       </Banner>
+      <HeaderCards />
       <CampusService />
     </>
   )

@@ -66,7 +66,5 @@ export const getThreadList = (params: object) => {
 }
 
 export const getAnnouncement = () => {
-  return request.get<object, Thread[]>(
-    `${commonUrl}/star/api/forum/v1/view/thread/bulletin`
-  )
+  return request.get<object, Thread[]>(`${commonUrl}/view/thread/bulletin`)
 }
