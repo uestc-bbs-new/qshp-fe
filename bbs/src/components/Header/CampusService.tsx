@@ -9,29 +9,38 @@ import {
 
 import Link from '@/components/Link'
 
+type NavLink = {
+  link: string
+  name: string
+  external: boolean
+}
 const boatWheelImg = new URL(
   `../../assets/boat-wheel.png`,
   import.meta.url
 ).href.toString()
-const listServiceItems: { link: string; name: string }[] = [
+
+const listServiceItems: NavLink[] = [
   {
     link: 'thread/1430861',
     name: '校车时刻表',
+    external: false,
   },
-  { link: '/forum/305', name: '失物招领' },
-  { link: 'thread/1493930', name: '校历' },
+  { link: '/forum/305', name: '失物招领', external: false },
+  { link: 'thread/1493930', name: '校历', external: false },
   {
     link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
     name: '网上报修',
+    external: true,
   },
-  { link: 'http://ecard.uestc.edu.cn/', name: '一卡通查询' },
-  { link: 'http://portal.uestc.edu.cn/', name: '信息门户' },
+  { link: 'http://ecard.uestc.edu.cn/', name: '一卡通查询', external: true },
+  { link: 'http://portal.uestc.edu.cn/', name: '信息门户', external: true },
   {
     link: 'https://hq.uestc.edu.cn/yzs/commentSite/commentSiteIndex',
     name: '后勤建议',
+    external: true,
   },
-  { link: 'http://gis.uestc.edu.cn/', name: '校园地图' },
-  { link: 'http://www.lib.uestc.edu.cn/', name: '图书馆' },
+  { link: 'http://gis.uestc.edu.cn/', name: '校园地图', external: true },
+  { link: 'http://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
 ]
 const renderLink = (link: string, name: string, key: string) => {
   return (
