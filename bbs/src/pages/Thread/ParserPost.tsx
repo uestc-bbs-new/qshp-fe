@@ -8,6 +8,7 @@ import { PostFloor } from '@/common/interfaces/response'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
+
 import './richtext.css'
 
 export type PropsType = {
@@ -40,7 +41,11 @@ function ParseMd({ message }: { message: string }) {
 
 export function ParsePost({ post }: { post: PostFloor }) {
   return (
-    <div className={`rich-text-content rich-text-content-${post.format == 2 ? 'markdown' : 'legacy'}`}>
+    <div
+      className={`rich-text-content rich-text-content-${
+        post.format == 2 ? 'markdown' : 'legacy'
+      }`}
+    >
       {post.format == 2 ? (
         <ParseMd message={post.message} />
       ) : (

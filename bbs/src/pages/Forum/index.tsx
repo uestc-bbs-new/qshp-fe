@@ -23,6 +23,8 @@ import { getThreadList } from '@/apis/common'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
 
+import Head from './ForumHead'
+
 type TopProps = {
   children: React.ReactElement
 }
@@ -95,6 +97,7 @@ function Forum() {
     page: 1,
     type: 1,
     forum_id: routeParam.id,
+    forum_details: 1,
   })
 
   const pageSize = 20
@@ -119,17 +122,7 @@ function Forum() {
       forum_id: routeParam.id,
     })
     refetch()
-  }, [query.type, query.page])
-
-  useEffect(() => {
-    setQuery({
-      ...query,
-      page: 1,
-      type: 1,
-      forum_id: routeParam.id,
-    })
-    refetch()
-  }, [location])
+  }, [location, query.type, query.page])
 
   const handleSortChange = (event: SelectChangeEvent) => {
     window.scrollTo(0, 0)
@@ -146,7 +139,28 @@ function Forum() {
   }
 
   return (
-    <Box className="flex-1">
+    <Box className="flex-1" style={{ marginTop: '20px' }}>
+      {isFetching ? (
+        <Card>
+          <List>
+            <ListItem>
+              <Skeleton className="w-full" height={81}></Skeleton>
+            </ListItem>
+          </List>
+        </Card>
+      ) : threadList?.forum ? (
+        <Head data={threadList?.forum}></Head>
+      ) : null}
+      <Pagination
+        size="small"
+        page={page}
+        onChange={handlePageChange}
+        count={total}
+        variant="outlined"
+        shape="rounded"
+        style={{ margin: '20px' }}
+        sx={{ display: 'flex', justifyContent: 'center' }}
+      />
       <Card>
         <>
           {threadList?.rows?.some((item: any) => item.display_order > 0) && (
@@ -175,49 +189,49 @@ function Forum() {
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
                   <Skeleton
                     className="w-full"
                     width={961}
-                    height={81}
+                    height={100}
                   ></Skeleton>
                 </ListItem>
                 <ListItem>
@@ -250,6 +264,7 @@ function Forum() {
         style={{ marginTop: '20px' }}
         sx={{ display: 'flex', justifyContent: 'center' }}
       />
+      {/* <Edit></Edit> */}
     </Box>
   )
 }

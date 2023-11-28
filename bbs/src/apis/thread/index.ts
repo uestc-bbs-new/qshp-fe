@@ -6,9 +6,14 @@ import {
 import request from '@/utils/request'
 
 /** 获取帖子详情信息 */
-export const getThreadsInfo = (thread_id: string, page = 1, threadDetails = false) => {
+export const getThreadsInfo = (
+  thread_id: string,
+  page = 1,
+  threadDetails = false
+) => {
   return request.get<null, PostDetails>(
-    `/star/api/forum/v1/view/post/details`, {
+    `/star/api/forum/v1/view/post/details`,
+    {
       params: {
         thread_id,
         page,

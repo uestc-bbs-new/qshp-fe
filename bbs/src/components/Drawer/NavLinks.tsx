@@ -63,8 +63,20 @@ const listServiceItems: NavLink[] = [
   },
 ]
 
-const renderLink = (link: string, name: string, key: string | number, external?: boolean) => (
-  <Link to={link} key={key} underline="none" color="inherit" external={external ?? false} target={external ? '_blank': undefined}>
+const renderLink = (
+  link: string,
+  name: string,
+  key: string | number,
+  external?: boolean
+) => (
+  <Link
+    to={link}
+    key={key}
+    underline="none"
+    color="inherit"
+    external={external ?? false}
+    target={external ? '_blank' : undefined}
+  >
     <ListItemButton sx={{ pl: 4 }}>
       <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
       <ListItemText>

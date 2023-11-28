@@ -7,6 +7,7 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { Box, Button, Pagination, Stack } from '@mui/material'
 
 import { getThreadsInfo, replyThreads } from '@/apis/thread'
+import { ThreadDetails } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
@@ -15,12 +16,13 @@ import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
-import { ThreadDetails } from '@/common/interfaces/response'
 
-const kPageSize = 20;
+const kPageSize = 20
 
 function searchParamsAssign(value: URLSearchParams, kvList: object) {
-  return new URLSearchParams(Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList)))
+  return new URLSearchParams(
+    Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList))
+  )
 }
 
 function Thread() {
@@ -75,10 +77,12 @@ function Thread() {
           : reply_floor.current.post_id
       )
       vd?.setValue('')
-      setSearchParams(searchParamsAssign(searchParams, {
-        // total + 1 because a new reply was posted just now and info is not yet refreshed.
-        page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
-      }))
+      setSearchParams(
+        searchParamsAssign(searchParams, {
+          // total + 1 because a new reply was posted just now and info is not yet refreshed.
+          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
+        })
+      )
       setReplyRefresh(replyRefresh + 1)
     }
   }
@@ -127,7 +131,7 @@ function Thread() {
         count={info?.total ? Math.ceil(info?.total / 20) : 10}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
-          setSearchParams(searchParamsAssign(searchParams, {page: value}))
+          setSearchParams(searchParamsAssign(searchParams, { page: value }))
         }}
       />
       {info?.rows ? (
