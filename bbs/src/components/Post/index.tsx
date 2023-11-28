@@ -5,7 +5,7 @@ import {
 } from '@mui/icons-material'
 import React, { Box, Stack, Typography, useTheme } from '@mui/material'
 
-import { Thread } from '@/common/interfaces/response'
+import { ForumDetails, Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
@@ -17,6 +17,7 @@ type PostProps = {
   data: Thread
   small?: boolean
   className?: string
+  forumDetails?: ForumDetails
 }
 
 const formatNumber = (num: number) => {
@@ -30,7 +31,7 @@ const formatNumber = (num: number) => {
   return num
 }
 
-const Post = ({ data, small, className }: PostProps) => {
+const Post = ({ data, small, className, forumDetails }: PostProps) => {
   const theme = useTheme()
 
   const { dispatch } = useAppState()
@@ -64,6 +65,15 @@ const Post = ({ data, small, className }: PostProps) => {
               sx={small ? { minWidth: 0 } : { minWidth: 350 }}
             >
               <Stack direction="row">
+                {!small &&
+                  data.type_id &&
+                  forumDetails?.thread_types_map &&
+                  forumDetails?.thread_types_map[data.type_id] && (
+                    <Chip
+                      small={small}
+                      text={forumDetails?.thread_types_map[data.type_id].name}
+                    />
+                  )}
                 <Link
                   to={`/thread/${data.thread_id}`}
                   color="inherit"
@@ -72,9 +82,6 @@ const Post = ({ data, small, className }: PostProps) => {
                   onClick={handleClick}
                 >
                   <Box>
-                    {!small && data.name && (
-                      <Chip small={small} text={data.name} />
-                    )}
                     <Typography textAlign="justify">{data.subject}</Typography>
                   </Box>
                 </Link>

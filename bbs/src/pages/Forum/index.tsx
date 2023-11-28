@@ -20,6 +20,7 @@ import {
 } from '@mui/material'
 
 import { getThreadList } from '@/apis/common'
+import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
 
@@ -93,11 +94,14 @@ function Forum() {
   const params = new URLSearchParams(window.location.search)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
+  const [forumDetails, setForumDetails] = useState<ForumDetails | undefined>(
+    undefined
+  )
   const [query, setQuery] = useState({
     page: 1,
     type: 1,
     forum_id: routeParam.id,
-    forum_details: 1,
+    forum_details: !forumDetails ? 1 : 0,
   })
 
   const pageSize = 20
@@ -110,6 +114,9 @@ function Forum() {
     onSuccess: (data: any) => {
       if (data && data.total) {
         setTotal(Math.ceil(data.total / pageSize))
+      }
+      if (data && data.forum) {
+        setForumDetails(data.forum)
       }
     },
   })
@@ -148,8 +155,8 @@ function Forum() {
             </ListItem>
           </List>
         </Card>
-      ) : threadList?.forum ? (
-        <Head data={threadList?.forum}></Head>
+      ) : forumDetails ? (
+        <Head data={forumDetails}></Head>
       ) : null}
       <Pagination
         size="small"
@@ -176,7 +183,11 @@ function Forum() {
                   {threadList?.rows
                     ?.filter((item: any) => item.display_order > 0)
                     .map((item: any) => (
-                      <Post data={item} key={item.thread_id} />
+                      <Post
+                        data={item}
+                        key={item.thread_id}
+                        forumDetails={forumDetails}
+                      />
                     ))}
                 </List>
               )}
@@ -247,7 +258,11 @@ function Forum() {
                 {threadList?.rows
                   ?.filter((item: any) => item.display_order === 0)
                   .map((item: any) => (
-                    <Post data={item} key={item.thread_id} />
+                    <Post
+                      data={item}
+                      key={item.thread_id}
+                      forumDetails={forumDetails}
+                    />
                   ))}
               </List>
             )}
