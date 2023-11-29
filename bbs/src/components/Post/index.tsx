@@ -11,6 +11,7 @@ import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
 import Avatar from '../Avatar'
+import { forumDictionary } from '../Breadcurmbs'
 import Link from '../Link'
 
 type PostProps = {
@@ -72,19 +73,27 @@ const Post = ({ data, small, className }: PostProps) => {
                   onClick={handleClick}
                 >
                   <Box>
-                    {!small && data.name && (
-                      <Chip small={small} text={data.name} />
+                    {data.forum_id && (
+                      <Chip
+                        small={small}
+                        text={forumDictionary[data.forum_id]}
+                      />
                     )}
-                    <Typography textAlign="justify">{data.subject}</Typography>
+                    <Typography
+                      textAlign="justify"
+                      sx={small ? { fontSize: 12 } : {}}
+                    >
+                      {data.subject}
+                    </Typography>
                   </Box>
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
-                <Link color="inherit">{data.author}</Link>
+                <Link color="#3A71F2">{data.author}</Link>
                 {/* <UserCard uid={data.author_id}>
                   <Link color="inherit">{data.author}</Link>
                 </UserCard> */}
-                <Typography fontSize="inherit" className="pl-1">
+                <Typography fontSize="inherit" className="pl-1" color="grey">
                   {`· ${chineseTime(data.dateline * 1000)}`}
                 </Typography>
               </Stack>

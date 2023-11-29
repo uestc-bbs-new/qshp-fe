@@ -17,7 +17,7 @@ interface Dictionary {
   [key: string]: string
 }
 
-const dictionary: Dictionary = {
+export const forumDictionary: Dictionary = {
   search: '搜索',
   2: '站务公告',
   46: '站务综合',
@@ -90,7 +90,7 @@ const Breadcrumbs = () => {
         const isLast = index === pathnames.length - 1
         const isSecondLast = index === pathnames.length - 2
 
-        const displayName = dictionary[name] || name
+        const displayName = forumDictionary[name] || name
 
         if (isSecondLast) {
           return pathnames[index] !== 'search' ? null : (
