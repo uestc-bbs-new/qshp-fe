@@ -69,6 +69,14 @@ const headerCard = (id: number) => {
                   </Link>
                 </Stack>
               </Box>
+              <Typography
+                fontSize={12}
+                fontWeight={600}
+                className="mr-5 mt-3"
+                color="#3A71F2"
+              >
+                2023-11-28
+              </Typography>
             </Stack>
           ))}
         </Stack>
