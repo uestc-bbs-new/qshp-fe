@@ -1,11 +1,17 @@
 import { Forum } from '@/common/interfaces/response'
 
+export type UserState = {
+  uid: number
+  username: string
+  new_pm?: number
+  new_notification?: number
+}
+
 export type State = {
   selectedPost: string
-  messages: { unread_count: number }
   drawer: boolean
   navList: Forum[]
-  users: { uid: number; name: string }
+  user: UserState
   theme: 'light' | 'dark'
 }
 
@@ -19,32 +25,15 @@ export const stateReducer = (state: State, action: StateAction) => {
     case 'clear':
       return {
         ...state,
-        messages: { unread_count: 0 },
         navList: [],
-        users: { uid: -1, name: 'nobody' },
+        user: { uid: 0, name: '游客' },
       }
     case 'set user': {
       return {
         ...state,
-        users: action.payload,
+        user: action.payload,
       }
     }
-    case 'set messages': {
-      return {
-        ...state,
-        messages: { unread_count: action.payload },
-      }
-    }
-    // case 'read messages': {
-    //   const messages = [
-    //     ...action.payload.messages,
-    //     // ...state.rooms[action.payload.id].messages,
-    //   ]
-    //   return {
-    //     ...state,
-    //     messages: { unread_count: 0 },
-    //   }
-    // }
     case 'set navList':
       return { ...state, navList: action.payload }
     case 'set theme':

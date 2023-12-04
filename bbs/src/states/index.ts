@@ -6,14 +6,11 @@ export type Theme = 'light' | 'dark'
 
 // type AppContext = [state: State, dispatch: React.Dispatch<Action>]
 const initialState = {
-  messages: {
-    unread_count: 1,
-  },
   drawer: false, //侧边栏是否打开
   navList: [],
-  users: {
-    uid: 1,
-    name: '',
+  user: {
+    uid: 0,
+    username: '游客',
   },
   theme: (localStorage.getItem('theme') as Theme) || 'light',
   selectedPost: '',
