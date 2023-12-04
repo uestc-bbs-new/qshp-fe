@@ -75,7 +75,7 @@ export const getAnnouncement = () => {
 export const signIn = (params: {
   username: string
   password: string
-  stay_signed_in: boolean
+  keep_signed_in: boolean
 }) => {
   return authService.post<object, string>(`${commonUrl}/auth/signin`, {
     ...params,

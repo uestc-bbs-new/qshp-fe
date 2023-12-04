@@ -70,7 +70,7 @@ const LoginComponent = () => {
     const authorization = await signIn({
       username: username.toString(),
       password: password.toString(),
-      stay_signed_in: data.get('stay_signed_in')?.toString() === '1',
+      keep_signed_in: data.get('keep_signed_in')?.toString() === '1',
     })
     if (authorization) {
       localStorage['newbbs_authorization'] = authorization
@@ -118,7 +118,7 @@ const LoginComponent = () => {
               </Grid>
             </Grid>
             <FormControlLabel
-              control={<Checkbox name="stay_signed_in" value="1" />}
+              control={<Checkbox name="keep_signed_in" value="1" />}
               label="自动登录"
             />
             <Stack direction="row" justifyContent="center">
