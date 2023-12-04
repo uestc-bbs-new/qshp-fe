@@ -64,7 +64,7 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
             >
               <Stack direction="row">
                 {!small &&
-                  data.type_id &&
+                  !!data.type_id &&
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
                     <Chip
