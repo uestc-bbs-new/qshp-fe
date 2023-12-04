@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
-import { Box, List, Pagination, Stack, Typography } from '@mui/material'
+import { Box, List, Pagination, Paper, Stack, Typography } from '@mui/material'
 
 import { searchThreads } from '@/apis/common'
 import Post from '@/components/Post'
@@ -55,14 +55,19 @@ const RersultForPost = ({
   if (currentName && data && data.resultNum > 0) {
     return (
       <Box className="flex-1">
-        <Typography>搜索结果: {currentName}</Typography>
-        <Box>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          搜索结果: {currentName}
+        </Typography>
+        <Typography fontSize={12} color="grey">
+          搜索到{data.resultNum > 999 ? '999+' : data.resultNum}个相关结果
+        </Typography>
+        <Paper elevation={3} sx={{ borderRadius: '10px', mt: 1 }}>
           <List>
             {data.threads.map((item) => (
               <Post data={item} key={item.thread_id} />
             ))}
           </List>
-        </Box>
+        </Paper>
         <Stack alignItems="center">
           <Pagination
             className="mt-4"

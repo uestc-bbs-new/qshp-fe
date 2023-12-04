@@ -69,7 +69,9 @@ const ForumCover = ({ data }: ForumData) => {
             underline="hover"
             to={`forum/${data.fid}`}
           >
-            <Typography variant="h6">{data.name}</Typography>
+            <Typography variant="h6" fontWeight="bold">
+              {data.name}
+            </Typography>
           </Link>
           <Typography>{data.todayposts || ''}</Typography>
         </Stack>

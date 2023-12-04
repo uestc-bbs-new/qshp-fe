@@ -65,6 +65,7 @@ const Announcement = () => {
   }
 
   if (data) {
+    console.log(data)
     return (
       <Box className="relative">
         <AutoPlay

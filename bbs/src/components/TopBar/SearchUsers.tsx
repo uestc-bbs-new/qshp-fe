@@ -23,7 +23,7 @@ const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
     navigate({
       pathname: '/search',
       search: createSearchParams({
-        type: 'user',
+        type: 'username',
         name: item.username,
       }).toString(),
     })

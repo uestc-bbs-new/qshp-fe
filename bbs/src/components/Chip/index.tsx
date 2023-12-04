@@ -20,7 +20,11 @@ const Chip = ({ text, small, type = 'plate', className }: Props) => {
           backgroundColor: chipColor(text, type),
         }}
       >
-        <Typography variant="subtitle2" className={small ? 'px-1' : 'px-2'}>
+        <Typography
+          variant="subtitle2"
+          className={small ? 'px-1' : 'px-2'}
+          fontSize={11}
+        >
           {text}
         </Typography>
       </Box>
