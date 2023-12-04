@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { notifyUserCallbacks } from '@/states/user'
+
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
 
 const statusCode = {
@@ -30,21 +32,24 @@ const service = axios.create({
   baseURL: baseUrl,
   headers: {
     'Content-type': 'application/json',
-    Authorization:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMDY5MjUsInVzZXJuYW1lIjoiQWJyYUMiLCJ1c2VyX2dyb3VwIjoyNiwiYWRtaW5fZ3JvdXAiOjMsImV4dGVuZGVkX2dyb3VwcyI6WzI2LDNdLCJ2aWV3X2F1dGhvcml0aWVzIjpbMiwxNywyNSw0NSw0Niw1NSw2MSw2Niw3MCw3NCwxMTEsMTE0LDExNSwxMTgsMTIxLDEyOCwxMzgsMTQwLDE0OSwxNTIsMTU0LDE4MywxOTksMjA4LDIyNSwyMjksMjMzLDIzNiwyMzcsMjUyLDI1NSwzMDUsMzA5LDMxMiwzMjYsMzcwLDM4MiwzOTEsNDAzXSwiYXVkIjoid2ViIiwiZXhwIjoxNjk1NjI4MjU3LCJqdGkiOiIzMDA1MzEyMzU5MDQ1NTI5NyIsImlhdCI6MTY5MDQ0NDI1NywiaXNzIjoi5riF5rC05rKz55WU4oCU4oCU55S15a2Q56eR5oqA5aSn5a2m5a6Y5pa56K665Z2bIiwic3ViIjoiYWNjZXNzX3Rva2VuIn0.ozcDENGOCKW4yps8v7g6GSfmAHb22yzW-doUCd-Ec_g',
   },
 })
 
-// /**
-//  * 请求拦截器
-//  * @param { object } config 请求参数
-//  */
-//  service.interceptors.request.use((config) => {
-//     config.headers['access-token'] = sessionStorage.getItem('token')
-//     return config
-//   }, function (error) {
-//     return Promise.reject(error)
-//   })
+/**
+ * 请求拦截器
+ * @param { object } config 请求参数
+ */
+service.interceptors.request.use(
+  (config) => {
+    config.headers['Authorization'] = localStorage.getItem(
+      'newbbs_authorization'
+    )
+    return config
+  },
+  function (error) {
+    return Promise.reject(error)
+  }
+)
 
 // /**
 //  * 响应拦截器
@@ -53,6 +58,7 @@ const service = axios.create({
 service.interceptors.response.use(
   (response) => {
     const content = response.data
+    notifyUserCallbacks(content.user)
     if (content.errcode === statusCode.responseSuccess) {
       return content.data
     } else {

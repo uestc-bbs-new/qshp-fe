@@ -5,6 +5,8 @@ import { RouterProvider } from 'react-router-dom'
 import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
+import { UserState } from './states/reducers/stateReducer'
+import { registerUserCallback, unregisterUserCallback } from './states/user'
 import { checkCookie } from './utils/cookie'
 
 const queryClient = new QueryClient({
@@ -22,6 +24,14 @@ function App() {
   useEffect(() => {
     checkCookie()
   })
+
+  useEffect(() => {
+    const callback = (newUser?: UserState) => {
+      dispatch({ type: 'set user', payload: newUser })
+    }
+    registerUserCallback(callback)
+    return () => unregisterUserCallback(callback)
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>

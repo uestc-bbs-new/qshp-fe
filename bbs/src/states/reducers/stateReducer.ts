@@ -1,5 +1,7 @@
 import { Forum } from '@/common/interfaces/response'
 
+import { guestUser } from '..'
+
 export type UserState = {
   uid: number
   username: string
@@ -26,13 +28,26 @@ export const stateReducer = (state: State, action: StateAction) => {
       return {
         ...state,
         navList: [],
-        user: { uid: 0, name: '游客' },
       }
     case 'set user': {
-      return {
-        ...state,
-        user: action.payload,
+      if (!action.payload && state.user != guestUser) {
+        return {
+          ...state,
+          user: guestUser,
+        }
+      } else if (
+        action.payload &&
+        (action.payload.uid != state.user.uid ||
+          action.payload.username != state.user.username ||
+          action.payload.new_pm != state.user.new_pm ||
+          action.payload.new_notification != state.user.new_notification)
+      ) {
+        return {
+          ...state,
+          user: action.payload,
+        }
       }
+      return state
     }
     case 'set navList':
       return { ...state, navList: action.payload }

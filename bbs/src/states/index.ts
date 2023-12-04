@@ -5,13 +5,15 @@ import { State, StateAction, stateReducer } from './reducers/stateReducer'
 export type Theme = 'light' | 'dark'
 
 // type AppContext = [state: State, dispatch: React.Dispatch<Action>]
+
+const guestUser = {
+  uid: 0,
+  username: '游客',
+}
 const initialState = {
   drawer: false, //侧边栏是否打开
   navList: [],
-  user: {
-    uid: 0,
-    username: '游客',
-  },
+  user: guestUser,
   theme: (localStorage.getItem('theme') as Theme) || 'light',
   selectedPost: '',
 }
@@ -33,3 +35,4 @@ export const useAppState = () =>
   }>(AppContext)
 
 export default useAppStateContext
+export { guestUser }
