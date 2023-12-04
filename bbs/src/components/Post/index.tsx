@@ -3,7 +3,7 @@ import {
   RemoveRedEyeOutlined,
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
-import React, { Box, Stack, Typography, useTheme } from '@mui/material'
+import React, { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 
 import { Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
@@ -42,9 +42,7 @@ const Post = ({ data, small, className }: PostProps) => {
   return (
     <Box className={small ? className : `${className} p-0.5`}>
       <Box
-        className={`rounded-lg ${
-          small ? 'p-1' : 'shadow-lg p-4'
-        } ${className} `}
+        className={`rounded-lg ${small ? 'p-1' : 'p-4'} ${className} `}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
@@ -156,6 +154,9 @@ const Post = ({ data, small, className }: PostProps) => {
           )}
         </Stack>
       </Box>
+      {!small && (
+        <Divider variant="middle" style={{ backgroundColor: 'grey' }} />
+      )}
     </Box>
   )
 }
