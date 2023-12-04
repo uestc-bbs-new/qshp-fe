@@ -1,3 +1,5 @@
+import React from 'react'
+
 type Props = {
   children: Array<React.ReactElement>
   separator: React.ReactElement
@@ -5,10 +7,12 @@ type Props = {
 const Separated = ({ children, separator }: Props) => {
   return (
     <>
-      {children.map((child, index) => [
-        child,
-        index < children.length - 1 ? separator : <></>,
-      ])}
+      {children.map((child, index) => (
+        <React.Fragment key={index}>
+          {child}
+          {index < children.length - 1 ? separator : <></>}
+        </React.Fragment>
+      ))}
     </>
   )
 }
