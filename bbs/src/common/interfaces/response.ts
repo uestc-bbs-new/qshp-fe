@@ -143,6 +143,7 @@ export type UserInfo = {
 export type ThreadList = {
   total: number
   rows: Array<Thread>
+  forum?: ForumDetails
 }
 
 export interface ThreadDetails {
@@ -233,6 +234,7 @@ export type ForumDetails = {
   children: Array<ForumType>
   parents: Array<ForumType>
   thread_types: Array<ThreadType>
+  thread_types_map?: ThreadTypeMap
   announcement: string
   announcement_format: string
   post_notice_format: string
@@ -257,10 +259,12 @@ export type ForumType = {
 }
 
 export type ThreadType = {
-  typeid: number
+  type_id: number
   name: string
   moderators_only: boolean
 }
+
+export type ThreadTypeMap = { [type_id: number]: ThreadType }
 
 export interface UserName {
   user_id: number

@@ -3,6 +3,7 @@ import {
   ForumList,
   Thread,
   ThreadList,
+  ThreadTypeMap,
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
@@ -50,19 +51,21 @@ export const searchUsers_at = (params: object) => {
   )
 }
 
-export const searchUsers_uid = (params: object) => {
-  return request.get<object, { total: number; rows: UserInfo[] }>(
-    `${commonUrl}/global/search/uid`,
+export const getThreadList = async (params: object) => {
+  const result = await request.get<null, ThreadList>(
+    `${commonUrl}/view/thread/threads`,
     {
       params: params,
     }
   )
-}
-
-export const getThreadList = (params: object) => {
-  return request.get<null, ThreadList>(`${commonUrl}/view/thread/threads`, {
-    params: params,
-  })
+  if (result.forum && result.forum.thread_types) {
+    result.forum.thread_types_map =
+      result.forum.thread_types.reduce<ThreadTypeMap>((map, item) => {
+        map[item.type_id] = item
+        return map
+      }, {})
+  }
+  return result
 }
 
 export const getAnnouncement = () => {
