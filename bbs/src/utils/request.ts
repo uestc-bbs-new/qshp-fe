@@ -28,10 +28,24 @@ const errorHandle = (status: number, errorTest: string) => {
  * 设置请求超时 { timeout }
  */
 
-const service = axios.create({
+const commonConfig = {
   baseURL: baseUrl,
+}
+const commonHeaders = {
+  'Content-type': 'application/json',
+}
+const service = axios.create({
+  ...commonConfig,
   headers: {
-    'Content-type': 'application/json',
+    ...commonHeaders,
+  },
+})
+
+const authService = axios.create({
+  ...commonConfig,
+  headers: {
+    ...commonHeaders,
+    'X-UESTC-BBS': '1',
   },
 })
 
@@ -85,3 +99,4 @@ service.interceptors.response.use(
 )
 
 export default service
+export { authService }

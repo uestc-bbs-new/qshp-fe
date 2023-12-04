@@ -16,6 +16,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { signOut } from '@/apis/common'
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
@@ -26,10 +27,9 @@ import Avatar from '../Avatar'
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
 
-  const logout = () => {
-    dispatch({
-      type: 'clear',
-    })
+  const logout = async () => {
+    await signOut()
+    dispatch({ type: 'set user' })
   }
 
   const themeChange = () => {

@@ -7,7 +7,7 @@ import {
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
-import request from '@/utils/request'
+import request, { authService } from '@/utils/request'
 
 const commonUrl = '/star/api/forum/v1'
 
@@ -70,4 +70,8 @@ export const getThreadList = async (params: object) => {
 
 export const getAnnouncement = () => {
   return request.get<object, Thread[]>(`${commonUrl}/view/thread/bulletin`)
+}
+
+export const signOut = () => {
+  return authService.post(`${commonUrl}/auth/signout`)
 }
