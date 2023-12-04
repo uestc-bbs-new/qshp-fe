@@ -6,7 +6,6 @@ import {
   Divider,
   FormControl,
   IconButton,
-  Menu,
   MenuItem,
   Stack,
 } from '@mui/material'
@@ -118,38 +117,9 @@ const SearchBar = () => {
               <MenuItem value="post" onClick={handleFocus}>
                 帖子
               </MenuItem>
-              <MenuItem onMouseEnter={handleMouseEnter}>用户</MenuItem>
-              <MenuItem value="username" sx={{ display: 'none' }}>
-                用户名
+              <MenuItem value="username" onClick={handleFocus}>
+                用户
               </MenuItem>
-              <MenuItem value="uid" sx={{ display: 'none' }}>
-                UID
-              </MenuItem>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMouseLeave}
-                MenuListProps={{
-                  onMouseLeave: handleMouseLeave,
-                }}
-              >
-                <MenuItem
-                  value="username"
-                  onClick={() => {
-                    setSearchType('username'), handleFocus()
-                  }}
-                >
-                  用户名
-                </MenuItem>
-                <MenuItem
-                  value="uid"
-                  onClick={() => {
-                    setSearchType('uid'), handleFocus()
-                  }}
-                >
-                  UID
-                </MenuItem>
-              </Menu>
             </Select>
           </FormControl>
 
