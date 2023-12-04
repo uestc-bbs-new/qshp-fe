@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 import { notifyUserCallbacks } from '@/states/user'
 
@@ -65,37 +65,45 @@ service.interceptors.request.use(
   }
 )
 
+const commonResponseInterceptor = (response: AxiosResponse) => {
+  const content = response.data
+  notifyUserCallbacks(content.user)
+  if (content.errcode === statusCode.responseSuccess) {
+    return content.data
+  } else {
+    return content.data
+  }
+}
+
+const commonResponseErrorInterceptor = (error: any) => {
+  if (error) {
+    if (error.response) {
+      const httpError = {
+        hasError: true,
+        status: error.response.status,
+        statusText: error.response.statusText,
+      }
+      errorHandle(httpError.status, httpError.statusText)
+    } else {
+      // show toast
+    }
+    return Promise.reject(error)
+  } else {
+    // show toast
+  }
+}
+
 // /**
 //  * 响应拦截器
 //  * @param { object } response 响应参数
 //  */
 service.interceptors.response.use(
-  (response) => {
-    const content = response.data
-    notifyUserCallbacks(content.user)
-    if (content.errcode === statusCode.responseSuccess) {
-      return content.data
-    } else {
-      return content.data
-    }
-  },
-  (error) => {
-    if (error) {
-      if (error.response) {
-        const httpError = {
-          hasError: true,
-          status: error.response.status,
-          statusText: error.response.statusText,
-        }
-        errorHandle(httpError.status, httpError.statusText)
-      } else {
-        // show toast
-      }
-      return Promise.reject(error)
-    } else {
-      // show toast
-    }
-  }
+  commonResponseInterceptor,
+  commonResponseErrorInterceptor
+)
+authService.interceptors.response.use(
+  commonResponseInterceptor,
+  commonResponseErrorInterceptor
 )
 
 export default service

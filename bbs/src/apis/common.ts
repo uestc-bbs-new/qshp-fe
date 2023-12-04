@@ -72,6 +72,16 @@ export const getAnnouncement = () => {
   return request.get<object, Thread[]>(`${commonUrl}/view/thread/bulletin`)
 }
 
+export const signIn = (params: {
+  username: string
+  password: string
+  stay_signed_in: boolean
+}) => {
+  return authService.post<object, string>(`${commonUrl}/auth/signin`, {
+    ...params,
+  })
+}
+
 export const signOut = () => {
   return authService.post(`${commonUrl}/auth/signout`)
 }
