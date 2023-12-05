@@ -106,5 +106,12 @@ authService.interceptors.response.use(
   commonResponseErrorInterceptor
 )
 
+if (import.meta.env.DEV) {
+  interface WindowExtension extends Window {
+    api: any
+  }
+  ;(window as unknown as WindowExtension).api = service
+}
+
 export default service
 export { authService }
