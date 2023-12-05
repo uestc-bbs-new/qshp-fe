@@ -15,6 +15,6 @@ export default (axios: AxiosInstance) =>
       if (error.response?.status === kHttpUnauthorized) {
         notifyUserCallbacks(undefined)
       }
-      return error
+      return Promise.reject(error)
     }
   )

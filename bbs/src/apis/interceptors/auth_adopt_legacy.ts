@@ -13,7 +13,7 @@ export default (axios: AxiosInstance) =>
   axios.interceptors.response.use(null, (error: any) => {
     if (error.response?.status === kHttpUnauthorized) {
       if (adoptLegacyAttempted) {
-        return error
+        return Promise.reject(error)
       }
 
       if (!attempting) {
@@ -22,9 +22,7 @@ export default (axios: AxiosInstance) =>
           .post<object, string>(`${commonUrl}/auth/adoptLegacyAuth`)
           .then((authorization) => {
             setAuthorizationHeader(authorization)
-            axios(error.response.config)
           })
-          .catch(() => error.response)
           .finally(() => {
             axios.interceptors.request.eject(
               delayFurtherRequestsIInterceptorId as number
@@ -40,7 +38,9 @@ export default (axios: AxiosInstance) =>
           }
         )
         return pendingPromise
+          .catch(() => Promise.reject(error))
+          .then(() => axios(error.response.config))
       }
     }
-    return error
+    return Promise.reject(error)
   })
