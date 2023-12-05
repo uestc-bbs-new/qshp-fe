@@ -1,26 +1,9 @@
-import axios, { AxiosResponse } from 'axios'
-
-import { notifyUserCallbacks } from '@/states/user'
+import axios from 'axios'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
 
-const statusCode = {
-  tokenExpire: 401,
-  responseSuccess: 0,
-}
-
-/**
- * 错误处理
- * @param { number } status 状态码
- */
-const errorHandle = (status: number, errorTest: string) => {
-  switch (status) {
-    case statusCode.tokenExpire:
-      console.log(errorTest)
-      break
-    default:
-      break
-  }
+const apiResultCode = {
+  success: 0,
 }
 
 /**
@@ -49,63 +32,7 @@ const authService = axios.create({
   },
 })
 
-/**
- * 请求拦截器
- * @param { object } config 请求参数
- */
-service.interceptors.request.use(
-  (config) => {
-    config.headers['Authorization'] = localStorage.getItem(
-      'newbbs_authorization'
-    )
-    return config
-  },
-  function (error) {
-    return Promise.reject(error)
-  }
-)
-
-const commonResponseInterceptor = (response: AxiosResponse) => {
-  const content = response.data
-  notifyUserCallbacks(content.user)
-  if (content.errcode === statusCode.responseSuccess) {
-    return content.data
-  } else {
-    return content.data
-  }
-}
-
-const commonResponseErrorInterceptor = (error: any) => {
-  if (error) {
-    if (error.response) {
-      const httpError = {
-        hasError: true,
-        status: error.response.status,
-        statusText: error.response.statusText,
-      }
-      errorHandle(httpError.status, httpError.statusText)
-    } else {
-      // show toast
-    }
-    return Promise.reject(error)
-  } else {
-    // show toast
-  }
-}
-
-// /**
-//  * 响应拦截器
-//  * @param { object } response 响应参数
-//  */
-service.interceptors.response.use(
-  commonResponseInterceptor,
-  commonResponseErrorInterceptor
-)
-authService.interceptors.response.use(
-  commonResponseInterceptor,
-  commonResponseErrorInterceptor
-)
-
+// Export window.api for easier testing in development
 if (import.meta.env.DEV) {
   interface WindowExtension extends Window {
     api: any
@@ -114,4 +41,4 @@ if (import.meta.env.DEV) {
 }
 
 export default service
-export { authService }
+export { authService, apiResultCode }

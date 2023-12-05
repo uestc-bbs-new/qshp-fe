@@ -23,6 +23,7 @@ import { signIn } from '@/apis/common'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
+import { setAuthorizationHeader } from '@/utils/auth_header'
 import { useDiscuzLink } from '@/utils/discuz_link_map'
 
 import Message from './Message'
@@ -73,7 +74,7 @@ const LoginComponent = () => {
       keep_signed_in: data.get('keep_signed_in')?.toString() === '1',
     })
     if (authorization) {
-      localStorage['newbbs_authorization'] = authorization
+      setAuthorizationHeader(authorization)
       closeSignin()
     }
   }

@@ -9,6 +9,18 @@ import {
 } from '@/common/interfaces/response'
 import request, { authService } from '@/utils/request'
 
+import registerAuthHeaderInterceptors from './interceptors/auth_header'
+import registerBaseResponseInterceptors from './interceptors/base_response'
+import registerUserInterceptors from './interceptors/user'
+
+registerAuthHeaderInterceptors(request)
+
+registerUserInterceptors(request)
+registerUserInterceptors(authService)
+
+registerBaseResponseInterceptors(request)
+registerBaseResponseInterceptors(authService)
+
 const commonUrl = '/star/api/forum/v1'
 
 export const getForumList = () => {
