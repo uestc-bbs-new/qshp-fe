@@ -7,12 +7,14 @@ import {
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
-import request, { authService } from '@/utils/request'
+import request, { authService, commonUrl } from '@/utils/request'
 
+import registerAuthAdoptLegacyInterceptors from './interceptors/auth_adopt_legacy'
 import registerAuthHeaderInterceptors from './interceptors/auth_header'
 import registerBaseResponseInterceptors from './interceptors/base_response'
 import registerUserInterceptors from './interceptors/user'
 
+registerAuthAdoptLegacyInterceptors(request)
 registerAuthHeaderInterceptors(request)
 
 registerUserInterceptors(request)
@@ -20,8 +22,6 @@ registerUserInterceptors(authService)
 
 registerBaseResponseInterceptors(request)
 registerBaseResponseInterceptors(authService)
-
-const commonUrl = '/star/api/forum/v1'
 
 export const getForumList = () => {
   return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)

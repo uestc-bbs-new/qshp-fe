@@ -5,7 +5,7 @@ import { apiResultCode } from '@/utils/request'
 export default (axios: AxiosInstance) =>
   axios.interceptors.response.use(
     (response: AxiosResponse) => {
-      if (response.data.code === apiResultCode.success) {
+      if (response.data?.code === apiResultCode.success) {
         return response.data.data
       } else {
         return Promise.reject({

@@ -1,10 +1,12 @@
 import axios from 'axios'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
+const commonUrl = '/star/api/forum/v1'
 
 const apiResultCode = {
   success: 0,
 }
+const kHttpUnauthorized = 401
 
 /**
  * 创建axios实例
@@ -41,4 +43,4 @@ if (import.meta.env.DEV) {
 }
 
 export default service
-export { authService, apiResultCode }
+export { authService, apiResultCode, kHttpUnauthorized, commonUrl }
