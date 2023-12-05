@@ -26,6 +26,7 @@ function searchParamsAssign(value: URLSearchParams, kvList: object) {
 }
 
 function Thread() {
+  const { state } = useAppState()
   const [vd, setVd] = useState<Vditor>()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -181,7 +182,7 @@ function Thread() {
           <Avatar
             className="mr-4"
             alt="test"
-            uid={1}
+            uid={state.user.uid}
             sx={{ width: 120, height: 120 }}
             variant="rounded"
           />
