@@ -43,6 +43,7 @@ function Thread() {
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
   const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
+  const [totalPages, setTotalPages] = useState(1)
 
   /**
    * 用于记录页面的 query 参数
@@ -75,6 +76,9 @@ function Thread() {
           setThreadDetails(data.thread)
           dispatch({ type: 'set post', payload: data.thread.subject })
         }
+        if (data && data.total) {
+          setTotalPages(Math.ceil(data.total / kPageSize))
+        }
       },
     }
   )
@@ -92,7 +96,7 @@ function Thread() {
       setSearchParams(
         searchParamsAssign(searchParams, {
           // total + 1 because a new reply was posted just now and info is not yet refreshed.
-          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
+          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 1,
         })
       )
       setReplyRefresh(replyRefresh + 1)
@@ -140,7 +144,7 @@ function Thread() {
   return (
     <Box className="flex-1" minWidth="1em">
       <Pagination
-        count={info?.total ? Math.ceil(info?.total / 20) : 10}
+        count={totalPages}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(searchParamsAssign(searchParams, { page: value }))
