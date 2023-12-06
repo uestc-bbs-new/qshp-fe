@@ -196,62 +196,11 @@ function Forum() {
           <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
             {isFetching || !threadList?.rows?.length ? (
               <List>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={81}
-                  ></Skeleton>
-                </ListItem>
+                {[...Array(8)].map((_, index) => (
+                  <ListItem key={index}>
+                    <Skeleton className="w-full" width={961} height={100} />
+                  </ListItem>
+                ))}
               </List>
             ) : (
               <List>
