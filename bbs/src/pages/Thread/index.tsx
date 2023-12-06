@@ -195,7 +195,7 @@ function Thread() {
           ))}
         </List>
       ) : (
-        <Error isError={isError} error={error} />
+        <Error isError={isError} error={error} onRefresh={refetch} />
       )}
 
       <Card className="py-4">
