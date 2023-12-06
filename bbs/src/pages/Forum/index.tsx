@@ -171,81 +171,87 @@ function Forum() {
       {forumDetails?.children?.length && (
         <SubForums>{forumDetails.children}</SubForums>
       )}
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ margin: '20px' }}
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          scrollMarginTop: (theme) => theme.spacing(8 + 2),
-        }}
-        ref={threadListTop}
-      />
-      <Card>
+      {!!(isFetching || threadList?.rows?.length) && (
         <>
-          {threadList?.rows?.some((item: any) => item.display_order > 0) && (
-            <Top>
-              {isFetching ? (
-                <List>
-                  <ListItem>
-                    <Skeleton className="w-full" height={81}></Skeleton>
-                  </ListItem>
-                </List>
-              ) : (
-                <List>
-                  {threadList?.rows
-                    ?.filter((item: any) => item.display_order > 0)
-                    .map((item: any) => (
-                      <Post
-                        data={item}
-                        key={item.thread_id}
-                        forumDetails={forumDetails}
-                      />
-                    ))}
-                </List>
+          <Pagination
+            size="small"
+            page={page}
+            onChange={handlePageChange}
+            count={total}
+            variant="outlined"
+            shape="rounded"
+            style={{ margin: '20px' }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              scrollMarginTop: (theme) => theme.spacing(8 + 2),
+            }}
+            ref={threadListTop}
+          />
+          <Card>
+            <>
+              {threadList?.rows?.some(
+                (item: any) => item.display_order > 0
+              ) && (
+                <Top>
+                  {isFetching ? (
+                    <List>
+                      <ListItem>
+                        <Skeleton className="w-full" height={81}></Skeleton>
+                      </ListItem>
+                    </List>
+                  ) : (
+                    <List>
+                      {threadList?.rows
+                        ?.filter((item: any) => item.display_order > 0)
+                        .map((item: any) => (
+                          <Post
+                            data={item}
+                            key={item.thread_id}
+                            forumDetails={forumDetails}
+                          />
+                        ))}
+                    </List>
+                  )}
+                </Top>
               )}
-            </Top>
-          )}
-          <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
-            {isFetching || !threadList?.rows?.length ? (
-              <List>
-                {[...Array(8)].map((_, index) => (
-                  <ListItem key={index}>
-                    <Skeleton className="w-full" height={100} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <List>
-                {threadList?.rows
-                  ?.filter((item: any) => item.display_order === 0)
-                  .map((item: any) => (
-                    <Post
-                      data={item}
-                      key={item.thread_id}
-                      forumDetails={forumDetails}
-                    />
-                  ))}
-              </List>
-            )}
-          </Normal>
+              <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
+                {isFetching ? (
+                  <List>
+                    {[...Array(8)].map((_, index) => (
+                      <ListItem key={index}>
+                        <Skeleton className="w-full" height={100} />
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : (
+                  <List>
+                    {threadList?.rows
+                      ?.filter((item: any) => item.display_order === 0)
+                      .map((item: any) => (
+                        <Post
+                          data={item}
+                          key={item.thread_id}
+                          forumDetails={forumDetails}
+                        />
+                      ))}
+                  </List>
+                )}
+              </Normal>
+            </>
+          </Card>
+          <Pagination
+            size="small"
+            page={page}
+            onChange={handlePageChange}
+            count={total}
+            variant="outlined"
+            shape="rounded"
+            style={{ marginTop: '20px' }}
+            sx={{ display: 'flex', justifyContent: 'center' }}
+          />
         </>
-      </Card>
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ marginTop: '20px' }}
-        sx={{ display: 'flex', justifyContent: 'center' }}
-      />
+      )}
       {/* <Edit></Edit> */}
     </Box>
   )

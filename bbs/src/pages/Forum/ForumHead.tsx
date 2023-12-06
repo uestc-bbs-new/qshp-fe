@@ -83,12 +83,14 @@ const Head = ({ data }: HeadProps) => {
             </Stack>
           </Box>
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography
-            dangerouslySetInnerHTML={{ __html: data?.announcement }}
-          />
-          {/* <ParsePost></ParsePost> */}
-        </AccordionDetails>
+        {!!data?.announcement && (
+          <AccordionDetails>
+            <Typography
+              dangerouslySetInnerHTML={{ __html: data?.announcement }}
+            />
+            {/* <ParsePost></ParsePost> */}
+          </AccordionDetails>
+        )}
       </Accordion>
     </>
   )
