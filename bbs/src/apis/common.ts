@@ -11,23 +11,12 @@ import request, { authService, commonUrl } from '@/utils/request'
 
 import registerAuthAdoptLegacyInterceptors from './interceptors/auth_adopt_legacy'
 import registerAuthHeaderInterceptors from './interceptors/auth_header'
-import {
-  registerFulfilledInterceptors,
-  registerRejectedInterceptors,
-} from './interceptors/base_response'
 import registerUserInterceptors from './interceptors/user'
 
 registerAuthHeaderInterceptors(request)
-
+registerAuthAdoptLegacyInterceptors(request.axios)
 registerUserInterceptors(request)
 registerUserInterceptors(authService)
-
-registerFulfilledInterceptors(request)
-registerAuthAdoptLegacyInterceptors(request)
-registerRejectedInterceptors(request)
-
-registerFulfilledInterceptors(authService)
-registerRejectedInterceptors(authService)
 
 export const getForumList = () => {
   return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)
@@ -40,11 +29,11 @@ export const getBulletin = (params: object) => {
 }
 
 export const getBBSInfo = () => {
-  return request.get<null, BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
+  return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
 }
 
 export const searchThreads = (params: object) => {
-  return request.post<object, { resultNum: number; threads: Thread[] }>(
+  return request.post<{ resultNum: number; threads: Thread[] }>(
     `${commonUrl}/global/search/thread`,
     params,
     {
@@ -56,21 +45,21 @@ export const searchThreads = (params: object) => {
 }
 
 export const searchUsers = (params: object) => {
-  return request.get<object, { total: number; rows: UserInfo[] }>(
+  return request.get<{ total: number; rows: UserInfo[] }>(
     `${commonUrl}/global/search`,
     { params: params }
   )
 }
 
 export const searchUsers_at = (params: object) => {
-  return request.get<object, { total: number; rows: Users[] }>(
+  return request.get<{ total: number; rows: Users[] }>(
     `${commonUrl}/global/search/at`,
     { params: params }
   )
 }
 
 export const getThreadList = async (params: object) => {
-  const result = await request.get<null, ThreadList>(
+  const result = await request.get<ThreadList>(
     `${commonUrl}/view/thread/threads`,
     {
       params: params,
@@ -87,7 +76,7 @@ export const getThreadList = async (params: object) => {
 }
 
 export const getAnnouncement = () => {
-  return request.get<object, Thread[]>(`${commonUrl}/view/thread/bulletin`)
+  return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
 }
 
 export const signIn = (params: {
@@ -95,7 +84,7 @@ export const signIn = (params: {
   password: string
   keep_signed_in: boolean
 }) => {
-  return authService.post<object, string>(`${commonUrl}/auth/signin`, {
+  return authService.post<string>(`${commonUrl}/auth/signin`, {
     ...params,
   })
 }

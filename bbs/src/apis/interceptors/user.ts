@@ -1,9 +1,9 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
 import { notifyUserCallbacks } from '@/states/user'
-import { apiResultCode, kHttpUnauthorized } from '@/utils/request'
+import { AxiosWrapper, apiResultCode, kHttpUnauthorized } from '@/utils/request'
 
-export default (axios: AxiosInstance) =>
+export default (axios: AxiosInstance | AxiosWrapper) =>
   axios.interceptors.response.use(
     (response: AxiosResponse) => {
       if (response.data?.code == apiResultCode.success) {
