@@ -29,14 +29,16 @@ const Head = ({ data }: HeadProps) => {
   const moderators = data?.moderators || []
   return (
     <>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={<ExpandMore />}>
+      <Accordion defaultExpanded disableGutters>
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          sx={{
+            backgroundImage:
+              'linear-gradient(90deg, rgb(210, 226, 253), rgb(255, 255, 255))',
+          }}
+        >
           <Box>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              sx={{ width: 280, height: 50 }}
-            >
+            <Stack direction="row">
               <Stack
                 direction="row"
                 className="pr-5"
@@ -51,7 +53,12 @@ const Head = ({ data }: HeadProps) => {
                 <Typography>今日：</Typography>
                 <Typography fontWeight="bold">{data?.todayposts}</Typography>
               </Stack>
-              <Divider orientation="vertical" variant="middle" flexItem />
+              <Divider
+                orientation="vertical"
+                variant="middle"
+                flexItem
+                className="mx-4"
+              />
               <Stack direction="row" alignItems="center">
                 <Typography>主题：</Typography>
                 <Typography fontWeight="bold">{data?.threads}</Typography>

@@ -26,6 +26,7 @@ import Post from '@/components/Post'
 import { useAppState } from '@/states'
 
 import Head from './ForumHead'
+import SubForums from './SubForums'
 
 type TopProps = {
   children: React.ReactElement
@@ -167,6 +168,9 @@ function Forum() {
       ) : forumDetails ? (
         <Head data={forumDetails}></Head>
       ) : null}
+      {forumDetails?.children?.length && (
+        <SubForums>{forumDetails.children}</SubForums>
+      )}
       <Pagination
         size="small"
         page={page}

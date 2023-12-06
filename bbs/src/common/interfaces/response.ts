@@ -251,13 +251,13 @@ export type ForumType = {
   posts: number
   todayposts: number
   yesterdayposts: number
-  latest_thread: Array<{
+  latest_thread: {
     thread_id: number
     subject: string
     lastpost_time: number
     lastpost_author: string
     lastpost_authorid: number
-  }>
+  }
 }
 
 export type ThreadType = {

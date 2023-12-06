@@ -43,7 +43,7 @@ function Thread() {
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
   const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
-  const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
+  const forumDetails = useRef<ForumDetails | null>(null)
   const [totalPages, setTotalPages] = useState(1)
 
   /**
@@ -73,7 +73,7 @@ function Thread() {
         thread_id,
         query.page,
         !threadDetails,
-        !forumDetails
+        !forumDetails.current
       )
     },
     {
@@ -83,7 +83,7 @@ function Thread() {
           dispatch({ type: 'set thread', payload: data.thread })
         }
         if (data && data.forum) {
-          setForumDetails(data.forum)
+          forumDetails.current = data.forum
           dispatch({ type: 'set forum', payload: data.forum })
         }
         if (data && data.total) {
@@ -121,6 +121,10 @@ function Thread() {
     }
   }, [info])
 
+  useEffect(() => {
+    setThreadDetails(null)
+    forumDetails.current = null
+  }, [thread_id])
   useEffect(() => {
     setQuery({
       ...query,
