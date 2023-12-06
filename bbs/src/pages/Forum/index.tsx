@@ -101,7 +101,7 @@ function Forum() {
     page: 1,
     type: 1,
     forum_id: routeParam.id,
-    forum_details: !forumDetails ? 1 : 0,
+    forum_details: 1,
   })
 
   const pageSize = 20
@@ -117,6 +117,10 @@ function Forum() {
       }
       if (data && data.forum) {
         setForumDetails(data.forum)
+        setQuery({
+          ...query,
+          forum_details: 0,
+        })
       }
     },
   })
@@ -147,7 +151,7 @@ function Forum() {
 
   return (
     <Box className="flex-1" style={{ marginTop: '20px' }}>
-      {isFetching ? (
+      {isFetching && !forumDetails ? (
         <Card>
           <List>
             <ListItem>
@@ -198,7 +202,7 @@ function Forum() {
               <List>
                 {[...Array(8)].map((_, index) => (
                   <ListItem key={index}>
-                    <Skeleton className="w-full" width={961} height={100} />
+                    <Skeleton className="w-full" height={100} />
                   </ListItem>
                 ))}
               </List>
