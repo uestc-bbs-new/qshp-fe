@@ -52,9 +52,10 @@ export default (axios: AxiosInstance) =>
         response.data?.code == apiResultCode.success &&
         !response.data?.user
       ) {
-        return adoptLegacyAuth(axios)
-          .catch(() => response)
-          .then(() => axios(response.config))
+        return adoptLegacyAuth(axios).then(
+          () => axios(response.config),
+          () => response
+        )
       }
       return response
     },
