@@ -43,6 +43,8 @@ const ForumCover = ({ data }: ForumData) => {
     imgUrl = coverImg.href
   }
 
+  const isGuest = useAppState().state.user.uid == 0
+
   return (
     <Box
       className="relative rounded text-white overflow-hidden"
@@ -83,7 +85,7 @@ const ForumCover = ({ data }: ForumData) => {
         </Stack> */}
 
         <Stack direction="row" className="mt-4">
-          {!data.latest_thread && <Box>暂无新帖</Box>}
+          {!data.latest_thread && <Box>{isGuest ? '' : '暂无新帖'}</Box>}
           <Box
             className="mr-4"
             visibility={data.latest_thread ? 'visible' : 'hidden'}
