@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams } from 'react-router-dom'
 
@@ -103,6 +103,7 @@ function Forum() {
     forum_id: routeParam.id,
     forum_details: 1,
   })
+  const threadListTop = useRef<HTMLElement>(null)
 
   const pageSize = 20
   const {
@@ -136,7 +137,7 @@ function Forum() {
   }, [location, query.type, query.page])
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    window.scrollTo(0, 0)
+    threadListTop.current?.scrollIntoView()
     setSort(event.target.value)
     setPage(1)
     const value = event.target.value
@@ -144,7 +145,7 @@ function Forum() {
   }
 
   const handlePageChange = (event: any, value: number) => {
-    window.scrollTo(0, 0)
+    threadListTop.current?.scrollIntoView()
     setPage(value)
     setQuery({ ...query, page: Number(value) })
   }
@@ -170,7 +171,12 @@ function Forum() {
         variant="outlined"
         shape="rounded"
         style={{ margin: '20px' }}
-        sx={{ display: 'flex', justifyContent: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          scrollMarginTop: (theme) => theme.spacing(8 + 2),
+        }}
+        ref={threadListTop}
       />
       <Card>
         <>

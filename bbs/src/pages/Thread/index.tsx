@@ -154,7 +154,10 @@ function Thread() {
         info?.rows.map((item, index) => {
           return (
             <Card className="mb-4" key={item.position}>
-              <section id={item.position.toString()}>
+              <section
+                id={item.position.toString()}
+                style={{ scrollMarginTop: '80px' }}
+              >
                 <Floor item={item} set_reply={set_reply}>
                   <>
                     <strong>{item.subject}</strong>
