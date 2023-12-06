@@ -154,7 +154,8 @@ export interface PostDetails {
   page: number
   pagesize: number
   total: number
-  thread: ThreadDetails
+  thread?: ThreadDetails
+  forum?: ForumDetails
   rows: PostFloor[]
 }
 
@@ -227,6 +228,7 @@ export interface UserInfos {
 }
 
 export type ForumDetails = {
+  fid: number
   name: string
   threads: number
   todayposts: number

@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 
 import { getThreadsInfo, replyThreads } from '@/apis/thread'
-import { ThreadDetails } from '@/common/interfaces/response'
+import { ForumDetails, ThreadDetails } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
@@ -43,6 +43,7 @@ function Thread() {
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
   const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
+  const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
   const [totalPages, setTotalPages] = useState(1)
 
   /**
@@ -68,13 +69,22 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, query.page, !threadDetails)
+      return getThreadsInfo(
+        thread_id,
+        query.page,
+        !threadDetails,
+        !forumDetails
+      )
     },
     {
       onSuccess: (data) => {
         if (data && data.thread) {
           setThreadDetails(data.thread)
-          dispatch({ type: 'set post', payload: data.thread.subject })
+          dispatch({ type: 'set thread', payload: data.thread })
+        }
+        if (data && data.forum) {
+          setForumDetails(data.forum)
+          dispatch({ type: 'set forum', payload: data.forum })
         }
         if (data && data.total) {
           setTotalPages(Math.ceil(data.total / kPageSize))

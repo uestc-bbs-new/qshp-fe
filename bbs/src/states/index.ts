@@ -10,12 +10,12 @@ const guestUser = {
   uid: 0,
   username: '游客',
 }
-const initialState = {
+const initialState: State = {
   drawer: false, //侧边栏是否打开
   navList: [],
   user: guestUser,
+  forumBreadcumbs: [],
   theme: (localStorage.getItem('theme') as Theme) || 'light',
-  selectedPost: '',
 }
 
 export const AppContext = createContext<{

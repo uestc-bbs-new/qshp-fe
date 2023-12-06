@@ -23,6 +23,7 @@ import { getThreadList } from '@/apis/common'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
+import { useAppState } from '@/states'
 
 import Head from './ForumHead'
 
@@ -104,6 +105,7 @@ function Forum() {
     forum_details: 1,
   })
   const threadListTop = useRef<HTMLElement>(null)
+  const { dispatch } = useAppState()
 
   const pageSize = 20
   const {
@@ -118,6 +120,7 @@ function Forum() {
       }
       if (data && data.forum) {
         setForumDetails(data.forum)
+        dispatch({ type: 'set forum', payload: data.forum })
         setQuery({
           ...query,
           forum_details: 0,
@@ -132,6 +135,7 @@ function Forum() {
     setQuery({
       ...query,
       forum_id: routeParam.id,
+      forum_details: 1,
     })
     refetch()
   }, [location, query.type, query.page])

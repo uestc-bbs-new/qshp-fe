@@ -9,13 +9,15 @@ import request from '@/utils/request'
 export const getThreadsInfo = (
   thread_id: string,
   page = 1,
-  threadDetails = false
+  threadDetails = false,
+  forumDetails = false
 ) => {
   return request.get<PostDetails>(`/star/api/forum/v1/view/post/details`, {
     params: {
       thread_id,
       page,
       thread_details: threadDetails ? 1 : 0,
+      forum_details: forumDetails ? 1 : 0,
     },
   })
 }

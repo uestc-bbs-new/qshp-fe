@@ -1,4 +1,4 @@
-import { Forum } from '@/common/interfaces/response'
+import { Forum, ForumDetails } from '@/common/interfaces/response'
 
 import { guestUser } from '..'
 
@@ -9,11 +9,23 @@ export type UserState = {
   new_notification?: number
 }
 
+type ForumBreadcumbEntry = {
+  forum_id: number
+  name: string
+  top: boolean
+}
+
+type ThreadBreadcumbEntry = {
+  thread_id: number
+  subject: string
+}
+
 export type State = {
-  selectedPost: string
   drawer: boolean
   navList: Forum[]
   user: UserState
+  forumBreadcumbs: ForumBreadcumbEntry[]
+  activeThread?: ThreadBreadcumbEntry
   theme: 'light' | 'dark'
 }
 
@@ -55,8 +67,41 @@ export const stateReducer = (state: State, action: StateAction) => {
       return { ...state, theme: action.payload }
     case 'set drawer':
       return { ...state, drawer: !state.drawer }
-    case 'set post':
-      return { ...state, selectedPost: action.payload }
+    case 'set forum':
+      if (state.forumBreadcumbs.length == 0 && !!action.payload?.forum_id) {
+        return state
+      }
+      if (
+        state.forumBreadcumbs.length != 0 &&
+        state.forumBreadcumbs[state.forumBreadcumbs.length - 1].forum_id ==
+          action.payload?.forum_id
+      ) {
+        return state
+      }
+      {
+        const newForums: ForumBreadcumbEntry[] = []
+        const forum = action.payload as ForumDetails | undefined
+        if (forum?.fid) {
+          console.log(forum.parents)
+          newForums.unshift(
+            ...forum.parents
+              .concat([])
+              .reverse()
+              .map((parent, index) => ({
+                forum_id: parent.fid,
+                name: parent.name,
+                top: index === 0,
+              })),
+            { forum_id: forum.fid, name: forum.name, top: false }
+          )
+        }
+        return {
+          ...state,
+          forumBreadcumbs: newForums,
+        }
+      }
+    case 'set thread':
+      return { ...state, activeThread: action.payload }
     default:
       return state
   }
