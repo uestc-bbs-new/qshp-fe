@@ -63,12 +63,12 @@ const Setting = () => {
 
   const SelectedComponent = listItems[selectedIndex].Component
   return (
-    <Box sx={{ px: 2, pt: 1, width: '100%' }}>
+    <Box sx={{ pr: 2, pt: 1, width: '100%' }}>
       <Typography variant="h5" sx={{ mb: 1 }}>
         {listItems[selectedIndex].name}
       </Typography>
       <Box sx={{ display: 'flex' }}>
-        <Box sx={{ height: 200 }}>
+        <Box sx={{ height: 200, mr: 4 }}>
           <Paper
             elevation={3}
             sx={{ borderRadius: '10px', overflow: 'hidden' }}
