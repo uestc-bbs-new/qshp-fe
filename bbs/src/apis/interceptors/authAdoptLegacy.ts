@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
-import { setAuthorizationHeader } from '@/utils/auth_header'
+import { setAuthorizationHeader } from '@/utils/authHeader'
 import {
   apiResultCode,
   authService,

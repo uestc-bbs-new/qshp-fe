@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios'
 
-import { getAuthorizationHeader } from '@/utils/auth_header'
+import { getAuthorizationHeader } from '@/utils/authHeader'
 import { AxiosWrapper } from '@/utils/request'
 
 export default (axios: AxiosInstance | AxiosWrapper) =>

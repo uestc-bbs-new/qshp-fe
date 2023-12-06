@@ -9,8 +9,8 @@ import {
 } from '@/common/interfaces/response'
 import request, { authService, commonUrl } from '@/utils/request'
 
-import registerAuthAdoptLegacyInterceptors from './interceptors/auth_adopt_legacy'
-import registerAuthHeaderInterceptors from './interceptors/auth_header'
+import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
+import registerAuthHeaderInterceptors from './interceptors/authHeader'
 import registerUserInterceptors from './interceptors/user'
 
 registerAuthHeaderInterceptors(request)
