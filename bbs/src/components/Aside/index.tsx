@@ -19,6 +19,10 @@ const Aside = () => {
     setId(newId)
   }
 
+  if (location.pathname !== '/' && !location.pathname.startsWith('/forum')) {
+    return null
+  }
+
   return (
     <Box className="ml-2 w-60">
       <Tabs
