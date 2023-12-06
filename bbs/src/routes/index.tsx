@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <Thread />,
       },
       { path: '/message', name: '消息', element: <Message /> },
-      { path: '/setting', name: '设置', element: <Setting /> },
+      { path: '/setting/:id?', name: '设置', element: <Setting /> },
     ] as CustomRouteConfig[],
   },
 ] as CustomRouteConfig[])
