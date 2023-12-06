@@ -1,7 +1,12 @@
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosResponse } from 'axios'
 
 import { setAuthorizationHeader } from '@/utils/auth_header'
-import { authService, commonUrl, kHttpUnauthorized } from '@/utils/request'
+import {
+  apiResultCode,
+  authService,
+  commonUrl,
+  kHttpUnauthorized,
+} from '@/utils/request'
 
 let adoptLegacyAttempted = false
 
@@ -41,11 +46,24 @@ const adoptLegacyAuth = (axios: AxiosInstance) => {
 }
 
 export default (axios: AxiosInstance) =>
-  axios.interceptors.response.use(null, (error: any) => {
-    if (error.response?.status === kHttpUnauthorized) {
-      return adoptLegacyAuth(axios)
-        .catch(() => Promise.reject(error))
-        .then(() => axios(error.response.config))
+  axios.interceptors.response.use(
+    (response: AxiosResponse) => {
+      if (
+        response.data?.code == apiResultCode.success &&
+        !response.data?.user
+      ) {
+        return adoptLegacyAuth(axios)
+          .catch(() => response)
+          .then(() => axios(response.config))
+      }
+      return response
+    },
+    (error: any) => {
+      if (error.response?.status === kHttpUnauthorized) {
+        return adoptLegacyAuth(axios)
+          .catch(() => Promise.reject(error))
+          .then(() => axios(error.response.config))
+      }
+      return Promise.reject(error)
     }
-    return Promise.reject(error)
-  })
+  )
