@@ -4,13 +4,22 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
-import { Box, Button, Pagination, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  Pagination,
+  Skeleton,
+  Stack,
+} from '@mui/material'
 
 import { getThreadsInfo, replyThreads } from '@/apis/thread'
 import { ThreadDetails } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
+import Error from '@/components/Error'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -51,6 +60,8 @@ function Thread() {
 
   const {
     data: info,
+    error,
+    isError: isError,
     isLoading: infoLoading,
     refetch,
   } = useQuery(
@@ -172,9 +183,15 @@ function Thread() {
           )
         })
       ) : infoLoading ? (
-        <>请求帖子详细信息中</>
+        <List>
+          {[...Array(4)].map((_, index) => (
+            <ListItem key={index}>
+              <Skeleton className="w-full" height={81}></Skeleton>
+            </ListItem>
+          ))}
+        </List>
       ) : (
-        <>帖子详细信息获取错误</>
+        <Error isError={isError} error={error} />
       )}
 
       <Card className="py-4">
