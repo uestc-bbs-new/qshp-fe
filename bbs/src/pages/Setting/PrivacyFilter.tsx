@@ -33,6 +33,9 @@ const PrivacyFilter = () => {
                 color: theme.palette.text.secondary,
               }}
             >
+              <Box component="span" sx={{ color: 'red' }}>
+                *
+              </Box>
               注：您可以选择部分人看到您的主页内容
             </Typography>
 
