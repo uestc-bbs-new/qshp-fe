@@ -6,37 +6,16 @@ import {
   FormControl,
   MenuItem,
   Paper,
-  Select,
   Stack,
-  TextField,
-  TextFieldProps,
   Typography,
   alpha,
-  styled,
   useTheme,
 } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
+import { StyledField } from '@/components/StyledField'
+import { StyledSelect } from '@/components/StyledSelect'
 
-const StyledField = styled((props: TextFieldProps) => (
-  <TextField size="small" {...props} />
-))(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '8px',
-    '& fieldset': {
-      borderColor: '#D4E1FD',
-    },
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#7d7d7d',
-    },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.mode === 'dark' ? '#95C9F8' : '#3A70F0',
-    },
-  },
-  '& .MuiOutlinedInput-input': {
-    color: theme.palette.mode === 'dark' ? '#ffffff' : '#7281A7',
-  },
-}))
 const menuItems = ['公开', '好友可见', '保密']
 
 const Profile = () => {
@@ -91,14 +70,14 @@ const Profile = () => {
                 onChange={(e) => setSelfIntroduction(e.target.value)}
                 sx={{ width: '70%' }}
               />
-              <FormControl sx={{ width: 90, size: 'small' }}>
-                <Select value={privacy}>
+              <FormControl sx={{ width: 90 }}>
+                <StyledSelect value={privacy} sx={{ ml: 1 }}>
                   {menuItems.map((item) => (
                     <MenuItem key={item} value={item}>
                       {item}
                     </MenuItem>
                   ))}
-                </Select>
+                </StyledSelect>
               </FormControl>
             </Stack>
             <Stack direction="row" sx={{ mb: 3 }}>
