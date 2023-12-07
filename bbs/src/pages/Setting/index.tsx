@@ -51,7 +51,10 @@ const listItems = [
 const Setting = () => {
   const location = useLocation()
   const [selectedIndex, setSelectedIndex] = useState(
-    listItems.findIndex((item) => location.pathname.endsWith(item.link))
+    listItems.findIndex(
+      (item) =>
+        location.pathname.endsWith(item.link) || location.pathname.endsWith('')
+    )
   )
 
   const handleListItemClick = (

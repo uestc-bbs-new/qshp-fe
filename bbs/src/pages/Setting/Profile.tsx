@@ -52,7 +52,7 @@ const Profile = () => {
             </Stack>
             <Typography
               sx={{
-                ml: 12,
+                ml: 13,
                 mt: 1,
                 mb: 3,
                 color: alpha(theme.palette.text.secondary, 0.3),

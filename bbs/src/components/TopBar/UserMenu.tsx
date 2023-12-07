@@ -75,7 +75,7 @@ const MenuContent = () => {
         切换账号
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem>
+      <MenuItem onClick={() => (window.location.href = `/setting`)}>
         <ListItemIcon>
           <Settings fontSize="small" />
         </ListItemIcon>
