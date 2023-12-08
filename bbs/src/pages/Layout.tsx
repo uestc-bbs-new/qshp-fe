@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { Outlet } from 'react-router-dom'
 
@@ -24,13 +25,16 @@ const Layout = () => {
     // catchTime: 60 * 1000,
     // staleTime: 30 * 1000
     onSuccess: (data) => {
-      // 对板块信息进行处理，得到嵌套的板块关系
       dispatch({
         type: 'set navList',
         payload: data,
       })
     },
   })
+  // Refresh forum list after signin change.
+  useEffect(() => {
+    query.refetch()
+  }, [state.user.uid])
 
   return (
     <>
