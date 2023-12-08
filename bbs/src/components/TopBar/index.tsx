@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
+
+import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Add, Close, Menu } from '@mui/icons-material'
@@ -57,6 +59,7 @@ const Options = ({ state }: { state: State }) => {
 }
 
 const LoginComponent = () => {
+  const hCaptchaToken = useRef('')
   const [signinOpen, setSigninOpen] = useState(false)
   const closeSignin = () => setSigninOpen(false)
   const doSignin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -68,10 +71,15 @@ const LoginComponent = () => {
       alert('请输入用户名与密码。')
       return
     }
+    if (!hCaptchaToken.current) {
+      alert('请完成验证后登录')
+      return
+    }
     const authorization = await signIn({
       username: username.toString(),
       password: password.toString(),
       keep_signed_in: data.get('keep_signed_in')?.toString() === '1',
+      captcha_value: hCaptchaToken.current,
     })
     if (authorization) {
       setAuthorizationHeader(authorization)
@@ -122,6 +130,14 @@ const LoginComponent = () => {
               control={<Checkbox name="keep_signed_in" value="1" />}
               label="自动登录"
             />
+            <div style={{ textAlign: 'center' }}>
+              <HCaptcha
+                sitekey="52100d97-0777-4497-8852-e380d5b3430b"
+                onVerify={(token, ekey) => {
+                  hCaptchaToken.current = token
+                }}
+              />
+            </div>
             <Stack direction="row" justifyContent="center">
               <Button type="submit">登录</Button>
             </Stack>
