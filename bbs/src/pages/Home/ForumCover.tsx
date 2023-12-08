@@ -83,10 +83,10 @@ const ForumCover = ({ data }: ForumData) => {
         </Stack> */}
 
         <Stack direction="row" className="mt-4" minHeight={40}>
-          {!!data.latest_thread.thread_id && (
+          {!!data.latest_thread?.thread_id && (
             <Box
               className="mr-4"
-              visibility={data.latest_thread.thread_id ? 'visible' : 'hidden'}
+              visibility={data.latest_thread?.thread_id ? 'visible' : 'hidden'}
             >
               <Avatar
                 alt={data.latest_thread?.lastpost_author}
@@ -117,7 +117,7 @@ const ForumCover = ({ data }: ForumData) => {
                 <Typography>
                   {chineseTime(data.latest_thread?.lastpost_time * 1000)}
                 </Typography>
-                {!!data.latest_thread.thread_id && (
+                {!!data.latest_thread?.thread_id && (
                   <>
                     <Typography className="mx-1">·</Typography>
                     <Link color="inherit">
