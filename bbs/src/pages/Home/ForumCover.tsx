@@ -43,8 +43,6 @@ const ForumCover = ({ data }: ForumData) => {
     imgUrl = coverImg.href
   }
 
-  const isGuest = useAppState().state.user.uid == 0
-
   return (
     <Box
       className="relative rounded text-white overflow-hidden"
@@ -84,29 +82,34 @@ const ForumCover = ({ data }: ForumData) => {
           </UserCard>
         </Stack> */}
 
-        <Stack direction="row" className="mt-4">
-          {!data.latest_thread && <Box>{isGuest ? '' : '暂无新帖'}</Box>}
-          <Box
-            className="mr-4"
-            visibility={data.latest_thread ? 'visible' : 'hidden'}
-          >
-            <Avatar
-              alt={data.latest_thread?.lastpost_author}
-              uid={data.latest_thread?.lastpost_authorid}
-              sx={{ width: 40, height: 40 }}
-              variant="rounded"
-            />
-          </Box>
+        <Stack direction="row" className="mt-4" minHeight={40}>
+          {!!data.latest_thread.thread_id && (
+            <Box
+              className="mr-4"
+              visibility={data.latest_thread.thread_id ? 'visible' : 'hidden'}
+            >
+              <Avatar
+                alt={data.latest_thread?.lastpost_author}
+                uid={data.latest_thread?.lastpost_authorid}
+                sx={{ width: 40, height: 40 }}
+                variant="rounded"
+              />
+            </Box>
+          )}
           {data.latest_thread && (
             <Box className="flex-1">
               <Stack direction="row">
                 <Link
                   color="inherit"
                   underline="hover"
-                  to={`/thread/${data.latest_thread?.thread_id}`}
+                  to={
+                    data.latest_thread?.thread_id
+                      ? `/thread/${data.latest_thread?.thread_id}`
+                      : undefined
+                  }
                 >
                   <Box className="line-clamp-1">
-                    {data.latest_thread?.subject}
+                    {data.latest_thread?.subject || '\u00a0'}
                   </Box>
                 </Link>
               </Stack>
@@ -114,13 +117,14 @@ const ForumCover = ({ data }: ForumData) => {
                 <Typography>
                   {chineseTime(data.latest_thread?.lastpost_time * 1000)}
                 </Typography>
-                <Typography className="mx-1">·</Typography>
-                <Link color="inherit">
-                  {data.latest_thread?.lastpost_author}
-                </Link>
-                {/* <UserCard uid={data.authorid}>
-                <Link color="inherit">{data.author}</Link>
-              </UserCard> */}
+                {!!data.latest_thread.thread_id && (
+                  <>
+                    <Typography className="mx-1">·</Typography>
+                    <Link color="inherit">
+                      {data.latest_thread?.lastpost_author}
+                    </Link>
+                  </>
+                )}
               </Stack>
             </Box>
           )}
