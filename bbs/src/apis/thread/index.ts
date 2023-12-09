@@ -22,7 +22,19 @@ export const getThreadsInfo = (
   })
 }
 
-/** 获取帖子详情信息 */
+export type PostThreadDetails = {
+  forum_id: number
+  type_id?: string
+  subject: string
+  message: string
+}
+
+export const postThread = (details: PostThreadDetails) => {
+  return request.post('/star/api/forum/v1/post/thread', {
+    ...details,
+  })
+}
+
 export const replyThreads = (
   thread_id: number,
   message: string,

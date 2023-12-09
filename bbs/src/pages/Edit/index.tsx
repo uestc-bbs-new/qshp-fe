@@ -1,9 +1,10 @@
 import Vditor from 'vditor'
 
-import { useEffect, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -11,11 +12,13 @@ import {
   MenuItem,
   Select,
   Skeleton,
+  Snackbar,
   Stack,
   TextField,
 } from '@mui/material'
 
 import { getForumDetails } from '@/apis/common'
+import { PostThreadDetails, postThread } from '@/apis/thread'
 import { Forum, ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
@@ -32,8 +35,14 @@ const Edit = () => {
   const [selectedForum, setSelectedForum] = useState<ForumDetails | undefined>(
     routeState?.forum?.fid ? routeState.forum : undefined
   )
+  const threadTypes = selectedForum?.thread_types || []
   const shouldFetchForumDetails = routeParam.fid && !selectedForum
   const [forumLoading, setForumLoading] = useState(shouldFetchForumDetails)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const subjectRef = useRef<HTMLInputElement>()
+  const [postPending, setPostPending] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (shouldFetchForumDetails && routeParam.fid) {
@@ -48,8 +57,54 @@ const Edit = () => {
     }
   }, [])
 
-  const handleSubmit = () => {
-    console.log(vd?.getValue())
+  const handleSubmit = async () => {
+    if (postPending) {
+      return
+    }
+    if (!selectedForum) {
+      showError('请选择合适的版块。')
+      return
+    }
+    if (
+      threadTypes.length > 0 &&
+      !selectedForum.optional_thread_type &&
+      !typeId
+    ) {
+      showError('请选择合适的分类。')
+      return
+    }
+    if (!subjectRef.current?.value) {
+      showError('请输入标题。')
+      return
+    }
+    const message = vd?.getValue()
+    if (!message) {
+      showError('请输入内容。')
+      return
+    }
+
+    setPostPending(true)
+    postThread(
+      Object.assign(
+        {
+          forum_id: selectedForum.fid,
+          subject: subjectRef.current.value,
+          message,
+          format: 2,
+        },
+        typeId ? { type_id: typeId } : {}
+      ) as PostThreadDetails
+    )
+      .then((result) => {
+        navigate(`/thread/${result.thread_id}`)
+      })
+      .catch((err) => {
+        setPostPending(false)
+      })
+  }
+  const showError = (message: string) => {
+    setSnackbarMessage(message)
+    setSnackbarOpen(true)
   }
 
   return (
@@ -64,7 +119,7 @@ const Edit = () => {
                 value={selectedForum?.name || '请选择版块'}
                 sx={{ minWidth: '12em' }}
               />
-              {(selectedForum?.thread_types || []).length > 0 && (
+              {threadTypes.length > 0 && (
                 <FormControl sx={{ minWidth: `12em` }}>
                   <InputLabel id="post-typeid-label">请选择分类</InputLabel>
                   <Select
@@ -81,15 +136,25 @@ const Edit = () => {
                   </Select>
                 </FormControl>
               )}
-              <TextField fullWidth hiddenLabel placeholder="主题标题" />
+              <TextField fullWidth label="标题" inputRef={subjectRef} />
             </Stack>
           )}
           <Editor minHeight={300} setVd={setVd} />
           <Box className="text-center">
-            <Button onClick={handleSubmit}>发布主题</Button>
+            <Button disabled={postPending} onClick={handleSubmit}>
+              {postPending ? '请稍候...' : '发布主题'}
+            </Button>
           </Box>
         </>
       </Card>
+      <Snackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        autoHideDuration={5000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert severity="error">{snackbarMessage}</Alert>
+      </Snackbar>
     </Box>
   )
 }

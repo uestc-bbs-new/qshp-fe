@@ -242,6 +242,7 @@ export type ForumDetails = ForumCommon & {
   parents: Array<ForumType>
   thread_types: Array<ThreadType>
   thread_types_map?: ThreadTypeMap
+  optional_thread_type: boolean
   announcement: string
   announcement_format: string
   post_notice_format: string
