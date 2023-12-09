@@ -32,7 +32,9 @@ const Edit = () => {
   const routeParam = useParams()
   const routeState = useLocation().state
   const [selectedForum, setSelectedForum] = useState<ForumDetails | undefined>(
-    routeState?.forum?.fid ? routeState.forum : undefined
+    routeState?.forum?.fid && routeState.forum.can_post_thraed
+      ? routeState.forum
+      : undefined
   )
   const threadTypes = selectedForum?.thread_types || []
   const shouldFetchForumDetails = routeParam.fid && !selectedForum
