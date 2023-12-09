@@ -27,6 +27,7 @@ import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import { useDiscuzLink } from '@/utils/discuzLinkMap'
+import { useActiveRoute } from '@/utils/routes'
 
 import Message from './Message'
 import SearchBar from './Search'
@@ -34,6 +35,23 @@ import UserMenu from './UserMenu'
 
 const Options = ({ state }: { state: State }) => {
   const navigate = useNavigate()
+  const activeRoute = useActiveRoute()
+  const fid =
+    (activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
+    state.activeForum?.can_post_thread
+      ? state.activeForum?.fid
+      : null
+  const post = () => {
+    if (fid) {
+      navigate(`/post/${fid}`, {
+        state: {
+          forum: state.activeForum,
+        },
+      })
+    } else {
+      navigate('/post')
+    }
+  }
 
   return (
     <Stack
@@ -49,7 +67,7 @@ const Options = ({ state }: { state: State }) => {
           className="ml-3 bg-white bg-opacity-40"
           variant="contained"
           startIcon={<Add />}
-          onClick={() => navigate('/edit')}
+          onClick={post}
         >
           发帖
         </Button>
