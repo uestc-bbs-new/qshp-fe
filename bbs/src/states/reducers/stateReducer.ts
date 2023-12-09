@@ -25,6 +25,7 @@ export type State = {
   navList: Forum[]
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
+  activeForum?: ForumDetails
   activeThread?: ThreadBreadcumbEntry
   theme: 'light' | 'dark'
 }
@@ -68,14 +69,7 @@ export const stateReducer = (state: State, action: StateAction) => {
     case 'set drawer':
       return { ...state, drawer: !state.drawer }
     case 'set forum':
-      if (state.forumBreadcumbs.length == 0 && !!action.payload?.forum_id) {
-        return state
-      }
-      if (
-        state.forumBreadcumbs.length != 0 &&
-        state.forumBreadcumbs[state.forumBreadcumbs.length - 1].forum_id ==
-          action.payload?.forum_id
-      ) {
+      if (state.activeForum?.fid == action.payload?.fid) {
         return state
       }
       {
@@ -97,6 +91,7 @@ export const stateReducer = (state: State, action: StateAction) => {
         }
         return {
           ...state,
+          activeForum: action.payload,
           forumBreadcumbs: newForums,
         }
       }
