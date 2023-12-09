@@ -19,16 +19,13 @@ import {
 
 import { getForumDetails } from '@/apis/common'
 import { PostThreadDetails, postThread } from '@/apis/thread'
-import { Forum, ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
-import { useAppState } from '@/states'
+import { PostNotice } from '@/components/PostNotice'
 
 const Edit = () => {
-  const { state } = useAppState()
-  const [group, setGroup] = useState('')
   const [typeId, setTypeId] = useState('')
-  const [groupItem, setGroupItem] = useState<Forum[]>([])
   const [vd, setVd] = useState<Vditor>() // editor ref
   const routeParam = useParams()
   const routeState = useLocation().state
@@ -109,36 +106,43 @@ const Edit = () => {
   }
 
   return (
-    <Box className="flex-1">
+    <Box className="flex-1" mt={2}>
       <Card>
         <>
           {forumLoading ? (
             <Skeleton height={53} />
           ) : (
-            <Stack direction="row" className="pb-4">
-              <TextField
-                value={selectedForum?.name || '请选择版块'}
-                sx={{ minWidth: '12em' }}
-              />
-              {threadTypes.length > 0 && (
-                <FormControl sx={{ minWidth: `12em` }}>
-                  <InputLabel id="post-typeid-label">请选择分类</InputLabel>
-                  <Select
-                    value={typeId}
-                    label="请选择分类"
-                    labelId="post-typeid-label"
-                    onChange={(e) => setTypeId(e.target.value)}
-                  >
-                    {selectedForum?.thread_types.map((item) => (
-                      <MenuItem key={item.name} value={item.type_id}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+            <>
+              {selectedForum?.post_notice.newthread && (
+                <Box pt={2}>
+                  <PostNotice forum={selectedForum} position="newthread" />
+                </Box>
               )}
-              <TextField fullWidth label="标题" inputRef={subjectRef} />
-            </Stack>
+              <Stack direction="row" className="pb-4" pt={2}>
+                <TextField
+                  value={selectedForum?.name || '请选择版块'}
+                  sx={{ minWidth: '12em' }}
+                />
+                {threadTypes.length > 0 && (
+                  <FormControl sx={{ minWidth: `12em` }}>
+                    <InputLabel id="post-typeid-label">请选择分类</InputLabel>
+                    <Select
+                      value={typeId}
+                      label="请选择分类"
+                      labelId="post-typeid-label"
+                      onChange={(e) => setTypeId(e.target.value)}
+                    >
+                      {selectedForum?.thread_types.map((item) => (
+                        <MenuItem key={item.name} value={item.type_id}>
+                          {item.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+                <TextField fullWidth label="标题" inputRef={subjectRef} />
+              </Stack>
+            </>
           )}
           <Editor minHeight={300} setVd={setVd} />
           <Box className="text-center">

@@ -16,7 +16,7 @@ export type PropsType = {
   format: number
 }
 
-function ParseLegacy({ post }: { post: PostFloor }) {
+export function ParseLegacy({ post }: { post: PostFloor }) {
   return (
     <div
       dangerouslySetInnerHTML={{

@@ -234,6 +234,19 @@ export type ForumCommon = {
   can_post_reply?: boolean
 }
 
+export type PostNotice = {
+  newthread: string
+  newthread_mobile: string
+  newthread_quick: string
+  reply: string
+  reply_mobile: string
+  reply_quick: string
+  reply_quick_mobile: string
+  editthread: string
+  editthread_mobile: string
+  poll: string
+}
+
 export type ForumDetails = ForumCommon & {
   threads: number
   todayposts: number
@@ -246,6 +259,7 @@ export type ForumDetails = ForumCommon & {
   announcement: string
   announcement_format: string
   post_notice_format: string
+  post_notice: PostNotice
 }
 
 export type ForumType = ForumCommon & {
