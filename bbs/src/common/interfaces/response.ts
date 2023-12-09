@@ -154,7 +154,7 @@ export interface PostDetails {
   page: number
   pagesize: number
   total: number
-  thread?: ThreadDetails
+  thread?: Thread
   forum?: ForumDetails
   rows: PostFloor[]
 }

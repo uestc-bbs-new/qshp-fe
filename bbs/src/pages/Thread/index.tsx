@@ -12,14 +12,21 @@ import {
   Pagination,
   Skeleton,
   Stack,
+  Typography,
 } from '@mui/material'
 
 import { getThreadsInfo, replyThreads } from '@/apis/thread'
-import { ForumDetails, ThreadDetails } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  PostFloor,
+  Thread as ThreadType,
+} from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
+import Chip from '@/components/Chip'
 import Editor from '@/components/Editor'
 import Error from '@/components/Error'
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -34,6 +41,34 @@ function searchParamsAssign(value: URLSearchParams, kvList: object) {
   )
 }
 
+function PostSubject({
+  post,
+  thread,
+  forum,
+}: {
+  post: PostFloor
+  thread: ThreadType | null
+  forum: ForumDetails | null
+}) {
+  if (post.is_first) {
+    const typeName =
+      forum?.thread_types_map && thread?.type_id
+        ? forum.thread_types_map[thread.type_id]?.name
+        : null
+    return (
+      <Stack direction="row" alignItems="center">
+        {typeName && (
+          <Link>
+            <Chip text={typeName} />
+          </Link>
+        )}
+        <Typography variant="h6">{post.subject}</Typography>
+      </Stack>
+    )
+  }
+  return <Typography fontWeight="bold">{post.subject}</Typography>
+}
+
 function Thread() {
   const { state } = useAppState()
   const [vd, setVd] = useState<Vditor>()
@@ -42,8 +77,8 @@ function Thread() {
   const location = useLocation()
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
-  const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
-  const forumDetails = useRef<ForumDetails | null>(null)
+  const [threadDetails, setThreadDetails] = useState<ThreadType | null>(null)
+  const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
   const [totalPages, setTotalPages] = useState(1)
 
   /**
@@ -73,7 +108,7 @@ function Thread() {
         thread_id,
         query.page,
         !threadDetails,
-        !forumDetails.current
+        !forumDetails
       )
     },
     {
@@ -83,7 +118,7 @@ function Thread() {
           dispatch({ type: 'set thread', payload: data.thread })
         }
         if (data && data.forum) {
-          forumDetails.current = data.forum
+          setForumDetails(data.forum)
           dispatch({ type: 'set forum', payload: data.forum })
         }
         if (data && data.total) {
@@ -123,7 +158,7 @@ function Thread() {
 
   useEffect(() => {
     setThreadDetails(null)
-    forumDetails.current = null
+    setForumDetails(null)
   }, [thread_id])
   useEffect(() => {
     setQuery({
@@ -174,7 +209,11 @@ function Thread() {
               >
                 <Floor item={item} set_reply={set_reply}>
                   <>
-                    <strong>{item.subject}</strong>
+                    <PostSubject
+                      post={item}
+                      thread={threadDetails}
+                      forum={forumDetails}
+                    />
                     <div className="text-sm text-slate-300 flex justify-between">
                       <div>{chineseTime(item.dateline * 1000)}</div>
                       <div className="flex flex-row gap-3 justify-between">

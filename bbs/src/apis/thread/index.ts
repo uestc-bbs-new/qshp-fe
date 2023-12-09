@@ -5,21 +5,28 @@ import {
 } from '@/common/interfaces/response'
 import request from '@/utils/request'
 
+import { makeThreadTypesMap } from '../common'
+
 /** 获取帖子详情信息 */
-export const getThreadsInfo = (
+export const getThreadsInfo = async (
   thread_id: string,
   page = 1,
   threadDetails = false,
   forumDetails = false
 ) => {
-  return request.get<PostDetails>(`/star/api/forum/v1/view/post/details`, {
-    params: {
-      thread_id,
-      page,
-      thread_details: threadDetails ? 1 : 0,
-      forum_details: forumDetails ? 1 : 0,
-    },
-  })
+  const result = await request.get<PostDetails>(
+    `/star/api/forum/v1/view/post/details`,
+    {
+      params: {
+        thread_id,
+        page,
+        thread_details: threadDetails ? 1 : 0,
+        forum_details: forumDetails ? 1 : 0,
+      },
+    }
+  )
+  makeThreadTypesMap(result.forum)
+  return result
 }
 
 export type PostThreadDetails = {

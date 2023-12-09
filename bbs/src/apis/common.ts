@@ -19,6 +19,18 @@ registerAuthAdoptLegacyInterceptors(request.axios)
 registerUserInterceptors(request)
 registerUserInterceptors(authService)
 
+export const makeThreadTypesMap = (forum?: ForumDetails) => {
+  if (forum && forum.thread_types) {
+    forum.thread_types_map = forum.thread_types.reduce<ThreadTypeMap>(
+      (map, item) => {
+        map[item.type_id] = item
+        return map
+      },
+      {}
+    )
+  }
+}
+
 export const getForumList = () => {
   return request.get<ForumList>(`${commonUrl}/view/forum/forum-list`)
 }
@@ -73,13 +85,7 @@ export const getThreadList = async (params: object) => {
       params: params,
     }
   )
-  if (result.forum && result.forum.thread_types) {
-    result.forum.thread_types_map =
-      result.forum.thread_types.reduce<ThreadTypeMap>((map, item) => {
-        map[item.type_id] = item
-        return map
-      }, {})
-  }
+  makeThreadTypesMap(result.forum)
   return result
 }
 
