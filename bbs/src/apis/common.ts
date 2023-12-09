@@ -1,5 +1,6 @@
 import {
   BBSInfo,
+  ForumDetails,
   ForumList,
   Thread,
   ThreadList,
@@ -19,7 +20,14 @@ registerUserInterceptors(request)
 registerUserInterceptors(authService)
 
 export const getForumList = () => {
-  return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)
+  return request.get<ForumList>(`${commonUrl}/view/forum/forum-list`)
+}
+export const getForumDetails = (forum_id: string) => {
+  return request.get<ForumDetails>(`${commonUrl}/view/forum/forum-details`, {
+    params: {
+      forum_id,
+    },
+  })
 }
 
 export const getBulletin = (params: object) => {
