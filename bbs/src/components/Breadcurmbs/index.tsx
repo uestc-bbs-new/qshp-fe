@@ -52,8 +52,9 @@ const Breadcrumbs = () => {
       <StyledRouterLink color="inherit" to="/">
         首页
       </StyledRouterLink>
-      {(activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
+      {['forum', 'thread', 'post'].includes(activeRoute?.id || '') &&
         forum(state)}
+      {activeRoute?.id == 'post' && <Typography>发帖</Typography>}
       {activeRoute?.id == 'thread' && thread(state)}
       {activeRoute?.id == 'search' && search(searchParams)}
     </MuiBreadcrumbs>

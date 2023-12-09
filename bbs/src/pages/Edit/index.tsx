@@ -23,8 +23,10 @@ import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { PostNotice } from '@/components/PostNotice'
+import { useAppState } from '@/states'
 
 const Edit = () => {
+  const { dispatch } = useAppState()
   const [typeId, setTypeId] = useState('')
   const [vd, setVd] = useState<Vditor>() // editor ref
   const routeParam = useParams()
@@ -53,6 +55,9 @@ const Edit = () => {
         .catch(() => setForumLoading(false))
     }
   }, [])
+  useEffect(() => {
+    dispatch({ type: 'set forum', payload: selectedForum })
+  }, [selectedForum])
 
   const handleSubmit = async () => {
     if (postPending) {

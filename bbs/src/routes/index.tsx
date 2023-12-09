@@ -47,7 +47,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/', id: 'index', name: '清水河畔', element: <Home /> },
       { path: '/search', id: 'search', name: '搜索帖子', element: <Search /> },
-      { path: '/post/:fid?', name: '发表主题', element: <Edit /> },
+      { path: '/post/:fid?', id: 'post', name: '发表主题', element: <Edit /> },
       { path: '/forum/:id', id: 'forum', name: '论坛分区', element: <Forum /> },
       {
         path: '/thread/:id',
