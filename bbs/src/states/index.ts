@@ -12,7 +12,7 @@ const guestUser = {
 }
 const initialState: State = {
   drawer: false, //侧边栏是否打开
-  navList: [],
+  forumList: [],
   user: guestUser,
   forumBreadcumbs: [],
   theme: (localStorage.getItem('theme') as Theme) || 'light',
