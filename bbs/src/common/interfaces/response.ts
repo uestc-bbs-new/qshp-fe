@@ -227,9 +227,14 @@ export interface UserInfos {
   prestiges: number
 }
 
-export type ForumDetails = {
+export type ForumCommon = {
   fid: number
   name: string
+  can_post_thread?: boolean
+  can_post_reply?: boolean
+}
+
+export type ForumDetails = ForumCommon & {
   threads: number
   todayposts: number
   moderators: Array<string>
@@ -242,11 +247,7 @@ export type ForumDetails = {
   post_notice_format: string
 }
 
-export type ForumType = {
-  fid: number
-  fup: number
-  type: string
-  name: string
+export type ForumType = ForumCommon & {
   threads: number
   posts: number
   todayposts: number
