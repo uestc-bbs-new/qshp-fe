@@ -96,6 +96,7 @@ const Edit = () => {
       ) as PostThreadDetails
     )
       .then((result) => {
+        vd?.setValue('')
         navigate(`/thread/${result.thread_id}`)
       })
       .catch((err) => {
