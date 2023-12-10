@@ -22,7 +22,7 @@ type ThreadBreadcumbEntry = {
 
 export type State = {
   drawer: boolean
-  navList: Forum[]
+  forumList: Forum[]
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
   activeForum?: ForumDetails
@@ -62,8 +62,8 @@ export const stateReducer = (state: State, action: StateAction) => {
       }
       return state
     }
-    case 'set navList':
-      return { ...state, navList: action.payload }
+    case 'set forumList':
+      return { ...state, forumList: action.payload }
     case 'set theme':
       return { ...state, theme: action.payload }
     case 'set drawer':

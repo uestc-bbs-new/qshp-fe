@@ -170,7 +170,7 @@ const NavLinks = () => {
   return (
     <Box>
       <Toolbar />
-      <Sections data={state.navList} />
+      <Sections data={state.forumList} />
     </Box>
   )
 }

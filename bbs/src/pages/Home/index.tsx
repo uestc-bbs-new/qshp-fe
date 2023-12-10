@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <>
       <Box className="flex-1">
-        {!state || !state.navList || state.navList.length === 0 ? (
+        {!state || !state.forumList || state.forumList.length === 0 ? (
           <>
             <Skeleton variant="rounded" height={40} />
             <Box className="flex-1" display="flex">
@@ -23,7 +23,7 @@ const Home = () => {
           </>
         ) : (
           <List>
-            {state.navList.map((item) => (
+            {state.forumList.map((item) => (
               <ForumGroup data={item} key={item.name} />
             ))}
           </List>

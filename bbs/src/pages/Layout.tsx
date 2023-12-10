@@ -26,7 +26,7 @@ const Layout = () => {
     // staleTime: 30 * 1000
     onSuccess: (data) => {
       dispatch({
-        type: 'set navList',
+        type: 'set forumList',
         payload: data,
       })
     },

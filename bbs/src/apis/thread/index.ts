@@ -3,6 +3,7 @@ import {
   UserInfos,
   UserNameFind,
 } from '@/common/interfaces/response'
+import { unescapeSubject } from '@/utils/htmlEscape'
 import request from '@/utils/request'
 
 import { makeThreadTypesMap } from '../common'
@@ -26,6 +27,16 @@ export const getThreadsInfo = async (
     }
   )
   makeThreadTypesMap(result.forum)
+  if (result.thread?.subject) {
+    result.thread.subject = unescapeSubject(
+      result.thread.subject,
+      result.thread.dateline,
+      true
+    )
+  }
+  result.rows.forEach((item) => {
+    item.subject = unescapeSubject(item.subject, item.dateline, false)
+  })
   return result
 }
 

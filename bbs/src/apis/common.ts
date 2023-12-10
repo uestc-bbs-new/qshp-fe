@@ -1,13 +1,14 @@
 import {
   BBSInfo,
+  Forum,
   ForumDetails,
-  ForumList,
   Thread,
   ThreadList,
   ThreadTypeMap,
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
+import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { authService, commonUrl } from '@/utils/request'
 
 import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
@@ -32,7 +33,7 @@ export const makeThreadTypesMap = (forum?: ForumDetails) => {
 }
 
 export const getForumList = () => {
-  return request.get<ForumList>(`${commonUrl}/view/forum/forum-list`)
+  return request.get<Forum[]>(`${commonUrl}/view/forum/forum-list`)
 }
 export const getForumDetails = (forum_id: string) => {
   return request.get<ForumDetails>(`${commonUrl}/view/forum/forum-details`, {
@@ -86,6 +87,9 @@ export const getThreadList = async (params: object) => {
     }
   )
   makeThreadTypesMap(result.forum)
+  result.rows.forEach((item) => {
+    item.subject = unescapeSubject(item.subject, item.dateline, true)
+  })
   return result
 }
 
