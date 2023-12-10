@@ -1,6 +1,7 @@
 import Vditor from 'vditor'
 
 import { useEffect, useRef, useState } from 'react'
+import { useQuery } from 'react-query'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -19,11 +20,12 @@ import {
 
 import { getForumDetails } from '@/apis/common'
 import { PostThreadDetails, postThread } from '@/apis/thread'
-import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { PostNotice } from '@/components/PostNotice'
 import { useAppState } from '@/states'
+
+import { ForumSelect } from './ForumSelect'
 
 const Edit = () => {
   const { dispatch } = useAppState()
@@ -31,32 +33,39 @@ const Edit = () => {
   const [vd, setVd] = useState<Vditor>() // editor ref
   const routeParam = useParams()
   const routeState = useLocation().state
-  const [selectedForum, setSelectedForum] = useState<ForumDetails | undefined>(
-    routeState?.forum?.fid && routeState.forum.can_post_thraed
-      ? routeState.forum
-      : undefined
-  )
+  const [openForumSelect, setOpenForumSelect] = useState(false)
+  const [query, setQuery] = useState({
+    fid: routeParam.fid,
+  })
+  const {
+    data: selectedForum,
+    isFetching: forumLoading,
+    refetch,
+  } = useQuery(['forumDetails', query], async () => {
+    if (query.fid) {
+      if (
+        query.fid == routeState?.forum?.fid &&
+        routeState.forum.can_post_thraed
+      ) {
+        return routeState.forum
+      }
+      const forum = await getForumDetails(query.fid)
+      if (forum.can_post_thread) {
+        return forum
+      }
+    }
+    return undefined
+  })
   const threadTypes = selectedForum?.thread_types || []
-  const shouldFetchForumDetails = routeParam.fid && !selectedForum
-  const [forumLoading, setForumLoading] = useState(shouldFetchForumDetails)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const subjectRef = useRef<HTMLInputElement>()
   const [postPending, setPostPending] = useState(false)
   const navigate = useNavigate()
-
   useEffect(() => {
-    if (shouldFetchForumDetails && routeParam.fid) {
-      getForumDetails(routeParam.fid)
-        .then((forum) => {
-          if (forum.can_post_thread) {
-            setSelectedForum(forum)
-          }
-          setForumLoading(false)
-        })
-        .catch(() => setForumLoading(false))
-    }
-  }, [])
+    setQuery({ fid: routeParam.fid })
+  }, [routeParam.fid])
+
   useEffect(() => {
     dispatch({ type: 'set forum', payload: selectedForum })
   }, [selectedForum])
@@ -129,6 +138,7 @@ const Edit = () => {
                 <TextField
                   value={selectedForum?.name || '请选择版块'}
                   sx={{ minWidth: '12em' }}
+                  onClick={() => setOpenForumSelect(true)}
                 />
                 {threadTypes.length > 0 && (
                   <FormControl sx={{ minWidth: `12em` }}>
@@ -167,6 +177,16 @@ const Edit = () => {
       >
         <Alert severity="error">{snackbarMessage}</Alert>
       </Snackbar>
+      <ForumSelect
+        open={openForumSelect}
+        selectedFid={selectedForum?.fid}
+        onCompleted={(fid: number | undefined) => {
+          if (fid != selectedForum?.fid) {
+            navigate(`/post/${fid}`)
+          }
+          setOpenForumSelect(false)
+        }}
+      />
     </Box>
   )
 }
