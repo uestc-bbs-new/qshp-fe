@@ -12,6 +12,7 @@ import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Message from '@/pages/Message'
 import Search from '@/pages/Search'
+import Setting from '@/pages/Setting'
 import Thread from '@/pages/Thread'
 
 // import NotFound from '@/pages/ErrorPage'
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
         element: <Thread />,
       },
       { path: '/message', name: '消息', element: <Message /> },
+      { path: '/setting/:id?', name: '设置', element: <Setting /> },
     ] as CustomRouteConfig[],
   },
 ] as CustomRouteConfig[])

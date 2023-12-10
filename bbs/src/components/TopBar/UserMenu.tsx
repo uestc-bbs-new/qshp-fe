@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import {
   DarkMode,
   LightMode,
@@ -45,6 +47,7 @@ const MenuContent = () => {
       })
     }
   }
+  const navigate = useNavigate()
   return (
     <Box className="py-2">
       <MenuItem>
@@ -83,7 +86,7 @@ const MenuContent = () => {
         切换账号
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem>
+      <MenuItem onClick={() => navigate({ pathname: '/setting' })}>
         <ListItemIcon>
           <Settings fontSize="small" />
         </ListItemIcon>

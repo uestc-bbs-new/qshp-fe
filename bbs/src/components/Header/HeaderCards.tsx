@@ -64,8 +64,18 @@ const headerCard = (id: number) => {
                       <Typography sx={{ mt: 0.3 }}>标题balabala</Typography>
                     </Box>
                   </Link>
-                  <Link sx={{ fontSize: 12 }} underline="none" color="grey">
-                    作者
+                  <Link
+                    sx={{
+                      fontSize: 12,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      width: '200px',
+                    }}
+                    underline="none"
+                    color="grey"
+                  >
+                    {`内容预览内容预览内容预览内容预览内容预览`}
                   </Link>
                 </Stack>
               </Box>
@@ -75,7 +85,7 @@ const headerCard = (id: number) => {
                 className="mr-5 mt-3"
                 color="#3A71F2"
               >
-                2023-11-28
+                {`作者123`}
               </Typography>
             </Stack>
           ))}
