@@ -41,7 +41,7 @@ const Profile = () => {
                 variant="rounded"
               />
             </Stack>
-            <Stack direction="row">
+            <Stack direction="row" alignItems="center">
               <Typography sx={{ width: 100 }}>昵称</Typography>
               <StyledField
                 value={name}
@@ -62,7 +62,7 @@ const Profile = () => {
               您有一次免费改名的机会，如需换名，请在上面输入新的用户名，并点击“修改”按钮
             </Typography>
             <Stack direction="row" sx={{ mb: 3 }}>
-              <Typography sx={{ width: 100 }}>自我介绍</Typography>
+              <Typography sx={{ width: 100, mt: 1 }}>自我介绍</Typography>
               <StyledField
                 multiline
                 rows={4}
@@ -80,7 +80,7 @@ const Profile = () => {
                 </StyledSelect>
               </FormControl>
             </Stack>
-            <Stack direction="row" sx={{ mb: 3 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>自定义头衔</Typography>
               <StyledField
                 value={title}
@@ -89,7 +89,7 @@ const Profile = () => {
               />
             </Stack>
             <Stack direction="row" sx={{ mb: 3 }}>
-              <Typography sx={{ width: 100 }}>个人签名</Typography>
+              <Typography sx={{ width: 100, mt: 1 }}>个人签名</Typography>
               <StyledField
                 multiline
                 rows={5}

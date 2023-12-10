@@ -66,7 +66,7 @@ const PasswordSecurity = () => {
                 sx={{ width: '40%' }}
               />
             </Stack>
-            <Stack direction="row">
+            <Stack direction="row" alignItems="center">
               <Typography sx={{ width: 100 }}>新密码</Typography>
               <StyledField
                 value={newPassword}
@@ -85,7 +85,7 @@ const PasswordSecurity = () => {
             >
               如果不需要更改密码，此处请留空
             </Typography>
-            <Stack direction="row">
+            <Stack direction="row" alignItems="center">
               <Typography sx={{ width: 100 }}>确认新密码</Typography>
               <StyledField
                 value={newPasswordConfirm}
@@ -104,7 +104,7 @@ const PasswordSecurity = () => {
             >
               如果不需要更改密码，此处请留空
             </Typography>
-            <Stack direction="row" sx={{ mb: 3 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>邮箱</Typography>
               <StyledField
                 value={email}
@@ -137,7 +137,7 @@ const PasswordSecurity = () => {
               如果哦没有收到邮件，您可以更换一个邮箱，或者
               <Button>重新接受验证邮件</Button>
             </Typography>
-            <Stack direction="row" sx={{ mb: 8 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
               <Typography sx={{ width: 100 }}>安全提问</Typography>
               <FormControl sx={{ width: '30%' }}>
                 <StyledSelect
@@ -155,7 +155,7 @@ const PasswordSecurity = () => {
                 </StyledSelect>
               </FormControl>
             </Stack>
-            <Stack direction="row" sx={{ mb: 8 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
               <Typography sx={{ width: 100 }}>回答</Typography>
               <StyledField
                 value={securityAnswer}

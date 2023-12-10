@@ -39,7 +39,7 @@ const PrivacyFilter = () => {
               注：您可以选择部分人看到您的主页内容
             </Typography>
 
-            <Stack direction="row" sx={{ mb: 3 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>好友列表</Typography>
               <FormControl sx={{ width: 200 }}>
                 <StyledSelect
@@ -58,7 +58,7 @@ const PrivacyFilter = () => {
                 </StyledSelect>
               </FormControl>
             </Stack>
-            <Stack direction="row" sx={{ mb: 3 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>留言板</Typography>
               <FormControl sx={{ width: 200 }}>
                 <StyledSelect

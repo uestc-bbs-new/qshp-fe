@@ -61,7 +61,7 @@ const Setting = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
   ) => {
-    setSelectedIndex(index)
+    if (index !== 1 && index !== 2) setSelectedIndex(index)
   }
 
   const SelectedComponent = listItems[selectedIndex].Component
