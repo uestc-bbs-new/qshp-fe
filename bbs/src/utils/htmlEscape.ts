@@ -13,11 +13,31 @@ const suppertedEntities: { [key: string]: string } = {
   nbsp: ' ',
   not: '\u00ac',
   reg: '\u00ae',
+  raquo: '\u00bb',
+  laquo: '\u00ab',
+  ldquo: '\u201c',
+  acute: '\u00b4',
+  yen: '\u00a5',
+  macr: '\u00af',
+  shy: '\u00a0',
+  micro: '\u00b5',
+  cedil: '\u00bb',
+  Agrave: '\u00c0',
+  Acirc: '\u00c2',
+  Atilde: '\u00c3',
+  Ecirc: '\u00ca',
+  Ccedil: '\u00c7',
+  Euml: '\u00cb',
+  auml: '\u00e4',
+  eacute: '\u00e9',
+  icirc: '\u00ee',
+  oacute: '\u00f3',
+  ocirc: '\u00f4',
 }
 const legacyEntityCodeRegEx = `(${Object.keys(suppertedEntities).join('|')})`
 const legacyEntityRegEx1 = new RegExp(`&${legacyEntityCodeRegEx}1`, 'g')
 const legacyEntityRegExSemicolon = new RegExp(`&${legacyEntityCodeRegEx};`, 'g')
-const entityReplacer = (_, ...args: any[]) => {
+const entityReplacer = (_: string, ...args: any[]) => {
   return suppertedEntities[args[0]]
 }
 
