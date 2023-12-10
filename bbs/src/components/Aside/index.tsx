@@ -7,6 +7,7 @@ import { Box, List, Tab, Tabs, Typography } from '@mui/material'
 import { getBBSInfo } from '@/apis/common'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
+import { useActiveRoute } from '@/utils/routes'
 
 import Static from './Static'
 
@@ -14,12 +15,13 @@ const Aside = () => {
   const location = useLocation()
   const [id, setId] = useState(2)
   const { data: hot, isLoading } = useQuery(['hotThread'], () => getBBSInfo())
+  const activeRoute = useActiveRoute()
 
   const handleChange = (event: React.SyntheticEvent, newId: number) => {
     setId(newId)
   }
 
-  if (location.pathname !== '/' && !location.pathname.startsWith('/forum')) {
+  if (activeRoute && activeRoute.id !== 'index' && activeRoute.id != 'forum') {
     return null
   }
 

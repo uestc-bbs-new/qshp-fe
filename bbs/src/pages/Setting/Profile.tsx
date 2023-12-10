@@ -46,7 +46,7 @@ const Profile = () => {
               <StyledField
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                sx={{ width: '70%' }}
+                sx={{ width: '35%' }}
               />
               <Button>修改</Button>
             </Stack>

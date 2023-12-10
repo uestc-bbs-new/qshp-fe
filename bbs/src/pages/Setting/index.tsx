@@ -59,9 +59,10 @@ const Setting = () => {
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number
+    index: number,
+    item: (typeof listItems)[number]
   ) => {
-    if (index !== 1 && index !== 2) setSelectedIndex(index)
+    if (!item.external) setSelectedIndex(index)
   }
 
   const SelectedComponent = listItems[selectedIndex].Component
@@ -90,7 +91,9 @@ const Setting = () => {
                     <ListItemButton
                       key={index}
                       selected={selectedIndex === index}
-                      onClick={(event) => handleListItemClick(event, index)}
+                      onClick={(event) =>
+                        handleListItemClick(event, index, item)
+                      }
                       sx={{ height: 40 }}
                     >
                       <ListItemText primary={item.name} />
