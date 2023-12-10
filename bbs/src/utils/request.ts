@@ -1,23 +1,176 @@
-import axios from 'axios'
+import axios, {
+  AxiosDefaults,
+  AxiosInstance,
+  AxiosInterceptorManager,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
+const commonUrl = '/star/api/forum/v1'
 
-const statusCode = {
-  tokenExpire: 401,
-  responseSuccess: 0,
+const apiResultCode = {
+  success: 0,
+}
+const kHttpUnauthorized = 401
+
+interface CommonResponse {
+  code: number
+  message: string
+  data: any
 }
 
-/**
- * 错误处理
- * @param { number } status 状态码
- */
-const errorHandle = (status: number, errorTest: string) => {
-  switch (status) {
-    case statusCode.tokenExpire:
-      console.log(errorTest)
-      break
-    default:
-      break
+function transformAxiosResponse<T = any, D = any>(
+  response: Promise<AxiosResponse<T, D>>
+): Promise<T> {
+  return response
+    .catch((error: any) => {
+      if (error) {
+        if (error.response) {
+          // HTTP 4xx/5xx status codes
+          console.log('HTTP error from API', error)
+          return Promise.reject({
+            type: 'http',
+            status: error.response.status,
+            statusText: error.response.statusText,
+            details: error,
+          })
+        } else {
+          return Promise.reject({
+            type: 'network',
+            details: error,
+          })
+          // show toast
+        }
+      } else {
+        console.error('Invalid API request', error)
+        return Promise.reject({
+          type: 'invalid',
+          details: error,
+        })
+      }
+    })
+    .then((response: AxiosResponse<T, D>) => {
+      const data = response.data as CommonResponse | undefined
+      if (data?.code === apiResultCode.success) {
+        return data.data
+      } else {
+        return Promise.reject({
+          type: 'api',
+          code: data?.code,
+          message: data?.message,
+          details: data,
+        })
+      }
+    })
+}
+
+class AxiosWrapper {
+  axios: AxiosInstance
+  defaults: AxiosDefaults
+  interceptors: {
+    request: AxiosInterceptorManager<InternalAxiosRequestConfig>
+    response: AxiosInterceptorManager<AxiosResponse>
+  }
+  constructor(axios: AxiosInstance) {
+    this.axios = axios
+    this.defaults = axios.defaults
+    this.interceptors = axios.interceptors
+  }
+  getUri(config?: AxiosRequestConfig): string {
+    return this.axios.getUri(config)
+  }
+  request<T = any, D = any>(config: AxiosRequestConfig<D>): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.request<T, AxiosResponse<T, D>, D>(config)
+    )
+  }
+  get<T = any, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.get<T, AxiosResponse<T, D>>(url, config)
+    )
+  }
+  delete<T = any, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.delete<T, AxiosResponse<T, D>>(url, config)
+    )
+  }
+  head<T = any, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.head<T, AxiosResponse<T, D>>(url, config)
+    )
+  }
+  options<T = any, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.options<T, AxiosResponse<T, D>>(url, config)
+    )
+  }
+  post<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.post<T, AxiosResponse<T, D>>(url, data, config)
+    )
+  }
+  put<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.put<T, AxiosResponse<T, D>>(url, data, config)
+    )
+  }
+  patch<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.patch<T, AxiosResponse<T, D>>(url, data, config)
+    )
+  }
+  postForm<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.postForm<T, AxiosResponse<T, D>>(url, data, config)
+    )
+  }
+  putForm<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.putForm<T, AxiosResponse<T, D>>(url, data, config)
+    )
+  }
+  patchForm<T = any, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<T> {
+    return transformAxiosResponse<T, D>(
+      this.axios.patchForm<T, AxiosResponse<T, D>>(url, data, config)
+    )
   }
 }
 
@@ -26,56 +179,44 @@ const errorHandle = (status: number, errorTest: string) => {
  * 设置请求超时 { timeout }
  */
 
-const service = axios.create({
+const commonConfig = {
   baseURL: baseUrl,
-  headers: {
-    'Content-type': 'application/json',
-    Authorization:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMDY5MjUsInVzZXJuYW1lIjoiQWJyYUMiLCJ1c2VyX2dyb3VwIjoyNiwiYWRtaW5fZ3JvdXAiOjMsImV4dGVuZGVkX2dyb3VwcyI6WzI2LDNdLCJ2aWV3X2F1dGhvcml0aWVzIjpbMiwxNywyNSw0NSw0Niw1NSw2MSw2Niw3MCw3NCwxMTEsMTE0LDExNSwxMTgsMTIxLDEyOCwxMzgsMTQwLDE0OSwxNTIsMTU0LDE4MywxOTksMjA4LDIyNSwyMjksMjMzLDIzNiwyMzcsMjUyLDI1NSwzMDUsMzA5LDMxMiwzMjYsMzcwLDM4MiwzOTEsNDAzXSwiYXVkIjoid2ViIiwiZXhwIjoxNjk1NjI4MjU3LCJqdGkiOiIzMDA1MzEyMzU5MDQ1NTI5NyIsImlhdCI6MTY5MDQ0NDI1NywiaXNzIjoi5riF5rC05rKz55WU4oCU4oCU55S15a2Q56eR5oqA5aSn5a2m5a6Y5pa56K665Z2bIiwic3ViIjoiYWNjZXNzX3Rva2VuIn0.ozcDENGOCKW4yps8v7g6GSfmAHb22yzW-doUCd-Ec_g',
-  },
-})
-
-// /**
-//  * 请求拦截器
-//  * @param { object } config 请求参数
-//  */
-//  service.interceptors.request.use((config) => {
-//     config.headers['access-token'] = sessionStorage.getItem('token')
-//     return config
-//   }, function (error) {
-//     return Promise.reject(error)
-//   })
-
-// /**
-//  * 响应拦截器
-//  * @param { object } response 响应参数
-//  */
-service.interceptors.response.use(
-  (response) => {
-    const content = response.data
-    if (content.errcode === statusCode.responseSuccess) {
-      return content.data
-    } else {
-      return content.data
-    }
-  },
-  (error) => {
-    if (error) {
-      if (error.response) {
-        const httpError = {
-          hasError: true,
-          status: error.response.status,
-          statusText: error.response.statusText,
-        }
-        errorHandle(httpError.status, httpError.statusText)
-      } else {
-        // show toast
-      }
-      return Promise.reject(error)
-    } else {
-      // show toast
-    }
-  }
+}
+const commonHeaders = {
+  'Content-type': 'application/json',
+}
+const service = new AxiosWrapper(
+  axios.create({
+    ...commonConfig,
+    headers: {
+      ...commonHeaders,
+    },
+  })
 )
 
+const authService = new AxiosWrapper(
+  axios.create({
+    ...commonConfig,
+    headers: {
+      ...commonHeaders,
+      'X-UESTC-BBS': '1',
+    },
+  })
+)
+
+// Export window.api for easier testing in development
+if (import.meta.env.DEV) {
+  interface WindowExtension extends Window {
+    api: any
+  }
+  ;(window as unknown as WindowExtension).api = service
+}
+
 export default service
+export {
+  authService,
+  apiResultCode,
+  kHttpUnauthorized,
+  commonUrl,
+  AxiosWrapper,
+}

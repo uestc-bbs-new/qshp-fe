@@ -154,7 +154,8 @@ export interface PostDetails {
   page: number
   pagesize: number
   total: number
-  thread: ThreadDetails
+  thread?: Thread
+  forum?: ForumDetails
   rows: PostFloor[]
 }
 
@@ -226,8 +227,27 @@ export interface UserInfos {
   prestiges: number
 }
 
-export type ForumDetails = {
+export type ForumCommon = {
+  fid: number
   name: string
+  can_post_thread?: boolean
+  can_post_reply?: boolean
+}
+
+export type PostNotice = {
+  newthread: string
+  newthread_mobile: string
+  newthread_quick: string
+  reply: string
+  reply_mobile: string
+  reply_quick: string
+  reply_quick_mobile: string
+  editthread: string
+  editthread_mobile: string
+  poll: string
+}
+
+export type ForumDetails = ForumCommon & {
   threads: number
   todayposts: number
   moderators: Array<string>
@@ -235,27 +255,25 @@ export type ForumDetails = {
   parents: Array<ForumType>
   thread_types: Array<ThreadType>
   thread_types_map?: ThreadTypeMap
+  optional_thread_type: boolean
   announcement: string
   announcement_format: string
   post_notice_format: string
+  post_notice: PostNotice
 }
 
-export type ForumType = {
-  fid: number
-  fup: number
-  type: string
-  name: string
+export type ForumType = ForumCommon & {
   threads: number
   posts: number
   todayposts: number
   yesterdayposts: number
-  latest_thread: Array<{
+  latest_thread: {
     thread_id: number
     subject: string
     lastpost_time: number
     lastpost_author: string
     lastpost_authorid: number
-  }>
+  }
 }
 
 export type ThreadType = {

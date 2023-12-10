@@ -1,5 +1,6 @@
 import {
   BBSInfo,
+  ForumDetails,
   ForumList,
   Thread,
   ThreadList,
@@ -7,12 +8,38 @@ import {
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
-import request from '@/utils/request'
+import request, { authService, commonUrl } from '@/utils/request'
 
-const commonUrl = '/star/api/forum/v1'
+import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
+import registerAuthHeaderInterceptors from './interceptors/authHeader'
+import registerUserInterceptors from './interceptors/user'
+
+registerAuthHeaderInterceptors(request)
+registerAuthAdoptLegacyInterceptors(request.axios)
+registerUserInterceptors(request)
+registerUserInterceptors(authService)
+
+export const makeThreadTypesMap = (forum?: ForumDetails) => {
+  if (forum && forum.thread_types) {
+    forum.thread_types_map = forum.thread_types.reduce<ThreadTypeMap>(
+      (map, item) => {
+        map[item.type_id] = item
+        return map
+      },
+      {}
+    )
+  }
+}
 
 export const getForumList = () => {
-  return request.get<null, ForumList>(`${commonUrl}/view/forum/forum-list`)
+  return request.get<ForumList>(`${commonUrl}/view/forum/forum-list`)
+}
+export const getForumDetails = (forum_id: string) => {
+  return request.get<ForumDetails>(`${commonUrl}/view/forum/forum-details`, {
+    params: {
+      forum_id,
+    },
+  })
 }
 
 export const getBulletin = (params: object) => {
@@ -22,11 +49,11 @@ export const getBulletin = (params: object) => {
 }
 
 export const getBBSInfo = () => {
-  return request.get<null, BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
+  return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
 }
 
 export const searchThreads = (params: object) => {
-  return request.post<object, { resultNum: number; threads: Thread[] }>(
+  return request.post<{ resultNum: number; threads: Thread[] }>(
     `${commonUrl}/global/search/thread`,
     params,
     {
@@ -38,36 +65,51 @@ export const searchThreads = (params: object) => {
 }
 
 export const searchUsers = (params: object) => {
-  return request.get<object, { total: number; rows: UserInfo[] }>(
+  return request.get<{ total: number; rows: UserInfo[] }>(
     `${commonUrl}/global/search`,
     { params: params }
   )
 }
 
 export const searchUsers_at = (params: object) => {
-  return request.get<object, { total: number; rows: Users[] }>(
+  return request.get<{ total: number; rows: Users[] }>(
     `${commonUrl}/global/search/at`,
     { params: params }
   )
 }
 
 export const getThreadList = async (params: object) => {
-  const result = await request.get<null, ThreadList>(
+  const result = await request.get<ThreadList>(
     `${commonUrl}/view/thread/threads`,
     {
       params: params,
     }
   )
-  if (result.forum && result.forum.thread_types) {
-    result.forum.thread_types_map =
-      result.forum.thread_types.reduce<ThreadTypeMap>((map, item) => {
-        map[item.type_id] = item
-        return map
-      }, {})
-  }
+  makeThreadTypesMap(result.forum)
   return result
 }
 
 export const getAnnouncement = () => {
-  return request.get<object, Thread[]>(`${commonUrl}/view/thread/bulletin`)
+  return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
+}
+
+export const signIn = (params: {
+  username: string
+  password: string
+  keep_signed_in: boolean
+  captcha_value: string
+}) => {
+  return authService.post<string>(
+    `${commonUrl}/auth/signin`,
+    {
+      username: params.username,
+      password: params.password,
+      keep_signed_in: params.keep_signed_in,
+    },
+    { headers: { 'X-UESTC-BBS-Captcha': params.captcha_value } }
+  )
+}
+
+export const signOut = () => {
+  return authService.post(`${commonUrl}/auth/signout`)
 }

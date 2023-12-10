@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams } from 'react-router-dom'
 
@@ -23,8 +23,10 @@ import { getThreadList } from '@/apis/common'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Post from '@/components/Post'
+import { useAppState } from '@/states'
 
 import Head from './ForumHead'
+import SubForums from './SubForums'
 
 type TopProps = {
   children: React.ReactElement
@@ -101,8 +103,10 @@ function Forum() {
     page: 1,
     type: 1,
     forum_id: routeParam.id,
-    forum_details: !forumDetails ? 1 : 0,
+    forum_details: 1,
   })
+  const threadListTop = useRef<HTMLElement>(null)
+  const { dispatch } = useAppState()
 
   const pageSize = 20
   const {
@@ -117,6 +121,11 @@ function Forum() {
       }
       if (data && data.forum) {
         setForumDetails(data.forum)
+        dispatch({ type: 'set forum', payload: data.forum })
+        setQuery({
+          ...query,
+          forum_details: 0,
+        })
       }
     },
   })
@@ -127,12 +136,13 @@ function Forum() {
     setQuery({
       ...query,
       forum_id: routeParam.id,
+      forum_details: 1,
     })
     refetch()
   }, [location, query.type, query.page])
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    window.scrollTo(0, 0)
+    threadListTop.current?.scrollIntoView()
     setSort(event.target.value)
     setPage(1)
     const value = event.target.value
@@ -140,14 +150,14 @@ function Forum() {
   }
 
   const handlePageChange = (event: any, value: number) => {
-    window.scrollTo(0, 0)
+    threadListTop.current?.scrollIntoView()
     setPage(value)
     setQuery({ ...query, page: Number(value) })
   }
 
   return (
     <Box className="flex-1" style={{ marginTop: '20px' }}>
-      {isFetching ? (
+      {isFetching && !forumDetails ? (
         <Card>
           <List>
             <ListItem>
@@ -158,127 +168,90 @@ function Forum() {
       ) : forumDetails ? (
         <Head data={forumDetails}></Head>
       ) : null}
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ margin: '20px' }}
-        sx={{ display: 'flex', justifyContent: 'center' }}
-      />
-      <Card>
+      {forumDetails?.children?.length && (
+        <SubForums>{forumDetails.children}</SubForums>
+      )}
+      {!!(isFetching || threadList?.rows?.length) && (
         <>
-          {threadList?.rows?.some((item: any) => item.display_order > 0) && (
-            <Top>
-              {isFetching ? (
-                <List>
-                  <ListItem>
-                    <Skeleton className="w-full" height={81}></Skeleton>
-                  </ListItem>
-                </List>
-              ) : (
-                <List>
-                  {threadList?.rows
-                    ?.filter((item: any) => item.display_order > 0)
-                    .map((item: any) => (
-                      <Post
-                        data={item}
-                        key={item.thread_id}
-                        forumDetails={forumDetails}
-                      />
-                    ))}
-                </List>
+          <Pagination
+            size="small"
+            page={page}
+            onChange={handlePageChange}
+            count={total}
+            variant="outlined"
+            shape="rounded"
+            style={{ margin: '20px' }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              scrollMarginTop: (theme) => theme.spacing(8 + 2),
+            }}
+            ref={threadListTop}
+          />
+          <Card>
+            <>
+              {threadList?.rows?.some(
+                (item: any) => item.display_order > 0
+              ) && (
+                <Top>
+                  {isFetching ? (
+                    <List>
+                      <ListItem>
+                        <Skeleton className="w-full" height={81}></Skeleton>
+                      </ListItem>
+                    </List>
+                  ) : (
+                    <List>
+                      {threadList?.rows
+                        ?.filter((item: any) => item.display_order > 0)
+                        .map((item: any) => (
+                          <Post
+                            data={item}
+                            key={item.thread_id}
+                            forumDetails={forumDetails}
+                          />
+                        ))}
+                    </List>
+                  )}
+                </Top>
               )}
-            </Top>
-          )}
-          <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
-            {isFetching || !threadList?.rows?.length ? (
-              <List>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={100}
-                  ></Skeleton>
-                </ListItem>
-                <ListItem>
-                  <Skeleton
-                    className="w-full"
-                    width={961}
-                    height={81}
-                  ></Skeleton>
-                </ListItem>
-              </List>
-            ) : (
-              <List>
-                {threadList?.rows
-                  ?.filter((item: any) => item.display_order === 0)
-                  .map((item: any) => (
-                    <Post
-                      data={item}
-                      key={item.thread_id}
-                      forumDetails={forumDetails}
-                    />
-                  ))}
-              </List>
-            )}
-          </Normal>
+              <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
+                {isFetching ? (
+                  <List>
+                    {[...Array(8)].map((_, index) => (
+                      <ListItem key={index}>
+                        <Skeleton className="w-full" height={100} />
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : (
+                  <List>
+                    {threadList?.rows
+                      ?.filter((item: any) => item.display_order === 0)
+                      .map((item: any) => (
+                        <Post
+                          data={item}
+                          key={item.thread_id}
+                          forumDetails={forumDetails}
+                        />
+                      ))}
+                  </List>
+                )}
+              </Normal>
+            </>
+          </Card>
+          <Pagination
+            size="small"
+            page={page}
+            onChange={handlePageChange}
+            count={total}
+            variant="outlined"
+            shape="rounded"
+            style={{ marginTop: '20px' }}
+            sx={{ display: 'flex', justifyContent: 'center' }}
+          />
         </>
-      </Card>
-      <Pagination
-        size="small"
-        page={page}
-        onChange={handlePageChange}
-        count={total}
-        variant="outlined"
-        shape="rounded"
-        style={{ marginTop: '20px' }}
-        sx={{ display: 'flex', justifyContent: 'center' }}
-      />
+      )}
       {/* <Edit></Edit> */}
     </Box>
   )

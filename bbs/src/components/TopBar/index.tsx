@@ -1,26 +1,57 @@
+import HCaptcha from '@hcaptcha/react-hcaptcha'
+
+import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Add, Menu } from '@mui/icons-material'
+import { Add, Close, Menu } from '@mui/icons-material'
 import { MeetingRoomTwoTone } from '@mui/icons-material'
 import {
   AppBar,
   Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Grid,
   IconButton,
   Stack,
+  TextField,
   Toolbar,
   Typography,
 } from '@mui/material'
 
+import { signIn } from '@/apis/common'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
-import { useDiscuzLink } from '@/utils/discuz_link_map'
+import { State } from '@/states/reducers/stateReducer'
+import { setAuthorizationHeader } from '@/utils/authHeader'
+import { useDiscuzLink } from '@/utils/discuzLinkMap'
+import { useActiveRoute } from '@/utils/routes'
 
 import Message from './Message'
 import SearchBar from './Search'
 import UserMenu from './UserMenu'
 
-const Options = () => {
+const Options = ({ state }: { state: State }) => {
   const navigate = useNavigate()
+  const activeRoute = useActiveRoute()
+  const fid =
+    (activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
+    state.activeForum?.can_post_thread
+      ? state.activeForum?.fid
+      : null
+  const post = () => {
+    if (fid) {
+      navigate(`/post/${fid}`, {
+        state: {
+          forum: state.activeForum,
+        },
+      })
+    } else {
+      navigate('/post')
+    }
+  }
 
   return (
     <Stack
@@ -28,15 +59,15 @@ const Options = () => {
       direction="row"
       className="basis-1/4 text-right"
     >
-      <Toolbar>
-        <UserMenu />
+      <Toolbar disableGutters>
+        <UserMenu user={state.user} />
         <Message />
         {/* <AboutMe unread={state.messages.unread_count}/> */}
         <Button
           className="ml-3 bg-white bg-opacity-40"
           variant="contained"
           startIcon={<Add />}
-          onClick={() => navigate('/edit')}
+          onClick={post}
         >
           发帖
         </Button>
@@ -46,6 +77,33 @@ const Options = () => {
 }
 
 const LoginComponent = () => {
+  const hCaptchaToken = useRef('')
+  const [signinOpen, setSigninOpen] = useState(false)
+  const closeSignin = () => setSigninOpen(false)
+  const doSignin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const data = new FormData(e.currentTarget)
+    const username = data.get('username')
+    const password = data.get('password')
+    if (!username || !password) {
+      alert('请输入用户名与密码。')
+      return
+    }
+    if (!hCaptchaToken.current) {
+      alert('请完成验证后登录')
+      return
+    }
+    const authorization = await signIn({
+      username: username.toString(),
+      password: password.toString(),
+      keep_signed_in: data.get('keep_signed_in')?.toString() === '1',
+      captcha_value: hCaptchaToken.current,
+    })
+    if (authorization) {
+      setAuthorizationHeader(authorization)
+      closeSignin()
+    }
+  }
   return (
     <Stack
       justifyContent="flex-end"
@@ -53,8 +111,57 @@ const LoginComponent = () => {
       spacing={1}
       className="basis-1/4"
     >
-      <Button variant="outlined">登录</Button>
+      <Button variant="contained" onClick={(_) => setSigninOpen(true)}>
+        登录
+      </Button>
       <Button variant="contained">注册</Button>
+      <Dialog open={signinOpen} onClose={closeSignin}>
+        <DialogTitle>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography>登录</Typography>
+            <IconButton onClick={closeSignin}>
+              <Close />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          <form onSubmit={doSignin}>
+            <Grid container alignItems="center" rowSpacing={2}>
+              <Grid item xs={4}>
+                <Typography>用户名：</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <TextField autoFocus fullWidth name="username" />
+              </Grid>
+              <Grid item xs={4}>
+                <Typography>密码：</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <TextField type="password" fullWidth name="password" />
+              </Grid>
+            </Grid>
+            <FormControlLabel
+              control={<Checkbox name="keep_signed_in" value="1" />}
+              label="自动登录"
+            />
+            <div style={{ textAlign: 'center' }}>
+              <HCaptcha
+                sitekey="52100d97-0777-4497-8852-e380d5b3430b"
+                onVerify={(token, ekey) => {
+                  hCaptchaToken.current = token
+                }}
+              />
+            </div>
+            <Stack direction="row" justifyContent="center">
+              <Button type="submit">登录</Button>
+            </Stack>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Stack>
   )
 }
@@ -100,12 +207,12 @@ const TopBar = () => {
           <SearchBar />
         </Stack>
         <Stack sx={{ flexGrow: 1 }}></Stack>
-        {state.users.uid != 0 ? <Options /> : <LoginComponent />}
+        {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
         <Link
           to="/thread/1812091"
           className="text-white"
           underline="none"
-          sx={{ mr: 1, ml: -1.5 }}
+          sx={{ ml: 2, mr: 1 }}
         >
           <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
         </Link>

@@ -4,13 +4,29 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
-import { Box, Button, Pagination, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  Pagination,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import { getThreadsInfo, replyThreads } from '@/apis/thread'
-import { ThreadDetails } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  PostFloor,
+  Thread as ThreadType,
+} from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
+import Chip from '@/components/Chip'
 import Editor from '@/components/Editor'
+import Error from '@/components/Error'
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -25,14 +41,45 @@ function searchParamsAssign(value: URLSearchParams, kvList: object) {
   )
 }
 
+function PostSubject({
+  post,
+  thread,
+  forum,
+}: {
+  post: PostFloor
+  thread: ThreadType | null
+  forum: ForumDetails | null
+}) {
+  if (post.is_first) {
+    const typeName =
+      forum?.thread_types_map && thread?.type_id
+        ? forum.thread_types_map[thread.type_id]?.name
+        : null
+    return (
+      <Stack direction="row" alignItems="center">
+        {typeName && (
+          <Link>
+            <Chip text={typeName} />
+          </Link>
+        )}
+        <Typography variant="h6">{post.subject}</Typography>
+      </Stack>
+    )
+  }
+  return <Typography fontWeight="bold">{post.subject}</Typography>
+}
+
 function Thread() {
+  const { state } = useAppState()
   const [vd, setVd] = useState<Vditor>()
 
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
-  const [threadDetails, setThreadDetails] = useState<ThreadDetails | null>(null)
+  const [threadDetails, setThreadDetails] = useState<ThreadType | null>(null)
+  const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
+  const [totalPages, setTotalPages] = useState(1)
 
   /**
    * 用于记录页面的 query 参数
@@ -50,18 +97,32 @@ function Thread() {
 
   const {
     data: info,
+    error,
+    isError: isError,
     isLoading: infoLoading,
     refetch,
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(thread_id, query.page, !threadDetails)
+      return getThreadsInfo(
+        thread_id,
+        query.page,
+        !threadDetails,
+        !forumDetails
+      )
     },
     {
       onSuccess: (data) => {
         if (data && data.thread) {
           setThreadDetails(data.thread)
-          dispatch({ type: 'set post', payload: data.thread.subject })
+          dispatch({ type: 'set thread', payload: data.thread })
+        }
+        if (data && data.forum) {
+          setForumDetails(data.forum)
+          dispatch({ type: 'set forum', payload: data.forum })
+        }
+        if (data && data.total) {
+          setTotalPages(Math.ceil(data.total / kPageSize))
         }
       },
     }
@@ -80,7 +141,7 @@ function Thread() {
       setSearchParams(
         searchParamsAssign(searchParams, {
           // total + 1 because a new reply was posted just now and info is not yet refreshed.
-          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 10,
+          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 1,
         })
       )
       setReplyRefresh(replyRefresh + 1)
@@ -95,6 +156,10 @@ function Thread() {
     }
   }, [info])
 
+  useEffect(() => {
+    setThreadDetails(null)
+    setForumDetails(null)
+  }, [thread_id])
   useEffect(() => {
     setQuery({
       ...query,
@@ -128,7 +193,7 @@ function Thread() {
   return (
     <Box className="flex-1" minWidth="1em">
       <Pagination
-        count={info?.total ? Math.ceil(info?.total / 20) : 10}
+        count={totalPages}
         page={Number(searchParams.get('page')) || 1}
         onChange={(e, value) => {
           setSearchParams(searchParamsAssign(searchParams, { page: value }))
@@ -138,10 +203,17 @@ function Thread() {
         info?.rows.map((item, index) => {
           return (
             <Card className="mb-4" key={item.position}>
-              <section id={item.position.toString()}>
+              <section
+                id={item.position.toString()}
+                style={{ scrollMarginTop: '80px' }}
+              >
                 <Floor item={item} set_reply={set_reply}>
                   <>
-                    <strong>{item.subject}</strong>
+                    <PostSubject
+                      post={item}
+                      thread={threadDetails}
+                      forum={forumDetails}
+                    />
                     <div className="text-sm text-slate-300 flex justify-between">
                       <div>{chineseTime(item.dateline * 1000)}</div>
                       <div className="flex flex-row gap-3 justify-between">
@@ -171,9 +243,15 @@ function Thread() {
           )
         })
       ) : infoLoading ? (
-        <>请求帖子详细信息中</>
+        <List>
+          {[...Array(4)].map((_, index) => (
+            <ListItem key={index}>
+              <Skeleton className="w-full" height={81}></Skeleton>
+            </ListItem>
+          ))}
+        </List>
       ) : (
-        <>帖子详细信息获取错误</>
+        <Error isError={isError} error={error} onRefresh={refetch} />
       )}
 
       <Card className="py-4">
@@ -181,7 +259,7 @@ function Thread() {
           <Avatar
             className="mr-4"
             alt="test"
-            uid={1}
+            uid={state.user.uid}
             sx={{ width: 120, height: 120 }}
             variant="rounded"
           />

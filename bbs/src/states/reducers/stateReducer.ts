@@ -1,11 +1,32 @@
-import { Forum } from '@/common/interfaces/response'
+import { Forum, ForumDetails } from '@/common/interfaces/response'
+
+import { guestUser } from '..'
+
+export type UserState = {
+  uid: number
+  username: string
+  new_pm?: number
+  new_notification?: number
+}
+
+type ForumBreadcumbEntry = {
+  forum_id: number
+  name: string
+  top: boolean
+}
+
+type ThreadBreadcumbEntry = {
+  thread_id: number
+  subject: string
+}
 
 export type State = {
-  selectedPost: string
-  messages: { unread_count: number }
   drawer: boolean
   navList: Forum[]
-  users: { uid: number; name: string }
+  user: UserState
+  forumBreadcumbs: ForumBreadcumbEntry[]
+  activeForum?: ForumDetails
+  activeThread?: ThreadBreadcumbEntry
   theme: 'light' | 'dark'
 }
 
@@ -19,40 +40,63 @@ export const stateReducer = (state: State, action: StateAction) => {
     case 'clear':
       return {
         ...state,
-        messages: { unread_count: 0 },
         navList: [],
-        users: { uid: -1, name: 'nobody' },
       }
     case 'set user': {
-      return {
-        ...state,
-        users: action.payload,
+      if (!action.payload && state.user != guestUser) {
+        return {
+          ...state,
+          user: guestUser,
+        }
+      } else if (
+        action.payload &&
+        (action.payload.uid != state.user.uid ||
+          action.payload.username != state.user.username ||
+          action.payload.new_pm != state.user.new_pm ||
+          action.payload.new_notification != state.user.new_notification)
+      ) {
+        return {
+          ...state,
+          user: action.payload,
+        }
       }
+      return state
     }
-    case 'set messages': {
-      return {
-        ...state,
-        messages: { unread_count: action.payload },
-      }
-    }
-    // case 'read messages': {
-    //   const messages = [
-    //     ...action.payload.messages,
-    //     // ...state.rooms[action.payload.id].messages,
-    //   ]
-    //   return {
-    //     ...state,
-    //     messages: { unread_count: 0 },
-    //   }
-    // }
     case 'set navList':
       return { ...state, navList: action.payload }
     case 'set theme':
       return { ...state, theme: action.payload }
     case 'set drawer':
       return { ...state, drawer: !state.drawer }
-    case 'set post':
-      return { ...state, selectedPost: action.payload }
+    case 'set forum':
+      if (state.activeForum?.fid == action.payload?.fid) {
+        return state
+      }
+      {
+        const newForums: ForumBreadcumbEntry[] = []
+        const forum = action.payload as ForumDetails | undefined
+        if (forum?.fid) {
+          console.log(forum.parents)
+          newForums.unshift(
+            ...forum.parents
+              .concat([])
+              .reverse()
+              .map((parent, index) => ({
+                forum_id: parent.fid,
+                name: parent.name,
+                top: index === 0,
+              })),
+            { forum_id: forum.fid, name: forum.name, top: false }
+          )
+        }
+        return {
+          ...state,
+          activeForum: action.payload,
+          forumBreadcumbs: newForums,
+        }
+      }
+    case 'set thread':
+      return { ...state, activeThread: action.payload }
     default:
       return state
   }

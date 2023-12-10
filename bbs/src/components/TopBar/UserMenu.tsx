@@ -9,10 +9,19 @@ import {
   Settings,
   TransferWithinAStation,
 } from '@mui/icons-material'
-import { Box, Divider, ListItemIcon, MenuItem } from '@mui/material'
+import {
+  Box,
+  Divider,
+  ListItemIcon,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material'
 
+import { signOut } from '@/apis/common'
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
+import { UserState } from '@/states/reducers/stateReducer'
 import siteRoot from '@/utils/siteRoot'
 
 import Avatar from '../Avatar'
@@ -20,10 +29,9 @@ import Avatar from '../Avatar'
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
 
-  const logout = () => {
-    dispatch({
-      type: 'clear',
-    })
+  const logout = async () => {
+    await signOut()
+    dispatch({ type: 'set user' })
   }
 
   const themeChange = () => {
@@ -95,16 +103,19 @@ const MenuContent = () => {
   )
 }
 
-const UserMenu = () => {
+const UserMenu = ({ user }: { user: UserState }) => {
   return (
     <>
       <Tooltip title={<MenuContent />}>
-        <Avatar
-          className="mx-3"
-          uid={0}
-          sx={{ width: 32, height: 32 }}
-          variant="rounded"
-        />
+        <Stack direction="row" alignItems="center">
+          <Avatar
+            className="mx-3"
+            uid={user.uid}
+            sx={{ width: 32, height: 32 }}
+            variant="rounded"
+          />
+          <Typography>{user.username}</Typography>
+        </Stack>
       </Tooltip>
     </>
   )

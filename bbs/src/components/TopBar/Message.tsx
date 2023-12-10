@@ -10,6 +10,7 @@ import { useAppState } from '@/states'
 const MessageTabs = () => {
   const [value, setValue] = useState(0)
   const navigate = useNavigate()
+  const { state } = useAppState()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -24,14 +25,15 @@ const MessageTabs = () => {
         onClick={() => navigate('/message')}
         className="flex justify-between"
       >
-        @我的 <Badge color="warning" badgeContent={2} />
+        提醒{' '}
+        <Badge color="warning" badgeContent={state.user.new_notification} />
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
         onClick={() => navigate('/message')}
         className="flex justify-between"
       >
-        我的消息 <Badge color="warning" badgeContent={2} />
+        站内信 <Badge color="warning" badgeContent={state.user.new_pm} />
       </MenuItem>
     </Box>
   )
@@ -39,15 +41,12 @@ const MessageTabs = () => {
 
 const MessagePopover = () => {
   const { state } = useAppState()
-
+  const totalMessages =
+    (state.user.new_notification ?? 0) + (state.user.new_pm ?? 0)
   return (
     <>
       <Tooltip title={<MessageTabs />}>
-        <Badge
-          badgeContent={state.messages.unread_count}
-          className="mx-3"
-          color="warning"
-        >
+        <Badge badgeContent={totalMessages} className="mx-3" color="warning">
           <MarkunreadOutlined className="text-white" />
         </Badge>
       </Tooltip>
