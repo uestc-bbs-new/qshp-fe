@@ -20,6 +20,7 @@ import {
 
 import { getForumDetails } from '@/apis/common'
 import { PostThreadDetails, postThread } from '@/apis/thread'
+import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { PostNotice } from '@/components/PostNotice'
@@ -41,7 +42,7 @@ const Edit = () => {
     data: selectedForum,
     isFetching: forumLoading,
     refetch,
-  } = useQuery(['forumDetails', query], async () => {
+  } = useQuery<ForumDetails>(['forumDetails', query], async () => {
     if (query.fid) {
       if (
         query.fid == routeState?.forum?.fid &&
