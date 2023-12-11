@@ -5,46 +5,9 @@ type ForumLastestThread = {
   lastpost_author: string
   lastpost_authorid: number
 }
-export type Forum = {
-  fid: number
-  fup: number
-  type: string
-  name: string
-  threads: number
-  posts: number
-  todayposts: number
-  yesterdayposts: number
-  autoclose: number
-  modworks: number
-  favtimes: number
-  sharetimes: number
-  tid: number
-  typeid: number
-  author: string
-  authorid: number
-  subject: string
-  dateline: number
-  lastpost: string
-  lastposter: string
-  views: number
-  replies: number
-  highlight: number
-  digest: number
-  rate: number
-  special: boolean
-  attachment: number
-  moderated: boolean
-  closed: boolean
-  stickreply: boolean
-  recommends: number
-  recommend_add: number
-  recommend_sub: number
-  heats: number
-  cover: number
-  replycredit: number
-  maxposition: number
-  comments: number
-  latest_thread: ForumLastestThread
+export type Forum = ForumCommon & {
+  todayposts?: number
+  latest_thread?: ForumLastestThread
   moderators?: Array<string>
   children?: Array<Forum>
 }

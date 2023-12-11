@@ -19,7 +19,56 @@ import {
 } from '@mui/material'
 
 import { Forum } from '@/common/interfaces/response'
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
+
+const canPostThreadInForumOrChildren = (forum: Forum) => {
+  return (
+    forum.can_post_thread ||
+    (forum.children?.length &&
+      forum.children.some((item) => item.can_post_thread))
+  )
+}
+
+const isForumOrChildrenSelected = (forum: Forum, fid?: number) => {
+  if (!fid) {
+    return false
+  }
+  if (forum.fid == fid) {
+    return true
+  }
+  return (
+    forum.children?.length && forum.children.some((item) => item.fid == fid)
+  )
+}
+
+const ForumLink = ({
+  fid,
+  onClick,
+}: {
+  fid: number
+  onClick: (fid: number) => void
+}) => {
+  const { state } = useAppState()
+  const fidNameMap: { [fid: number]: string } = {}
+  const addToMap = (forum: Forum) => {
+    fidNameMap[forum.fid] = forum.name
+    forum.children?.length && forum.children.forEach(addToMap)
+  }
+  state.forumList.forEach(addToMap)
+
+  return (
+    <Link
+      to={`/post/${fid}`}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick(fid)
+      }}
+    >
+      {fidNameMap[fid]}
+    </Link>
+  )
+}
 
 export const ForumSelect = ({
   open,
@@ -62,14 +111,23 @@ export const ForumSelect = ({
       <DialogTitle>
         <Stack
           direction="row"
-          justifyContent="spaceBetween"
+          justifyContent="space-between"
           alignItems="center"
         >
-          <Typography>请选择板块：</Typography>
+          <Typography variant="h6">请选择板块：</Typography>
           <IconButton onClick={close}>
             <Close />
           </IconButton>
         </Stack>
+        <Typography variant="body1">
+          灌水帖请在
+          <ForumLink fid={25} onClick={onCompleted} />
+          发表，物品交易请在
+          <ForumLink fid={61} onClick={onCompleted} />
+          发表，对河畔或管理组的意见建议、使用中遇到的问题请在
+          <ForumLink fid={46} onClick={onCompleted} />
+          发表。
+        </Typography>
       </DialogTitle>
       <DialogContent>
         {state.forumList.map((group, index) => (
@@ -87,7 +145,12 @@ export const ForumSelect = ({
                     <Grid item rowSpacing={0} xs={3} key={index}>
                       <Button
                         size="large"
-                        color={item.fid == fid ? 'success' : 'primary'}
+                        color={
+                          isForumOrChildrenSelected(item, fid)
+                            ? 'success'
+                            : 'primary'
+                        }
+                        disabled={!canPostThreadInForumOrChildren(item)}
                         onClick={(e) => onChooseForum(e, item)}
                       >
                         {item.name}
@@ -104,15 +167,22 @@ export const ForumSelect = ({
                           }
                           anchorEl={anchorEl}
                         >
-                          <MenuItem
-                            onClick={(e) => onChooseForum(e, item, true)}
-                          >
-                            {item.name}
-                          </MenuItem>
-                          <Divider />
+                          {item.can_post_thread && (
+                            <>
+                              <MenuItem
+                                selected={item.fid == fid}
+                                onClick={(e) => onChooseForum(e, item, true)}
+                              >
+                                {item.name}
+                              </MenuItem>
+                              <Divider />
+                            </>
+                          )}
                           {item.children.map((sub, index) => (
                             <MenuItem
                               key={index}
+                              selected={sub.fid == fid}
+                              disabled={!sub.can_post_thread}
                               onClick={(e) => onChooseForum(e, sub)}
                             >
                               {sub.name}
