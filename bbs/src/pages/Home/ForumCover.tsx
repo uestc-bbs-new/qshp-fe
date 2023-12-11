@@ -115,7 +115,7 @@ const ForumCover = ({ data }: ForumData) => {
               </Stack>
               <Stack direction="row">
                 <Typography>
-                  {chineseTime(data.latest_thread?.lastpost_time * 1000)}
+                  {chineseTime(data.latest_thread?.lastpost_time * 1000, true)}
                 </Typography>
                 {!!data.latest_thread?.thread_id && (
                   <>
