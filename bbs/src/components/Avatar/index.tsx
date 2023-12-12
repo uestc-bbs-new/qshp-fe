@@ -24,7 +24,13 @@ const Avatar = ({ uid, size, alt, sx, ...other }: AvatarProps) => {
     src = transform(size, uid)
   }
   return (
-    <MuiAvatar alt={alt} src={src} sx={sx} {...other}>
+    <MuiAvatar
+      imgProps={{ loading: 'lazy' }}
+      alt={alt}
+      src={src}
+      sx={sx}
+      {...other}
+    >
       <MuiAvatar alt={alt} src={defaultAvatar} sx={sx} {...other} />
     </MuiAvatar>
   )
