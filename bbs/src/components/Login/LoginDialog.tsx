@@ -24,10 +24,11 @@ import { useAppState } from '@/states'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 
 const LoginDialog = ({ open }: { open: boolean }) => {
-  const { dispatch } = useAppState()
+  const { state, dispatch } = useAppState()
   const formRef = useRef<HTMLFormElement>(null)
   const hCaptchaToken = useRef('')
   const hCaptchaRef = useRef<HCaptcha>(null)
+  const [signinPending, setSigninPending] = useState(false)
   const close = () => dispatch({ type: 'close login' })
   type FormData = {
     username: string
@@ -66,6 +67,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   }
   const doSignIn = async (formData: FormData) => {
     try {
+      setSigninPending(true)
       const authorization = await signIn({
         username: formData.username,
         password: formData.password,
@@ -80,6 +82,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       showError((e as { message?: string })?.message || '登录失败！')
       hCaptchaRef.current?.resetCaptcha()
       console.error(e)
+    } finally {
+      setSigninPending(false)
     }
   }
   const onCaptchaVerify = (token: string, _: string) => {
@@ -110,6 +114,11 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         </Stack>
       </DialogTitle>
       <DialogContent>
+        {state.login.prompt && (
+          <Alert severity="info" className="mb-5">
+            {state.login.prompt}
+          </Alert>
+        )}
         <form onSubmit={onSubmit} ref={formRef}>
           <Grid container alignItems="center" rowSpacing={2}>
             <Grid item xs={4}>
@@ -137,7 +146,9 @@ const LoginDialog = ({ open }: { open: boolean }) => {
             />
           </div>
           <Stack direction="row" justifyContent="center">
-            <Button type="submit">登录</Button>
+            <Button type="submit" disabled={signinPending}>
+              {signinPending ? '请稍候...' : '登录'}
+            </Button>
           </Stack>
         </form>
       </DialogContent>

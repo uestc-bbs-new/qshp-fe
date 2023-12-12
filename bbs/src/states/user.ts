@@ -1,6 +1,11 @@
 import { UserState } from './reducers/stateReducer'
 
-type UserCallback = (state?: UserState) => void
+export type UserCallbackDetails = {
+  user?: UserState
+  requireSignIn?: boolean
+}
+
+type UserCallback = (details: UserCallbackDetails) => void
 
 const userCallbacks: Array<UserCallback> = []
 
@@ -15,8 +20,8 @@ const unregisterUserCallback = (callback: UserCallback) => {
   }
 }
 
-const notifyUserCallbacks = (newUser?: UserState) => {
-  userCallbacks.forEach((callback) => callback(newUser))
+const notifyUserCallbacks = (details: UserCallbackDetails) => {
+  userCallbacks.forEach((callback) => callback(details))
 }
 
 export { registerUserCallback, unregisterUserCallback, notifyUserCallbacks }

@@ -6,8 +6,11 @@ import LoginDialog from './components/Login/LoginDialog'
 import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
-import { UserState } from './states/reducers/stateReducer'
-import { registerUserCallback, unregisterUserCallback } from './states/user'
+import {
+  UserCallbackDetails,
+  registerUserCallback,
+  unregisterUserCallback,
+} from './states/user'
 import { checkCookie } from './utils/cookie'
 
 const queryClient = new QueryClient({
@@ -27,8 +30,11 @@ function App() {
   })
 
   useEffect(() => {
-    const callback = (newUser?: UserState) => {
-      dispatch({ type: 'set user', payload: newUser })
+    const callback = (details: UserCallbackDetails) => {
+      if (details.requireSignIn) {
+        dispatch({ type: 'open login', payload: '请您登录后继续浏览。' })
+      }
+      dispatch({ type: 'set user', payload: details.user })
     }
     registerUserCallback(callback)
     return () => unregisterUserCallback(callback)

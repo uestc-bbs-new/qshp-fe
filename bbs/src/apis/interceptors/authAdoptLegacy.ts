@@ -1,5 +1,6 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
+import { notifyUserCallbacks } from '@/states/user'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import {
   apiResultCode,
@@ -62,7 +63,10 @@ export default (axios: AxiosInstance) =>
     (error: any) => {
       if (error.response?.status === kHttpUnauthorized) {
         return adoptLegacyAuth(axios)
-          .catch(() => Promise.reject(error))
+          .catch(() => {
+            notifyUserCallbacks({ requireSignIn: true })
+            return Promise.reject(error)
+          })
           .then(() => axios(error.response.config))
       }
       return Promise.reject(error)

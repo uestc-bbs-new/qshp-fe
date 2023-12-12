@@ -7,13 +7,13 @@ export default (axios: AxiosInstance | AxiosWrapper) =>
   axios.interceptors.response.use(
     (response: AxiosResponse) => {
       if (response.data?.code == apiResultCode.success) {
-        notifyUserCallbacks(response.data.user)
+        notifyUserCallbacks({ user: response.data.user })
       }
       return response
     },
     (error: any) => {
       if (error.response?.status === kHttpUnauthorized) {
-        notifyUserCallbacks(undefined)
+        notifyUserCallbacks({ user: undefined })
       }
       return Promise.reject(error)
     }

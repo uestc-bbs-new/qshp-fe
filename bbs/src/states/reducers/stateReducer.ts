@@ -103,6 +103,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
         ...state,
         login: {
           open: true,
+          prompt: action.payload,
         },
       }
     case 'close login':
