@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 
+import LoginDialog from './components/Login/LoginDialog'
 import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
@@ -38,6 +39,7 @@ function App() {
       <AppContext.Provider value={{ state, dispatch }}>
         <ThemeProvider theme={state.theme}>
           <RouterProvider router={router} />
+          <LoginDialog open={state.login.open} />
         </ThemeProvider>
       </AppContext.Provider>
     </QueryClientProvider>

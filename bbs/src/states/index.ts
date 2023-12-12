@@ -15,6 +15,9 @@ const initialState: State = {
   forumList: [],
   user: guestUser,
   forumBreadcumbs: [],
+  login: {
+    open: false,
+  },
   theme: (localStorage.getItem('theme') as Theme) || 'light',
 }
 

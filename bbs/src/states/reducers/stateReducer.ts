@@ -20,6 +20,11 @@ type ThreadBreadcumbEntry = {
   subject: string
 }
 
+type LoginDialogState = {
+  open: boolean
+  prompt?: string
+}
+
 export type State = {
   drawer: boolean
   forumList: Forum[]
@@ -27,6 +32,7 @@ export type State = {
   forumBreadcumbs: ForumBreadcumbEntry[]
   activeForum?: ForumDetails
   activeThread?: ThreadBreadcumbEntry
+  login: LoginDialogState
   theme: 'light' | 'dark'
 }
 
@@ -97,6 +103,18 @@ export const stateReducer = (state: State, action: StateAction) => {
       }
     case 'set thread':
       return { ...state, activeThread: action.payload }
+    case 'open login':
+      return {
+        ...state,
+        login: {
+          open: true,
+        },
+      }
+    case 'close login':
+      return {
+        ...state,
+        login: { close: true },
+      }
     default:
       return state
   }
