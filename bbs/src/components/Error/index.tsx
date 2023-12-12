@@ -21,7 +21,9 @@ const Error = ({ isError, error, onRefresh }: Props) => {
       <AlertTitle>错误</AlertTitle>
       <Typography>
         {error.type == 'http'
-          ? error.message
+          ? error.status == 401
+            ? '该页面需要登录后才能浏览。'
+            : `HTTP ${error.status} ${error.statusText}`
           : error.type == 'network'
           ? '网络不畅，请稍后刷新重试'
           : '系统错误'}

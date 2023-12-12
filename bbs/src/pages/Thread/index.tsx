@@ -166,7 +166,7 @@ function Thread() {
       page: Number(searchParams.get('page')) || 1,
     })
     refetch()
-  }, [searchParams, thread_id, replyRefresh])
+  }, [searchParams, thread_id, replyRefresh, state.user.uid])
 
   const reply_floor = useRef({
     floor: 1,
@@ -192,87 +192,91 @@ function Thread() {
 
   return (
     <Box className="flex-1" minWidth="1em">
-      <Pagination
-        count={totalPages}
-        page={Number(searchParams.get('page')) || 1}
-        onChange={(e, value) => {
-          setSearchParams(searchParamsAssign(searchParams, { page: value }))
-        }}
-      />
-      {info?.rows ? (
-        info?.rows.map((item, index) => {
-          return (
-            <Card className="mb-4" key={item.position}>
-              <section
-                id={item.position.toString()}
-                style={{ scrollMarginTop: '80px' }}
-              >
-                <Floor item={item} set_reply={set_reply}>
-                  <>
-                    <PostSubject
-                      post={item}
-                      thread={threadDetails}
-                      forum={forumDetails}
-                    />
-                    <div className="text-sm text-slate-300 flex justify-between">
-                      <div>{chineseTime(item.dateline * 1000)}</div>
-                      <div className="flex flex-row gap-3 justify-between">
-                        <div
-                          className="hover:text-blue-500"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              window.location.href.split('#')[0] +
-                                '#' +
-                                item.position
-                            )
-                          }}
-                        >
-                          分享
-                        </div>
-                        <div>#{item.position}</div>
-                      </div>
-                    </div>
-                    <Box paddingRight="1.5em">
-                      <ParsePost post={item} />
-                    </Box>
-                  </>
-                </Floor>
-              </section>
-            </Card>
-          )
-        })
-      ) : infoLoading ? (
-        <List>
-          {[...Array(4)].map((_, index) => (
-            <ListItem key={index}>
-              <Skeleton className="w-full" height={81}></Skeleton>
-            </ListItem>
-          ))}
-        </List>
-      ) : (
+      {isError ? (
         <Error isError={isError} error={error} onRefresh={refetch} />
-      )}
-
-      <Card className="py-4">
-        <Stack direction="row">
-          <Avatar
-            className="mr-4"
-            alt="test"
-            uid={state.user.uid}
-            sx={{ width: 120, height: 120 }}
-            variant="rounded"
+      ) : (
+        <>
+          <Pagination
+            count={totalPages}
+            page={Number(searchParams.get('page')) || 1}
+            onChange={(e, value) => {
+              setSearchParams(searchParamsAssign(searchParams, { page: value }))
+            }}
           />
-          <Box className="flex-1">
-            <Editor setVd={setVd} minHeight={300} />
-            <Box className="text-right">
-              <Button variant="text" onClick={handleSubmit}>
-                回复帖子
-              </Button>
-            </Box>
-          </Box>
-        </Stack>
-      </Card>
+          {info?.rows
+            ? info?.rows.map((item, index) => {
+                return (
+                  <Card className="mb-4" key={item.position}>
+                    <section
+                      id={item.position.toString()}
+                      style={{ scrollMarginTop: '80px' }}
+                    >
+                      <Floor item={item} set_reply={set_reply}>
+                        <>
+                          <PostSubject
+                            post={item}
+                            thread={threadDetails}
+                            forum={forumDetails}
+                          />
+                          <div className="text-sm text-slate-300 flex justify-between">
+                            <div>{chineseTime(item.dateline * 1000)}</div>
+                            <div className="flex flex-row gap-3 justify-between">
+                              <div
+                                className="hover:text-blue-500"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    window.location.href.split('#')[0] +
+                                      '#' +
+                                      item.position
+                                  )
+                                }}
+                              >
+                                分享
+                              </div>
+                              <div>#{item.position}</div>
+                            </div>
+                          </div>
+                          <Box paddingRight="1.5em">
+                            <ParsePost post={item} />
+                          </Box>
+                        </>
+                      </Floor>
+                    </section>
+                  </Card>
+                )
+              })
+            : infoLoading && (
+                <List>
+                  {[...Array(4)].map((_, index) => (
+                    <ListItem key={index}>
+                      <Skeleton className="w-full" height={81}></Skeleton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+
+          <Card className="py-4">
+            <Stack direction="row">
+              <Avatar
+                className="mr-4"
+                alt="test"
+                uid={state.user.uid}
+                sx={{ width: 120, height: 120 }}
+                variant="rounded"
+              />
+              <Box className="flex-1">
+                <Editor setVd={setVd} minHeight={300} />
+                <Box className="text-right">
+                  <Button variant="text" onClick={handleSubmit}>
+                    回复帖子
+                  </Button>
+                </Box>
+              </Box>
+            </Stack>
+          </Card>
+        </>
+      )}
     </Box>
   )
 }
