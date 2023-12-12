@@ -41,13 +41,8 @@ export interface StateAction {
   readonly payload?: any
 }
 
-export const stateReducer = (state: State, action: StateAction) => {
+export const stateReducer = (state: State, action: StateAction): State => {
   switch (action.type) {
-    case 'clear':
-      return {
-        ...state,
-        navList: [],
-      }
     case 'set user': {
       if (!action.payload && state.user != guestUser) {
         return {
@@ -113,7 +108,7 @@ export const stateReducer = (state: State, action: StateAction) => {
     case 'close login':
       return {
         ...state,
-        login: { close: true },
+        login: { open: false },
       }
     default:
       return state

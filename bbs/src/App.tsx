@@ -38,8 +38,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AppContext.Provider value={{ state, dispatch }}>
         <ThemeProvider theme={state.theme}>
-          <RouterProvider router={router} />
-          <LoginDialog open={state.login.open} />
+          <>
+            <RouterProvider router={router} />
+            <LoginDialog open={state.login.open} />
+          </>
         </ThemeProvider>
       </AppContext.Provider>
     </QueryClientProvider>
