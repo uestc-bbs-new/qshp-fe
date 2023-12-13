@@ -3,6 +3,7 @@ import {
   Forum,
   ForumDetails,
   Thread,
+  ThreadBasics,
   ThreadList,
   ThreadTypeMap,
   UserInfo,
@@ -51,6 +52,18 @@ export const getBulletin = (params: object) => {
 
 export const getBBSInfo = () => {
   return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
+}
+
+export const getTopLists = (ids: string | string[]) => {
+  if (typeof ids === 'string') {
+    ids = [ids]
+  }
+  return request.get<{ [id: string]: ThreadBasics[] | undefined }>(
+    `${commonUrl}/view/thread/toplist`,
+    {
+      params: { idlist: ids.join(',') },
+    }
+  )
 }
 
 export const searchThreads = (params: object) => {

@@ -1,21 +1,14 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
 
+import { ThreadBasics } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
 
-const renderTextById = (id: number) => {
-  switch (id) {
-    case 1:
-      return '最新回复'
-    case 2:
-      return '最新发表'
-    case 3:
-      return '精华展示'
-  }
-}
-const headerCard = (id: number) => {
+const kCount = 5
+
+const headerCard = (title: string, list: ThreadBasics[]) => {
   const { dispatch } = useAppState()
   const handleClick = () => {
     dispatch({ type: 'set post', payload: '0' })
@@ -34,59 +27,67 @@ const headerCard = (id: number) => {
           }}
         >
           <Typography sx={{ fontWeight: 'bold' }} variant="h6">
-            {renderTextById(id)}
+            {title}
           </Typography>
         </Box>
         <Stack direction="column">
-          {/* 这里map data */}
-          {Array.from(new Array(5)).map((index) => (
+          {list.slice(0, kCount).map((thread, index) => (
             <Stack key={index} direction="row" sx={{ my: 0.5 }}>
               <Box className="p-1">
                 <Box sx={{ mx: 1 }}>
                   <Avatar
                     alt="0"
-                    uid={0}
+                    uid={thread.author_id}
                     sx={{ width: 35, height: 35 }}
                     variant="rounded"
                   />
                 </Box>
               </Box>
-              <Box className="flex-1">
+              <Box className="flex-1" minWidth="1em" mr={2}>
                 <Stack direction="column">
                   <Link
-                    to={`/thread/0`}
+                    to={`/thread/${thread.thread_id}`}
                     color="inherit"
                     underline="hover"
-                    className={'line-clamp-3'}
                     onClick={handleClick}
                   >
                     <Box>
-                      <Typography sx={{ mt: 0.3 }}>标题balabala</Typography>
+                      <Typography
+                        sx={{
+                          mt: 0.3,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {thread.subject}
+                      </Typography>
                     </Box>
                   </Link>
-                  <Link
+                  <Typography
                     sx={{
                       fontSize: 12,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      width: '200px',
+                      maxWidth: '210px',
                     }}
-                    underline="none"
                     color="grey"
                   >
-                    {`内容预览内容预览内容预览内容预览内容预览`}
-                  </Link>
+                    {thread.summary}
+                  </Typography>
                 </Stack>
               </Box>
-              <Typography
+              <Link
                 fontSize={12}
                 fontWeight={600}
                 className="mr-5 mt-3"
                 color="#3A71F2"
+                underline="hover"
+                to={`/user/${thread.author_id}`}
               >
-                {`作者123`}
-              </Typography>
+                {thread.author}
+              </Link>
             </Stack>
           ))}
         </Stack>
@@ -94,18 +95,22 @@ const headerCard = (id: number) => {
     </Box>
   )
 }
-const HeaderCards = () => {
+const HeaderCards = ({
+  topLists,
+}: {
+  topLists: { [id: string]: ThreadBasics[] | undefined }
+}) => {
   return (
     <>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
-          {headerCard(1)}
+          {headerCard('最新回复', topLists.newreply || [])}
         </Grid>
         <Grid item xs={12} md={4}>
-          {headerCard(2)}
+          {headerCard('最新发表', topLists.newthread || [])}
         </Grid>
         <Grid item xs={12} md={4}>
-          {headerCard(3)}
+          {headerCard('精华展示', topLists.digest || [])}
         </Grid>
       </Grid>
     </>

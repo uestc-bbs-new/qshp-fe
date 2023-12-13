@@ -1,6 +1,9 @@
+import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
-import { Box, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Skeleton, Stack, Typography, useTheme } from '@mui/material'
+
+import { getTopLists } from '@/apis/common'
 
 import Banner from '../Banner'
 import Breadcrumbs from '../Breadcurmbs'
@@ -15,6 +18,13 @@ const headerImg = new URL(
 
 const WelcomeBanner = () => {
   const theme = useTheme()
+  const {
+    data: topLists,
+    isLoading,
+    isFetched,
+  } = useQuery('toplist', () => {
+    return getTopLists(['newreply', 'newthread', 'digest'])
+  })
   return (
     <>
       <Banner src={headerImg}>
@@ -26,7 +36,11 @@ const WelcomeBanner = () => {
         </Box>
       </Banner>
       <OverviewInfo />
-      <HeaderCards />
+      {!topLists && isLoading ? (
+        <Skeleton height={394} />
+      ) : (
+        topLists && <HeaderCards topLists={topLists} />
+      )}
       <CampusService />
     </>
   )

@@ -47,20 +47,24 @@ export type ForumList = {
   }>
 }
 
-export type Thread = {
+export type ThreadBasics = {
   thread_id: number
   forum_id: number
-  post_id: number
-  type_id: number
-  sort_id: number
   author: string
   author_id: number
   subject: string
   dateline: number
   last_post: number
-  last_poster: string
+  summary: string
   views: number
   replies: number
+}
+
+export type Thread = ThreadBasics & {
+  post_id: number
+  type_id: number
+  sort_id: number
+  last_poster: string
   dis_playorder: number
   highlight: number
   digest: number
@@ -81,7 +85,6 @@ export type Thread = {
   reply_credit: number
   max_position: number
   comments: number
-  message: string
 }
 
 export type BBSInfo = {
