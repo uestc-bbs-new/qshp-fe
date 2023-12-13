@@ -54,16 +54,26 @@ export const getBBSInfo = () => {
   return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
 }
 
-export const getTopLists = (ids: string | string[]) => {
+export const getTopLists = async (ids: string | string[]) => {
   if (typeof ids === 'string') {
     ids = [ids]
   }
-  return request.get<{ [id: string]: ThreadBasics[] | undefined }>(
-    `${commonUrl}/view/thread/toplist`,
-    {
-      params: { idlist: ids.join(',') },
-    }
-  )
+  const result = await request.get<{
+    [id: string]: ThreadBasics[] | undefined
+  }>(`${commonUrl}/view/thread/toplist`, {
+    params: { idlist: ids.join(',') },
+  })
+  for (const [_, v] of Object.entries(result)) {
+    v?.forEach(
+      (thread) =>
+        (thread.subject = unescapeSubject(
+          thread.subject,
+          thread.dateline,
+          true
+        ))
+    )
+  }
+  return result
 }
 
 export const searchThreads = (params: object) => {
