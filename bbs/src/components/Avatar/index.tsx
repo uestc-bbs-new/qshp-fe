@@ -1,5 +1,6 @@
 import { Avatar as MuiAvatar, AvatarProps as MuiProps } from '@mui/material'
 
+import anonymousAvatar from '@/assets/avatar-anonymous.png'
 import defaultAvatar from '@/assets/avatar-default.png'
 import { largeLink, middleLink, smallLink } from '@/utils/avatarLink'
 
@@ -18,11 +19,7 @@ type AvatarProps = MuiProps & {
 }
 // set default avatar due to mui avatar fallbacks
 const Avatar = ({ uid, size, alt, sx, ...other }: AvatarProps) => {
-  let src = ''
-  // if (uid.toString().length === 6) {
-  if (uid) {
-    src = transform(size, uid)
-  }
+  const src = uid ? transform(size, uid) : anonymousAvatar
   return (
     <MuiAvatar
       imgProps={{ loading: 'lazy' }}
