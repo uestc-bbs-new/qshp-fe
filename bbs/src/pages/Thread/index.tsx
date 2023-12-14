@@ -1,12 +1,15 @@
 import Vditor from 'vditor'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import {
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   List,
   ListItem,
   Pagination,
@@ -94,7 +97,7 @@ function Thread() {
   )
 
   const { dispatch } = useAppState()
-
+  const anonymousRef = createRef<HTMLInputElement>()
   const {
     data: info,
     error,
@@ -130,13 +133,15 @@ function Thread() {
 
   const handleSubmit = async () => {
     if (vd?.getValue()) {
-      await replyThreads(
-        Number(thread_id),
-        vd?.getValue(),
-        reply_floor.current.post_id === -1
-          ? undefined
-          : reply_floor.current.post_id
-      )
+      await replyThreads({
+        thread_id: Number(thread_id),
+        message: vd?.getValue(),
+        is_anonymous: anonymousRef.current?.checked,
+        post_id:
+          reply_floor.current.post_id === -1
+            ? undefined
+            : reply_floor.current.post_id,
+      })
       vd?.setValue('')
       setSearchParams(
         searchParamsAssign(searchParams, {
@@ -267,6 +272,17 @@ function Thread() {
               />
               <Box className="flex-1">
                 <Editor setVd={setVd} minHeight={300} />
+                {/* TODO(fangjue): Extract PostOptions component. */}
+                <Box>
+                  {forumDetails?.can_post_anonymously && (
+                    <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox inputRef={anonymousRef} />}
+                        label="匿名发帖"
+                      />
+                    </FormGroup>
+                  )}
+                </Box>
                 <Box className="text-right">
                   <Button variant="text" onClick={handleSubmit}>
                     回复帖子

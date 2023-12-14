@@ -40,11 +40,15 @@ export const getThreadsInfo = async (
   return result
 }
 
-export type PostThreadDetails = {
+export type PostCommonDetails = {
+  subject?: string
+  message: string
+  is_anonymous?: boolean
+}
+
+export type PostThreadDetails = PostCommonDetails & {
   forum_id: number
   type_id?: string
-  subject: string
-  message: string
 }
 
 export const postThread = (details: PostThreadDetails) => {
@@ -53,15 +57,14 @@ export const postThread = (details: PostThreadDetails) => {
   })
 }
 
-export const replyThreads = (
-  thread_id: number,
-  message: string,
+export type ReplyThreadDetails = PostCommonDetails & {
+  thread_id: number
   post_id?: number
-) => {
+}
+
+export const replyThreads = (details: ReplyThreadDetails) => {
   return request.post<PostDetails>(`/star/api/forum/v1/post/post`, {
-    thread_id,
-    post_id,
-    message,
+    ...details,
     format: 2,
   })
 }

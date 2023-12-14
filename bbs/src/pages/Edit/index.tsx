@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 
-import { useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 
 import { getForumDetails } from '@/apis/common'
-import { PostThreadDetails, postThread } from '@/apis/thread'
+import { postThread } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
@@ -64,7 +64,7 @@ const Edit = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const subjectRef = useRef<HTMLInputElement>()
-  const anonymousRef = useRef<HTMLInputElement>(undefined)
+  const anonymousRef = createRef<HTMLInputElement>()
   const [postPending, setPostPending] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
@@ -112,7 +112,7 @@ const Edit = () => {
           is_anonymous: anonymousRef.current?.checked,
         },
         typeId ? { type_id: typeId } : {}
-      ) as PostThreadDetails
+      )
     )
       .then((result) => {
         vd?.setValue('')
