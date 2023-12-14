@@ -84,7 +84,8 @@ const headerCard = (title: string, list: ThreadBasics[]) => {
                 className="mr-5 mt-3"
                 color="#3A71F2"
                 underline="hover"
-                to={`/user/${thread.author_id}`}
+                to={thread.author_id ? `/user/${thread.author_id}` : undefined}
+                sx={thread.author_id == 0 ? { cursor: 'pointer' } : null}
               >
                 {thread.author}
               </Link>

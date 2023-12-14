@@ -8,7 +8,10 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   InputLabel,
   MenuItem,
   Select,
@@ -61,6 +64,7 @@ const Edit = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const subjectRef = useRef<HTMLInputElement>()
+  const anonymousRef = useRef<HTMLInputElement>(undefined)
   const [postPending, setPostPending] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
@@ -105,6 +109,7 @@ const Edit = () => {
           subject: subjectRef.current.value,
           message,
           format: 2,
+          is_anonymous: anonymousRef.current?.checked,
         },
         typeId ? { type_id: typeId } : {}
       ) as PostThreadDetails
@@ -163,6 +168,16 @@ const Edit = () => {
             </>
           )}
           <Editor minHeight={300} setVd={setVd} />
+          <Box>
+            {selectedForum?.can_post_anonymously && (
+              <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox inputRef={anonymousRef} />}
+                  label="匿名发帖"
+                />
+              </FormGroup>
+            )}
+          </Box>
           <Box className="text-center">
             <Button disabled={postPending} onClick={handleSubmit}>
               {postPending ? '请稍候...' : '发布主题'}

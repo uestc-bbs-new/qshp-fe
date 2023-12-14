@@ -222,6 +222,7 @@ export type ForumDetails = ForumCommon & {
   thread_types: Array<ThreadType>
   thread_types_map?: ThreadTypeMap
   optional_thread_type: boolean
+  can_post_anonymously: boolean
   announcement: string
   announcement_format: string
   post_notice_format: string
