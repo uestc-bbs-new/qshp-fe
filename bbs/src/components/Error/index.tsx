@@ -6,6 +6,18 @@ type Props = {
   onRefresh?: () => void
 }
 const Error = ({ isError, error, onRefresh }: Props) => {
+  let message = error.message
+  if (error.type == 'http') {
+    if (error.status == 401) {
+      message = '该页面需要登录后才能浏览。'
+    } else {
+      message = `HTTP ${error.status} ${error.statusText}`
+    }
+  } else if (error.type == 'network') {
+    message = '网络不畅，请稍后刷新重试'
+  } else if (!message) {
+    message = '系统错误'
+  }
   return isError ? (
     <Alert
       severity="error"
@@ -19,15 +31,7 @@ const Error = ({ isError, error, onRefresh }: Props) => {
       }
     >
       <AlertTitle>错误</AlertTitle>
-      <Typography>
-        {error.type == 'http'
-          ? error.status == 401
-            ? '该页面需要登录后才能浏览。'
-            : `HTTP ${error.status} ${error.statusText}`
-          : error.type == 'network'
-          ? '网络不畅，请稍后刷新重试'
-          : '系统错误'}
-      </Typography>
+      <Typography>{message}</Typography>
     </Alert>
   ) : (
     <></>
