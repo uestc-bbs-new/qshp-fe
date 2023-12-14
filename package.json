@@ -69,7 +69,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
     "react-swipeable-views": "^0.14.0",
-    "vditor": "^3.9.6",
+    "vditor": "^3.9.7",
     "vite": "^4.4.11"
   }
 }

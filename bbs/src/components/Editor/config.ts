@@ -20,6 +20,7 @@ const options: IOptions = {
       },
     ],
   },
+  cdn: '/third_party/vditor',
   upload: {
     accept: 'image/*,.mp3, .wav, .rar',
     token: 'test',
