@@ -157,7 +157,7 @@ export const ForumSelect = ({
                       </Button>
                       {!!item.children?.length && (
                         <Menu
-                          open={subForumsOpen[item.fid]}
+                          open={!!subForumsOpen[item.fid]}
                           onClose={() =>
                             setSubForumsOpen(
                               Object.assign({}, subForumsOpen, {
@@ -167,27 +167,30 @@ export const ForumSelect = ({
                           }
                           anchorEl={anchorEl}
                         >
-                          {item.can_post_thread && (
-                            <>
+                          {(item.can_post_thread
+                            ? [
+                                <MenuItem
+                                  key="main forum"
+                                  selected={item.fid == fid}
+                                  onClick={(e) => onChooseForum(e, item, true)}
+                                >
+                                  {item.name}
+                                </MenuItem>,
+                                <Divider key="divider" />,
+                              ]
+                            : []
+                          ).concat(
+                            item.children.map((sub, index) => (
                               <MenuItem
-                                selected={item.fid == fid}
-                                onClick={(e) => onChooseForum(e, item, true)}
+                                key={index}
+                                selected={sub.fid == fid}
+                                disabled={!sub.can_post_thread}
+                                onClick={(e) => onChooseForum(e, sub)}
                               >
-                                {item.name}
+                                {sub.name}
                               </MenuItem>
-                              <Divider />
-                            </>
+                            ))
                           )}
-                          {item.children.map((sub, index) => (
-                            <MenuItem
-                              key={index}
-                              selected={sub.fid == fid}
-                              disabled={!sub.can_post_thread}
-                              onClick={(e) => onChooseForum(e, sub)}
-                            >
-                              {sub.name}
-                            </MenuItem>
-                          ))}
                         </Menu>
                       )}
                     </Grid>
