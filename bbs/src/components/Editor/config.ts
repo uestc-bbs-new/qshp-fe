@@ -4,6 +4,9 @@ import { getUsername } from '@/apis/thread'
 const common = {
   cdn: '/third_party/vditor',
 }
+const commonEmojiPath = {
+  emojiPath: `${common.cdn}/dist/images/emoji`,
+}
 
 type Mode = 'light' | 'dark'
 
@@ -22,7 +25,7 @@ export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
   ...common,
   mode,
   ...previewCommon(mode),
-  emojiPath: `${common.cdn}/dist/images/emoji`,
+  ...commonEmojiPath,
 })
 
 const options: IOptions = {
@@ -30,6 +33,7 @@ const options: IOptions = {
   // change the z-index due to the mui base z-index = 1200
   fullscreen: { index: 1202 },
   hint: {
+    ...commonEmojiPath,
     extend: [
       {
         key: '@',
