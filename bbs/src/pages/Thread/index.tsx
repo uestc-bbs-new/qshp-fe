@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
@@ -35,6 +35,7 @@ import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
+import ThreadLikes from './ThreadLikes'
 
 const kPageSize = 20
 
@@ -245,6 +246,9 @@ function Thread() {
                           <Box paddingRight="1.5em">
                             <ParsePost post={item} />
                           </Box>
+                          {item.is_first && item.position == 1 && (
+                            <ThreadLikes values={[item.support, item.oppose]} />
+                          )}
                         </>
                       </Floor>
                     </section>
