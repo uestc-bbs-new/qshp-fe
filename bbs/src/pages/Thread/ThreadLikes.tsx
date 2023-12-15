@@ -20,14 +20,16 @@ const ThreadLikeMiddleHalf = ({
   const value = values[index]
   const widthRatio = value / total
   const normalWidth = `${100 * widthRatio}%`
-  const reservedWidth = borderRadius + padding
+  const reservedWidth = borderRadius // + padding
   const largerHalf = widthRatio > 0.5
   const style = {
     [`padding${D}`]: `${padding}px`,
     backgroundColor: color,
     width: `calc(${normalWidth} + ${
-      (largerHalf ? -1 : 1) * reservedWidth + (largerHalf ? borderRadius : 0)
+      (largerHalf ? -1 : 1) * reservedWidth +
+      (largerHalf ? borderRadius + 0.5 : 0.5) // Add 0.5px to avoid 1px gap
     }px)`,
+    transition: 'all 0.6s ease',
   }
   if (widthRatio > 0.5) {
     Object.assign(style, {
@@ -47,11 +49,9 @@ const ThreadLikeMiddlePart = ({
   borderRadius: number
   values: [number, number]
 }) => {
-  let a = values[0],
-    b = values[1]
-  if (a == 0 && b == 0) {
-    a = b = 1
-  }
+  const baseValue = 1
+  const a = values[0] + baseValue
+  const b = values[1] + baseValue
   return (
     <Stack direction="row" flexGrow="1" flexShrink="1">
       <ThreadLikeMiddleHalf
@@ -99,7 +99,7 @@ const ThreadLikeLabel = ({
         fontWeight="700"
         color="white"
         px={1}
-        sx={{ order: index ? 1 : 0 }}
+        sx={{ order: index == 0 ? 1 : 0 }}
       >
         {values[index]}
       </Typography>
@@ -128,6 +128,7 @@ const ThreadLikes = ({ values }: { values: [number, number] }) => {
         height={height}
         borderRadius={borderRadius}
         mx="auto"
+        my={3}
       >
         <ThreadLikeLabel
           index={0}
