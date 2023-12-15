@@ -1,10 +1,12 @@
 import Vditor from 'vditor'
 
-import { useEffect, useRef } from 'react'
+import { createRef, useEffect } from 'react'
 
 import { Typography } from '@mui/material'
 
 import { PostFloor } from '@/common/interfaces/response'
+import { getPreviewOptions } from '@/components/Editor/config'
+import { useAppState } from '@/states'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
@@ -19,6 +21,7 @@ export type PropsType = {
 export function ParseLegacy({ post }: { post: PostFloor }) {
   return (
     <div
+      className="rich-text-content rich-text-content-legacy"
       dangerouslySetInnerHTML={{
         __html: bbcode2html(post.message, {
           allowimgurl: true,
@@ -32,25 +35,23 @@ export function ParseLegacy({ post }: { post: PostFloor }) {
 }
 
 function ParseMd({ message }: { message: string }) {
-  const el = useRef(null)
+  const { state } = useAppState()
+  const el = createRef<HTMLDivElement>()
   useEffect(() => {
-    Vditor.preview(el.current as unknown as HTMLDivElement, message)
+    el.current &&
+      Vditor.preview(el.current, message, getPreviewOptions(state.theme))
   }, [])
-  return <Typography color="text.primary" ref={el}></Typography>
+  return (
+    <div className="rich-text-content rich-text-content-markdown">
+      <Typography color="text.primary" ref={el}></Typography>
+    </div>
+  )
 }
 
 export function ParsePost({ post }: { post: PostFloor }) {
-  return (
-    <div
-      className={`rich-text-content rich-text-content-${
-        post.format == 2 ? 'markdown' : 'legacy'
-      }`}
-    >
-      {post.format == 2 ? (
-        <ParseMd message={post.message} />
-      ) : (
-        <ParseLegacy post={post} />
-      )}
-    </div>
+  return post.format == 2 ? (
+    <ParseMd message={post.message} />
+  ) : (
+    <ParseLegacy post={post} />
   )
 }

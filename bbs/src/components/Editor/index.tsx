@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useAppState } from '@/states'
 
-import options from './config'
+import options, { getPreviewThemeOptions } from './config'
 
 type props = IOptions & {
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
@@ -71,6 +71,7 @@ const customRenderers = (rendererType: string) => {
 const Editor = ({ setVd, ...other }: props) => {
   const { state } = useAppState()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
+  const theme = state.theme === 'light' ? undefined : 'dark'
   useEffect(() => {
     const vd = new Vditor('vditor', {
       after: () => {
@@ -84,17 +85,15 @@ const Editor = ({ setVd, ...other }: props) => {
         setVd(vd)
       },
       ...options,
+      preview: getPreviewThemeOptions(state.theme),
       ...other,
-      theme: state.theme === 'light' ? 'classic' : 'dark',
+      theme,
     })
   }, [state.theme])
 
   useEffect(() => {
     if (vditor) {
-      vditor.setTheme(
-        state.theme === 'light' ? 'classic' : 'dark',
-        state.theme === 'light' ? 'classic' : 'dark'
-      )
+      vditor.setTheme(theme || 'classic', theme)
     }
   }, [state.theme, vditor])
   return <div id="vditor" className="vditor flex-1" />

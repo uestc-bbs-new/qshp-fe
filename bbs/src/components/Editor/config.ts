@@ -1,7 +1,32 @@
 // TODO: How to take the @ user information to request?
 import { getUsername } from '@/apis/thread'
 
+const common = {
+  cdn: '/third_party/vditor',
+}
+
+type Mode = 'light' | 'dark'
+
+const previewCommon = (mode: Mode) => ({
+  theme: {
+    current: mode,
+    path: `${common.cdn}/dist/css/content-theme`,
+  },
+})
+
+export const getPreviewThemeOptions = (mode: Mode): IPreview => ({
+  ...previewCommon(mode),
+})
+
+export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
+  ...common,
+  mode,
+  ...previewCommon(mode),
+  emojiPath: `${common.cdn}/dist/images/emoji`,
+})
+
 const options: IOptions = {
+  ...common,
   // change the z-index due to the mui base z-index = 1200
   fullscreen: { index: 1202 },
   hint: {
@@ -20,7 +45,6 @@ const options: IOptions = {
       },
     ],
   },
-  cdn: '/third_party/vditor',
   upload: {
     accept: 'image/*,.mp3, .wav, .rar',
     token: 'test',
