@@ -105,10 +105,13 @@ const ThreadLikeLabel = ({
       </Typography>
       <IconButton
         sx={{
-          width: 38,
-          height: 38,
+          width: (38 / 24) * borderRadius,
+          height: (38 / 24) * borderRadius,
           borderRadius: '100%',
           backgroundColor: 'white',
+          '&:hover': {
+            backgroundColor: '#eee',
+          },
         }}
       >
         {index == 0 ? <ThumbUp {...iconProps} /> : <ThumbDown {...iconProps} />}
