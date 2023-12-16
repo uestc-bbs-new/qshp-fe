@@ -54,6 +54,7 @@ const ForumCover = ({ data }: ForumData) => {
           backgroundImage: `url(${imgUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          filter: 'blur(3px)',
         }}
       ></Box>
       <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
