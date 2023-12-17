@@ -1,5 +1,9 @@
+import { useState } from 'react'
+
 import { ThumbDown, ThumbUp } from '@mui/icons-material'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
+
+import { votePost } from '@/apis/thread'
 
 const threadLabelColors = ['#FF9A2E', '#6AA1FF']
 const kLeftRight = ['Left', 'Right']
@@ -69,13 +73,17 @@ const ThreadLikeMiddlePart = ({
 }
 
 const ThreadLikeLabel = ({
+  tid,
   index,
   borderRadius,
   values,
+  onIncrement,
 }: {
+  tid: number
   index: number
   borderRadius: number
   values: [number, number]
+  onIncrement: (index: number) => void
 }) => {
   const color = threadLabelColors[index]
   const iconProps = { htmlColor: color }
@@ -85,6 +93,11 @@ const ThreadLikeLabel = ({
     [`borderTop${D}Radius`]: `${borderRadius}px`,
     [`borderBottom${D}Radius`]: `${borderRadius}px`,
     backgroundColor: color,
+  }
+  const like = async () => {
+    if (await votePost({ tid, support: index == 0 })) {
+      onIncrement(index)
+    }
   }
   return (
     <Stack
@@ -113,16 +126,30 @@ const ThreadLikeLabel = ({
             backgroundColor: '#eee',
           },
         }}
+        onClick={like}
       >
         {index == 0 ? <ThumbUp {...iconProps} /> : <ThumbDown {...iconProps} />}
       </IconButton>
     </Stack>
   )
 }
-const ThreadLikes = ({ values }: { values: [number, number] }) => {
+const ThreadLikes = ({
+  tid,
+  values,
+}: {
+  tid: number
+  values: [number, number]
+}) => {
   const width = 300
   const height = 48
   const borderRadius = height / 2
+  const [newValues, setNewValues] = useState(values)
+  const onIncrement = (index: number) => {
+    const v: [number, number] = [...newValues]
+    v[index]++
+    setNewValues(v)
+  }
+
   return (
     <Box>
       <Stack
@@ -134,15 +161,19 @@ const ThreadLikes = ({ values }: { values: [number, number] }) => {
         my={3}
       >
         <ThreadLikeLabel
+          tid={tid}
           index={0}
           borderRadius={borderRadius}
-          values={values}
+          values={newValues}
+          onIncrement={onIncrement}
         />
-        <ThreadLikeMiddlePart borderRadius={borderRadius} values={values} />
+        <ThreadLikeMiddlePart borderRadius={borderRadius} values={newValues} />
         <ThreadLikeLabel
+          tid={tid}
           index={1}
           borderRadius={borderRadius}
-          values={values}
+          values={newValues}
+          onIncrement={onIncrement}
         />
       </Stack>
     </Box>

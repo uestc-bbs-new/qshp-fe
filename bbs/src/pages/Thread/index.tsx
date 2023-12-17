@@ -246,9 +246,14 @@ function Thread() {
                           <Box paddingRight="1.5em">
                             <ParsePost post={item} />
                           </Box>
-                          {item.is_first == 1 && item.position == 1 && (
-                            <ThreadLikes values={[item.support, item.oppose]} />
-                          )}
+                          {threadDetails &&
+                            item.is_first == 1 &&
+                            item.position == 1 && (
+                              <ThreadLikes
+                                tid={threadDetails.thread_id}
+                                values={[item.support, item.oppose]}
+                              />
+                            )}
                         </>
                       </Floor>
                     </section>

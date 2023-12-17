@@ -69,6 +69,16 @@ export const replyThreads = (details: ReplyThreadDetails) => {
   })
 }
 
+export const votePost = (params: {
+  tid?: number
+  pid?: number
+  support: boolean
+}) => {
+  return request.post<boolean>(`/star/api/forum/v1/post/vote`, undefined, {
+    params,
+  })
+}
+
 /** 获取用户信息 */
 export const getUserInfo = (uid: number) => {
   return request.get<UserInfos>(`/star/api/forum/v1/view/profile/` + uid)
