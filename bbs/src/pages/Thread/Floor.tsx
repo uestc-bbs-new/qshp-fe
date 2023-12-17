@@ -34,9 +34,9 @@ const Floor = ({ children, item, set_reply }: props) => {
         </Box>
         <Box className="flex-1" minWidth="1em">
           {children}
+          <Footer post={item} set_reply={set_reply} />
         </Box>
       </Stack>
-      <Footer floor={item.position} set_reply={set_reply} />
     </Box>
   )
 }
