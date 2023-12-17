@@ -1,10 +1,11 @@
 import {
   PostDetails,
+  PostDetailsByPostId,
   UserInfos,
   UserNameFind,
 } from '@/common/interfaces/response'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request from '@/utils/request'
+import request, { commonUrl } from '@/utils/request'
 
 import { makeThreadTypesMap } from '../common'
 
@@ -66,6 +67,18 @@ export const replyThreads = (details: ReplyThreadDetails) => {
   return request.post<PostDetails>(`/star/api/forum/v1/post/post`, {
     ...details,
     format: 2,
+  })
+}
+
+export const getPostDetails = (params: {
+  commentPids: number[]
+  ratePids: number[]
+}) => {
+  return request.get<PostDetailsByPostId>(`${commonUrl}/post/details`, {
+    params: {
+      comment_pids: params.commentPids.join(','),
+      rate_pids: params.ratePids.join(','),
+    },
   })
 }
 

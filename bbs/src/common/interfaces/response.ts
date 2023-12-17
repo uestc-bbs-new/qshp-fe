@@ -162,6 +162,33 @@ export interface PostFloor {
   warned?: boolean
   hidden_reply?: boolean
   password?: boolean
+  has_comment?: boolean
+  has_rate?: boolean
+}
+
+export interface PostComment {
+  id: number
+  author: string
+  author_id: number
+  dateline: number
+  message: string
+}
+
+export interface PostRate {
+  user_id: number
+  username: string
+  credits: { [name: string]: number }
+  dateline: number
+  reason: string
+}
+
+export interface PostExtraDetails {
+  comments: PostComment[]
+  rates: PostRate[]
+}
+
+export interface PostDetailsByPostId {
+  [post_id: number]: PostExtraDetails
 }
 
 export interface UserInfos {

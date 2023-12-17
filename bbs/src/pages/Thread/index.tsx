@@ -18,9 +18,10 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getThreadsInfo, replyThreads } from '@/apis/thread'
+import { getPostDetails, getThreadsInfo, replyThreads } from '@/apis/thread'
 import {
   ForumDetails,
+  PostDetailsByPostId,
   PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
@@ -83,6 +84,7 @@ function Thread() {
   const [threadDetails, setThreadDetails] = useState<ThreadType | null>(null)
   const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
   const [totalPages, setTotalPages] = useState(1)
+  const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
 
   /**
    * 用于记录页面的 query 参数
@@ -115,7 +117,7 @@ function Thread() {
       )
     },
     {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         if (data && data.thread) {
           setThreadDetails(data.thread)
           dispatch({ type: 'set thread', payload: data.thread })
@@ -126,6 +128,21 @@ function Thread() {
         }
         if (data && data.total) {
           setTotalPages(Math.ceil(data.total / kPageSize))
+        }
+        if (data && data.rows) {
+          const commentPids: number[] = []
+          const ratePids: number[] = []
+          data.rows.forEach((post) => {
+            if (post.has_comment) {
+              commentPids.push(post.post_id)
+            }
+            if (post.has_rate) {
+              ratePids.push(post.post_id)
+            }
+          })
+          if (commentPids.length || ratePids.length) {
+            setPostDetails(await getPostDetails({ commentPids, ratePids }))
+          }
         }
       },
     }
@@ -216,7 +233,11 @@ function Thread() {
                       id={item.position.toString()}
                       style={{ scrollMarginTop: '80px' }}
                     >
-                      <Floor item={item} set_reply={set_reply}>
+                      <Floor
+                        post={item}
+                        postDetails={postDetails[item.post_id]}
+                        set_reply={set_reply}
+                      >
                         <>
                           <PostSubject
                             post={item}
