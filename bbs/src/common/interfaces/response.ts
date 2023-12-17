@@ -174,17 +174,27 @@ export interface PostComment {
   message: string
 }
 
+export interface CreditScoreMap {
+  [name: string]: number
+}
+
 export interface PostRate {
   user_id: number
   username: string
-  credits: { [name: string]: number }
+  credits: CreditScoreMap
   dateline: number
   reason: string
 }
 
+export interface PostRateStat {
+  total_users: number
+  total_credits: CreditScoreMap
+}
+
 export interface PostExtraDetails {
-  comments: PostComment[]
-  rates: PostRate[]
+  comments?: PostComment[]
+  rates?: PostRate[]
+  rate_stat?: PostRateStat
 }
 
 export interface PostDetailsByPostId {

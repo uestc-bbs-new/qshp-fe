@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { ExpandMore } from '@mui/icons-material'
 import {
   Accordion,
@@ -5,6 +7,8 @@ import {
   AccordionSummary,
   Alert,
   Box,
+  Button,
+  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -19,8 +23,11 @@ import {
   PostExtraDetails,
   type PostFloor,
   PostRate,
+  PostRateStat,
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Chip from '@/components/Chip'
+import Link from '@/components/Link'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -31,6 +38,32 @@ type props = {
   post: PostFloor
   postDetails?: PostExtraDetails
   set_reply: (data: number) => void
+}
+
+const PostExtraDetailsContainer = ({
+  children,
+  loading,
+  hasContent,
+}: {
+  children?: React.ReactElement
+  loading: boolean
+  hasContent: boolean
+}) => {
+  return (
+    <>
+      {(hasContent || loading) && (
+        <Box my={2}>
+          {hasContent
+            ? children
+            : [
+                <Skeleton key={1} height={50} />,
+                <Skeleton key={2} height={50} />,
+                <Skeleton key={3} height={50} />,
+              ]}
+        </Box>
+      )}
+    </>
+  )
 }
 
 const Floor = ({ children, post, postDetails, set_reply }: props) => {
@@ -73,16 +106,27 @@ const Floor = ({ children, post, postDetails, set_reply }: props) => {
           </div>
           <PostStatus post={post} />
           {children}
-          {postDetails?.comments && (
-            <Box my={2}>
+          <PostExtraDetailsContainer
+            loading={!!post.has_comment && !postDetails}
+            hasContent={!!postDetails?.comments?.length}
+          >
+            {postDetails?.comments && (
               <PostComments comments={postDetails.comments} />
-            </Box>
-          )}
-          {postDetails?.rates && (
-            <Box my={2}>
-              <PostRates rates={postDetails.rates} />
-            </Box>
-          )}
+            )}
+          </PostExtraDetailsContainer>
+          <PostExtraDetailsContainer
+            loading={!!post.has_rate && !postDetails}
+            hasContent={
+              !!postDetails?.rates?.length && !!postDetails?.rate_stat
+            }
+          >
+            {postDetails?.rates && postDetails?.rate_stat && (
+              <PostRates
+                rates={postDetails.rates}
+                rateStat={postDetails.rate_stat}
+              />
+            )}
+          </PostExtraDetailsContainer>
           <Footer post={post} set_reply={set_reply} />
         </Box>
       </Stack>
@@ -137,27 +181,29 @@ const PostComments = ({ comments }: { comments: PostComment[] }) => {
               my={2}
             >
               <Typography>
-                <Avatar
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                  }}
-                  uid={comment.author_id}
-                />
-                <span
-                  style={{
-                    verticalAlign: 'middle',
-                    fontWeight: 'bold',
-                    display: 'inline-block',
-                    minWidth: '8em',
-                    marginLeft: '0.5em',
-                    marginRight: '0.75em',
-                  }}
-                >
-                  {comment.author}
-                </span>
+                <Link to={`/user/${comment.author_id}`}>
+                  <Avatar
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      display: 'inline-block',
+                      verticalAlign: 'middle',
+                    }}
+                    uid={comment.author_id}
+                  />
+                  <span
+                    style={{
+                      verticalAlign: 'middle',
+                      fontWeight: 'bold',
+                      display: 'inline-block',
+                      minWidth: '8em',
+                      marginLeft: '0.5em',
+                      marginRight: '0.75em',
+                    }}
+                  >
+                    {comment.author}
+                  </span>
+                </Link>
                 <span style={{ verticalAlign: 'middle' }}>
                   {comment.message}
                 </span>
@@ -176,12 +222,34 @@ const PostComments = ({ comments }: { comments: PostComment[] }) => {
   )
 }
 
-const PostRates = ({ rates }: { rates: PostRate[] }) => {
-  const creditsMap = { 威望: 0, 水滴: 0, 奖励券: 0 }
-  rates.forEach((rate) => {
-    Object.assign(creditsMap, rate.credits)
-  })
-  const usedCredits = Object.keys(creditsMap).filter((k) => creditsMap[k])
+const PostRates = ({
+  rates,
+  rateStat,
+}: {
+  rates: PostRate[]
+  rateStat: PostRateStat
+}) => {
+  const kCreditNamesToPromote = ['威望', '奖励券']
+  const kCreditNamesInOrder = ['威望', '水滴', '奖励券']
+  const kMaxPromotedRates = 3
+  const kMaxInitialRates = 10
+  const promotedRates = []
+  let initialRates = []
+  const usedCredits: string[] = []
+  for (const rate of rates) {
+    if (
+      kCreditNamesToPromote.some((name) => rate.credits[name]) &&
+      promotedRates.length < kMaxPromotedRates
+    ) {
+      promotedRates.push(rate)
+    } else if (initialRates.length < kMaxInitialRates) {
+      initialRates.push(rate)
+    }
+  }
+  initialRates = promotedRates.concat(initialRates).slice(0, kMaxInitialRates)
+  kCreditNamesInOrder.forEach(
+    (name) => rateStat.total_credits[name] && usedCredits.push(name)
+  )
   return (
     <Accordion defaultExpanded disableGutters>
       <AccordionSummary expandIcon={<ExpandMore />}>
@@ -190,28 +258,40 @@ const PostRates = ({ rates }: { rates: PostRate[] }) => {
       <AccordionDetails sx={{ paddingY: 0 }}>
         <Table>
           <TableHead>
-            <TableCell>参与人数</TableCell>
+            <TableCell>共 {rateStat.total_users} 人参与</TableCell>
             {usedCredits.map((name, index) => (
-              <TableCell key={index}>{name}</TableCell>
+              <TableCell key={index}>
+                {name}
+                {rateStat.total_credits[name] != 0 && (
+                  <Chip
+                    text={
+                      (rateStat.total_credits[name] > 0 ? '+' : '') +
+                      rateStat.total_credits[name]
+                    }
+                  />
+                )}
+              </TableCell>
             ))}
             <TableCell>理由</TableCell>
           </TableHead>
           <TableBody>
-            {rates.map((rate, index) => (
+            {initialRates.map((rate, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <Stack direction="row" alignItems="center">
-                    <Avatar
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                      }}
-                      uid={rate.user_id}
-                    />
-                    <Typography ml={1}>{rate.username}</Typography>
-                  </Stack>
+                  <Link to={`user/${rate.user_id}`}>
+                    <Stack direction="row" alignItems="center">
+                      <Avatar
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          display: 'inline-block',
+                          verticalAlign: 'middle',
+                        }}
+                        uid={rate.user_id}
+                      />
+                      <Typography ml={1}>{rate.username}</Typography>
+                    </Stack>
+                  </Link>
                 </TableCell>
                 {usedCredits.map((name, index) => (
                   <TableCell key={index}>
@@ -224,6 +304,11 @@ const PostRates = ({ rates }: { rates: PostRate[] }) => {
             ))}
           </TableBody>
         </Table>
+        {rates.length > initialRates.length && (
+          <Stack direction="row" justifyContent="flex-end" my={1}>
+            <Button>查看更多</Button>
+          </Stack>
+        )}
       </AccordionDetails>
     </Accordion>
   )
