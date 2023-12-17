@@ -31,7 +31,6 @@ import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
-import { chineseTime } from '@/utils/dayjs'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
@@ -224,25 +223,6 @@ function Thread() {
                             thread={threadDetails}
                             forum={forumDetails}
                           />
-                          <div className="text-sm text-slate-300 flex justify-between">
-                            <div>{chineseTime(item.dateline * 1000)}</div>
-                            <div className="flex flex-row gap-3 justify-between">
-                              <div
-                                className="hover:text-blue-500"
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    window.location.href.split('#')[0] +
-                                      '#' +
-                                      item.position
-                                  )
-                                }}
-                              >
-                                分享
-                              </div>
-                              <div>#{item.position}</div>
-                            </div>
-                          </div>
                           <Box paddingRight="1.5em">
                             <ParsePost post={item} />
                           </Box>

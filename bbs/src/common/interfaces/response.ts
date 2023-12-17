@@ -157,6 +157,11 @@ export interface PostFloor {
   online_time: number
   registered_at: number
   last_login_at: number
+  pinned?: boolean
+  blocked?: boolean
+  warned?: boolean
+  hidden_reply?: boolean
+  password?: boolean
 }
 
 export interface UserInfos {
