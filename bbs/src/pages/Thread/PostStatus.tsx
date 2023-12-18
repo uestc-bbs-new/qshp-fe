@@ -25,6 +25,11 @@ const PostStatus = ({ post }: { post: PostFloor }) => {
           <Typography>本帖为密码帖</Typography>
         </Alert>
       )}
+      {post.invisible && (
+        <Alert severity="warning">
+          <Typography>本帖已删除</Typography>
+        </Alert>
+      )}
     </>
   )
 }

@@ -164,6 +164,7 @@ export interface PostFloor {
   password?: boolean
   has_comment?: boolean
   has_rate?: boolean
+  invisible: number
 }
 
 export interface PostComment {
