@@ -330,7 +330,7 @@ const PostRates = ({
             {initialRates.map((rate, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <Link to={`user/${rate.user_id}`}>
+                  <Link to={`/user/${rate.user_id}`}>
                     <Stack direction="row" alignItems="center">
                       <Avatar
                         sx={{
