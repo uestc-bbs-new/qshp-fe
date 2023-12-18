@@ -47,26 +47,24 @@ const router = createBrowserRouter([
       </ScrollToTop>
     ),
     children: [
-      { path: '/', id: 'index', name: '清水河畔', element: <Home /> },
-      { path: '/search', id: 'search', name: '搜索帖子', element: <Search /> },
-      { path: '/post/:fid?', id: 'post', name: '发表主题', element: <Edit /> },
-      { path: '/forum/:id', id: 'forum', name: '论坛分区', element: <Forum /> },
+      { path: '/', id: 'index', element: <Home /> },
+      { path: '/search', id: 'search', element: <Search /> },
+      { path: '/post/:fid?', id: 'post', element: <Edit /> },
+      { path: '/forum/:id', id: 'forum', element: <Forum /> },
       {
         path: '/thread/:id',
         id: 'thread',
-        name: '内容详情',
         element: <Thread />,
       },
       { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
-      { path: '/message', name: '消息', element: <Message /> },
+      { path: '/message', element: <Message /> },
       {
         path: '/setting/:id?',
         id: 'setting',
-        name: '设置',
         element: <Setting />,
       },
-    ] as CustomRouteConfig[],
+    ],
   },
-] as CustomRouteConfig[])
+])
 
 export default router
