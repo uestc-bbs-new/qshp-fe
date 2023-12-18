@@ -1,6 +1,7 @@
 import {
   PostDetails,
   PostDetailsByPostId,
+  PostPosition,
   UserInfos,
   UserNameFind,
 } from '@/common/interfaces/response'
@@ -8,6 +9,8 @@ import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { commonUrl } from '@/utils/request'
 
 import { makeThreadTypesMap } from '../common'
+
+export const kPostPageSize = 20
 
 /** 获取帖子详情信息 */
 export const getThreadsInfo = async (
@@ -91,6 +94,15 @@ export const votePost = (params: {
 }) => {
   return request.post<boolean>(`/star/api/forum/v1/post/vote`, undefined, {
     params,
+  })
+}
+
+export const findPost = (post_id: string, thread_id?: string) => {
+  return request.get<PostPosition>(`/star/api/forum/v1/post/find`, {
+    params: {
+      tid: thread_id,
+      pid: post_id,
+    },
   })
 }
 

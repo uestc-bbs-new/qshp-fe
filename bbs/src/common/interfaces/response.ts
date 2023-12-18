@@ -205,6 +205,11 @@ export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
 }
 
+export interface PostPosition {
+  thread_id: number
+  position: number
+}
+
 export interface UserInfos {
   views: number
   emailstatus: boolean

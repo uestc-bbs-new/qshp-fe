@@ -8,6 +8,7 @@ import {
 
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
+import Goto from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Message from '@/pages/Message'
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
         name: '内容详情',
         element: <Thread />,
       },
+      { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
       { path: '/message', name: '消息', element: <Message /> },
       {
         path: '/setting/:id?',

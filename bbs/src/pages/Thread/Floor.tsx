@@ -1,9 +1,11 @@
 import React from 'react'
 
-import { Box, Skeleton, Stack } from '@mui/material'
+import PublishIcon from '@mui/icons-material/Publish'
+import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
 import { PostExtraDetails, type PostFloor } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 
@@ -13,9 +15,10 @@ import PostRates from './PostRates'
 import PostStatus from './PostStatus'
 
 type props = {
-  children: React.ReactElement
+  children: React.ReactNode
   post: PostFloor
   postDetails?: PostExtraDetails
+  threadSubject?: string
   set_reply: (data: number) => void
 }
 
@@ -44,7 +47,17 @@ const PostExtraDetailsContainer = ({
   )
 }
 
-const Floor = ({ children, post, postDetails, set_reply }: props) => {
+const Floor = ({
+  children,
+  post,
+  postDetails,
+  threadSubject,
+  set_reply,
+}: props) => {
+  const gotoLink =
+    post.position == 1
+      ? `/thread/${post.thread_id}`
+      : `/goto/${post.thread_id}/${post.post_id}`
   return (
     <Box className="py-4">
       <Stack direction="row">
@@ -65,23 +78,42 @@ const Floor = ({ children, post, postDetails, set_reply }: props) => {
           {/* <Typography  */}
         </Box>
         <Box className="flex-1" minWidth="1em">
-          <div className="text-sm text-slate-300 flex justify-between">
-            <div>{chineseTime(post.dateline * 1000)}</div>
-            <div className="flex flex-row gap-3 justify-between">
-              <div
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            className="text-sm text-slate-300"
+          >
+            <Link color="inherit" underline="none" to={gotoLink}>
+              {chineseTime(post.dateline * 1000)}
+            </Link>
+            <Stack direction="row" alignItems="center">
+              <Link
+                color="inherit"
                 className="hover:text-blue-500"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
+                mr={1}
+                to={gotoLink}
+                underline="hover"
+                onClick={(e) => {
+                  e.preventDefault()
                   navigator.clipboard.writeText(
-                    window.location.href.split('#')[0] + '#' + post.position
+                    `${threadSubject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
                 }}
               >
                 分享
-              </div>
-              <div>#{post.position}</div>
-            </div>
-          </div>
+              </Link>
+              <Typography>
+                {post.pinned && (
+                  <PublishIcon
+                    htmlColor="#ff785b"
+                    sx={{ verticalAlign: 'middle' }}
+                  />
+                )}
+                #{post.position}
+              </Typography>
+            </Stack>
+          </Stack>
           <PostStatus post={post} />
           {children}
           <PostExtraDetailsContainer

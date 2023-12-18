@@ -18,7 +18,12 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getPostDetails, getThreadsInfo, replyThreads } from '@/apis/thread'
+import {
+  getPostDetails,
+  getThreadsInfo,
+  kPostPageSize,
+  replyThreads,
+} from '@/apis/thread'
 import {
   ForumDetails,
   PostDetailsByPostId,
@@ -36,8 +41,6 @@ import { useAppState } from '@/states'
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 import ThreadLikes from './ThreadLikes'
-
-const kPageSize = 20
 
 function searchParamsAssign(value: URLSearchParams, kvList: object) {
   return new URLSearchParams(
@@ -127,7 +130,7 @@ function Thread() {
           dispatch({ type: 'set forum', payload: data.forum })
         }
         if (data && data.total) {
-          setTotalPages(Math.ceil(data.total / kPageSize))
+          setTotalPages(Math.ceil(data.total / kPostPageSize))
         }
         if (data && data.rows) {
           const commentPids: number[] = []
@@ -167,7 +170,7 @@ function Thread() {
       setSearchParams(
         searchParamsAssign(searchParams, {
           // total + 1 because a new reply was posted just now and info is not yet refreshed.
-          page: info?.total ? Math.ceil((info?.total + 1) / kPageSize) : 1,
+          page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
         })
       )
       setReplyRefresh(replyRefresh + 1)
@@ -234,32 +237,31 @@ function Thread() {
                 return (
                   <Card className="mb-4" key={item.position}>
                     <section
-                      id={item.position.toString()}
+                      id={`post-${item.post_id}`}
                       style={{ scrollMarginTop: '80px' }}
                     >
                       <Floor
                         post={item}
                         postDetails={postDetails[item.post_id]}
+                        threadSubject={threadDetails?.subject}
                         set_reply={set_reply}
                       >
-                        <>
-                          <PostSubject
-                            post={item}
-                            thread={threadDetails}
-                            forum={forumDetails}
-                          />
-                          <Box paddingRight="1.5em">
-                            <ParsePost post={item} />
-                          </Box>
-                          {threadDetails &&
-                            item.is_first == 1 &&
-                            item.position == 1 && (
-                              <ThreadLikes
-                                tid={threadDetails.thread_id}
-                                values={[item.support, item.oppose]}
-                              />
-                            )}
-                        </>
+                        <PostSubject
+                          post={item}
+                          thread={threadDetails}
+                          forum={forumDetails}
+                        />
+                        <Box paddingRight="1.5em">
+                          <ParsePost post={item} />
+                        </Box>
+                        {threadDetails &&
+                          item.is_first == 1 &&
+                          item.position == 1 && (
+                            <ThreadLikes
+                              tid={threadDetails.thread_id}
+                              values={[item.support, item.oppose]}
+                            />
+                          )}
                       </Floor>
                     </section>
                   </Card>
