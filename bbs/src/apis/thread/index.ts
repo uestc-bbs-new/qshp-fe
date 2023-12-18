@@ -71,13 +71,15 @@ export const replyThreads = (details: ReplyThreadDetails) => {
 }
 
 export const getPostDetails = (params: {
-  commentPids: number[]
-  ratePids: number[]
+  commentPids?: number[]
+  ratePids?: number[]
+  page?: number
 }) => {
   return request.get<PostDetailsByPostId>(`${commonUrl}/post/details`, {
     params: {
-      comment_pids: params.commentPids.join(','),
-      rate_pids: params.ratePids.join(','),
+      comment_pids: (params.commentPids || []).join(','),
+      rate_pids: (params.ratePids || []).join(','),
+      page: params.page,
     },
   })
 }
