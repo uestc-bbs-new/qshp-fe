@@ -194,9 +194,9 @@ export interface PostRateStat {
 
 export interface PostExtraDetails {
   comments?: PostComment[]
-  comment_total: number
-  comment_pages: number
-  comment_page_size: number
+  comment_total?: number
+  comment_pages?: number
+  comment_page_size?: number
   rates?: PostRate[]
   rate_stat?: PostRateStat
 }

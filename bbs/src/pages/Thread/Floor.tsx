@@ -32,13 +32,12 @@ const PostExtraDetailsContainer = ({
     <>
       {(hasContent || loading) && (
         <Box my={2}>
-          {hasContent
-            ? children
-            : [
-                <Skeleton key={1} height={50} />,
-                <Skeleton key={2} height={50} />,
-                <Skeleton key={3} height={50} />,
-              ]}
+          {hasContent && children}
+          {loading && [
+            <Skeleton key={1} height={50} />,
+            <Skeleton key={2} height={50} />,
+            <Skeleton key={3} height={50} />,
+          ]}
         </Box>
       )}
     </>
@@ -93,7 +92,7 @@ const Floor = ({ children, post, postDetails, set_reply }: props) => {
               <PostComments
                 post_id={post.post_id}
                 comments={postDetails.comments}
-                totalPages={postDetails.comment_pages}
+                totalPages={postDetails.comment_pages || 1}
               />
             )}
           </PostExtraDetailsContainer>

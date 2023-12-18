@@ -141,7 +141,11 @@ function Thread() {
             }
           })
           if (commentPids.length || ratePids.length) {
-            setPostDetails(await getPostDetails({ commentPids, ratePids }))
+            const details = await getPostDetails({ commentPids, ratePids })
+            commentPids
+              .concat(ratePids)
+              .forEach((pid) => !details[pid] && (details[pid] = {}))
+            setPostDetails(details)
           }
         }
       },
