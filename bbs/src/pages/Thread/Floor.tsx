@@ -310,9 +310,15 @@ const PostRates = ({
       <AccordionDetails sx={{ paddingY: 0 }}>
         <Table>
           <TableHead>
-            <TableCell>共 {rateStat.total_users} 人参与</TableCell>
+            <TableCell sx={{ width: '14em' }}>
+              共 {rateStat.total_users} 人参与
+            </TableCell>
             {usedCredits.map((name, index) => (
-              <TableCell key={index}>
+              <TableCell
+                key={index}
+                className="text-center"
+                sx={{ width: '12em' }}
+              >
                 {name}
                 {rateStat.total_credits[name] != 0 && (
                   <Chip
@@ -346,7 +352,7 @@ const PostRates = ({
                   </Link>
                 </TableCell>
                 {usedCredits.map((name, index) => (
-                  <TableCell key={index}>
+                  <TableCell key={index} className="text-center">
                     {rate.credits[name] > 0 && '+'}
                     {rate.credits[name]}
                   </TableCell>
