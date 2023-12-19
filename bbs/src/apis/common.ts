@@ -102,11 +102,20 @@ export const searchUsers_at = (params: object) => {
   )
 }
 
-export const getThreadList = async (params: object) => {
+export const getThreadList = async (params: {
+  forum_id: number
+  page: number
+  sort_by?: number
+  type_id?: number
+  forum_details?: boolean
+}) => {
   const result = await request.get<ThreadList>(
     `${commonUrl}/view/thread/threads`,
     {
-      params: params,
+      params: {
+        ...params,
+        forum_details: params.forum_details ? 1 : 0,
+      },
     }
   )
   makeThreadTypesMap(result.forum)

@@ -19,28 +19,37 @@ const useActiveRoute = () => {
   return activeRoute
 }
 
+const withSearchAndHash = (
+  baseUrl: string,
+  query?: URLSearchParams,
+  hashValue?: string
+) => {
+  if (query) {
+    const str = query.toString()
+    if (str) {
+      baseUrl += `?${str}`
+    }
+  }
+  if (hashValue) {
+    baseUrl += `#${hashValue}`
+  }
+  return baseUrl
+}
+
 const thread = (
   thread_id: number,
   query?: URLSearchParams,
   hashValue?: string
-) => {
-  let href = `/thread/${thread_id}`
-  if (query) {
-    const str = query.toString()
-    if (str) {
-      href += `?${str}`
-    }
-  }
-  if (hashValue) {
-    href += `#${hashValue}`
-  }
-  return href
-}
+) => withSearchAndHash(`/thread/${thread_id}`, query, hashValue)
+
+const forum = (forum_id: number, query?: URLSearchParams) =>
+  withSearchAndHash(`/forum/${forum_id}`, query)
 
 const goto = (post_id: number) => `/goto/${post_id}`
 
 export const pages = {
   thread,
+  forum,
   goto,
 }
 

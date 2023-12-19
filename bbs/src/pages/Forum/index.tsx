@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
@@ -14,7 +14,6 @@ import {
   MenuItem,
   Pagination,
   Select,
-  SelectChangeEvent,
   Skeleton,
   useTheme,
 } from '@mui/material'
@@ -23,8 +22,11 @@ import { getThreadList } from '@/apis/common'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Error from '@/components/Error'
+import Link from '@/components/Link'
 import Post from '@/components/Post'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
+import { searchParamsAssign } from '@/utils/tools'
 
 import Head from './ForumHead'
 import SubForums from './SubForums'
@@ -59,13 +61,23 @@ const Top = ({ children }: TopProps) => {
   )
 }
 
+const kSortByValues = [
+  { id: 1, text: '最新回复' },
+  { id: 2, text: '最新发表' },
+  { id: 3, text: '最多回复' },
+  { id: 4, text: '最热主题' },
+]
+
 type NormalProps = {
-  sortBy: string
-  handleSortChange: any
+  query: any
+  searchParams: URLSearchParams
+  onChange?: (sort_by: number) => void
   children: React.ReactElement
 }
-const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
+const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
   const theme = useTheme()
+  const [open, setOpen] = useState(false)
+  const value = query.sort_by || kSortByValues[0].id
   return (
     <>
       <ListItem>
@@ -73,12 +85,28 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
         <Select
           variant="standard"
           disableUnderline
-          value={sortBy}
-          onChange={handleSortChange}
+          value={value}
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
         >
-          <MenuItem value="1">最新回复</MenuItem>
-          <MenuItem value="2">最新发表</MenuItem>
-          <MenuItem value="3">最热主题</MenuItem>
+          {kSortByValues.map((item, index) => (
+            <MenuItem key={index} value={item.id}>
+              <Link
+                display="block"
+                to={pages.forum(
+                  query.forum_id,
+                  searchParamsAssign(searchParams, { page: 1, sortby: item.id })
+                )}
+                onClick={() => {
+                  setOpen(false)
+                  onChange && onChange(item.id)
+                }}
+              >
+                {item.text}
+              </Link>
+            </MenuItem>
+          ))}
         </Select>
       </ListItem>
       <Divider
@@ -90,24 +118,60 @@ const Normal = ({ sortBy, handleSortChange, children }: NormalProps) => {
   )
 }
 
+const ForumPagination = forwardRef(function ForumPagination(
+  {
+    count,
+    page,
+    onChange,
+  }: {
+    count: number
+    page: number
+    onChange: (_: React.ChangeEvent<unknown>, page: number) => void
+  },
+  ref
+) {
+  return (
+    <Pagination
+      size="small"
+      count={count}
+      page={page}
+      onChange={onChange}
+      boundaryCount={3}
+      siblingCount={1}
+      variant="outlined"
+      shape="rounded"
+      style={{ margin: '20px' }}
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        scrollMarginTop: (theme) => theme.spacing(8 + 2),
+      }}
+      ref={ref}
+    />
+  )
+})
+
 function Forum() {
   const { state } = useAppState()
-  const [sortBy, setSort] = useState('1') // thread sort rule
-  //const [postList, setPostList] = useState([]) // 新建一个postList状态值，用来同步渲染post组件
-  const routeParam = useParams()
-  const params = new URLSearchParams(window.location.search)
-  const [page, setPage] = useState(1)
+  const forumId = parseInt(useParams().id || '0')
+  const [searchParams, setSearchParams] = useSearchParams()
   const [total, setTotal] = useState(0)
   const [forumDetails, setForumDetails] = useState<ForumDetails | undefined>(
     undefined
   )
-  const [query, setQuery] = useState({
-    page: 1,
-    type: 1,
-    forum_id: routeParam.id,
-    forum_details: 1,
-  })
-  const threadListTop = useRef<HTMLElement>(null)
+  const initQuery = () => {
+    const sortBy = searchParams.get('sortby') || '1'
+    const typeId = searchParams.get('typeid')
+    return {
+      forum_id: forumId,
+      page: parseInt(searchParams.get('page') || '1') || 1,
+      sort_by: parseInt(sortBy) || 1,
+      type_id: (typeId && parseInt(typeId)) || undefined,
+      forum_details: !forumDetails,
+    }
+  }
+  const [query, setQuery] = useState(initQuery())
+  const threadListTop = useRef<HTMLElement>()
   const { dispatch } = useAppState()
 
   const pageSize = 20
@@ -126,37 +190,19 @@ function Forum() {
       if (data && data.forum) {
         setForumDetails(data.forum)
         dispatch({ type: 'set forum', payload: data.forum })
-        setQuery({
-          ...query,
-          forum_details: 0,
-        })
       }
     },
   })
 
-  const location = useLocation()
-
   useEffect(() => {
-    setQuery({
-      ...query,
-      forum_id: routeParam.id,
-      forum_details: 1,
-    })
+    setQuery(initQuery())
     refetch()
-  }, [location, query.type, query.page, state.user.uid])
+  }, [forumId, searchParams, state.user.uid])
 
-  const handleSortChange = (event: SelectChangeEvent) => {
+  const handlePageChange = (_: any, newPage: number) => {
+    setSearchParams(searchParamsAssign(searchParams, { page: newPage }))
+    // TODO(fangjue): This conflicts with <ScrollToTop in routes/. [s:56]
     threadListTop.current?.scrollIntoView()
-    setSort(event.target.value)
-    setPage(1)
-    const value = event.target.value
-    setQuery({ ...query, page: 1, type: parseInt(value, 10) })
-  }
-
-  const handlePageChange = (event: any, value: number) => {
-    threadListTop.current?.scrollIntoView()
-    setPage(value)
-    setQuery({ ...query, page: Number(value) })
   }
 
   return (
@@ -181,19 +227,10 @@ function Forum() {
           )}
           {!!(isFetching || threadList?.rows?.length) && (
             <>
-              <Pagination
-                size="small"
-                page={page}
-                onChange={handlePageChange}
+              <ForumPagination
                 count={total}
-                variant="outlined"
-                shape="rounded"
-                style={{ margin: '20px' }}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  scrollMarginTop: (theme) => theme.spacing(8 + 2),
-                }}
+                page={query.page}
+                onChange={handlePageChange}
                 ref={threadListTop}
               />
               <Card>
@@ -223,7 +260,11 @@ function Forum() {
                       )}
                     </Top>
                   )}
-                  <Normal sortBy={sortBy} handleSortChange={handleSortChange}>
+                  <Normal
+                    query={query}
+                    searchParams={searchParams}
+                    onChange={() => threadListTop.current?.scrollIntoView()}
+                  >
                     {isFetching ? (
                       <List>
                         {[...Array(8)].map((_, index) => (
@@ -248,15 +289,10 @@ function Forum() {
                   </Normal>
                 </>
               </Card>
-              <Pagination
-                size="small"
-                page={page}
-                onChange={handlePageChange}
+              <ForumPagination
                 count={total}
-                variant="outlined"
-                shape="rounded"
-                style={{ marginTop: '20px' }}
-                sx={{ display: 'flex', justifyContent: 'center' }}
+                page={query.page}
+                onChange={handlePageChange}
               />
             </>
           )}

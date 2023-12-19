@@ -38,16 +38,11 @@ import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
+import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 import ThreadLikes from './ThreadLikes'
-
-function searchParamsAssign(value: URLSearchParams, kvList: object) {
-  return new URLSearchParams(
-    Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList))
-  )
-}
 
 function PostSubject({
   post,
@@ -95,11 +90,15 @@ function Thread() {
   const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
 
   const initQuery = () => {
+    const authorId = searchParams.get('authorid')
+    const orderType = searchParams.get('ordertype')
     return {
       thread_id,
-      author_id: searchParams.get('authorid'),
-      order_type: searchParams.get('ordertype'),
       page: parseInt(searchParams.get('page') || '1') || 1,
+      author_id: (authorId && parseInt(authorId)) || undefined,
+      order_type: orderType || undefined,
+      thread_details: !threadDetails,
+      forum_details: !forumDetails,
     }
   }
 
@@ -114,16 +113,9 @@ function Thread() {
     isLoading: infoLoading,
     refetch,
   } = useQuery(
-    [query],
+    ['thread', query],
     () => {
-      return getThreadsInfo({
-        thread_id: query.thread_id,
-        page: query.page,
-        author_id: (query.author_id && parseInt(query.author_id)) || undefined,
-        order_type: query.order_type || undefined,
-        thread_details: !threadDetails,
-        forum_details: !forumDetails,
-      })
+      return getThreadsInfo(query)
     },
     {
       onSuccess: async (data) => {
@@ -198,7 +190,7 @@ function Thread() {
   useEffect(() => {
     setQuery(initQuery())
     refetch()
-  }, [searchParams, thread_id, replyRefresh, state.user.uid])
+  }, [thread_id, searchParams, replyRefresh, state.user.uid])
 
   const reply_floor = useRef({
     floor: 1,
@@ -234,10 +226,10 @@ function Thread() {
         <>
           <Pagination
             count={totalPages}
-            page={Number(searchParams.get('page')) || 1}
+            page={query.page}
             boundaryCount={3}
             siblingCount={1}
-            onChange={(e, value) => {
+            onChange={(_, value) => {
               setSearchParams(searchParamsAssign(searchParams, { page: value }))
             }}
           />
