@@ -4,12 +4,18 @@ import chipColor from './color'
 
 interface Props {
   text: string
-  small?: boolean
+  size?: 'small' | 'medium' | 'large'
   type?: string
   className?: string
 }
 
-const Chip = ({ text, small, type = 'plate', className }: Props) => {
+const Chip = ({ text, size, type = 'plate', className }: Props) => {
+  const typographyClassName = {
+    small: 'px-1',
+    medium: 'px-2',
+    large: 'px-3',
+  }[size || 'medium']
+  const typographyFontSize = size == 'large' ? 13 : 11
   return (
     <Box className={`inline-block ${className} pl-1`}>
       <Box
@@ -22,8 +28,8 @@ const Chip = ({ text, small, type = 'plate', className }: Props) => {
       >
         <Typography
           variant="subtitle2"
-          className={small ? 'px-1' : 'px-2'}
-          fontSize={11}
+          className={typographyClassName}
+          fontSize={typographyFontSize}
         >
           {text}
         </Typography>

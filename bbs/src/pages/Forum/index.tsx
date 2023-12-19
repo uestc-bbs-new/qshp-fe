@@ -15,6 +15,7 @@ import {
   Pagination,
   Select,
   Skeleton,
+  Stack,
   useTheme,
 } from '@mui/material'
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
@@ -22,8 +23,9 @@ import { SelectInputProps } from '@mui/material/Select/SelectInput'
 import { getThreadList } from '@/apis/common'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
+import Chip from '@/components/Chip'
 import Error from '@/components/Error'
-import { MenuItemLink } from '@/components/Link'
+import Link, { MenuItemLink } from '@/components/Link'
 import Post from '@/components/Post'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
@@ -236,6 +238,23 @@ function Forum() {
                 onChange={handlePageChange}
                 ref={threadListTop}
               />
+              <Stack direction="row" sx={{ flexWrap: 'wrap' }} my={2.5}>
+                {forumDetails?.thread_types.map((item, index) => (
+                  <Link
+                    key={index}
+                    to={pages.forum(
+                      forumId,
+                      new URLSearchParams({
+                        typeid: item.type_id.toString(),
+                      })
+                    )}
+                    preventScrollReset
+                    my={0.5}
+                  >
+                    <Chip text={item.name} size="large" />
+                  </Link>
+                ))}
+              </Stack>
               <Card>
                 <>
                   {threadList?.rows?.some(

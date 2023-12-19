@@ -69,7 +69,6 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
                     <Chip
-                      small={small}
                       text={forumDetails?.thread_types_map[data.type_id].name}
                     />
                   )}
