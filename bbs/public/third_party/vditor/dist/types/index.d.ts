@@ -97,6 +97,19 @@ interface ILuteRender {
     renderBackslashContent?: ILuteRenderCallback;
 }
 
+interface ILuteRenderers {
+    HTML2VditorDOM?: ILuteRender,
+    HTML2VditorIRDOM?: ILuteRender,
+    HTML2Md?: ILuteRender,
+    Md2HTML?: ILuteRender,
+    Md2VditorDOM?: ILuteRender,
+    Md2VditorIRDOM?: ILuteRender,
+    Md2VditorSVDOM?: ILuteRender,
+    SpinVditorDOM?: ILuteRender,
+    SpinVditorIRDOM?: ILuteRender,
+    SpinVditorSVDOM?: ILuteRender,
+}
+
 interface ILuteOptions extends IMarkdownConfig {
     emojis: IObject;
     emojiSite: string;
@@ -125,15 +138,7 @@ declare class Lute {
     private constructor();
 
     public SetJSRenderers(options?: {
-        renderers: {
-            HTML2VditorDOM?: ILuteRender,
-            HTML2VditorIRDOM?: ILuteRender,
-            HTML2Md?: ILuteRender,
-            Md2HTML?: ILuteRender,
-            Md2VditorDOM?: ILuteRender,
-            Md2VditorIRDOM?: ILuteRender,
-            Md2VditorSVDOM?: ILuteRender,
-        },
+        renderers: ILuteRenderers,
     }): void;
 
     public SetChineseParagraphBeginningSpace(enable: boolean): void;
@@ -722,6 +727,8 @@ interface IOptions {
     tab?: string;
     /** @link https://ld246.com/article/1549638745630#options-outline */
     outline?: IOutline;
+    /** 首次预览前设置自定义渲染器 */
+    luteRenderers? :ILuteRenderers
 
     /** Hook for getMarkdown in src/ts/markdown/getMarkdown.ts */
     beforeGetMarkdown?(currentMode: string, el: HTMLElement): string | undefined;
