@@ -1,10 +1,4 @@
-import { useEffect } from 'react'
-import {
-  RouteObject,
-  createBrowserRouter,
-  useLocation,
-  useNavigationType,
-} from 'react-router-dom'
+import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
 
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
@@ -18,33 +12,14 @@ import Thread from '@/pages/Thread'
 
 // import NotFound from '@/pages/ErrorPage'
 
-type CustomRouteConfig = RouteObject & { name?: string }
-
-const ScrollToTop = ({
-  children,
-}: {
-  children: Array<React.ReactElement> | React.ReactElement
-}) => {
-  const location = useLocation()
-  const navType = useNavigationType()
-  useEffect(() => {
-    if (navType != 'POP') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      })
-    }
-  }, [location])
-  return <>{children}</>
-}
-
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <ScrollToTop>
+      <>
         <Layout />
-      </ScrollToTop>
+        <ScrollRestoration />
+      </>
     ),
     children: [
       { path: '/', id: 'index', element: <Home /> },

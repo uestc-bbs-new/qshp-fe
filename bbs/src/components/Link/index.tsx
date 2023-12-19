@@ -9,6 +9,7 @@ import {
 
 export type LinkProps = MuiLinkProps & {
   to?: string
+  preventScrollReset?: boolean
   external?: boolean
 }
 

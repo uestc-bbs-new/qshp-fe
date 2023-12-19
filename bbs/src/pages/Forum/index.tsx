@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
@@ -101,6 +101,7 @@ const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
                 query.forum_id,
                 searchParamsAssign(searchParams, { page: 1, sortby: item.id })
               )}
+              preventScrollReset
             >
               {item.text}
             </MenuItem>
@@ -150,9 +151,10 @@ const ForumPagination = forwardRef(function ForumPagination(
 })
 
 function Forum() {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
+  const navigate = useNavigate()
   const forumId = parseInt(useParams().id || '0')
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [total, setTotal] = useState(0)
   const [forumDetails, setForumDetails] = useState<ForumDetails | undefined>(
     undefined
@@ -170,7 +172,6 @@ function Forum() {
   }
   const [query, setQuery] = useState(initQuery())
   const threadListTop = useRef<HTMLElement>()
-  const { dispatch } = useAppState()
 
   const pageSize = 20
   const {
@@ -198,8 +199,12 @@ function Forum() {
   }, [forumId, searchParams, state.user.uid])
 
   const handlePageChange = (_: any, newPage: number) => {
-    setSearchParams(searchParamsAssign(searchParams, { page: newPage }))
-    // TODO(fangjue): This conflicts with <ScrollToTop in routes/. [s:56]
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        page: newPage,
+      })}`,
+      { preventScrollReset: true }
+    )
     threadListTop.current?.scrollIntoView()
   }
 
