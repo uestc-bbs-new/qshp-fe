@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
-import { useActiveRoute } from '@/utils/routes'
+import { pages, useActiveRoute } from '@/utils/routes'
 
 const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   textDecoration: 'none',
@@ -18,7 +18,7 @@ const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
 const thread = (state: State) => {
   if (state.activeThread) {
     return (
-      <StyledRouterLink key={1} to={`/thread/${state.activeThread.thread_id}`}>
+      <StyledRouterLink key={1} to={pages.thread(state.activeThread.thread_id)}>
         {state.activeThread.subject}
       </StyledRouterLink>
     )

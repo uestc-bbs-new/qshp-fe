@@ -2,6 +2,7 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
 
 import { ThreadBasics } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -46,7 +47,7 @@ const headerCard = (title: string, list: ThreadBasics[]) => {
               <Box className="flex-1" minWidth="1em" mr={2}>
                 <Stack direction="column">
                   <Link
-                    to={`/thread/${thread.thread_id}`}
+                    to={pages.thread(thread.thread_id)}
                     color="inherit"
                     underline="hover"
                     onClick={handleClick}

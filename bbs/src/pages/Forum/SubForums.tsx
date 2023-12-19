@@ -17,6 +17,7 @@ import Card from '@/components/Card'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 const SubForums = ({ children }: { children: ForumType[] }) => {
   const [collapsed, setCollapsed] = useState(false)
@@ -61,7 +62,7 @@ const SubForums = ({ children }: { children: ForumType[] }) => {
                         <>
                           <Link
                             color="inherit"
-                            to={`/thread/${child.latest_thread.thread_id}`}
+                            to={pages.thread(child.latest_thread.thread_id)}
                           >
                             {child.latest_thread.subject}
                           </Link>

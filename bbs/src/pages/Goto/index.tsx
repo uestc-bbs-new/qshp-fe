@@ -1,6 +1,7 @@
 import { redirect } from 'react-router-dom'
 
 import { findPost, kPostPageSize } from '@/apis/thread'
+import { pages } from '@/utils/routes'
 
 const Goto = async ({ params }: { params: object }) => {
   const p = params as { tidOrPid: string; pid?: string }
@@ -12,9 +13,13 @@ const Goto = async ({ params }: { params: object }) => {
   }
   const result = await findPost(pid, tid)
   return redirect(
-    `/thread/${result.thread_id}?page=${Math.ceil(
-      result.position / kPostPageSize
-    )}#post-${pid}`
+    pages.thread(
+      result.thread_id,
+      new URLSearchParams({
+        page: Math.ceil(result.position / kPostPageSize).toString(),
+      }),
+      `#post-${pid}`
+    )
   )
 }
 

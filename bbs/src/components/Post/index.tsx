@@ -9,6 +9,7 @@ import { ForumDetails, Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -73,7 +74,7 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
                     />
                   )}
                 <Link
-                  to={`/thread/${data.thread_id}`}
+                  to={pages.thread(data.thread_id)}
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}

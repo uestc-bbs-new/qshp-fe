@@ -12,6 +12,7 @@ import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
@@ -61,9 +62,7 @@ const Floor = ({
   set_reply,
 }: props) => {
   const gotoLink =
-    post.position == 1
-      ? `/thread/${post.thread_id}`
-      : `/goto/${post.thread_id}/${post.post_id}`
+    post.position == 1 ? pages.thread(post.thread_id) : pages.goto(post.post_id)
   return (
     <Box className="py-4">
       <Stack direction="row">

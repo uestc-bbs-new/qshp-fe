@@ -20,6 +20,7 @@ import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 type ForumData = {
   data: Forum
@@ -105,7 +106,7 @@ const ForumCover = ({ data }: ForumData) => {
                   underline="hover"
                   to={
                     data.latest_thread?.thread_id
-                      ? `/thread/${data.latest_thread?.thread_id}`
+                      ? pages.thread(data.latest_thread?.thread_id)
                       : undefined
                   }
                 >

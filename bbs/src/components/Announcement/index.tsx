@@ -8,6 +8,7 @@ import { Campaign } from '@mui/icons-material'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 
 import { getAnnouncement } from '@/apis/common'
+import { pages } from '@/utils/routes'
 
 import Link from '../Link'
 import SlidePagination from './SlidePagination'
@@ -38,7 +39,7 @@ const Slide = ({ children, tid }: SlideProps) => {
       <Box className="p-4 flex-1 overflow-hidden">
         <Typography className="line-clamp-2">
           {children}
-          <Link to={`/thread/${tid}`} underline="none">
+          <Link to={pages.thread(tid)} underline="none">
             【点我查看】
           </Link>
         </Typography>

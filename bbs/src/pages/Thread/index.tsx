@@ -37,6 +37,7 @@ import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
 
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
@@ -258,11 +259,17 @@ function Thread() {
                             <Link
                               color="inherit"
                               underline="hover"
-                              to={`/thread/${item.thread_id}${
-                                query.author_id
-                                  ? ''
-                                  : `?authorid=${item.author_id}`
-                              }`}
+                              to={pages.thread(
+                                item.thread_id,
+                                new URLSearchParams({
+                                  ...(query.order_type && {
+                                    ordertype: query.order_type,
+                                  }),
+                                  ...(query.author_id
+                                    ? null
+                                    : { authorid: item.author_id.toString() }),
+                                })
+                              )}
                               ml={2}
                             >
                               {query.author_id ? '查看全部' : '只看该作者'}
@@ -272,9 +279,19 @@ function Thread() {
                                 color="inherit"
                                 underline="hover"
                                 ml={2}
-                                to={`/thread/${item.thread_id}?ordertype=${
-                                  currentlyReversed ? 'forward' : 'reverse'
-                                }`}
+                                to={pages.thread(
+                                  item.thread_id,
+                                  new URLSearchParams({
+                                    ...(query.author_id && {
+                                      authorid: item.author_id.toString(),
+                                    }),
+                                    ...(currentlyReversed
+                                      ? threadDetails?.reverse_replies && {
+                                          ordertype: 'forward',
+                                        }
+                                      : { ordertype: 'reverse' }),
+                                  })
+                                )}
                               >
                                 {currentlyReversed ? '正序浏览' : '倒序浏览'}
                               </Link>

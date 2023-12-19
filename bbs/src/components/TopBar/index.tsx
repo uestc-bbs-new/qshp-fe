@@ -15,7 +15,7 @@ import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
 import { useDiscuzLink } from '@/utils/discuzLinkMap'
-import { useActiveRoute } from '@/utils/routes'
+import { pages, useActiveRoute } from '@/utils/routes'
 
 import Message from './Message'
 import SearchBar from './Search'
@@ -127,7 +127,7 @@ const TopBar = () => {
         <Stack sx={{ flexGrow: 1 }}></Stack>
         {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
         <Link
-          to="/thread/1812091"
+          to={pages.thread(1812091)}
           className="text-white"
           underline="none"
           sx={{ ml: 2, mr: 1 }}

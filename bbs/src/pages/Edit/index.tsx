@@ -28,6 +28,7 @@ import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { PostNotice } from '@/components/PostNotice'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
 
 import { ForumSelect } from './ForumSelect'
 
@@ -116,7 +117,7 @@ const Edit = () => {
     )
       .then((result) => {
         vd?.setValue('')
-        navigate(`/thread/${result.thread_id}`)
+        navigate(pages.thread(result.thread_id))
       })
       .catch((err) => {
         setPostPending(false)

@@ -19,4 +19,29 @@ const useActiveRoute = () => {
   return activeRoute
 }
 
+const thread = (
+  thread_id: number,
+  query?: URLSearchParams,
+  hashValue?: string
+) => {
+  let href = `/thread/${thread_id}`
+  if (query) {
+    const str = query.toString()
+    if (str) {
+      href += `?${str}`
+    }
+  }
+  if (hashValue) {
+    href += `#${hashValue}`
+  }
+  return href
+}
+
+const goto = (post_id: number) => `/goto/${post_id}`
+
+export const pages = {
+  thread,
+  goto,
+}
+
 export { useActiveRoute }
