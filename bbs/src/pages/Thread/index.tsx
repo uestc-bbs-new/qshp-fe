@@ -54,8 +54,8 @@ function PostSubject({
   forum,
 }: {
   post: PostFloor
-  thread: ThreadType | null
-  forum: ForumDetails | null
+  thread?: ThreadType
+  forum?: ForumDetails
 }) {
   if (post.is_first) {
     const typeName =
@@ -84,22 +84,25 @@ function Thread() {
   const location = useLocation()
   const thread_id = useParams()['id'] as string
   const [replyRefresh, setReplyRefresh] = useState(0)
-  const [threadDetails, setThreadDetails] = useState<ThreadType | null>(null)
-  const [forumDetails, setForumDetails] = useState<ForumDetails | null>(null)
+  const [threadDetails, setThreadDetails] = useState<ThreadType | undefined>(
+    undefined
+  )
+  const [forumDetails, setForumDetails] = useState<ForumDetails | undefined>(
+    undefined
+  )
   const [totalPages, setTotalPages] = useState(1)
   const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
 
-  /**
-   * 用于记录页面的 query 参数
-   * @typedef {{ thread_id: number, page: number}} Query
-   */
-  const [query, setQuery] = useState(
-    /** @type {Query} */
-    {
-      thread_id: thread_id,
-      page: 1,
+  const initQuery = () => {
+    return {
+      thread_id,
+      author_id: searchParams.get('authorid'),
+      order_type: searchParams.get('ordertype'),
+      page: parseInt(searchParams.get('page') || '1') || 1,
     }
-  )
+  }
+
+  const [query, setQuery] = useState(initQuery())
 
   const { dispatch } = useAppState()
   const anonymousRef = createRef<HTMLInputElement>()
@@ -112,12 +115,14 @@ function Thread() {
   } = useQuery(
     [query],
     () => {
-      return getThreadsInfo(
-        thread_id,
-        query.page,
-        !threadDetails,
-        !forumDetails
-      )
+      return getThreadsInfo({
+        thread_id: query.thread_id,
+        page: query.page,
+        author_id: (query.author_id && parseInt(query.author_id)) || undefined,
+        order_type: query.order_type || undefined,
+        thread_details: !threadDetails,
+        forum_details: !forumDetails,
+      })
     },
     {
       onSuccess: async (data) => {
@@ -186,14 +191,11 @@ function Thread() {
   }, [info])
 
   useEffect(() => {
-    setThreadDetails(null)
-    setForumDetails(null)
+    setThreadDetails(undefined)
+    setForumDetails(undefined)
   }, [thread_id])
   useEffect(() => {
-    setQuery({
-      ...query,
-      page: Number(searchParams.get('page')) || 1,
-    })
+    setQuery(initQuery())
     refetch()
   }, [searchParams, thread_id, replyRefresh, state.user.uid])
 
@@ -219,6 +221,10 @@ function Thread() {
     vd?.focus()
   }
 
+  const currentlyReversed =
+    query.order_type == 'reverse' ||
+    (threadDetails?.reverse_replies && query.order_type != 'forward')
+
   return (
     <Box className="flex-1" minWidth="1em">
       {isError ? (
@@ -228,6 +234,8 @@ function Thread() {
           <Pagination
             count={totalPages}
             page={Number(searchParams.get('page')) || 1}
+            boundaryCount={3}
+            siblingCount={1}
             onChange={(e, value) => {
               setSearchParams(searchParamsAssign(searchParams, { page: value }))
             }}
@@ -243,8 +251,36 @@ function Thread() {
                       <Floor
                         post={item}
                         postDetails={postDetails[item.post_id]}
-                        threadSubject={threadDetails?.subject}
+                        threadDetails={threadDetails}
                         set_reply={set_reply}
+                        threadControls={
+                          <>
+                            <Link
+                              color="inherit"
+                              underline="hover"
+                              to={`/thread/${item.thread_id}${
+                                query.author_id
+                                  ? ''
+                                  : `?authorid=${item.author_id}`
+                              }`}
+                              ml={2}
+                            >
+                              {query.author_id ? '查看全部' : '只看该作者'}
+                            </Link>
+                            {item.position == 1 && (
+                              <Link
+                                color="inherit"
+                                underline="hover"
+                                ml={2}
+                                to={`/thread/${item.thread_id}?ordertype=${
+                                  currentlyReversed ? 'forward' : 'reverse'
+                                }`}
+                              >
+                                {currentlyReversed ? '正序浏览' : '倒序浏览'}
+                              </Link>
+                            )}
+                          </>
+                        }
                       >
                         <PostSubject
                           post={item}

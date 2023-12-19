@@ -13,20 +13,32 @@ import { makeThreadTypesMap } from '../common'
 export const kPostPageSize = 20
 
 /** 获取帖子详情信息 */
-export const getThreadsInfo = async (
-  thread_id: string,
-  page = 1,
-  threadDetails = false,
-  forumDetails = false
-) => {
+export const getThreadsInfo = async ({
+  thread_id,
+  page,
+  author_id,
+  order_type,
+  thread_details,
+  forum_details,
+}: {
+  thread_id: string
+  page?: number
+  author_id?: number
+  order_type?: string
+  thread_details?: boolean
+  forum_details?: boolean
+}) => {
   const result = await request.get<PostDetails>(
     `/star/api/forum/v1/view/post/details`,
     {
       params: {
-        thread_id,
-        page,
-        thread_details: threadDetails ? 1 : 0,
-        forum_details: forumDetails ? 1 : 0,
+        thread_id: thread_id,
+        page: page || 1,
+        author_id: author_id,
+        order_type:
+          order_type == 'reverse' ? 1 : order_type == 'forward' ? 2 : null,
+        thread_details: thread_details ? 1 : 0,
+        forum_details: forum_details ? 1 : 0,
       },
     }
   )

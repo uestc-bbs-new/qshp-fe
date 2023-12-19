@@ -3,7 +3,11 @@ import React from 'react'
 import PublishIcon from '@mui/icons-material/Publish'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
-import { PostExtraDetails, type PostFloor } from '@/common/interfaces/response'
+import {
+  PostExtraDetails,
+  PostFloor,
+  Thread,
+} from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import UserCard from '@/components/UserCard'
@@ -13,14 +17,6 @@ import Footer from './Footer'
 import PostComments from './PostComments'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
-
-type props = {
-  children: React.ReactNode
-  post: PostFloor
-  postDetails?: PostExtraDetails
-  threadSubject?: string
-  set_reply: (data: number) => void
-}
 
 const PostExtraDetailsContainer = ({
   children,
@@ -47,11 +43,21 @@ const PostExtraDetailsContainer = ({
   )
 }
 
+type props = {
+  children: React.ReactNode
+  threadControls?: React.ReactNode
+  post: PostFloor
+  postDetails?: PostExtraDetails
+  threadDetails?: Thread
+  set_reply: (data: number) => void
+}
+
 const Floor = ({
   children,
+  threadControls,
   post,
   postDetails,
-  threadSubject,
+  threadDetails,
   set_reply,
 }: props) => {
   const gotoLink =
@@ -84,9 +90,12 @@ const Floor = ({
             justifyContent="space-between"
             className="text-sm text-slate-300"
           >
-            <Link color="inherit" underline="none" to={gotoLink}>
-              {chineseTime(post.dateline * 1000)}
-            </Link>
+            <Stack direction="row">
+              <Link color="inherit" underline="none" to={gotoLink}>
+                {chineseTime(post.dateline * 1000)}
+              </Link>
+              {threadControls}
+            </Stack>
             <Stack direction="row" alignItems="center">
               <Link
                 color="inherit"
@@ -97,7 +106,7 @@ const Floor = ({
                 onClick={(e) => {
                   e.preventDefault()
                   navigator.clipboard.writeText(
-                    `${threadSubject} - 清水河畔\n${location.origin}${gotoLink}`
+                    `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
                 }}
               >

@@ -85,6 +85,7 @@ export type Thread = ThreadBasics & {
   reply_credit: number
   max_position: number
   comments: number
+  reverse_replies: boolean
 }
 
 export type BBSInfo = {
