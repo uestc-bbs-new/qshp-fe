@@ -9,7 +9,7 @@ type RenderState = {
 }
 
 const kForumAttachBasePath = siteRoot + '/data/attachment/forum/'
-const kSmilyBasePath = siteRoot + '/static/image/smiley/'
+export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 function replace(
   str: string,
   patterns: RegExp[],

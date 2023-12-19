@@ -31,7 +31,11 @@ export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
   renderers: customRenderers('Preview'),
 })
 
-const options: IOptions = {
+const options = ({
+  smilyToolbarItem,
+}: {
+  smilyToolbarItem?: IMenuItem
+}): IOptions => ({
   ...common,
   luteRenderers: {
     SpinVditorDOM: customRenderers('SpinVditorDOM'),
@@ -82,7 +86,7 @@ const options: IOptions = {
     'edit-mode',
     'outline',
     '|',
-    'emoji',
+    ...(smilyToolbarItem ? [smilyToolbarItem] : ['emoji']),
     'headings',
     'bold',
     'italic',
@@ -111,6 +115,6 @@ const options: IOptions = {
     'redo',
     'fullscreen',
   ],
-}
+})
 
 export default options
