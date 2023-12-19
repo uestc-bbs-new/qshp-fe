@@ -72,7 +72,7 @@ const kSortByValues = [
 type NormalProps = {
   query: any
   searchParams: URLSearchParams
-  onChange?: SelectInputProps<T>['onChange']
+  onChange?: SelectInputProps['onChange']
   children: React.ReactElement
 }
 const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
