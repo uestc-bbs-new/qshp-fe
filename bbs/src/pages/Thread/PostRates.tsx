@@ -122,23 +122,29 @@ const RateTable = ({
   return (
     <Table>
       <TableHead>
-        <TableCell sx={{ width: '14em' }}>
-          共 {rateStat.total_users} 人参与
-        </TableCell>
-        {usedCredits.map((name, index) => (
-          <TableCell key={index} className="text-center" sx={{ width: '12em' }}>
-            {name}
-            {rateStat.total_credits[name] != 0 && (
-              <Chip
-                text={
-                  (rateStat.total_credits[name] > 0 ? '+' : '') +
-                  rateStat.total_credits[name]
-                }
-              />
-            )}
+        <TableRow>
+          <TableCell sx={{ width: '14em' }}>
+            共 {rateStat.total_users} 人参与
           </TableCell>
-        ))}
-        <TableCell>理由</TableCell>
+          {usedCredits.map((name, index) => (
+            <TableCell
+              key={index}
+              className="text-center"
+              sx={{ width: '12em' }}
+            >
+              {name}
+              {rateStat.total_credits[name] != 0 && (
+                <Chip
+                  text={
+                    (rateStat.total_credits[name] > 0 ? '+' : '') +
+                    rateStat.total_credits[name]
+                  }
+                />
+              )}
+            </TableCell>
+          ))}
+          <TableCell>理由</TableCell>
+        </TableRow>
       </TableHead>
       <TableBody>
         {rates.map((rate, index) => (

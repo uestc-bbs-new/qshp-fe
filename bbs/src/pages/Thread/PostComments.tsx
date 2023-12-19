@@ -74,40 +74,38 @@ const PostComments = ({
                   alignItems="baseline"
                   my={2}
                 >
-                  <Typography>
-                    <Link to={`/user/${comment.author_id}`}>
-                      <Avatar
-                        sx={{
-                          width: 28,
-                          height: 28,
-                          display: 'inline-block',
-                          verticalAlign: 'middle',
-                        }}
-                        uid={comment.author_id}
-                      />
-                      <span
-                        style={{
-                          verticalAlign: 'middle',
-                          fontWeight: 'bold',
-                          display: 'inline-block',
-                          minWidth: '8em',
-                          marginLeft: '0.5em',
-                          marginRight: '0.75em',
-                        }}
-                      >
-                        {comment.author}
-                      </span>
-                    </Link>
-                    <span style={{ verticalAlign: 'middle' }}>
-                      {comment.message}
-                    </span>
+                  <Link to={`/user/${comment.author_id}`}>
+                    <Avatar
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                      }}
+                      uid={comment.author_id}
+                    />
                     <span
-                      className="text-sm text-slate-300"
-                      style={{ verticalAlign: 'middle', marginLeft: '1em' }}
+                      style={{
+                        verticalAlign: 'middle',
+                        fontWeight: 'bold',
+                        display: 'inline-block',
+                        minWidth: '8em',
+                        marginLeft: '0.5em',
+                        marginRight: '0.75em',
+                      }}
                     >
-                      发表于{time}
+                      {comment.author}
                     </span>
-                  </Typography>
+                  </Link>
+                  <span style={{ verticalAlign: 'middle' }}>
+                    {comment.message}
+                  </span>
+                  <span
+                    className="text-sm text-slate-300"
+                    style={{ verticalAlign: 'middle', marginLeft: '1em' }}
+                  >
+                    发表于{time}
+                  </span>
                 </Stack>
               )
             })}
