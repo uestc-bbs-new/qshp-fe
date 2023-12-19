@@ -17,12 +17,13 @@ import {
   Skeleton,
   useTheme,
 } from '@mui/material'
+import { SelectInputProps } from '@mui/material/Select/SelectInput'
 
 import { getThreadList } from '@/apis/common'
 import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Error from '@/components/Error'
-import Link from '@/components/Link'
+import { MenuItemLink } from '@/components/Link'
 import Post from '@/components/Post'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
@@ -71,7 +72,7 @@ const kSortByValues = [
 type NormalProps = {
   query: any
   searchParams: URLSearchParams
-  onChange?: (sort_by: number) => void
+  onChange?: SelectInputProps<T>['onChange']
   children: React.ReactElement
 }
 const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
@@ -89,22 +90,19 @@ const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
+          onChange={onChange}
         >
           {kSortByValues.map((item, index) => (
-            <MenuItem key={index} value={item.id}>
-              <Link
-                display="block"
-                to={pages.forum(
-                  query.forum_id,
-                  searchParamsAssign(searchParams, { page: 1, sortby: item.id })
-                )}
-                onClick={() => {
-                  setOpen(false)
-                  onChange && onChange(item.id)
-                }}
-              >
-                {item.text}
-              </Link>
+            <MenuItem
+              key={index}
+              value={item.id}
+              component={MenuItemLink}
+              to={pages.forum(
+                query.forum_id,
+                searchParamsAssign(searchParams, { page: 1, sortby: item.id })
+              )}
+            >
+              {item.text}
             </MenuItem>
           ))}
         </Select>

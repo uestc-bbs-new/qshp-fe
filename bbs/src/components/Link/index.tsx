@@ -1,9 +1,13 @@
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
+import {
+  MenuItemProps,
+  Link as MuiLink,
+  LinkProps as MuiLinkProps,
+} from '@mui/material'
 
-type LinkProps = MuiLinkProps & {
+export type LinkProps = MuiLinkProps & {
   to?: string
   external?: boolean
 }
@@ -17,5 +21,9 @@ const Link = ({ to, external, ...other }: LinkProps) => {
   }
   return <MuiLink component={RouterLink} to={to} {...other} />
 }
+
+export const MenuItemLink = (props: MenuItemProps & LinkProps) => (
+  <Link {...props} />
+)
 
 export default Link
