@@ -50,11 +50,11 @@ function html(strings: TemplateStringsArray, ...texts: string[]): string {
     .join('')
 }
 
-const renderImage = (src: string, alt?: string) => {
+const renderImage = (src: string, alt: string) => {
   if (src == 's' && smilyMaps['s'][parseInt(alt || '')]) {
     return `<img src="${kSmilyBasePath}${
       smilyMaps['s'][parseInt(alt || '')]
-    }" class="smily" data-x-special-kind="smily" data-x-original-src="${src}" data-x-original-alt="${alt}">`
+    }" class="post_smily" data-x-special-kind="smily" data-x-original-src="${src}" data-x-original-alt="${alt}">`
   }
   const match = src.match(/^a:([0-9]+)/)
   if (match) {
@@ -76,10 +76,15 @@ const shouldRenderMarkers = (
   // See also lute/render/vditor_{ir,sv}_renderer.go for reference implementation.
   // `node.Parent.LinkType == 3` is not implemented yet.
   if (
-    (rendererType == 'SpinVditorIRDOM' || rendererType == 'SpinVditorSVDOM') &&
+    ['SpinVditorIRDOM', 'SpinVditorSVDOM', 'Md2VditorIRDOM'].includes(
+      rendererType
+    ) &&
     entering
   ) {
-    const mode = rendererType == 'SpinVditorIRDOM' ? 'ir' : 'sv'
+    const mode =
+      rendererType == 'SpinVditorIRDOM' || rendererType == 'Md2VditorIRDOM'
+        ? 'ir'
+        : 'sv'
     const lex = ['linkText', 'linkDest', 'image'].includes(nodeType)
       ? node.TokensStr()
       : nodeType
@@ -169,13 +174,16 @@ const customRenderers = (rendererType: string) => {
             const state = renderState[renderState.length - 1]
             if (state.type == 'image') {
               renderState.pop()
-              html = renderImage(state.dest, state.text)
+              html = renderImage(state.dest || '', state.text || '')
             } else if (state.type == 'link') {
               renderState.pop()
-              html = renderLink(state.dest, state.text)
+              html = renderLink(state.dest || '', state.text || '')
             } else {
               console.error('Unknown render state type', state)
             }
+          }
+          if (rendererType == 'SpinVditorSVDOM') {
+            return ['', Lute.WalkContinue]
           }
           return [html, Lute.WalkContinue]
         }
@@ -205,7 +213,7 @@ const customRenderers = (rendererType: string) => {
           }
           return (
             shouldRenderMarkers('linkDest', rendererType, node, entering) || [
-              html,
+              '',
               Lute.WalkContinue,
             ]
           )
@@ -251,11 +259,27 @@ const Editor = ({ setVd, ...other }: props) => {
             SpinVditorDOM: customRenderers('SpinVditorDOM'),
             SpinVditorIRDOM: customRenderers('SpinVditorIRDOM'),
             SpinVditorSVDOM: customRenderers('SpinVditorSVDOM'),
+            Md2VditorDOM: customRenderers('Md2VditorDOM'),
+            Md2VditorIRDOM: customRenderers('Md2VditorIRDOM'),
+            Md2HTML: customRenderers('Md2HTML'),
           } as object,
         })
         setVditor(vd)
         setVd(vd)
-        window.vd = vd
+      },
+      beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
+        if (currentMode == 'wysiwyg') {
+          const clone = el.cloneNode(true) as HTMLElement
+          ;[].forEach.call(
+            clone.querySelectorAll('img.post_smily'),
+            (img: HTMLImageElement) => {
+              img.src = img.getAttribute('data-x-original-src') || ''
+              img.alt = img.getAttribute('data-x-original-alt') || ''
+            }
+          )
+          return clone.innerHTML
+        }
+        return undefined
       },
       ...options,
       preview: getPreviewThemeOptions(state.theme),
