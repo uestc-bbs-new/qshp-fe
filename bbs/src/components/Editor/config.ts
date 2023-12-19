@@ -1,6 +1,8 @@
 // TODO: How to take the @ user information to request?
 import { getUsername } from '@/apis/thread'
 
+import { customRenderers } from './renderer'
+
 const common = {
   cdn: '/third_party/vditor',
 }
@@ -26,6 +28,7 @@ export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
   mode,
   ...previewCommon(mode),
   ...commonEmojiPath,
+  renderers: customRenderers('Preview'),
 })
 
 const options: IOptions = {
