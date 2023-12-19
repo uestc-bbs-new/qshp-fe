@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 import { useAppState } from '@/states'
 
 import options, { getPreviewThemeOptions } from './config'
-import { customRenderers } from './renderer'
 
 type props = IOptions & {
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
@@ -19,16 +18,6 @@ const Editor = ({ setVd, ...other }: props) => {
   useEffect(() => {
     const vd = new Vditor('vditor', {
       after: () => {
-        vd.vditor.lute.SetJSRenderers({
-          renderers: {
-            SpinVditorDOM: customRenderers('SpinVditorDOM'),
-            SpinVditorIRDOM: customRenderers('SpinVditorIRDOM'),
-            SpinVditorSVDOM: customRenderers('SpinVditorSVDOM'),
-            Md2VditorDOM: customRenderers('Md2VditorDOM'),
-            Md2VditorIRDOM: customRenderers('Md2VditorIRDOM'),
-            Md2HTML: customRenderers('Md2HTML'),
-          } as object,
-        })
         setVditor(vd)
         setVd(vd)
       },

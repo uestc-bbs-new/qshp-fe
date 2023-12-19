@@ -33,6 +33,14 @@ export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
 
 const options: IOptions = {
   ...common,
+  luteRenderers: {
+    SpinVditorDOM: customRenderers('SpinVditorDOM'),
+    SpinVditorIRDOM: customRenderers('SpinVditorIRDOM'),
+    SpinVditorSVDOM: customRenderers('SpinVditorSVDOM'),
+    Md2VditorDOM: customRenderers('Md2VditorDOM'),
+    Md2VditorIRDOM: customRenderers('Md2VditorIRDOM'),
+    Md2HTML: customRenderers('Md2HTML'),
+  },
   // change the z-index due to the mui base z-index = 1200
   fullscreen: { index: 1202 },
   hint: {

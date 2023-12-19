@@ -60,12 +60,25 @@ const renderLink = (href: string, text: string) => {
   return ''
 }
 
+type LuteRenderResult = [string, number]
+
 const shouldRenderMarkers = (
   nodeType: string,
   rendererType: string,
   node: ILuteNode,
   entering: boolean
-) => {
+): LuteRenderResult | false => {
+  if (
+    nodeType == 'image' &&
+    ('SpinVditorIRDOM' || rendererType == 'Md2VditorIRDOM')
+  ) {
+    return [
+      entering
+        ? `<span class="vditor-ir__node vditor-ir__node--expand" data-type="img">`
+        : `</span>`,
+      Lute.WalkContinue,
+    ]
+  }
   // See also lute/render/vditor_{ir,sv}_renderer.go for reference implementation.
   // `node.Parent.LinkType == 3` is not implemented yet.
   if (
@@ -90,14 +103,6 @@ const shouldRenderMarkers = (
         ')': ` vditor-${mode}__marker--paren`,
         linkDest: ` vditor-${mode}__marker--link`,
       }[nodeType] || ''
-    if (nodeType == 'image' && rendererType == 'SpinVditorIRDOM') {
-      return [
-        entering
-          ? `<span class="vditor-ir__node vditor-ir__node--expand" data-type="img">`
-          : `</span>`,
-        Lute.WalkContinue,
-      ]
-    }
     return [
       `<span class="vditor-${mode}__marker${extraClass}">${lex}</span>`,
       Lute.WalkContinue,
@@ -106,136 +111,114 @@ const shouldRenderMarkers = (
   return false
 }
 
-export const customRenderers = (rendererType: string) => {
-  return ((rendererType: string) => {
-    const renderState: RenderState[] = []
-    return {
-      renderBang: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, 'bang', node, entering)
-        return (
-          shouldRenderMarkers('!', rendererType, node, entering) || [
-            '',
-            Lute.WalkContinue,
-          ]
-        )
-      },
-      renderLink: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, 'link', node, entering)
-        return ['', Lute.WalkContinue]
-      },
-      renderOpenBracket: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, '[', node, entering)
-        return (
-          shouldRenderMarkers('[', rendererType, node, entering) || [
-            '',
-            Lute.WalkContinue,
-          ]
-        )
-      },
-      renderCloseBracket: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, ']', node, entering)
-        return (
-          shouldRenderMarkers(']', rendererType, node, entering) || [
-            '',
-            Lute.WalkContinue,
-          ]
-        )
-      },
-      renderOpenParen: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, '(', node, entering)
-        return (
-          shouldRenderMarkers('(', rendererType, node, entering) || [
-            '',
-            Lute.WalkContinue,
-          ]
-        )
-      },
-      renderCloseParen: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, ')', node, entering)
-        if (entering) {
-          return (
-            shouldRenderMarkers(')', rendererType, node, entering) || [
-              '',
-              Lute.WalkContinue,
-            ]
-          )
+const defaultRenderResult = (): LuteRenderResult => ['', Lute.WalkContinue]
+const shouldRenderMarkersOrDefault = (
+  nodeType: string,
+  rendererType: string,
+  node: ILuteNode,
+  entering: boolean
+): LuteRenderResult =>
+  shouldRenderMarkers(nodeType, rendererType, node, entering) ||
+  defaultRenderResult()
+
+export const customRenderers = (rendererType: string): ILuteRender => {
+  const renderState: RenderState[] = []
+  return {
+    renderBang: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, 'bang', node, entering)
+      return shouldRenderMarkersOrDefault('!', rendererType, node, entering)
+    },
+    renderLink: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, 'link', node, entering)
+      return ['', Lute.WalkContinue]
+    },
+    renderOpenBracket: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, '[', node, entering)
+      return shouldRenderMarkersOrDefault('[', rendererType, node, entering)
+    },
+    renderCloseBracket: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, ']', node, entering)
+      return shouldRenderMarkersOrDefault(']', rendererType, node, entering)
+    },
+    renderOpenParen: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, '(', node, entering)
+      return shouldRenderMarkersOrDefault('(', rendererType, node, entering)
+    },
+    renderCloseParen: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, ')', node, entering)
+      if (entering) {
+        return shouldRenderMarkersOrDefault(')', rendererType, node, entering)
+      } else {
+        let html = ''
+        if (renderState.length == 0) {
+          console.error('Unknown render state')
         } else {
-          let html = ''
-          if (renderState.length == 0) {
-            console.error('Unknown render state')
+          const state = renderState[renderState.length - 1]
+          if (state.type == 'image') {
+            renderState.pop()
+            html = renderImage(state.dest || '', state.text || '')
+          } else if (state.type == 'link') {
+            renderState.pop()
+            html = renderLink(state.dest || '', state.text || '')
           } else {
-            const state = renderState[renderState.length - 1]
-            if (state.type == 'image') {
-              renderState.pop()
-              html = renderImage(state.dest || '', state.text || '')
-            } else if (state.type == 'link') {
-              renderState.pop()
-              html = renderLink(state.dest || '', state.text || '')
-            } else {
-              console.error('Unknown render state type', state)
-            }
+            console.error('Unknown render state type', state)
           }
-          if (rendererType == 'SpinVditorSVDOM') {
-            return ['', Lute.WalkContinue]
-          }
-          return [html, Lute.WalkContinue]
         }
-      },
-      renderImage: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, 'image', node, entering)
-        if (entering) {
-          renderState.push({ type: 'image' })
-        }
-        return (
-          shouldRenderMarkers('image', rendererType, node, entering) || [
-            '',
-            Lute.WalkContinue,
-          ]
-        )
-      },
-      renderLinkText: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, 'link-text', node, entering, node.TokensStr())
-        if (entering) {
-          if (
-            renderState.length == 0 ||
-            renderState[renderState.length - 1].type != 'image'
-          ) {
-            renderState.push({ type: 'link', text: node.TokensStr() })
-          } else {
-            renderState[renderState.length - 1].text = node.TokensStr()
-          }
-          return (
-            shouldRenderMarkers('linkDest', rendererType, node, entering) || [
-              '',
-              Lute.WalkContinue,
-            ]
-          )
-        }
-        return ['', Lute.WalkContinue]
-      },
-      renderLinkDest: (node: ILuteNode, entering: boolean) => {
-        console.log(rendererType, 'link-dest', node, entering, node.TokensStr())
-        if (entering) {
-          return (
-            shouldRenderMarkers('linkDest', rendererType, node, entering) || [
-              '',
-              Lute.WalkContinue,
-            ]
-          )
-        } else {
-          if (renderState.length == 0) {
-            console.error('Unknown render state')
-          } else {
-            const state = renderState[renderState.length - 1]
-            if (state.type == 'image' || state.type == 'link') {
-              state.dest = node.TokensStr()
-            } else {
-              console.error('Unknown render state type', state)
-            }
-          }
+        if (rendererType == 'SpinVditorSVDOM') {
           return ['', Lute.WalkContinue]
         }
-      },
-    } as ILuteRender
-  })(rendererType)
+        return [html, Lute.WalkContinue]
+      }
+    },
+    renderImage: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, 'image', node, entering)
+      if (entering) {
+        renderState.push({ type: 'image' })
+      }
+      return shouldRenderMarkersOrDefault('image', rendererType, node, entering)
+    },
+    renderLinkText: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, 'link-text', node, entering, node.TokensStr())
+      if (entering) {
+        if (
+          renderState.length == 0 ||
+          renderState[renderState.length - 1].type != 'image'
+        ) {
+          renderState.push({ type: 'link', text: node.TokensStr() })
+        } else {
+          renderState[renderState.length - 1].text = node.TokensStr()
+        }
+        return shouldRenderMarkersOrDefault(
+          'linkDest',
+          rendererType,
+          node,
+          entering
+        )
+      }
+      return defaultRenderResult()
+    },
+    renderLinkDest: (node: ILuteNode, entering: boolean) => {
+      console.log(rendererType, 'link-dest', node, entering, node.TokensStr())
+      if (entering) {
+        return shouldRenderMarkersOrDefault(
+          'linkDest',
+          rendererType,
+          node,
+          entering
+        )
+      } else {
+        if (renderState.length == 0) {
+          console.error('Unknown render state')
+        } else {
+          const state = renderState[renderState.length - 1]
+          if (state.type == 'image' || state.type == 'link') {
+            state.dest = node.TokensStr()
+          } else {
+            console.error('Unknown render state type', state)
+          }
+        }
+        return defaultRenderResult()
+      }
+    },
+  }
 }
