@@ -54,8 +54,10 @@ const ThreadLikeMiddlePart = ({
   values: [number, number]
 }) => {
   const baseValue = 1
-  const a = values[0] + baseValue
-  const b = values[1] + baseValue
+  // There are 4 threads in the database that have negative likes, which is very
+  // strange and as a result we have to clamp value here.
+  const a = Math.max(0, values[0] + baseValue)
+  const b = Math.max(0, values[1] + baseValue)
   return (
     <Stack direction="row" flexGrow="1" flexShrink="1">
       <ThreadLikeMiddleHalf
