@@ -66,7 +66,11 @@ export type Thread = ThreadBasics & {
   sort_id: number
   last_poster: string
   dis_playorder: number
-  highlight: number
+  highlight_color?: string
+  highlight_bgcolor?: string
+  highlight_bold?: boolean
+  highlight_italic?: boolean
+  highlight_underline?: boolean
   digest: number
   is_rate: number
   special: boolean

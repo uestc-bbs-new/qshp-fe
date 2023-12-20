@@ -71,7 +71,20 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                   className="line-clamp-2"
                 >
                   <Box>
-                    <Typography textAlign="justify">{data.subject}</Typography>
+                    <Typography
+                      textAlign="justify"
+                      style={{
+                        color: data.highlight_color,
+                        backgroundColor: data.highlight_bgcolor,
+                        fontWeight: data.highlight_bold ? 'bold' : undefined,
+                        fontStyle: data.highlight_italic ? 'italic' : undefined,
+                        textDecoration: data.highlight_underline
+                          ? 'underline'
+                          : undefined,
+                      }}
+                    >
+                      {data.subject}
+                    </Typography>
                   </Box>
                 </Link>
               </Stack>
