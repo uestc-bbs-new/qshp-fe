@@ -7,16 +7,12 @@ import { PostFloor } from '@/common/interfaces/response'
 
 type FooterProps = {
   post: PostFloor
-  set_reply: (data: number) => void
+  onReply?: () => void
 }
 
-const Footer = ({ post, set_reply }: FooterProps) => {
+const Footer = ({ post, onReply }: FooterProps) => {
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
-  const handleReplyClick = () => {
-    window.location.hash = 'vditor'
-    set_reply(post.position)
-  }
 
   const vote = async (supportPost: boolean) => {
     if (
@@ -35,7 +31,7 @@ const Footer = ({ post, set_reply }: FooterProps) => {
   return (
     <Stack direction="row">
       <Button variant="text">点评</Button>
-      <Button variant="text" onClick={handleReplyClick}>
+      <Button variant="text" onClick={onReply}>
         回复
       </Button>
       {post.position > 1 && (

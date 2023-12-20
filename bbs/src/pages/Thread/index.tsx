@@ -31,6 +31,7 @@ import {
 import {
   ForumDetails,
   PostDetailsByPostId,
+  PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
@@ -40,6 +41,7 @@ import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
+import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
@@ -144,10 +146,7 @@ function Thread() {
         thread_id: Number(thread_id),
         message: vd?.getValue(),
         is_anonymous: anonymousRef.current?.checked,
-        post_id:
-          reply_floor.current.post_id === -1
-            ? undefined
-            : reply_floor.current.post_id,
+        post_id: replyFloor.current?.post_id,
       })
       vd?.setValue('')
       navigate(
@@ -178,26 +177,24 @@ function Thread() {
     refetch()
   }, [thread_id, searchParams, replyRefresh, state.user.uid])
 
-  const reply_floor = useRef({
-    floor: 1,
-    post_id: -1,
-  })
+  const replyFloor = useRef<PostFloor | undefined>(undefined)
 
-  const set_reply = (floor: number) => {
-    reply_floor.current.floor = floor
-    const reply_item = info?.rows.find((item) => item.position === floor)
-    let msg = reply_item?.message || ''
-    reply_floor.current.post_id = reply_item?.post_id || 1
+  const quickReplyRef = useRef<HTMLElement>()
+
+  const handleReply = (post: PostFloor) => {
+    replyFloor.current = post
+    let msg = post.message || ''
 
     // 正则处理回复信息
     const exp = /\[\/quote\]\n\n([\s\S]*)/
     msg = exp.test(msg) ? exp.exec(msg)![1] : msg
-    vd?.setValue(
-      `> ${info?.rows.find((item) => item.position === floor)?.author || ''}
-      ${msg}\n
-      `
-    )
     vd?.focus()
+    vd?.setValue('')
+    vd?.insertValue(
+      `> ${post.author || ''}
+> ${msg}\n\n`
+    )
+    quickReplyRef.current?.scrollIntoView()
   }
 
   const currentlyReversed =
@@ -224,14 +221,14 @@ function Thread() {
                   <Card className="mb-4" key={item.position}>
                     <section
                       id={`post-${item.post_id}`}
-                      style={{ scrollMarginTop: '80px' }}
+                      style={scrollAnchorStyle}
                     >
                       <Floor
                         post={item}
                         postDetails={postDetails[item.post_id]}
                         threadDetails={threadDetails}
                         forumDetails={forumDetails}
-                        set_reply={set_reply}
+                        onReply={handleReply}
                         threadControls={
                           <>
                             <Link
@@ -317,7 +314,7 @@ function Thread() {
                 sx={{ width: 120, height: 120 }}
                 variant="rounded"
               />
-              <Box className="flex-1">
+              <Box className="flex-1" sx={scrollAnchorSx} ref={quickReplyRef}>
                 <Editor setVd={setVd} minHeight={300} />
                 {/* TODO(fangjue): Extract PostOptions component. */}
                 <Box>

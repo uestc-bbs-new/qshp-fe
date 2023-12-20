@@ -29,6 +29,7 @@ import Link, { MenuItemLink } from '@/components/Link'
 import ThreadItem from '@/components/ThreadItem'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
+import { scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Head from './ForumHead'
@@ -145,7 +146,7 @@ const ForumPagination = forwardRef(function ForumPagination(
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        scrollMarginTop: (theme) => theme.spacing(8 + 2),
+        ...scrollAnchorSx,
       }}
       ref={ref}
     />
