@@ -20,7 +20,6 @@ import {
   Pagination,
   Skeleton,
   Stack,
-  Typography,
 } from '@mui/material'
 
 import {
@@ -32,12 +31,10 @@ import {
 import {
   ForumDetails,
   PostDetailsByPostId,
-  PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
-import Chip from '@/components/Chip'
 import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
@@ -48,34 +45,6 @@ import { searchParamsAssign } from '@/utils/tools'
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 import ThreadLikes from './ThreadLikes'
-
-function PostSubject({
-  post,
-  thread,
-  forum,
-}: {
-  post: PostFloor
-  thread?: ThreadType
-  forum?: ForumDetails
-}) {
-  if (post.is_first) {
-    const typeName =
-      forum?.thread_types_map && thread?.type_id
-        ? forum.thread_types_map[thread.type_id]?.name
-        : null
-    return (
-      <Stack direction="row" alignItems="center">
-        {typeName && (
-          <Link>
-            <Chip text={typeName} />
-          </Link>
-        )}
-        <Typography variant="h6">{post.subject}</Typography>
-      </Stack>
-    )
-  }
-  return <Typography fontWeight="bold">{post.subject}</Typography>
-}
 
 const ForumPagination = (props: {
   count: number
@@ -261,6 +230,7 @@ function Thread() {
                         post={item}
                         postDetails={postDetails[item.post_id]}
                         threadDetails={threadDetails}
+                        forumDetails={forumDetails}
                         set_reply={set_reply}
                         threadControls={
                           <>
@@ -307,11 +277,6 @@ function Thread() {
                           </>
                         }
                       >
-                        <PostSubject
-                          post={item}
-                          thread={threadDetails}
-                          forum={forumDetails}
-                        />
                         <Box paddingRight="1.5em">
                           <ParsePost post={item} />
                         </Box>

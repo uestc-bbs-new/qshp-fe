@@ -4,11 +4,13 @@ import PublishIcon from '@mui/icons-material/Publish'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
 import {
+  ForumDetails,
   PostExtraDetails,
   PostFloor,
   Thread,
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Chip from '@/components/Chip'
 import Link from '@/components/Link'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
@@ -18,6 +20,42 @@ import Footer from './Footer'
 import PostComments from './PostComments'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
+
+function PostSubject({
+  post,
+  thread,
+  forum,
+}: {
+  post: PostFloor
+  thread?: Thread
+  forum?: ForumDetails
+}) {
+  if (post.is_first) {
+    const type =
+      forum?.thread_types_map && thread?.type_id
+        ? forum.thread_types_map[thread.type_id]
+        : null
+    return (
+      <Stack direction="row" alignItems="center">
+        {type?.name && (
+          <Link
+            to={
+              forum &&
+              pages.forum(
+                forum?.fid,
+                new URLSearchParams({ typeid: type.type_id.toString() })
+              )
+            }
+          >
+            <Chip text={type.name} />
+          </Link>
+        )}
+        <Typography variant="h6">{post.subject}</Typography>
+      </Stack>
+    )
+  }
+  return <Typography fontWeight="bold">{post.subject}</Typography>
+}
 
 const PostExtraDetailsContainer = ({
   children,
@@ -50,6 +88,7 @@ type props = {
   post: PostFloor
   postDetails?: PostExtraDetails
   threadDetails?: Thread
+  forumDetails?: ForumDetails
   set_reply: (data: number) => void
 }
 
@@ -59,6 +98,7 @@ const Floor = ({
   post,
   postDetails,
   threadDetails,
+  forumDetails,
   set_reply,
 }: props) => {
   const gotoLink =
@@ -83,6 +123,13 @@ const Floor = ({
           {/* <Typography  */}
         </Box>
         <Box className="flex-1" minWidth="1em">
+          {post.position == 1 && (
+            <PostSubject
+              post={post}
+              thread={threadDetails}
+              forum={forumDetails}
+            />
+          )}
           <Stack
             direction="row"
             alignItems="center"
@@ -123,6 +170,13 @@ const Floor = ({
             </Stack>
           </Stack>
           <PostStatus post={post} />
+          {post.position > 1 && (
+            <PostSubject
+              post={post}
+              thread={threadDetails}
+              forum={forumDetails}
+            />
+          )}
           {children}
           <PostExtraDetailsContainer
             loading={!!post.has_comment && !postDetails}
