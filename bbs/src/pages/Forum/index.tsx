@@ -21,7 +21,7 @@ import {
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
 
 import { getThreadList } from '@/apis/common'
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails, ThreadType } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'
 import Error from '@/components/Error'
@@ -152,6 +152,28 @@ const ForumPagination = forwardRef(function ForumPagination(
   )
 })
 
+const ThreadTypeFilter = ({
+  forumId,
+  type,
+}: {
+  forumId: number
+  type?: ThreadType
+}) => (
+  <Link
+    to={pages.forum(
+      forumId,
+      type &&
+        new URLSearchParams({
+          typeid: type.type_id.toString(),
+        })
+    )}
+    preventScrollReset
+    my={0.5}
+  >
+    <Chip text={type?.name || '全部'} size="large" />
+  </Link>
+)
+
 function Forum() {
   const { state, dispatch } = useAppState()
   const navigate = useNavigate()
@@ -238,21 +260,12 @@ function Forum() {
                 onChange={handlePageChange}
                 ref={threadListTop}
               />
-              <Stack direction="row" sx={{ flexWrap: 'wrap' }} my={2.5}>
+              <Stack direction="row" sx={{ flexWrap: 'wrap' }} my={2.5} px={2}>
+                {(forumDetails?.thread_types || []).length > 1 && (
+                  <ThreadTypeFilter key="all" forumId={forumId} />
+                )}
                 {forumDetails?.thread_types.map((item, index) => (
-                  <Link
-                    key={index}
-                    to={pages.forum(
-                      forumId,
-                      new URLSearchParams({
-                        typeid: item.type_id.toString(),
-                      })
-                    )}
-                    preventScrollReset
-                    my={0.5}
-                  >
-                    <Chip text={item.name} size="large" />
-                  </Link>
+                  <ThreadTypeFilter key={index} forumId={forumId} type={item} />
                 ))}
               </Stack>
               <Card>
