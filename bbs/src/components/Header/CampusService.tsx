@@ -32,45 +32,56 @@ const listServiceItems: NavLink[] = [
     name: '网上报修',
     external: true,
   },
-  { link: 'http://ecard.uestc.edu.cn/', name: '一卡通查询', external: true },
-  { link: 'http://portal.uestc.edu.cn/', name: '信息门户', external: true },
+  { link: 'https://ecard.uestc.edu.cn/', name: '一卡通查询', external: true },
+  {
+    link: 'https://eportal.uestc.edu.cn/',
+    name: '网上服务大厅',
+    external: true,
+  },
   {
     link: 'https://hq.uestc.edu.cn/yzs/commentSite/commentSiteIndex',
     name: '后勤建议',
     external: true,
   },
-  { link: 'http://gis.uestc.edu.cn/', name: '校园地图', external: true },
-  { link: 'http://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
+  { link: 'https://gis.uestc.edu.cn/', name: '校园地图', external: true },
+  { link: 'https://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
 ]
-const renderLink = (link: string, name: string, key: string) => {
-  return (
-    <Box>
-      <Link to={link} underline="none" color="inherit" key={key}>
-        <ListItemButton sx={{ width: '100%' }}>
-          <Stack direction="column" spacing={1} alignItems="center">
-            <img src={boatWheelImg} alt="boat-wheel" width="30" height="30" />
-            <ListItemText>
-              <Typography color="inherit">{name}</Typography>
-            </ListItemText>
-          </Stack>
-        </ListItemButton>
-      </Link>
-    </Box>
-  )
-}
+
 const CampusService = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ backgroundColor: '#699ff2', borderRadius: '8px' }}>
-        <Box className="pt-3 px-8 text-white">
-          <Typography sx={{ fontWeight: 'bold' }} variant="h6">
+        <Box className="px-8 pt-1 pb-3 text-white">
+          <Typography sx={{ fontWeight: 'bold' }} variant="h6" my={0.5}>
             校园服务
-            <Stack direction="row" justifyContent="space-between">
-              {listServiceItems.map((item) =>
-                renderLink(item.link, item.name, item.name)
-              )}
-            </Stack>
           </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            {listServiceItems.map((item, index) => (
+              <Box key={index}>
+                <Link
+                  to={item.link}
+                  external={item.external}
+                  target={item.external ? '_blank' : undefined}
+                  underline="none"
+                  color="inherit"
+                >
+                  <ListItemButton sx={{ width: '100%' }}>
+                    <Stack direction="column" spacing={1} alignItems="center">
+                      <img
+                        src={boatWheelImg}
+                        alt="boat-wheel"
+                        width="30"
+                        height="30"
+                      />
+                      <ListItemText>
+                        <Typography color="inherit">{item.name}</Typography>
+                      </ListItemText>
+                    </Stack>
+                  </ListItemButton>
+                </Link>
+              </Box>
+            ))}
+          </Stack>
         </Box>
       </Paper>
     </Box>
