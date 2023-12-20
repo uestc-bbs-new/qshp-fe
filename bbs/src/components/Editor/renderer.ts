@@ -70,7 +70,7 @@ const shouldRenderMarkers = (
 ): LuteRenderResult | false => {
   if (
     nodeType == 'image' &&
-    ('SpinVditorIRDOM' || rendererType == 'Md2VditorIRDOM')
+    (rendererType == 'SpinVditorIRDOM' || rendererType == 'Md2VditorIRDOM')
   ) {
     return [
       entering
