@@ -228,7 +228,7 @@ function Thread() {
     query.order_type == 'reverse' ||
     (threadDetails?.reverse_replies && query.order_type != 'forward')
 
-  const handlePageChange = (_, page: number) =>
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) =>
     setSearchParams(searchParamsAssign(searchParams, { page }))
 
   return (
