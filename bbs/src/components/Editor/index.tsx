@@ -21,9 +21,10 @@ import { smilyData } from './smilyData'
 
 type props = IOptions & {
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
+  onKeyDown?: React.KeyboardEventHandler
 }
 
-const Editor = ({ setVd, ...other }: props) => {
+const Editor = ({ setVd, onKeyDown, ...other }: props) => {
   const { state } = useAppState()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
   const theme = state.theme === 'light' ? undefined : 'dark'
@@ -75,7 +76,7 @@ const Editor = ({ setVd, ...other }: props) => {
   }, [state.theme, vditor])
   return (
     <>
-      <div id="vditor" className="vditor flex-1" />
+      <div id="vditor" className="vditor flex-1" onKeyDown={onKeyDown} />
       <Menu
         anchorEl={smilyAnchor.current}
         open={smilyOpen}

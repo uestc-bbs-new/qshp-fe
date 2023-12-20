@@ -180,7 +180,6 @@ function Thread() {
   const replyFloor = useRef<PostFloor | undefined>(undefined)
 
   const quickReplyRef = useRef<HTMLElement>()
-
   const handleReply = (post: PostFloor) => {
     replyFloor.current = post
     let msg = post.message || ''
@@ -195,6 +194,11 @@ function Thread() {
 > ${msg}\n\n`
     )
     quickReplyRef.current?.scrollIntoView()
+  }
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey && e.key == 'Enter') {
+      handleSubmit()
+    }
   }
 
   const currentlyReversed =
@@ -315,7 +319,11 @@ function Thread() {
                 variant="rounded"
               />
               <Box className="flex-1" sx={scrollAnchorSx} ref={quickReplyRef}>
-                <Editor setVd={setVd} minHeight={300} />
+                <Editor
+                  setVd={setVd}
+                  minHeight={300}
+                  onKeyDown={handleKeyDown}
+                />
                 {/* TODO(fangjue): Extract PostOptions component. */}
                 <Box>
                   {forumDetails?.can_post_anonymously && (
