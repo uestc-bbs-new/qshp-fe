@@ -57,7 +57,7 @@ const renderImage = (src: string, alt: string) => {
   return html`<img src="${src}" alt="${alt || ''}" />`
 }
 const renderLink = (href: string, text: string) => {
-  return ''
+  return html`<a href="${href}">${text}</a>`
 }
 
 type LuteRenderResult = [string, number]
