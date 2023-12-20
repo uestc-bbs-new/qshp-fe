@@ -91,7 +91,13 @@ const Editor = ({ setVd, ...other }: props) => {
             ))}
           </Tabs>
           <Divider />
-          <Grid container maxHeight="300px" overflow="auto" flexShrink={1}>
+          <Grid
+            key={selectedSmilyKind.id}
+            container
+            maxHeight="300px"
+            overflow="auto"
+            flexShrink={1}
+          >
             {selectedSmilyKind.items.map((item, index) => (
               <Grid key={index} item>
                 <IconButton
@@ -102,7 +108,14 @@ const Editor = ({ setVd, ...other }: props) => {
                 >
                   <img
                     src={`${kSmilyBasePath}/${selectedSmilyKind.path}/${item.path}`}
-                    style={{ width: `${item.width}px` }}
+                    loading="lazy"
+                    style={{
+                      width: `${item.width}px`,
+                      height: `${Math.floor(
+                        (item.thumbnailHeight / item.thumbnailWidth) *
+                          item.width
+                      )}px`,
+                    }}
                   />
                 </IconButton>
               </Grid>
