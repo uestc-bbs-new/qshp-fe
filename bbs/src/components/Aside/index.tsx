@@ -5,7 +5,7 @@ import { Box, List, Skeleton, Tab, Tabs } from '@mui/material'
 
 import { getBBSInfo } from '@/apis/common'
 import Card from '@/components/Card'
-import ThreadItem from '@/components/ThreadItem'
+import { ThreadItemLite } from '@/components/ThreadItem'
 import { useActiveRoute } from '@/utils/routes'
 
 const Aside = () => {
@@ -44,13 +44,8 @@ const Aside = () => {
             ? [...Array(10)].map((_, index) => (
                 <Skeleton key={index} height={70} />
               ))
-            : hot?.threads?.map((item) => (
-                <ThreadItem
-                  small
-                  data={item}
-                  key={item.thread_id}
-                  className="mb-4"
-                />
+            : hot?.threads?.map((item, index) => (
+                <ThreadItemLite item={item} key={index} className="mb-4" />
               ))}
         </List>
       </Card>

@@ -15,7 +15,6 @@ import Link from '../Link'
 
 type PostProps = {
   data: Thread
-  small?: boolean
   className?: string
   forumDetails?: ForumDetails
 }
@@ -31,23 +30,23 @@ const formatNumber = (num: number) => {
   return num
 }
 
-const ThreadItem = ({ data, small, className, forumDetails }: PostProps) => {
+const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
   const theme = useTheme()
 
   return (
-    <Box className={small ? className : `${className} p-0.5`}>
+    <Box className={`${className} p-0.5`}>
       <Box
-        className={`rounded-lg ${small ? 'p-1' : 'p-4'} ${className} `}
+        className={`rounded-lg p-4 ${className} `}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
       >
         <Stack direction="row">
-          <Box sx={small ? { mr: 1.2 } : { mr: 2 }}>
+          <Box sx={{ mr: 2 }}>
             <Avatar
               alt={data.author}
               uid={data.author_id}
-              sx={small ? { width: 30, height: 30 } : { width: 54, height: 54 }}
+              sx={{ width: 54, height: 54 }}
               variant="rounded"
             />
           </Box>
@@ -55,11 +54,10 @@ const ThreadItem = ({ data, small, className, forumDetails }: PostProps) => {
             <Stack
               justifyContent="space-between"
               direction="column"
-              sx={small ? { minWidth: 0 } : { minWidth: 350 }}
+              sx={{ minWidth: 350 }}
             >
               <Stack direction="row">
-                {!small &&
-                  !!data.type_id &&
+                {!!data.type_id &&
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
                     <Chip
@@ -70,7 +68,7 @@ const ThreadItem = ({ data, small, className, forumDetails }: PostProps) => {
                   to={pages.thread(data.thread_id)}
                   color="inherit"
                   underline="hover"
-                  className={small ? 'line-clamp-3' : 'line-clamp-2'}
+                  className="line-clamp-2"
                 >
                   <Box>
                     <Typography textAlign="justify">{data.subject}</Typography>
@@ -83,69 +81,111 @@ const ThreadItem = ({ data, small, className, forumDetails }: PostProps) => {
                   <Link color="inherit">{data.author}</Link>
                 </UserCard> */}
                 <Typography fontSize="inherit" className="pl-1" color="grey">
-                  {`· ${chineseTime(data.dateline * 1000, small)}`}
+                  {`· ${chineseTime(data.dateline * 1000)}`}
                 </Typography>
               </Stack>
-              {small ? (
-                <></>
-              ) : (
-                <Stack>
-                  {/* <Typography variant="subtitle2">{data.subject}</Typography> */}
-                </Stack>
-              )}
+              <Stack>
+                {/* <Typography variant="subtitle2">{data.subject}</Typography> */}
+              </Stack>
             </Stack>
           </Box>
-          {!small && (
-            <Box>
+          <Box>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: 265, height: 35 }}
+            >
               <Stack
                 direction="row"
+                className="w-1/3 pr-2"
+                alignItems="center"
                 justifyContent="space-between"
-                sx={{ width: 265, height: 35 }}
               >
-                <Stack
-                  direction="row"
-                  className="w-1/3 pr-2"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <RemoveRedEyeOutlined />
-                  <Typography>{formatNumber(data.views)}</Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  className="w-1/3 pl-3"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <ModeCommentOutlined />
-                  <Typography>{formatNumber(data.replies)}</Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  className="w-1/3 pl-5"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <ThumbUpAltOutlined />
-                  <Typography>{formatNumber(data.favorite_times)}</Typography>
-                </Stack>
+                <RemoveRedEyeOutlined />
+                <Typography>{formatNumber(data.views)}</Typography>
               </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <Box>
-                  <Typography className="pr-10">
-                    {`最新回复:`}
-                    {data.last_poster}
-                  </Typography>
-                </Box>
-                <Typography>{chineseTime(data.last_post * 1000)}</Typography>
+              <Stack
+                direction="row"
+                className="w-1/3 pl-3"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <ModeCommentOutlined />
+                <Typography>{formatNumber(data.replies)}</Typography>
               </Stack>
-            </Box>
-          )}
+              <Stack
+                direction="row"
+                className="w-1/3 pl-5"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <ThumbUpAltOutlined />
+                <Typography>{formatNumber(data.favorite_times)}</Typography>
+              </Stack>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Box>
+                <Typography className="pr-10">
+                  {`最新回复:`}
+                  {data.last_poster}
+                </Typography>
+              </Box>
+              <Typography>{chineseTime(data.last_post * 1000)}</Typography>
+            </Stack>
+          </Box>
         </Stack>
       </Box>
-      {!small && (
-        <Divider variant="middle" style={{ backgroundColor: 'grey' }} />
-      )}
+      <Divider variant="middle" style={{ backgroundColor: 'grey' }} />
+    </Box>
+  )
+}
+
+export const ThreadItemLite = ({
+  item,
+  className,
+}: {
+  item: Thread
+  className?: string
+}) => {
+  const theme = useTheme()
+
+  return (
+    <Box className={className}>
+      <Box
+        className={`rounded-lg p-1 ${className}`}
+        style={{
+          backgroundColor: theme.palette.background.paper,
+        }}
+      >
+        <Stack direction="row" alignItems="center">
+          <Avatar
+            alt={item.author}
+            uid={item.author_id}
+            sx={{ width: 30, height: 30 }}
+            variant="rounded"
+          />
+          <Link
+            to={pages.thread(item.thread_id)}
+            color="inherit"
+            underline="hover"
+            className="line-clamp-3"
+            ml={1.2}
+          >
+            <Typography textAlign="justify">{item.subject}</Typography>
+          </Link>
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center"
+          className="text-sm"
+        >
+          <Link color="#3A71F2">{item.author}</Link>
+          <Typography fontSize="inherit" className="pl-1" color="grey">
+            {`· ${chineseTime(item.dateline * 1000, true)}`}
+          </Typography>
+        </Stack>
+      </Box>
     </Box>
   )
 }
