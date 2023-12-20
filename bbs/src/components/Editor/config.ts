@@ -1,6 +1,8 @@
 // TODO: How to take the @ user information to request?
 import { getUsername } from '@/apis/thread'
 
+import { customRenderers } from './renderer'
+
 const common = {
   cdn: '/third_party/vditor',
 }
@@ -26,10 +28,23 @@ export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
   mode,
   ...previewCommon(mode),
   ...commonEmojiPath,
+  renderers: customRenderers('Preview'),
 })
 
-const options: IOptions = {
+const options = ({
+  smilyToolbarItem,
+}: {
+  smilyToolbarItem?: IMenuItem
+}): IOptions => ({
   ...common,
+  luteRenderers: {
+    SpinVditorDOM: customRenderers('SpinVditorDOM'),
+    SpinVditorIRDOM: customRenderers('SpinVditorIRDOM'),
+    SpinVditorSVDOM: customRenderers('SpinVditorSVDOM'),
+    Md2VditorDOM: customRenderers('Md2VditorDOM'),
+    Md2VditorIRDOM: customRenderers('Md2VditorIRDOM'),
+    Md2HTML: customRenderers('Md2HTML'),
+  },
   // change the z-index due to the mui base z-index = 1200
   fullscreen: { index: 1202 },
   hint: {
@@ -71,7 +86,7 @@ const options: IOptions = {
     'edit-mode',
     'outline',
     '|',
-    'emoji',
+    ...(smilyToolbarItem ? [smilyToolbarItem] : ['emoji']),
     'headings',
     'bold',
     'italic',
@@ -100,6 +115,6 @@ const options: IOptions = {
     'redo',
     'fullscreen',
   ],
-}
+})
 
 export default options
