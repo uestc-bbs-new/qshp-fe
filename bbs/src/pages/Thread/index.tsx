@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 
-import { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 
@@ -71,6 +71,16 @@ function PostSubject({
   }
   return <Typography fontWeight="bold">{post.subject}</Typography>
 }
+
+const ForumPagination = (props: {
+  count: number
+  page: number
+  onChange: (e: React.ChangeEvent<unknown>, page: number) => void
+}) => (
+  <Stack direction="row" justifyContent="center" my={1.5}>
+    <Pagination boundaryCount={3} siblingCount={1} {...props} />
+  </Stack>
+)
 
 function Thread() {
   const { state } = useAppState()
@@ -218,20 +228,19 @@ function Thread() {
     query.order_type == 'reverse' ||
     (threadDetails?.reverse_replies && query.order_type != 'forward')
 
+  const handlePageChange = (_, page: number) =>
+    setSearchParams(searchParamsAssign(searchParams, { page }))
+
   return (
     <Box className="flex-1" minWidth="1em">
       {isError ? (
         <Error isError={isError} error={error} onRefresh={refetch} />
       ) : (
         <>
-          <Pagination
+          <ForumPagination
             count={totalPages}
             page={query.page}
-            boundaryCount={3}
-            siblingCount={1}
-            onChange={(_, value) => {
-              setSearchParams(searchParamsAssign(searchParams, { page: value }))
-            }}
+            onChange={handlePageChange}
           />
           {info?.rows
             ? info?.rows.map((item, index) => {
@@ -322,6 +331,11 @@ function Thread() {
                 </List>
               )}
 
+          <ForumPagination
+            count={totalPages}
+            page={query.page}
+            onChange={handlePageChange}
+          />
           <Card className="py-4">
             <Stack direction="row">
               <Avatar
