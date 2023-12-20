@@ -69,7 +69,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
     "react-swipeable-views": "^0.14.0",
-    "vditor": "file:./bbs/public/third_party/vditor",
+    "vditor": "file:./bbs/third_party/vditor",
     "vite": "^4.4.11"
   }
 }

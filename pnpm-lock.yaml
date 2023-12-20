@@ -54,8 +54,8 @@ importers:
         specifier: ^0.14.0
         version: registry.npmmirror.com/react-swipeable-views@0.14.0(react@18.2.0)
       vditor:
-        specifier: file:./bbs/public/third_party/vditor
-        version: file:bbs/public/third_party/vditor
+        specifier: file:./bbs/third_party/vditor
+        version: file:bbs/third_party/vditor
       vite:
         specifier: ^4.4.11
         version: registry.npmmirror.com/vite@4.4.11(@types/node@18.13.0)
@@ -1432,8 +1432,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  file:bbs/public/third_party/vditor:
-    resolution: {directory: bbs/public/third_party/vditor, type: directory}
+  file:bbs/third_party/vditor:
+    resolution: {directory: bbs/third_party/vditor, type: directory}
     name: vditor
     dependencies:
       diff-match-patch: registry.npmmirror.com/diff-match-patch@1.0.5
