@@ -2,7 +2,12 @@ import Vditor from 'vditor'
 
 import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 
 import {
   Box,
@@ -115,6 +120,7 @@ function Thread() {
   const [query, setQuery] = useState(initQuery())
 
   const { dispatch } = useAppState()
+  const navigate = useNavigate()
   const anonymousRef = createRef<HTMLInputElement>()
   const {
     data: info,
@@ -175,11 +181,12 @@ function Thread() {
             : reply_floor.current.post_id,
       })
       vd?.setValue('')
-      setSearchParams(
-        searchParamsAssign(searchParams, {
+      navigate(
+        `${location.pathname}?${searchParamsAssign(searchParams, {
           // total + 1 because a new reply was posted just now and info is not yet refreshed.
           page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
-        })
+        })}`,
+        { preventScrollReset: true }
       )
       setReplyRefresh(replyRefresh + 1)
     }
