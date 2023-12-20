@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 import { Box, List, Pagination, Paper, Stack, Typography } from '@mui/material'
 
 import { searchThreads } from '@/apis/common'
-import Post from '@/components/Post'
+import ThreadItem from '@/components/ThreadItem'
 
 import EmptySearch from './EmptySearch'
 
@@ -64,7 +64,7 @@ const RersultForPost = ({
         <Paper elevation={3} sx={{ borderRadius: '10px', mt: 1 }}>
           <List>
             {data.threads.map((item) => (
-              <Post data={item} key={item.thread_id} />
+              <ThreadItem data={item} key={item.thread_id} />
             ))}
           </List>
         </Paper>

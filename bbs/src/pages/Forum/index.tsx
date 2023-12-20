@@ -26,7 +26,7 @@ import Card from '@/components/Card'
 import Chip from '@/components/Chip'
 import Error from '@/components/Error'
 import Link, { MenuItemLink } from '@/components/Link'
-import Post from '@/components/Post'
+import ThreadItem from '@/components/ThreadItem'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
@@ -285,7 +285,7 @@ function Forum() {
                           {threadList?.rows
                             ?.filter((item: any) => item.display_order > 0)
                             .map((item: any) => (
-                              <Post
+                              <ThreadItem
                                 data={item}
                                 key={item.thread_id}
                                 forumDetails={forumDetails}
@@ -313,7 +313,7 @@ function Forum() {
                         {threadList?.rows
                           ?.filter((item: any) => item.display_order === 0)
                           .map((item: any) => (
-                            <Post
+                            <ThreadItem
                               data={item}
                               key={item.thread_id}
                               forumDetails={forumDetails}

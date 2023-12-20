@@ -3,7 +3,7 @@ import {
   RemoveRedEyeOutlined,
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
-import React, { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 
 import { ForumDetails, Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
@@ -31,7 +31,7 @@ const formatNumber = (num: number) => {
   return num
 }
 
-const Post = ({ data, small, className, forumDetails }: PostProps) => {
+const ThreadItem = ({ data, small, className, forumDetails }: PostProps) => {
   const theme = useTheme()
 
   return (
@@ -150,4 +150,4 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
   )
 }
 
-export default Post
+export default ThreadItem
