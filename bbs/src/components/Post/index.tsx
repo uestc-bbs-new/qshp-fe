@@ -7,7 +7,6 @@ import React, { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 
 import { ForumDetails, Thread } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
-import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -34,11 +33,6 @@ const formatNumber = (num: number) => {
 
 const Post = ({ data, small, className, forumDetails }: PostProps) => {
   const theme = useTheme()
-
-  const { dispatch } = useAppState()
-  const handleClick = () => {
-    dispatch({ type: 'set post', payload: data.subject })
-  }
 
   return (
     <Box className={small ? className : `${className} p-0.5`}>
@@ -77,7 +71,6 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}
-                  onClick={handleClick}
                 >
                   <Box>
                     <Typography textAlign="justify">{data.subject}</Typography>
@@ -90,7 +83,7 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
                   <Link color="inherit">{data.author}</Link>
                 </UserCard> */}
                 <Typography fontSize="inherit" className="pl-1" color="grey">
-                  {`· ${chineseTime(data.dateline * 1000)}`}
+                  {`· ${chineseTime(data.dateline * 1000, small)}`}
                 </Typography>
               </Stack>
               {small ? (
@@ -102,9 +95,7 @@ const Post = ({ data, small, className, forumDetails }: PostProps) => {
               )}
             </Stack>
           </Box>
-          {small ? (
-            <></>
-          ) : (
+          {!small && (
             <Box>
               <Stack
                 direction="row"
