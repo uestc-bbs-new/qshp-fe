@@ -83,6 +83,8 @@ const Editor = ({ setVd, ...other }: props) => {
       >
         <Stack maxWidth={640}>
           <Tabs
+            variant="scrollable"
+            scrollButtons="auto"
             value={selectedSmilyKind}
             onChange={(_, newValue) => setSmilyKind(newValue)}
           >

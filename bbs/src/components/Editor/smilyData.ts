@@ -4290,6 +4290,12 @@ smilyData.forEach((kind) => {
   kind.items.forEach((item) => fillSmilyMap(smilyMaps[codePrefix], kind, item))
 })
 
+export const unifiedSmilyMap: SmilyEntry = Object.assign(
+  {},
+  smilyMaps['s'],
+  smilyMaps['a']
+)
+
 export const legacySmilyMaps: SmilyMap = {}
 const 蛋黄脸 = smilyData.find((kind) => kind.name == '蛋黄脸')
 if (蛋黄脸) {

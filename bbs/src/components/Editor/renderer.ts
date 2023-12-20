@@ -1,6 +1,6 @@
 import siteRoot from '@/utils/siteRoot'
 
-import { smilyMaps } from './smilyData'
+import { unifiedSmilyMap } from './smilyData'
 
 type RenderState = {
   type: 'image' | 'link'
@@ -40,9 +40,9 @@ function html(strings: TemplateStringsArray, ...texts: string[]): string {
 }
 
 const renderImage = (src: string, alt: string) => {
-  if (src == 's' && smilyMaps['s'][parseInt(alt || '')]) {
+  if (src == 's' && unifiedSmilyMap[parseInt(alt || '')]) {
     return html`<img
-      src="${kSmilyBasePath}${smilyMaps['s'][parseInt(alt || '')]}"
+      src="${kSmilyBasePath}${unifiedSmilyMap[parseInt(alt || '')]}"
       class="post_smily"
       data-x-special-kind="smily"
       data-x-original-src="${src}"
