@@ -4,7 +4,7 @@ import { getUsername } from '@/apis/thread'
 import { customRenderers } from './renderer'
 
 const common = {
-  cdn: '/third_party/vditor',
+  cdn: '/third_party/vditor-patched-0.1',
 }
 const commonEmojiPath = {
   emojiPath: `${common.cdn}/dist/images/emoji`,

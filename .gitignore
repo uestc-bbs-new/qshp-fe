@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 !bbs/third_party/vditor/dist/
-!bbs/public/third_party/vditor/dist/
+!bbs/public/third_party/vditor*/dist/
 
 # Editor directories and files
 !.vscode/extensions.json
