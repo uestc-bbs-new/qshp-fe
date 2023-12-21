@@ -12,12 +12,15 @@ const Goto = async ({ params }: { params: object }) => {
     tid = undefined
   }
   const result = await findPost(pid, tid)
+  const page = Math.ceil(result.position / kPostPageSize)
   return redirect(
     pages.thread(
       result.thread_id,
-      new URLSearchParams({
-        page: Math.ceil(result.position / kPostPageSize).toString(),
-      }),
+      page > 1
+        ? new URLSearchParams({
+            page: page.toString(),
+          })
+        : undefined,
       `post-${pid}`
     )
   )
