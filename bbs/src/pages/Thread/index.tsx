@@ -40,6 +40,7 @@ import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
@@ -190,7 +191,9 @@ function Thread() {
     vd?.focus()
     vd?.setValue('')
     vd?.insertValue(
-      `> ${post.author || ''}
+      `> ${post.author} 发表于 [${chineseTime(post.dateline * 1000, {
+        full: true,
+      })}](/goto/${post.post_id})
 > ${msg}\n\n`
     )
     quickReplyRef.current?.scrollIntoView()
