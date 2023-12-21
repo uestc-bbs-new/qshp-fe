@@ -195,7 +195,7 @@ export const ThreadItemLite = ({
         >
           <Link color="#3A71F2">{item.author}</Link>
           <Typography fontSize="inherit" className="pl-1" color="grey">
-            {`· ${chineseTime(item.dateline * 1000, true)}`}
+            {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
           </Typography>
         </Stack>
       </Box>

@@ -7,7 +7,13 @@ dayjs.locale('zh-cn')
 dayjs.extend(calendar)
 dayjs.extend(relativeTime)
 
-export const chineseTime = (time: number, short?: boolean) => {
+export const chineseTime = (
+  time: number,
+  options?: { short?: boolean; full?: boolean }
+) => {
+  if (options?.full) {
+    return dayjs(time).format('YYYY-MM-DD HH:mm')
+  }
   if (Date.now() - time < 1000 * 60) {
     return '刚刚'
   }
@@ -20,6 +26,6 @@ export const chineseTime = (time: number, short?: boolean) => {
     nextWeek: 'dddd HH:mm', // The next week ( Sunday at 2:30 AM )
     lastDay: '[昨天] HH:mm', // The day before ( Yesterday at 2:30 AM )
     lastWeek: '[上周] dddd HH:mm', // Last week ( Last Monday at 2:30 AM )
-    sameElse: 'YYYY-MM-DD' + (short ? '' : ' HH:mm'), // Everything else ( 17/10/2011 )
+    sameElse: 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm'), // Everything else ( 17/10/2011 )
   })
 }
