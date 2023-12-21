@@ -82,7 +82,7 @@ const shouldRenderMarkers = (
   // See also lute/render/vditor_{ir,sv}_renderer.go for reference implementation.
   // `node.Parent.LinkType == 3` is not implemented yet.
   if (
-    ['SpinVditorIRDOM', 'SpinVditorSVDOM', 'Md2VditorIRDOM'].includes(
+    ['SpinVditorSVDOM', 'SpinVditorIRDOM', 'Md2VditorIRDOM'].includes(
       rendererType
     ) &&
     entering
@@ -91,20 +91,27 @@ const shouldRenderMarkers = (
       rendererType == 'SpinVditorIRDOM' || rendererType == 'Md2VditorIRDOM'
         ? 'ir'
         : 'sv'
-    const lex = ['linkText', 'linkDest', 'image'].includes(nodeType)
-      ? node.TokensStr()
+    const text = ['linkText', 'linkDest', 'image'].includes(nodeType)
+      ? html`${node.TokensStr()}`
       : nodeType
+    if (nodeType == 'linkText') {
+      return [
+        mode == 'ir'
+          ? `<span class="vditor-ir__link">${text}</span>`
+          : `<span class="vditor-sv__marker--bracket" data-type="link-text">${text}</span>`,
+        Lute.WalkContinue,
+      ]
+    }
     const extraClass =
       {
         '[': ` vditor-${mode}__marker--bracket`,
         ']': ` vditor-${mode}__marker--bracket`,
-        linkText: ` vditor-${mode}__marker--bracket`,
         '(': ` vditor-${mode}__marker--paren`,
         ')': ` vditor-${mode}__marker--paren`,
         linkDest: ` vditor-${mode}__marker--link`,
       }[nodeType] || ''
     return [
-      `<span class="vditor-${mode}__marker${extraClass}">${lex}</span>`,
+      `<span class="vditor-${mode}__marker${extraClass}">${text}</span>`,
       Lute.WalkContinue,
     ]
   }
@@ -164,7 +171,11 @@ export const customRenderers = (rendererType: string): ILuteRender => {
             console.error('Unknown render state type', state)
           }
         }
-        if (rendererType == 'SpinVditorSVDOM') {
+        if (
+          ['SpinVditorSVDOM', 'SpinVditorIRDOM', 'Md2VditorIRDOM'].includes(
+            rendererType
+          )
+        ) {
           return ['', Lute.WalkContinue]
         }
         return [html, Lute.WalkContinue]
@@ -189,7 +200,7 @@ export const customRenderers = (rendererType: string): ILuteRender => {
           renderState[renderState.length - 1].text = node.TokensStr()
         }
         return shouldRenderMarkersOrDefault(
-          'linkDest',
+          'linkText',
           rendererType,
           node,
           entering
