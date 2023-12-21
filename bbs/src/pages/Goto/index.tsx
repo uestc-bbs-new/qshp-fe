@@ -18,7 +18,7 @@ const Goto = async ({ params }: { params: object }) => {
       new URLSearchParams({
         page: Math.ceil(result.position / kPostPageSize).toString(),
       }),
-      `#post-${pid}`
+      `post-${pid}`
     )
   )
 }
