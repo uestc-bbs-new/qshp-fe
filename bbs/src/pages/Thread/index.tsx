@@ -223,9 +223,9 @@ function Thread() {
             onChange={handlePageChange}
           />
           {info?.rows
-            ? info?.rows.map((item, index) => {
+            ? info?.rows.map((item) => {
                 return (
-                  <Card className="mb-4" key={item.position}>
+                  <Card className="mb-4" key={item.post_id}>
                     <section
                       id={`post-${item.post_id}`}
                       style={scrollAnchorStyle}
