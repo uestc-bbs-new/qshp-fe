@@ -73,7 +73,7 @@ export type Thread = ThreadBasics & {
   highlight_underline?: boolean
   digest: number
   is_rate: number
-  special: boolean
+  special: number
   attachment: number
   is_moderated: boolean
   is_closed: boolean
@@ -90,6 +90,26 @@ export type Thread = ThreadBasics & {
   max_position: number
   comments: number
   reverse_replies: boolean
+  poll?: ThreadPollDetails
+}
+
+export type ThreadPollDetails = {
+  options: ThreadPollOption[]
+  selected_options: number[]
+  show_voters: boolean
+  multiple: boolean
+  visible: boolean
+  max_choices: number
+  is_image: boolean
+  expiration: number
+  voter_count: number
+}
+
+export type ThreadPollOption = {
+  id: number
+  text: string
+  votes?: number
+  voters?: number[]
 }
 
 export type BBSInfo = {
@@ -115,10 +135,6 @@ export type ThreadList = {
   total: number
   rows: Array<Thread>
   forum?: ForumDetails
-}
-
-export interface ThreadDetails {
-  subject: string
 }
 
 export interface PostDetails {

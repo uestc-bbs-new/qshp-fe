@@ -20,6 +20,7 @@ import Footer from './Footer'
 import PostComments from './PostComments'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
+import PollExtension from './extension/Poll'
 
 function PostSubject({
   post,
@@ -178,6 +179,9 @@ const Floor = ({
             />
           )}
           {children}
+          {post.position == 1 && (
+            <PollExtension threadDetails={threadDetails} />
+          )}
           <PostExtraDetailsContainer
             loading={!!post.has_comment && !postDetails}
             hasContent={!!postDetails?.comments?.length}

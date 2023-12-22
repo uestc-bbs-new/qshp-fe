@@ -1,11 +1,13 @@
 import dayjs from 'dayjs/esm'
 import 'dayjs/esm/locale/zh-cn'
 import calendar from 'dayjs/esm/plugin/calendar'
+import duration from 'dayjs/esm/plugin/duration'
 import relativeTime from 'dayjs/esm/plugin/relativeTime'
 
 dayjs.locale('zh-cn')
 dayjs.extend(calendar)
 dayjs.extend(relativeTime)
+dayjs.extend(duration)
 
 export const chineseTime = (
   time: number,
@@ -29,3 +31,6 @@ export const chineseTime = (
     sameElse: 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm'), // Everything else ( 17/10/2011 )
   })
 }
+
+export const chineseDuration = (seconds: number) =>
+  dayjs.duration({ seconds }).humanize()
