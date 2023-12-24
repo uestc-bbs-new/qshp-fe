@@ -76,7 +76,7 @@ function Thread() {
   const [totalPages, setTotalPages] = useState(1)
   const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
 
-  const initQuery = () => {
+  const initQuery = (threadChanged?: boolean) => {
     const authorId = searchParams.get('authorid')
     const orderType = searchParams.get('ordertype')
     return {
@@ -84,8 +84,8 @@ function Thread() {
       page: parseInt(searchParams.get('page') || '1') || 1,
       author_id: (authorId && parseInt(authorId)) || undefined,
       order_type: orderType || undefined,
-      thread_details: !threadDetails,
-      forum_details: !forumDetails,
+      thread_details: threadChanged || !threadDetails,
+      forum_details: threadChanged || !forumDetails,
     }
   }
 
@@ -170,11 +170,13 @@ function Thread() {
   }, [info])
 
   useEffect(() => {
-    setThreadDetails(undefined)
-    setForumDetails(undefined)
-  }, [thread_id])
-  useEffect(() => {
-    setQuery(initQuery())
+    let threadChanged = false
+    if (thread_id != query.thread_id) {
+      setThreadDetails(undefined)
+      setForumDetails(undefined)
+      threadChanged = true
+    }
+    setQuery(initQuery(threadChanged))
     refetch()
   }, [thread_id, searchParams, replyRefresh, state.user.uid])
 

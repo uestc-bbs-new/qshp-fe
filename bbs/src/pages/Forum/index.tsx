@@ -184,7 +184,7 @@ function Forum() {
   const [forumDetails, setForumDetails] = useState<ForumDetails | undefined>(
     undefined
   )
-  const initQuery = () => {
+  const initQuery = (forumChanged?: boolean) => {
     const sortBy = searchParams.get('sortby') || '1'
     const typeId = searchParams.get('typeid')
     return {
@@ -192,7 +192,7 @@ function Forum() {
       page: parseInt(searchParams.get('page') || '1') || 1,
       sort_by: parseInt(sortBy) || 1,
       type_id: (typeId && parseInt(typeId)) || undefined,
-      forum_details: !forumDetails,
+      forum_details: forumChanged || !forumDetails,
     }
   }
   const [query, setQuery] = useState(initQuery())
@@ -219,7 +219,14 @@ function Forum() {
   })
 
   useEffect(() => {
-    setQuery(initQuery())
+    setForumDetails(undefined)
+  }, [forumId])
+  useEffect(() => {
+    let forumChanged = false
+    if (forumId != query.forum_id) {
+      forumChanged = true
+    }
+    setQuery(initQuery(forumChanged))
     refetch()
   }, [forumId, searchParams, state.user.uid])
 
