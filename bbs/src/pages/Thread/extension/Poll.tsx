@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react'
 
 import {
-  Box,
+  Alert,
   Button,
   Checkbox,
   Divider,
   FormControlLabel,
   Radio,
   RadioGroup,
+  Snackbar,
   Stack,
   Typography,
 } from '@mui/material'
@@ -17,6 +18,7 @@ import {
   ThreadPollDetails,
   ThreadPollOption,
 } from '@/common/interfaces/response'
+import { useSnackbar } from '@/components/Snackbar'
 import { chineseDuration } from '@/utils/dayjs'
 
 const PollExtension = ({ threadDetails }: { threadDetails?: Thread }) => (
@@ -38,6 +40,11 @@ const Poll = ({
   const ended = !!poll.expiration && remainingSeconds <= 0
   const selectedOptions = useRef<{ [option_id: number]: boolean }>({})
   const [selectCount, setSelectedCount] = useState(0)
+  const {
+    props: snackbarProps,
+    message: snackbarMessage,
+    show: showError,
+  } = useSnackbar()
 
   const handleChange = (option_id: number, checked: boolean) => {
     selectedOptions.current[option_id] = checked
@@ -49,8 +56,19 @@ const Poll = ({
     )
   }
 
+  const vote = () => {
+    if (selectCount == 0) {
+      showError('请选择投票选项。')
+      return
+    }
+    if (poll.multiple && poll.max_choices < selectCount) {
+      showError(`最多选择 ${poll.max_choices} 项。`)
+      return
+    }
+  }
+
   return (
-    <Box my={2.5}>
+    <Stack alignItems="center" my={2.5} position="relative">
       <Stack direction="row">
         <Typography mr={1}>{poll.multiple ? '多' : '单'}选投票</Typography>
         {poll.multiple && (
@@ -89,11 +107,21 @@ const Poll = ({
         (poll.selected_options ? (
           <Typography>您已经投票，感谢您的参与！</Typography>
         ) : (
-          <Stack direction="row" mt={1}>
-            <Button variant="contained">确认投票</Button>
+          <Stack direction="row" mt={1.5}>
+            <Button variant="contained" onClick={vote}>
+              确认投票
+            </Button>
           </Stack>
         ))}
-    </Box>
+      <Snackbar
+        {...snackbarProps}
+        autoHideDuration={5000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        style={{ position: 'absolute', bottom: '60px' }}
+      >
+        <Alert severity="error">{snackbarMessage}</Alert>
+      </Snackbar>
+    </Stack>
   )
 }
 
