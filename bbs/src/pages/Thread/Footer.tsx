@@ -29,7 +29,7 @@ const Footer = ({ post, onReply }: FooterProps) => {
     }
   }
   return (
-    <Stack direction="row">
+    <Stack direction="row" mt={1}>
       <Button variant="text">点评</Button>
       <Button variant="text" onClick={onReply}>
         回复

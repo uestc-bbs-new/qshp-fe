@@ -240,6 +240,7 @@ function Thread() {
                           <>
                             <Link
                               color="inherit"
+                              className="hover:text-blue-500"
                               underline="hover"
                               to={pages.thread(
                                 item.thread_id,
@@ -259,6 +260,7 @@ function Thread() {
                             {item.position == 1 && (
                               <Link
                                 color="inherit"
+                                className="hover:text-blue-500"
                                 underline="hover"
                                 ml={2}
                                 to={pages.thread(

@@ -105,7 +105,7 @@ const Floor = ({
   const gotoLink =
     post.position == 1 ? pages.thread(post.thread_id) : pages.goto(post.post_id)
   return (
-    <Box className="py-4">
+    <Box pt={1.75} pb={1}>
       <Stack direction="row">
         <Box className="w-40 flex justify-center pr-4">
           <UserCard item={post}>
@@ -136,6 +136,8 @@ const Floor = ({
             alignItems="center"
             justifyContent="space-between"
             className="text-sm text-slate-300"
+            mt={post.position == 1 ? 0.5 : undefined}
+            mb={1}
           >
             <Stack direction="row">
               <Link color="inherit" underline="none" to={gotoLink}>
