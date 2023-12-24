@@ -27,6 +27,7 @@ import { ForumDetails } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Editor from '@/components/Editor'
 import { PostNotice } from '@/components/PostNotice'
+import { useSnackbar } from '@/components/Snackbar'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
@@ -62,8 +63,11 @@ const Edit = () => {
     return undefined
   })
   const threadTypes = selectedForum?.thread_types || []
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const {
+    props: snackbarProps,
+    message: snackbarMessage,
+    show: showError,
+  } = useSnackbar()
   const subjectRef = useRef<HTMLInputElement>()
   const anonymousRef = createRef<HTMLInputElement>()
   const [postPending, setPostPending] = useState(false)
@@ -123,13 +127,9 @@ const Edit = () => {
         setPostPending(false)
       })
   }
-  const showError = (message: string) => {
-    setSnackbarMessage(message)
-    setSnackbarOpen(true)
-  }
 
   return (
-    <Box className="flex-1" mt={2}>
+    <Box className="flex-1" mt={2} position="relative">
       <Card>
         <>
           {forumLoading ? (
@@ -187,10 +187,10 @@ const Edit = () => {
         </>
       </Card>
       <Snackbar
-        open={snackbarOpen}
-        onClose={() => setSnackbarOpen(false)}
+        {...snackbarProps}
         autoHideDuration={5000}
-        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        style={{ position: 'absolute', bottom: '60px' }}
       >
         <Alert severity="error">{snackbarMessage}</Alert>
       </Snackbar>
