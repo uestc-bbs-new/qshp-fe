@@ -29,7 +29,7 @@ export const getThreadsInfo = async ({
   forum_details?: boolean
 }) => {
   const result = await request.get<PostDetails>(
-    `/star/api/forum/v1/view/post/details`,
+    `${commonUrl}/view/post/details`,
     {
       params: {
         thread_id: thread_id,
@@ -68,7 +68,7 @@ export type PostThreadDetails = PostCommonDetails & {
 }
 
 export const postThread = (details: PostThreadDetails) => {
-  return request.post('/star/api/forum/v1/post/thread', {
+  return request.post(`${commonUrl}/post/thread`, {
     ...details,
   })
 }
@@ -79,7 +79,7 @@ export type ReplyThreadDetails = PostCommonDetails & {
 }
 
 export const replyThreads = (details: ReplyThreadDetails) => {
-  return request.post<PostDetails>(`/star/api/forum/v1/post/post`, {
+  return request.post<PostDetails>(`${commonUrl}/post/post`, {
     ...details,
     format: 2,
   })
@@ -104,13 +104,13 @@ export const votePost = (params: {
   pid?: number
   support: boolean
 }) => {
-  return request.post<boolean>(`/star/api/forum/v1/post/vote`, undefined, {
+  return request.post<boolean>(`${commonUrl}/post/vote`, undefined, {
     params,
   })
 }
 
 export const findPost = (post_id: string, thread_id?: string) => {
-  return request.get<PostPosition>(`/star/api/forum/v1/post/find`, {
+  return request.get<PostPosition>(`${commonUrl}/post/find`, {
     params: {
       tid: thread_id,
       pid: post_id,
@@ -120,12 +120,12 @@ export const findPost = (post_id: string, thread_id?: string) => {
 
 /** 获取用户信息 */
 export const getUserInfo = (uid: number) => {
-  return request.get<UserInfos>(`/star/api/forum/v1/view/profile/` + uid)
+  return request.get<UserInfos>(`${commonUrl}/view/profile/` + uid)
 }
 
 /** 模糊查询用户名 */
 export const getUsername = (key: string) => {
   return request.get<UserNameFind>(
-    `/star/api/forum/v1/global/search/at?username=${key}&page=${1}&pagesize=${20}`
+    `${commonUrl}/global/search/at?username=${key}&page=${1}&pagesize=${20}`
   )
 }
