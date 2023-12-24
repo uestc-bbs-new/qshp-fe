@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { MarkunreadOutlined } from '@mui/icons-material'
 import { Badge, Box, Divider, MenuItem } from '@mui/material'
@@ -12,7 +11,6 @@ import { MenuItemLink } from '../Link'
 
 const MessageTabs = () => {
   const [value, setValue] = useState(0)
-  const navigate = useNavigate()
   const { state } = useAppState()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

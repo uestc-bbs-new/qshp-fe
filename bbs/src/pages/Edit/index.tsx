@@ -199,7 +199,7 @@ const Edit = () => {
         selectedFid={selectedForum?.fid}
         onCompleted={(fid: number | undefined) => {
           if (fid != selectedForum?.fid) {
-            navigate(`/post/${fid}`)
+            navigate(pages.post(fid))
           }
           setOpenForumSelect(false)
         }}

@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import { Add, Menu } from '@mui/icons-material'
 import { MeetingRoomTwoTone } from '@mui/icons-material'
 import {
@@ -22,7 +20,6 @@ import SearchBar from './Search'
 import UserMenu from './UserMenu'
 
 const Options = ({ state }: { state: State }) => {
-  const navigate = useNavigate()
   const activeRoute = useActiveRoute()
   const fid =
     (activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
