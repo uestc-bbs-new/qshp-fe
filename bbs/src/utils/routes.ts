@@ -36,21 +36,24 @@ const withSearchAndHash = (
   return baseUrl
 }
 
-const thread = (
-  thread_id: number,
-  query?: URLSearchParams,
-  hashValue?: string
-) => withSearchAndHash(`/thread/${thread_id}`, query, hashValue)
-
-const forum = (forum_id: number, query?: URLSearchParams) =>
-  withSearchAndHash(`/forum/${forum_id}`, query)
-
-const goto = (post_id: number) => `/goto/${post_id}`
+type SettingsSubPage = 'profile' | 'privacy' | 'password'
+type MessagesSubPage = undefined
 
 export const pages = {
-  thread,
-  forum,
-  goto,
+  index: () => `/`,
+
+  thread: (thread_id: number, query?: URLSearchParams, hashValue?: string) =>
+    withSearchAndHash(`/thread/${thread_id}`, query, hashValue),
+  forum: (forum_id: number, query?: URLSearchParams) =>
+    withSearchAndHash(`/forum/${forum_id}`, query),
+  goto: (post_id: number) => `/goto/${post_id}`,
+  post: (forum_id?: number) => `/post${forum_id ? `/${forum_id}` : ''}`,
+
+  messages: (subPage?: MessagesSubPage) =>
+    `/messages${subPage ? `/${subPage}` : ''}`,
+
+  settings: (subPage?: SettingsSubPage) =>
+    `/settings${subPage ? `/${subPage}` : ''}`,
 }
 
 export { useActiveRoute }

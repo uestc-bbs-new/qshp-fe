@@ -32,10 +32,10 @@ const router = createBrowserRouter([
         element: <Thread />,
       },
       { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
-      { path: '/message', element: <Message /> },
+      { path: '/messages', id: 'messages', element: <Message /> },
       {
-        path: '/setting/:id?',
-        id: 'setting',
+        path: '/settings/:id?',
+        id: 'settings',
         element: <Setting />,
       },
     ],

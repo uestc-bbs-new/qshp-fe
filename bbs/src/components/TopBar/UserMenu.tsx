@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import {
   DarkMode,
   LightMode,
@@ -22,9 +20,11 @@ import { signOut } from '@/apis/common'
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
+import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
 import Avatar from '../Avatar'
+import { MenuItemLink } from '../Link'
 
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
@@ -47,7 +47,6 @@ const MenuContent = () => {
       })
     }
   }
-  const navigate = useNavigate()
   return (
     <Box className="py-2">
       <MenuItem>
@@ -58,9 +57,10 @@ const MenuContent = () => {
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
-        onClick={() =>
-          (window.location.href = `${siteRoot}/forum.php?mod=collection`)
-        }
+        component={MenuItemLink}
+        to={`${siteRoot}/forum.php?mod=collection`}
+        external
+        target="_blank"
       >
         <ListItemIcon>
           <SavedSearch fontSize="small" />
@@ -86,7 +86,7 @@ const MenuContent = () => {
         切换账号
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem onClick={() => navigate({ pathname: '/setting' })}>
+      <MenuItem component={MenuItemLink} to={pages.settings()}>
         <ListItemIcon>
           <Settings fontSize="small" />
         </ListItemIcon>

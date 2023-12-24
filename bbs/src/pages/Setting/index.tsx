@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 
 import Link from '@/components/Link'
+import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
 import PasswordSecurity from './PasswordSecurity'
@@ -19,7 +20,7 @@ import Profile from './Profile'
 
 const listItems = [
   {
-    link: '/setting/profile',
+    link: pages.settings('profile'),
     name: '个人资料',
     external: false,
     Component: Profile,
@@ -35,13 +36,13 @@ const listItems = [
     external: true,
   },
   {
-    link: '/setting/privacy',
+    link: pages.settings('privacy'),
     name: '隐私筛选',
     external: false,
     Component: PrivacyFilter,
   },
   {
-    link: '/setting/password',
+    link: pages.settings('password'),
     name: '密码安全',
     external: false,
     Component: PasswordSecurity,

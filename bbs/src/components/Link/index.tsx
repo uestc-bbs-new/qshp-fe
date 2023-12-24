@@ -11,6 +11,7 @@ export type LinkProps = MuiLinkProps & {
   to?: string
   preventScrollReset?: boolean
   external?: boolean
+  state?: any
 }
 
 const Link = ({ to, external, ...other }: LinkProps) => {

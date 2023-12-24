@@ -28,18 +28,8 @@ const Options = ({ state }: { state: State }) => {
     (activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
     state.activeForum?.can_post_thread
       ? state.activeForum?.fid
-      : null
-  const post = () => {
-    if (fid) {
-      navigate(`/post/${fid}`, {
-        state: {
-          forum: state.activeForum,
-        },
-      })
-    } else {
-      navigate('/post')
-    }
-  }
+      : undefined
+  const postLink = pages.post(fid)
 
   return (
     <Stack
@@ -55,7 +45,9 @@ const Options = ({ state }: { state: State }) => {
           className="ml-3 bg-white bg-opacity-40"
           variant="contained"
           startIcon={<Add />}
-          onClick={post}
+          component={Link}
+          to={postLink}
+          state={fid && state.activeForum}
         >
           发帖
         </Button>
@@ -115,7 +107,7 @@ const TopBar = () => {
           >
             <Menu />
           </IconButton>
-          <Link to="/" className="text-white">
+          <Link to={pages.index()} className="text-white">
             <img
               src={logoImg}
               alt="logo"

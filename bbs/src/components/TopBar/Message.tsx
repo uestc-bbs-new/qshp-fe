@@ -6,6 +6,9 @@ import { Badge, Box, Divider, MenuItem } from '@mui/material'
 
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
+
+import { MenuItemLink } from '../Link'
 
 const MessageTabs = () => {
   const [value, setValue] = useState(0)
@@ -22,7 +25,8 @@ const MessageTabs = () => {
       className="p-2 w-40 min-w-fit"
     >
       <MenuItem
-        onClick={() => navigate('/message')}
+        component={MenuItemLink}
+        to={pages.messages()}
         className="flex justify-between"
       >
         提醒{' '}
@@ -30,7 +34,8 @@ const MessageTabs = () => {
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
-        onClick={() => navigate('/message')}
+        component={MenuItemLink}
+        to={pages.messages()}
         className="flex justify-between"
       >
         站内信 <Badge color="warning" badgeContent={state.user.new_pm} />
