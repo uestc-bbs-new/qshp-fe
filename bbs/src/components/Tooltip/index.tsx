@@ -7,8 +7,11 @@ const Tooltip = ({ children, title, ...other }: TooltipProps) => {
   return (
     <MuiToolTip
       title={title}
+      {...other}
       PopperProps={{
+        ...other.PopperProps,
         sx: {
+          ...other.PopperProps?.sx,
           '& .MuiTooltip-tooltip': {
             backgroundColor: theme.palette.background.paper,
             padding: 0,
@@ -18,7 +21,6 @@ const Tooltip = ({ children, title, ...other }: TooltipProps) => {
           },
         },
       }}
-      {...other}
     >
       <div>{children}</div>
     </MuiToolTip>

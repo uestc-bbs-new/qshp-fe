@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { createRef, useEffect, useState } from 'react'
 
 import { Close } from '@mui/icons-material'
 import {
@@ -11,7 +11,6 @@ import {
   Grid,
   IconButton,
   ListItemText,
-  Menu,
   MenuItem,
   Stack,
   Typography,
@@ -20,6 +19,7 @@ import {
 
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
+import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
@@ -89,21 +89,9 @@ export const ForumSelect = ({
   useEffect(() => {
     setFid(selectedFid)
   }, [selectedFid])
-  const [subForumsOpen, setSubForumsOpen] = useState<{
-    [fid: number]: boolean
-  }>({})
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const onChooseForum = (
-    e: React.MouseEvent<HTMLElement>,
-    forum: Forum,
-    noSub?: boolean
-  ) => {
-    if (forum.children?.length && !noSub) {
-      setAnchorEl(e.currentTarget)
-      setSubForumsOpen(Object.assign({}, subForumsOpen, { [forum.fid]: true }))
-    } else {
-      setSubForumsOpen({})
+  const onChooseForum = (forum: Forum, noSub?: boolean) => {
+    if (!forum.children?.length || noSub) {
       onCompleted(forum.fid)
     }
   }
@@ -143,58 +131,12 @@ export const ForumSelect = ({
                 {group.children
                   ?.filter((item) => item.name)
                   .map((item, index) => (
-                    <Grid item rowSpacing={0} xs={3} key={index}>
-                      <Button
-                        size="large"
-                        color={
-                          isForumOrChildrenSelected(item, fid)
-                            ? 'success'
-                            : 'primary'
-                        }
-                        disabled={!canPostThreadInForumOrChildren(item)}
-                        onClick={(e) => onChooseForum(e, item)}
-                      >
-                        {item.name}
-                      </Button>
-                      {!!item.children?.length && (
-                        <Menu
-                          open={!!subForumsOpen[item.fid]}
-                          onClose={() =>
-                            setSubForumsOpen(
-                              Object.assign({}, subForumsOpen, {
-                                [item.fid]: false,
-                              })
-                            )
-                          }
-                          anchorEl={anchorEl}
-                        >
-                          {(item.can_post_thread
-                            ? [
-                                <MenuItem
-                                  key="main forum"
-                                  selected={item.fid == fid}
-                                  onClick={(e) => onChooseForum(e, item, true)}
-                                >
-                                  {item.name}
-                                </MenuItem>,
-                                <Divider key="divider" />,
-                              ]
-                            : []
-                          ).concat(
-                            item.children.map((sub, index) => (
-                              <MenuItem
-                                key={index}
-                                selected={sub.fid == fid}
-                                disabled={!sub.can_post_thread}
-                                onClick={(e) => onChooseForum(e, sub)}
-                              >
-                                {sub.name}
-                              </MenuItem>
-                            ))
-                          )}
-                        </Menu>
-                      )}
-                    </Grid>
+                    <ForumButton
+                      key={index}
+                      item={item}
+                      fid={fid}
+                      onChooseForum={onChooseForum}
+                    />
                   ))}
               </Grid>
             </Box>
@@ -202,5 +144,90 @@ export const ForumSelect = ({
         ))}
       </DialogContent>
     </Dialog>
+  )
+}
+
+const ForumButton = ({
+  item,
+  fid,
+  onChooseForum,
+}: {
+  item: Forum
+  fid?: number
+  onChooseForum: (forum: Forum, noSub?: boolean) => void
+}) => {
+  const buttonRef = createRef<HTMLButtonElement>()
+  const button = (
+    <Button
+      size="large"
+      color={isForumOrChildrenSelected(item, fid) ? 'success' : 'primary'}
+      disabled={!canPostThreadInForumOrChildren(item)}
+      onClick={() => onChooseForum(item)}
+      ref={buttonRef}
+    >
+      {item.name}
+    </Button>
+  )
+  return (
+    <Grid item rowSpacing={0} xs={3}>
+      {item.children?.length ? (
+        <Tooltip
+          placement="bottom-start"
+          TransitionProps={{ timeout: 500 }}
+          PopperProps={{
+            sx: {
+              // HACK: We have to write this to override MUI's default offset.
+              '&[data-popper-placement] .MuiTooltip-tooltipPlacementBottom': {
+                marginTop: '7px',
+              },
+            },
+            anchorEl: {
+              getBoundingClientRect: () => {
+                const buttonRect = buttonRef.current?.getBoundingClientRect()
+                return new DOMRect(
+                  // -9999 to avoid flashing at (0, 0) on closing the dialog.
+                  buttonRect?.x || -9999,
+                  buttonRect?.y || -9999,
+                  0,
+                  0
+                )
+              },
+            },
+          }}
+          title={
+            <>
+              {(item.can_post_thread
+                ? [
+                    <MenuItem
+                      key="main forum"
+                      selected={item.fid == fid}
+                      onClick={() => onChooseForum(item, true)}
+                    >
+                      {item.name}
+                    </MenuItem>,
+                    <Divider key="divider" />,
+                  ]
+                : []
+              ).concat(
+                item.children.map((sub, index) => (
+                  <MenuItem
+                    key={index}
+                    selected={sub.fid == fid}
+                    disabled={!sub.can_post_thread}
+                    onClick={() => onChooseForum(sub)}
+                  >
+                    {sub.name}
+                  </MenuItem>
+                ))
+              )}
+            </>
+          }
+        >
+          {button}
+        </Tooltip>
+      ) : (
+        button
+      )}
+    </Grid>
   )
 }
