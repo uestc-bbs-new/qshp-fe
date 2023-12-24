@@ -9,31 +9,28 @@ interface Props {
   className?: string
 }
 
-const Chip = ({ text, size, type = 'plate', className }: Props) => {
-  const typographyClassName = {
-    small: 'px-1',
-    medium: 'px-2',
-    large: 'px-3',
-  }[size || 'medium']
+const Chip = ({ text, size, type = 'threadType', className }: Props) => {
+  const size2 = size || 'medium'
   const typographyFontSize = size == 'large' ? 13 : 11
   return (
-    <Box className={`inline-block ${className} pl-1`}>
-      <Box
-        className={`mr-2 rounded text-white`}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: chipColor(text, type),
-        }}
+    <Box
+      mr={{ small: 0.5, medium: 0.5, large: 1 }[size2]}
+      className={`rounded text-white ${className}`}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: chipColor('background', type),
+      }}
+    >
+      <Typography
+        px={{ small: 0.6, medium: 0.6, large: 1.25 }[size2]}
+        py={{ small: 0.15, medium: 0.15, large: 0.5 }[size2]}
+        variant="subtitle2"
+        fontSize={typographyFontSize}
+        sx={{ color: chipColor('text', type) }}
       >
-        <Typography
-          variant="subtitle2"
-          className={typographyClassName}
-          fontSize={typographyFontSize}
-        >
-          {text}
-        </Typography>
-      </Box>
+        {text}
+      </Typography>
     </Box>
   )
 }

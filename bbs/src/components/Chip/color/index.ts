@@ -1,16 +1,21 @@
-const levelColor = (name: string) => {
-  return '#fff'
-}
-
-const plateColor = (name: string) => {
-  return 'rgb(100,116,139)'
+const defaultMap = (name: string) => (name == 'background' ? '#fff' : undefined)
+const colorMap: {
+  [type: string]: string | ((name: string) => string | undefined)
+} = {
+  threadType: (name: string) =>
+    name == 'background' ? 'rgba(77, 145, 245, 0.3)' : '#303133',
+  level: defaultMap,
 }
 
 const chipColor = (name: string, type: string) => {
-  if (type === 'level') {
-    return levelColor(name)
+  const result = colorMap[type]
+  if (typeof result == 'function') {
+    return result(name)
   }
-  return plateColor(name)
+  if (typeof result == 'string') {
+    return result
+  }
+  return defaultMap(name)
 }
 
 export default chipColor

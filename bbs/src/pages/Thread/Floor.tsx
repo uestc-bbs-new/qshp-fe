@@ -48,7 +48,7 @@ function PostSubject({
               )
             }
           >
-            <Chip text={type.name} />
+            <Chip text={type.name} size="large" />
           </Link>
         )}
         <Typography variant="h6">{post.subject}</Typography>
