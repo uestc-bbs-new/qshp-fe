@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material'
 
 import Card from '@/components/Card'
 
-const Message = () => {
+const Messages = () => {
   return (
     <Box className="flex-1">
       <Card>
@@ -12,4 +12,4 @@ const Message = () => {
   )
 }
 
-export default Message
+export default Messages

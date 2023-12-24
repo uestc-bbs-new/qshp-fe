@@ -49,7 +49,7 @@ const listItems = [
   },
 ]
 
-const Setting = () => {
+const Settings = () => {
   const location = useLocation()
   const [selectedIndex, setSelectedIndex] = useState(
     listItems.findIndex(
@@ -110,4 +110,4 @@ const Setting = () => {
     </Box>
   )
 }
-export default Setting
+export default Settings

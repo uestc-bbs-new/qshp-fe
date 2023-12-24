@@ -5,9 +5,9 @@ import Forum from '@/pages/Forum'
 import Goto from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
-import Message from '@/pages/Message'
+import Messages from '@/pages/Messages'
 import Search from '@/pages/Search'
-import Setting from '@/pages/Setting'
+import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 
 // import NotFound from '@/pages/ErrorPage'
@@ -32,11 +32,11 @@ const router = createBrowserRouter([
         element: <Thread />,
       },
       { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
-      { path: '/messages', id: 'messages', element: <Message /> },
+      { path: '/messages', id: 'messages', element: <Messages /> },
       {
         path: '/settings/:id?',
         id: 'settings',
-        element: <Setting />,
+        element: <Settings />,
       },
     ],
   },
