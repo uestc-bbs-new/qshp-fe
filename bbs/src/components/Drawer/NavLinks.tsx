@@ -17,6 +17,7 @@ import {
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
 type NavLink = {
@@ -144,7 +145,7 @@ const Sections = ({ data }: { data: Forum[] }) => {
         </List>
       ) : (
         <List style={{ color: '#7082a7' }}>
-          <Link to="/" underline="none" color="inherit">
+          <Link to={pages.index()} underline="none" color="inherit">
             <ListItemButton>
               <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
               <ListItemText>

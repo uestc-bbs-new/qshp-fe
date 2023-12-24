@@ -45,7 +45,7 @@ const SubForums = ({ children }: { children: ForumType[] }) => {
                     alignItems="center"
                   >
                     <Stack direction="row" alignItems="center">
-                      <Link to={`/forum/${child.fid}`}>
+                      <Link to={pages.forum(child.fid)}>
                         <Stack direction="row" alignItems="center">
                           <ForumOutlined fontSize="large" className="mr-4" />
                           <Typography variant="h6">{child.name}</Typography>

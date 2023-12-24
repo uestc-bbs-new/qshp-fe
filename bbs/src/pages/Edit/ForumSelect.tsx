@@ -21,6 +21,7 @@ import {
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
 
 const canPostThreadInForumOrChildren = (forum: Forum) => {
   return (
@@ -59,7 +60,7 @@ const ForumLink = ({
 
   return (
     <Link
-      to={`/post/${fid}`}
+      to={pages.post(fid)}
       onClick={(e) => {
         e.preventDefault()
         onClick(fid)

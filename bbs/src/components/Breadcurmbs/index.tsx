@@ -31,7 +31,7 @@ const forum = (state: State) => [
     forum.top ? (
       <Typography key={index}>{forum.name}</Typography>
     ) : (
-      <StyledRouterLink key={index} to={`/forum/${forum.forum_id}`}>
+      <StyledRouterLink key={index} to={pages.forum(forum.forum_id)}>
         {forum.name}
       </StyledRouterLink>
     )
@@ -49,7 +49,7 @@ const Breadcrumbs = () => {
 
   return (
     <MuiBreadcrumbs>
-      <StyledRouterLink color="inherit" to="/">
+      <StyledRouterLink color="inherit" to={pages.index()}>
         首页
       </StyledRouterLink>
       {['forum', 'thread', 'post'].includes(activeRoute?.id || '') &&
