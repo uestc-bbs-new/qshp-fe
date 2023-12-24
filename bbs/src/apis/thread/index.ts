@@ -2,6 +2,7 @@ import {
   PostDetails,
   PostDetailsByPostId,
   PostPosition,
+  ThreadPollDetails,
   UserInfos,
   UserNameFind,
 } from '@/common/interfaces/response'
@@ -115,6 +116,13 @@ export const findPost = (post_id: string, thread_id?: string) => {
       tid: thread_id,
       pid: post_id,
     },
+  })
+}
+
+export const pollVote = (thread_id: number, options: number[]) => {
+  return request.post<ThreadPollDetails>(`${commonUrl}/thread/poll/vote`, {
+    thread_id,
+    options,
   })
 }
 

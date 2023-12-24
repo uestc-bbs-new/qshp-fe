@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { pollVote } from '@/apis/thread'
 import {
   Thread,
   ThreadPollDetails,
@@ -24,21 +25,24 @@ import { chineseDuration } from '@/utils/dayjs'
 const PollExtension = ({ threadDetails }: { threadDetails?: Thread }) => (
   <>
     {threadDetails?.poll && (
-      <Poll threadDetails={threadDetails} poll={threadDetails.poll} />
+      <Poll threadDetails={{ ...threadDetails, poll: threadDetails.poll }} />
     )}
   </>
 )
 
+type WithRequiredProperty<Type, Key extends keyof Type> = Type & {
+  [Property in Key]-?: Type[Property]
+}
+
 const Poll = ({
   threadDetails,
-  poll,
 }: {
-  threadDetails: Thread
-  poll: ThreadPollDetails
+  threadDetails: WithRequiredProperty<Thread, 'poll'>
 }) => {
+  const [poll, setPoll] = useState(threadDetails.poll)
   const remainingSeconds = poll.expiration - Math.floor(Date.now() / 1000)
   const ended = !!poll.expiration && remainingSeconds <= 0
-  const selectedOptions = useRef<{ [option_id: number]: boolean }>({})
+  const selectedOptions = useRef(new Map<number, boolean>())
   const [selectCount, setSelectedCount] = useState(0)
   const {
     props: snackbarProps,
@@ -47,16 +51,17 @@ const Poll = ({
   } = useSnackbar()
 
   const handleChange = (option_id: number, checked: boolean) => {
-    selectedOptions.current[option_id] = checked
-    setSelectedCount(
-      Object.entries(selectedOptions.current).reduce(
-        (count, [_, checked]) => count + (checked ? 1 : 0),
-        0
-      )
-    )
+    selectedOptions.current.set(option_id, checked)
+    let count = 0
+    for (const [_, checked] of selectedOptions.current) {
+      if (checked) {
+        ++count
+      }
+    }
+    setSelectedCount(count)
   }
 
-  const vote = () => {
+  const vote = async () => {
     if (selectCount == 0) {
       showError('请选择投票选项。')
       return
@@ -65,6 +70,14 @@ const Poll = ({
       showError(`最多选择 ${poll.max_choices} 项。`)
       return
     }
+    setPoll(
+      await pollVote(
+        threadDetails.thread_id,
+        Array.from(selectedOptions.current.entries())
+          .filter(([_, checked]) => checked)
+          .map(([optionId, _]) => optionId)
+      )
+    )
   }
 
   return (
@@ -96,23 +109,24 @@ const Poll = ({
             ended={ended}
             checked={
               poll.selected_options?.includes(option.id) ||
-              selectedOptions.current[option.id]
+              !!selectedOptions.current.get(option.id)
             }
             noMoreChoices={poll.multiple && selectCount >= poll.max_choices}
             onChange={handleChange}
           />
         ))}
       </PollOptionsContainer>
-      {!ended &&
-        (poll.selected_options ? (
-          <Typography>您已经投票，感谢您的参与！</Typography>
-        ) : (
-          <Stack direction="row" mt={1.5}>
+      {!ended && (
+        <Stack direction="row" mt={1.5}>
+          {poll.selected_options ? (
+            <Typography>您已经投票，感谢您的参与！</Typography>
+          ) : (
             <Button variant="contained" onClick={vote}>
               确认投票
             </Button>
-          </Stack>
-        ))}
+          )}
+        </Stack>
+      )}
       <Snackbar
         {...snackbarProps}
         autoHideDuration={5000}
