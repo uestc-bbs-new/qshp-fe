@@ -55,7 +55,9 @@ const ForumPagination = (props: {
   onChange: (e: React.ChangeEvent<unknown>, page: number) => void
 }) => (
   <Stack direction="row" justifyContent="center" my={1.5}>
-    <Pagination boundaryCount={3} siblingCount={1} {...props} />
+    {props.count > 1 && (
+      <Pagination boundaryCount={3} siblingCount={1} {...props} />
+    )}
   </Stack>
 )
 

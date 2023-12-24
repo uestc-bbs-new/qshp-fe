@@ -132,7 +132,7 @@ const ForumPagination = forwardRef(function ForumPagination(
   },
   ref
 ) {
-  return (
+  return count > 1 ? (
     <Pagination
       size="small"
       count={count}
@@ -150,6 +150,8 @@ const ForumPagination = forwardRef(function ForumPagination(
       }}
       ref={ref}
     />
+  ) : (
+    <></>
   )
 })
 
