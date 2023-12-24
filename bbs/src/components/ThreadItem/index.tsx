@@ -1,5 +1,6 @@
 import {
   ModeCommentOutlined,
+  Poll,
   RemoveRedEyeOutlined,
   ThumbUpAltOutlined,
 } from '@mui/icons-material'
@@ -56,7 +57,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
               direction="column"
               sx={{ minWidth: 350 }}
             >
-              <Stack direction="row">
+              <Stack direction="row" alignItems="center">
                 {!!data.type_id &&
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
@@ -70,7 +71,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                   underline="hover"
                   className="line-clamp-2"
                 >
-                  <Box>
+                  <Stack direction="row" alignItems="center">
                     <Typography
                       textAlign="justify"
                       style={{
@@ -85,7 +86,13 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                     >
                       {data.subject}
                     </Typography>
-                  </Box>
+                    {data.special == 1 && (
+                      <Poll
+                        htmlColor="#FA541C"
+                        style={{ width: '0.85em', marginLeft: '0.25em' }}
+                      />
+                    )}
+                  </Stack>
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
