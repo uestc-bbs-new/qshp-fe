@@ -170,7 +170,8 @@ const ForumButton = ({
   )
   return (
     <Grid item rowSpacing={0} xs={3}>
-      {item.children?.length ? (
+      {item.children?.length &&
+      item.children.some((subForum) => subForum.can_post_thread) ? (
         <Tooltip
           placement="bottom-start"
           TransitionProps={{ timeout: 500 }}
