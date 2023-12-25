@@ -1,5 +1,3 @@
-const react = require('eslint-plugin-react')
-
 module.exports = {
   env: {
     browser: true,
