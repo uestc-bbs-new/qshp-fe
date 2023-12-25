@@ -124,7 +124,8 @@ const RateTable = ({
       <TableHead>
         <TableRow>
           <TableCell sx={{ width: '14em' }}>
-            共 {rateStat.total_users} 人参与
+            参与用户
+            <Chip className="ml-2" text={`${rateStat.total_users}`} />
           </TableCell>
           {usedCredits.map((name, index) => (
             <TableCell
@@ -135,6 +136,12 @@ const RateTable = ({
               {name}
               {rateStat.total_credits[name] != 0 && (
                 <Chip
+                  className="ml-2"
+                  type={
+                    rateStat.total_credits[name] > 0
+                      ? undefined
+                      : 'rateNegative'
+                  }
                   text={
                     (rateStat.total_credits[name] > 0 ? '+' : '') +
                     rateStat.total_credits[name]
@@ -166,7 +173,11 @@ const RateTable = ({
               </Link>
             </TableCell>
             {usedCredits.map((name, index) => (
-              <TableCell key={index} className="text-center">
+              <TableCell
+                key={index}
+                className="text-center"
+                sx={{ color: rate.credits[name] < 0 ? '#F56C6C' : '#6AA1FF' }}
+              >
                 {rate.credits[name] > 0 && '+'}
                 {rate.credits[name]}
               </TableCell>

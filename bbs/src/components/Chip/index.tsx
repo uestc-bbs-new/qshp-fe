@@ -17,8 +17,7 @@ const Chip = ({ text, size, type = 'threadType', className }: Props) => {
       mr={{ small: 0.5, medium: 0.5, large: 1 }[size2]}
       className={`rounded text-white ${className}`}
       sx={{
-        display: 'flex',
-        alignItems: 'center',
+        display: 'inline-block',
         backgroundColor: chipColor('background', type),
       }}
     >
