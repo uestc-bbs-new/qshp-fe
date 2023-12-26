@@ -87,14 +87,22 @@ export const replyThreads = (details: ReplyThreadDetails) => {
 }
 
 export const getPostDetails = (params: {
+  threadId: number
   commentPids?: number[]
   ratePids?: number[]
   page?: number
 }) => {
   return request.get<PostDetailsByPostId>(`${commonUrl}/post/details`, {
     params: {
-      comment_pids: (params.commentPids || []).join(','),
-      rate_pids: (params.ratePids || []).join(','),
+      thread_id: params.threadId,
+      ...(params.commentPids &&
+        params.commentPids.length && {
+          comment_pids: params.commentPids.join(','),
+        }),
+      ...(params.ratePids &&
+        params.ratePids.length && {
+          rate_pids: (params.ratePids || []).join(','),
+        }),
       page: params.page,
     },
   })
@@ -123,6 +131,20 @@ export const pollVote = (thread_id: number, options: number[]) => {
   return request.post<ThreadPollDetails>(`${commonUrl}/thread/poll/vote`, {
     thread_id,
     options,
+  })
+}
+
+export const postComment = (
+  thread_id: number,
+  post_id: number,
+  message: string,
+  reply_comment_id?: number
+) => {
+  return request.post(`${commonUrl}/post/comment`, {
+    thread_id,
+    post_id,
+    message,
+    ...(reply_comment_id && { reply_comment_id }),
   })
 }
 

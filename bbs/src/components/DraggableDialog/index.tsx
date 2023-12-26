@@ -21,18 +21,18 @@ const DialogPaper = (props: PaperProps) => (
 )
 
 type DraggableDialogProps = {
-  title: React.ReactNode
+  dialogTitle: React.ReactNode
   children: React.ReactNode
 }
 
 const DraggableDialog = ({
-  title,
+  dialogTitle,
   children,
   ...props
 }: DialogProps & DraggableDialogProps) => (
   <Dialog {...props} PaperComponent={DialogPaper} aria-labelledby={handleId}>
     <DialogTitle sx={{ cursor: 'move' }} id={handleId}>
-      {title}
+      {dialogTitle}
     </DialogTitle>
     {children}
   </Dialog>

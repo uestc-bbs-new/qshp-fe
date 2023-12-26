@@ -192,7 +192,7 @@ const Floor = ({
           >
             {postDetails?.comments && (
               <PostComments
-                post_id={post.post_id}
+                post={post}
                 comments={postDetails.comments}
                 totalPages={postDetails.comment_pages || 1}
               />

@@ -14,24 +14,24 @@ import {
 } from '@mui/material'
 
 import { getPostDetails } from '@/apis/thread'
-import { PostComment } from '@/common/interfaces/response'
+import { PostComment, PostFloor } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
 
 const PostComments = ({
-  post_id,
+  post,
   comments,
   totalPages,
 }: {
-  post_id: number
+  post: PostFloor
   comments: PostComment[]
   totalPages: number
 }) => {
   const [page, setPage] = useState(1)
   const queryKey: [string, { post_id: number; page: number }] = [
     'postcomment',
-    { post_id, page },
+    { post_id: post.post_id, page },
   ]
   const { data: currentComments, isLoading } = useQuery({
     queryKey,
@@ -42,7 +42,8 @@ const PostComments = ({
       }
       const result = (
         await getPostDetails({
-          commentPids: [post_id],
+          threadId: post.thread_id,
+          commentPids: [post.post_id],
           page,
         })
       )[post_id]

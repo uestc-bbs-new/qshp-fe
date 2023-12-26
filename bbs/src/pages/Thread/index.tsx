@@ -9,23 +9,28 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 
+import { Close } from '@mui/icons-material'
 import {
   Box,
   Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
+  IconButton,
   List,
   ListItem,
   Pagination,
   Skeleton,
   Stack,
+  TextField,
+  Typography,
 } from '@mui/material'
 
 import {
   getPostDetails,
   getThreadsInfo,
   kPostPageSize,
+  postComment,
   replyThreads,
 } from '@/apis/thread'
 import {
@@ -36,6 +41,7 @@ import {
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
+import DraggableDialog from '@/components/DraggableDialog'
 import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
@@ -77,6 +83,15 @@ function Thread() {
   )
   const [totalPages, setTotalPages] = useState(1)
   const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const closeDialog = () => setDialogOpen(false)
+  const [currentDialog, setCurrentDialog] = useState<
+    'reply' | 'comment' | undefined
+  >(undefined)
+  const [dialogPending, setDialogPending] = useState(false)
+  const [commentError, setCommentError] = useState(false)
+  const activePost = useRef<PostFloor>()
+  const commentMessage = useRef<HTMLInputElement>()
 
   const initQuery = (threadChanged?: boolean) => {
     const authorId = searchParams.get('authorid')
@@ -132,7 +147,11 @@ function Thread() {
             }
           })
           if (commentPids.length || ratePids.length) {
-            const details = await getPostDetails({ commentPids, ratePids })
+            const details = await getPostDetails({
+              threadId: Number(thread_id),
+              commentPids,
+              ratePids,
+            })
             commentPids
               .concat(ratePids)
               .forEach((pid) => !details[pid] && (details[pid] = {}))
@@ -208,7 +227,27 @@ function Thread() {
     }
   }
 
-  const handleComment = (post: PostFloor) => {}
+  const handleComment = (post: PostFloor) => {
+    activePost.current = post
+    setCurrentDialog('comment')
+    setDialogPending(false)
+    setCommentError(false)
+    setDialogOpen(true)
+  }
+  const sendComment = () => {
+    if (commentMessage.current?.value && activePost.current) {
+      setDialogPending(true)
+      postComment(
+        activePost.current.thread_id,
+        activePost.current.post_id,
+        commentMessage.current.value
+      )
+        .then(closeDialog)
+        .finally(() => setDialogPending(false))
+    } else {
+      setCommentError(true)
+    }
+  }
 
   const currentlyReversed =
     query.order_type == 'reverse' ||
@@ -357,6 +396,49 @@ function Thread() {
           </Card>
         </>
       )}
+      <DraggableDialog
+        open={dialogOpen}
+        onClose={closeDialog}
+        maxWidth="md"
+        fullWidth
+        dialogTitle={
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography>
+              {currentDialog == 'comment' ? '点评' : '回复'}
+            </Typography>
+            <IconButton onClick={closeDialog}>
+              <Close />
+            </IconButton>
+          </Stack>
+        }
+      >
+        <Box px={4}>
+          {currentDialog == 'comment' ? (
+            <TextField
+              fullWidth
+              multiline
+              required
+              error={commentError}
+              helperText={commentError && '请输入内容。'}
+              inputRef={commentMessage}
+            />
+          ) : (
+            <></>
+          )}
+          <Stack direction="row" justifyContent="center" my={1}>
+            <Button
+              onClick={currentDialog == 'comment' ? sendComment : undefined}
+              disabled={dialogPending}
+            >
+              发布
+            </Button>
+          </Stack>
+        </Box>
+      </DraggableDialog>
     </Box>
   )
 }

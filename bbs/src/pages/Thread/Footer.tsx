@@ -18,6 +18,7 @@ const Footer = ({ post, onReply, onComment }: FooterProps) => {
   const vote = async (supportPost: boolean) => {
     if (
       await votePost({
+        tid: post.thread_id,
         pid: post.post_id,
         support: supportPost,
       })
