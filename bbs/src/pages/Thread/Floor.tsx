@@ -91,6 +91,7 @@ type props = {
   threadDetails?: Thread
   forumDetails?: ForumDetails
   onReply: (post: PostFloor) => void
+  onComment: (post: PostFloor) => void
 }
 
 const Floor = ({
@@ -101,6 +102,7 @@ const Floor = ({
   threadDetails,
   forumDetails,
   onReply,
+  onComment,
 }: props) => {
   const gotoLink =
     post.position == 1 ? pages.thread(post.thread_id) : pages.goto(post.post_id)
@@ -209,7 +211,11 @@ const Floor = ({
               />
             )}
           </PostExtraDetailsContainer>
-          <Footer post={post} onReply={() => onReply(post)} />
+          <Footer
+            post={post}
+            onReply={() => onReply(post)}
+            onComment={() => onComment(post)}
+          />
         </Box>
       </Stack>
     </Box>

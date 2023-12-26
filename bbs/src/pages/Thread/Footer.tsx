@@ -8,9 +8,10 @@ import { PostFloor } from '@/common/interfaces/response'
 type FooterProps = {
   post: PostFloor
   onReply?: () => void
+  onComment?: () => void
 }
 
-const Footer = ({ post, onReply }: FooterProps) => {
+const Footer = ({ post, onReply, onComment }: FooterProps) => {
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
 
@@ -30,7 +31,9 @@ const Footer = ({ post, onReply }: FooterProps) => {
   }
   return (
     <Stack direction="row" mt={1}>
-      <Button variant="text">点评</Button>
+      <Button variant="text" onClick={onComment}>
+        点评
+      </Button>
       <Button variant="text" onClick={onReply}>
         回复
       </Button>

@@ -208,6 +208,8 @@ function Thread() {
     }
   }
 
+  const handleComment = (post: PostFloor) => {}
+
   const currentlyReversed =
     query.order_type == 'reverse' ||
     (threadDetails?.reverse_replies && query.order_type != 'forward')
@@ -240,6 +242,7 @@ function Thread() {
                         threadDetails={threadDetails}
                         forumDetails={forumDetails}
                         onReply={handleReply}
+                        onComment={handleComment}
                         threadControls={
                           <>
                             <Link
