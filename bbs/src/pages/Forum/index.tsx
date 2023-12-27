@@ -161,21 +161,32 @@ const ThreadTypeFilter = ({
 }: {
   forumId: number
   type?: ThreadType
-}) => (
-  <Link
-    to={pages.forum(
-      forumId,
-      type &&
-        new URLSearchParams({
-          typeid: type.type_id.toString(),
-        })
-    )}
-    preventScrollReset
-    my={0.5}
-  >
-    <Chip text={type?.name || '全部'} size="large" />
-  </Link>
-)
+}) => {
+  const [searchParams, _] = useSearchParams()
+  return (
+    <Link
+      to={pages.forum(
+        forumId,
+        type &&
+          new URLSearchParams({
+            typeid: type.type_id.toString(),
+          })
+      )}
+      preventScrollReset
+      my={0.5}
+    >
+      <Chip
+        text={type?.name || '全部'}
+        size="large"
+        type={
+          (type?.type_id?.toString() || null) == searchParams.get('typeid')
+            ? 'threadTypeActive'
+            : 'threadType'
+        }
+      />
+    </Link>
+  )
+}
 
 function Forum() {
   const { state, dispatch } = useAppState()
@@ -271,7 +282,7 @@ function Forum() {
                 ref={threadListTop}
               />
               <Stack direction="row" sx={{ flexWrap: 'wrap' }} my={2.5} px={2}>
-                {(forumDetails?.thread_types || []).length > 1 && (
+                {(forumDetails?.thread_types || []).length > 0 && (
                   <ThreadTypeFilter key="all" forumId={forumId} />
                 )}
                 {forumDetails?.thread_types.map((item, index) => (

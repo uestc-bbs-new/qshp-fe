@@ -4,6 +4,8 @@ const colorMap: {
 } = {
   threadType: (name: string) =>
     name == 'background' ? 'rgba(77, 145, 245, 0.3)' : '#303133',
+  threadTypeActive: (name: string) =>
+    name == 'background' ? '#FBACA3' : '#303133',
   rateNegative: (name: string) =>
     name == 'background' ? '#F56C6C' : '#FFFFFF',
   level: defaultMap,
