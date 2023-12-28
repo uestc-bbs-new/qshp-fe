@@ -35,7 +35,6 @@ import {
 } from '@/apis/thread'
 import {
   ForumDetails,
-  PostDetailsByPostId,
   PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
@@ -54,6 +53,7 @@ import { searchParamsAssign } from '@/utils/tools'
 import Floor from './Floor'
 import { ParsePost } from './ParserPost'
 import ThreadLikes from './ThreadLikes'
+import { PostDetailsByPostIdEx } from './types'
 
 const ForumPagination = (props: {
   count: number
@@ -82,7 +82,7 @@ function Thread() {
     undefined
   )
   const [totalPages, setTotalPages] = useState(1)
-  const [postDetails, setPostDetails] = useState<PostDetailsByPostId>({})
+  const [postDetails, setPostDetails] = useState<PostDetailsByPostIdEx>({})
   const [dialogOpen, setDialogOpen] = useState(false)
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] = useState<
@@ -236,13 +236,20 @@ function Thread() {
   }
   const sendComment = () => {
     if (commentMessage.current?.value && activePost.current) {
+      const post = activePost.current
       setDialogPending(true)
-      postComment(
-        activePost.current.thread_id,
-        activePost.current.post_id,
-        commentMessage.current.value
-      )
-        .then(closeDialog)
+      postComment(post.thread_id, post.post_id, commentMessage.current.value)
+        .then(() => {
+          closeDialog()
+          setPostDetails(
+            Object.assign({}, postDetails, {
+              [post.post_id]: Object.assign({}, postDetails[post.post_id], {
+                commentsRefresh:
+                  (postDetails[post.post_id]?.commentsRefresh || 0) + 1,
+              }),
+            })
+          )
+        })
         .finally(() => setDialogPending(false))
     } else {
       setCommentError(true)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 
 import { ExpandMore } from '@mui/icons-material'
@@ -14,31 +14,40 @@ import {
 } from '@mui/material'
 
 import { getPostDetails } from '@/apis/thread'
-import { PostComment, PostFloor } from '@/common/interfaces/response'
+import { PostFloor } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
 
+import { PostExtraDetailsEx } from './types'
+
 const PostComments = ({
   post,
-  comments,
-  totalPages,
+  postDetails,
 }: {
   post: PostFloor
-  comments: PostComment[]
-  totalPages: number
+  postDetails?: PostExtraDetailsEx
 }) => {
   const [page, setPage] = useState(1)
-  const queryKey: [string, { post_id: number; page: number }] = [
+  const queryKey: [
+    string,
+    { post_id: number; page: number; refresh?: number },
+  ] = [
     'postcomment',
-    { post_id: post.post_id, page },
+    { post_id: post.post_id, page, refresh: postDetails?.commentsRefresh },
   ]
-  const { data: currentComments, isLoading } = useQuery({
+  useEffect(() => setPage(1), [postDetails?.commentsRefresh])
+  const {
+    data: currentPostDetails,
+    isLoading,
+    isPreviousData,
+  } = useQuery({
     queryKey,
+    keepPreviousData: true,
     queryFn: async ({ queryKey }) => {
       const [_, { post_id, page }] = queryKey
-      if (page == 1) {
-        return comments
+      if (page == 1 && postDetails?.comments && !postDetails?.commentsRefresh) {
+        return postDetails
       }
       const result = (
         await getPostDetails({
@@ -47,10 +56,7 @@ const PostComments = ({
           page,
         })
       )[post_id]
-      if (result?.comments?.length) {
-        return result.comments
-      }
-      throw 'no data'
+      return result
     },
   })
   return (
@@ -59,11 +65,12 @@ const PostComments = ({
         <Typography variant="h6">点评</Typography>
       </AccordionSummary>
       <AccordionDetails sx={{ paddingY: 0 }}>
-        {isLoading && page != 1
+        {(isLoading || isPreviousData) &&
+        ((page == 1 && !postDetails?.commentsRefresh) || page != 1)
           ? [...Array(10)].map((_, index) => (
               <Skeleton key={index} height={50} />
             ))
-          : currentComments?.map((comment) => {
+          : currentPostDetails?.comments?.map((comment) => {
               let time = chineseTime(comment.dateline * 1000)
               if (time.match(/^[0-9a-zA-Z]/)) {
                 time = ' ' + time
@@ -110,15 +117,16 @@ const PostComments = ({
                 </Stack>
               )
             })}
-        {totalPages > 1 && (
-          <Box pb={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, page) => setPage(page)}
-            />
-          </Box>
-        )}
+        {currentPostDetails?.comment_pages &&
+          currentPostDetails?.comment_pages > 1 && (
+            <Box pb={2}>
+              <Pagination
+                count={currentPostDetails.comment_pages}
+                page={page}
+                onChange={(_, page) => setPage(page)}
+              />
+            </Box>
+          )}
       </AccordionDetails>
     </Accordion>
   )

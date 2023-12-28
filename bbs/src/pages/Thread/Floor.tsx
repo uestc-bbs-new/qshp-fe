@@ -3,12 +3,7 @@ import React from 'react'
 import PublishIcon from '@mui/icons-material/Publish'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
-import {
-  ForumDetails,
-  PostExtraDetails,
-  PostFloor,
-  Thread,
-} from '@/common/interfaces/response'
+import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
@@ -21,6 +16,7 @@ import PostComments from './PostComments'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
 import PollExtension from './extension/Poll'
+import { PostExtraDetailsEx } from './types'
 
 function PostSubject({
   post,
@@ -87,7 +83,7 @@ type props = {
   children: React.ReactNode
   threadControls?: React.ReactNode
   post: PostFloor
-  postDetails?: PostExtraDetails
+  postDetails?: PostExtraDetailsEx
   threadDetails?: Thread
   forumDetails?: ForumDetails
   onReply: (post: PostFloor) => void
@@ -188,15 +184,15 @@ const Floor = ({
           )}
           <PostExtraDetailsContainer
             loading={!!post.has_comment && !postDetails}
-            hasContent={!!postDetails?.comments?.length}
+            hasContent={
+              !!postDetails?.comments?.length || !!postDetails?.commentsRefresh
+            }
           >
-            {postDetails?.comments && (
-              <PostComments
-                post={post}
-                comments={postDetails.comments}
-                totalPages={postDetails.comment_pages || 1}
-              />
-            )}
+            <>
+              {(postDetails?.comments || !!postDetails?.commentsRefresh) && (
+                <PostComments post={post} postDetails={postDetails} />
+              )}
+            </>
           </PostExtraDetailsContainer>
           <PostExtraDetailsContainer
             loading={!!post.has_rate && !postDetails}
