@@ -110,7 +110,6 @@ const Floor = ({
             <div>
               <Avatar
                 className="m-auto"
-                alt="Remy Sharp"
                 uid={post.author_id}
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
