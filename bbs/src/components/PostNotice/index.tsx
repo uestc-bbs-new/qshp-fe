@@ -1,5 +1,6 @@
-import { ForumDetails, PostFloor } from '@/common/interfaces/response'
-import { ParseLegacy } from '@/pages/Thread/ParserPost'
+import { ForumDetails } from '@/common/interfaces/response'
+
+import { RichTextRenderer } from '../RichText'
 
 export const PostNotice = ({
   forum,
@@ -20,8 +21,8 @@ export const PostNotice = ({
         message = mobile
           ? p.newthread_mobile
           : quick
-          ? p.newthread_quick
-          : p.newthread
+            ? p.newthread_quick
+            : p.newthread
         break
       case 'reply':
         if (mobile) {
@@ -37,10 +38,11 @@ export const PostNotice = ({
         message = p.poll
         break
     }
-  }
-  if (forum?.post_notice_format == 'bbcode' && message) {
-    // TODO(fangjue): Refactor rich text formatting in future commits.
-    return <ParseLegacy post={{ message, format: 0 } as PostFloor} />
+    if (message) {
+      return (
+        <RichTextRenderer message={message} format={forum.post_notice_format} />
+      )
+    }
   }
   return <></>
 }

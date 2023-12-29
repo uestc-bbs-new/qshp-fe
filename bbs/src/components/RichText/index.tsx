@@ -13,12 +13,7 @@ import bbcode2html from '@/utils/bbcode/bbcode'
 
 import './richtext.css'
 
-export type PropsType = {
-  message: string
-  format: number
-}
-
-export function ParseLegacy({ post }: { post: PostFloor }) {
+const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
   return (
     <div
       className="rich-text-content rich-text-content-legacy"
@@ -34,7 +29,7 @@ export function ParseLegacy({ post }: { post: PostFloor }) {
   )
 }
 
-function ParseMd({ message }: { message: string }) {
+const MarkdownPostRenderer = ({ message }: { message: string }) => {
   const { state } = useAppState()
   const el = createRef<HTMLDivElement>()
   useEffect(() => {
@@ -48,10 +43,23 @@ function ParseMd({ message }: { message: string }) {
   )
 }
 
-export function ParsePost({ post }: { post: PostFloor }) {
+export const PostRenderer = ({ post }: { post: PostFloor }) => {
   return post.format == 2 ? (
-    <ParseMd message={post.message} />
+    <MarkdownPostRenderer message={post.message} />
   ) : (
-    <ParseLegacy post={post} />
+    <LegacyPostRenderer post={post} />
   )
 }
+
+export const RichTextRenderer = ({
+  message,
+  format,
+}: {
+  message: string
+  format: 'bbcode' | 'markdown'
+}) =>
+  format == 'bbcode' ? (
+    <LegacyPostRenderer post={{ message, format: 0 } as PostFloor} />
+  ) : (
+    <MarkdownPostRenderer message={message} />
+  )

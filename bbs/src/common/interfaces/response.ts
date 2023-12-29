@@ -297,7 +297,7 @@ export type ForumDetails = ForumCommon & {
   can_post_anonymously: boolean
   announcement: string
   announcement_format: string
-  post_notice_format: string
+  post_notice_format: 'bbcode' | 'markdown'
   post_notice: PostNotice
 }
 

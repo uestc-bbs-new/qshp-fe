@@ -44,6 +44,7 @@ import DraggableDialog from '@/components/DraggableDialog'
 import Editor from '@/components/Editor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
+import { PostRenderer } from '@/components/RichText'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -51,7 +52,6 @@ import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
-import { ParsePost } from './ParserPost'
 import ThreadLikes from './ThreadLikes'
 import { PostDetailsByPostIdEx } from './types'
 
@@ -337,7 +337,7 @@ function Thread() {
                         }
                       >
                         <Box paddingRight="1.5em">
-                          <ParsePost post={item} />
+                          <PostRenderer post={item} />
                         </Box>
                         {threadDetails &&
                           item.is_first == 1 &&
