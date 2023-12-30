@@ -392,6 +392,7 @@ function Thread() {
           ) : (
             <PostEditor
               kind="reply"
+              smallAuthor
               forum={forumDetails}
               threadId={threadId}
               replyPost={replyPost}

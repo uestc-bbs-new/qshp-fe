@@ -30,23 +30,30 @@ import { PostEditorValue } from './types'
 
 export type PostEditorKind = 'newthread' | 'reply'
 
-const Author = ({ anonymous }: { anonymous: boolean }) => {
+const Author = ({
+  small,
+  anonymous,
+}: {
+  small?: boolean
+  anonymous: boolean
+}) => {
   const { state } = useAppState()
+  const size = small ? 32 : 96
   return (
-    <Box mr={2}>
+    <Stack direction={small ? 'row' : 'column'} alignItems="center" mr={2}>
       <Avatar
         uid={anonymous ? 0 : state.user.uid}
-        sx={{ width: 96, height: 96 }}
+        sx={{ width: size, height: size, mr: small ? 1 : undefined }}
         variant="rounded"
       />
-      <Typography mt={1} textAlign="center">
+      <Typography mt={small ? undefined : 1} textAlign="center">
         {anonymous ? (
           '匿名'
         ) : (
           <Link underline="hover">{state.user.username}</Link>
         )}
       </Typography>
-    </Box>
+    </Stack>
   )
 }
 
@@ -58,6 +65,7 @@ const PostEditor = ({
   postId,
   replyPost,
   onReplied,
+  smallAuthor,
 }: {
   forum?: ForumDetails
   forumLoading?: boolean
@@ -66,6 +74,7 @@ const PostEditor = ({
   postId?: number
   replyPost?: PostFloor
   onReplied?: () => void
+  smallAuthor?: boolean
 }) => {
   kind = kind || 'newthread'
   if (kind == 'reply' && !threadId) {
@@ -180,7 +189,7 @@ const PostEditor = ({
         <PostNotice forum={forum} position={kind} />
       )}
       <Stack direction="row">
-        <Author anonymous={anonymous} />
+        {!smallAuthor && <Author anonymous={anonymous} />}
         <Box flexGrow={1}>
           <ThreadPostHeader
             kind={kind}
@@ -198,7 +207,13 @@ const PostEditor = ({
           />
         </Box>
       </Stack>
-      <Box className="text-center" mt={1.5}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent={smallAuthor ? 'flex-end' : 'center'}
+        mt={1.5}
+      >
+        {smallAuthor && <Author small anonymous={anonymous} />}
         <Button
           variant="contained"
           disabled={postPending}
@@ -206,7 +221,7 @@ const PostEditor = ({
         >
           {postPending ? '请稍候...' : buttonText}
         </Button>
-      </Box>
+      </Stack>
       <Snackbar
         {...snackbarProps}
         autoHideDuration={5000}
