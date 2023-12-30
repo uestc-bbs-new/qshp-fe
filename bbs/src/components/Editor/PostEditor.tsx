@@ -25,7 +25,6 @@ const PostEditor = ({
   const navigate = useNavigate()
   const [vd, setVd] = useState<Vditor>() // editor ref
 
-  const threadTypes = forum?.thread_types || []
   const {
     props: snackbarProps,
     message: snackbarMessage,
@@ -33,6 +32,27 @@ const PostEditor = ({
   } = useSnackbar()
   const postThreadRef = useRef<Partial<PostThreadDetails>>({})
   const [postPending, setPostPending] = useState(false)
+
+  const validateBeforeNewThread = () => {
+    if (!postThreadRef.current.forum_id) {
+      showError('请选择合适的版块。')
+      return false
+    }
+    if (
+      forum?.thread_types?.length &&
+      !forum?.optional_thread_type &&
+      !postThreadRef.current.type_id
+    ) {
+      showError('请选择合适的分类。')
+      return false
+    }
+    if (!postThreadRef.current?.subject) {
+      showError('请输入标题。')
+      return false
+    }
+
+    return true
+  }
 
   useEffect(() => {
     postThreadRef.current.forum_id = forum?.fid
@@ -42,22 +62,11 @@ const PostEditor = ({
     if (postPending) {
       return
     }
-    if (!postThreadRef.current.forum_id) {
-      showError('请选择合适的版块。')
+
+    if (!validateBeforeNewThread()) {
       return
     }
-    if (
-      threadTypes.length > 0 &&
-      !forum?.optional_thread_type &&
-      !postThreadRef.current.type_id
-    ) {
-      showError('请选择合适的分类。')
-      return
-    }
-    if (!postThreadRef.current?.subject) {
-      showError('请输入标题。')
-      return
-    }
+
     const message = vd?.getValue()
     if (!message) {
       showError('请输入内容。')
@@ -67,7 +76,8 @@ const PostEditor = ({
     setPostPending(true)
     postThread({
       ...postThreadRef.current,
-      forum_id: postThreadRef.current.forum_id,
+      // |forum_id| must not be undefined because it is already validated.
+      forum_id: postThreadRef.current.forum_id as number,
       format: 2,
       message,
     })
