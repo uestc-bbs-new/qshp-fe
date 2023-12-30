@@ -152,6 +152,7 @@ function Thread() {
   )
 
   const onReplied = () => {
+    setDialogOpen(false)
     navigate(
       `${location.pathname}?${searchParamsAssign(searchParams, {
         // total + 1 because a new reply was posted just now and info is not yet refreshed.
@@ -181,25 +182,13 @@ function Thread() {
     refetch()
   }, [threadId, searchParams, replyRefresh, state.user.uid])
 
-  const replyFloor = useRef<PostFloor | undefined>(undefined)
+  const [replyPost, setReplyPost] = useState<PostFloor>()
 
   const quickReplyRef = useRef<HTMLElement>()
   const handleReply = (post: PostFloor) => {
-    replyFloor.current = post
-    let msg = post.message || ''
-
-    // 正则处理回复信息
-    const exp = /\[\/quote\]\n\n([\s\S]*)/
-    msg = exp.test(msg) ? exp.exec(msg)![1] : msg
-    //     vd?.focus()
-    //     vd?.setValue('')
-    //     vd?.insertValue(
-    //       `> ${post.author} 发表于 [${chineseTime(post.dateline * 1000, {
-    //         full: true,
-    //       })}](/goto/${post.post_id})
-    // > ${msg}\n\n`
-    //     )
-    quickReplyRef.current?.scrollIntoView()
+    setReplyPost(post)
+    setCurrentDialog('reply')
+    setDialogOpen(true)
   }
 
   const handleComment = (post: PostFloor) => {
@@ -378,27 +367,36 @@ function Thread() {
           </Stack>
         }
       >
-        <Box px={4}>
+        <Box px={2} pb={currentDialog == 'reply' ? 1.5 : undefined}>
           {currentDialog == 'comment' ? (
-            <TextField
-              fullWidth
-              multiline
-              required
-              error={commentError}
-              helperText={commentError && '请输入内容。'}
-              inputRef={commentMessage}
-            />
+            <>
+              <TextField
+                fullWidth
+                multiline
+                required
+                error={commentError}
+                helperText={commentError && '请输入内容。'}
+                inputRef={commentMessage}
+              />
+              <Stack direction="row" justifyContent="center" my={1}>
+                <Button
+                  variant="contained"
+                  onClick={currentDialog == 'comment' ? sendComment : undefined}
+                  disabled={dialogPending}
+                >
+                  发布
+                </Button>
+              </Stack>
+            </>
           ) : (
-            <></>
+            <PostEditor
+              kind="reply"
+              forum={forumDetails}
+              threadId={threadId}
+              replyPost={replyPost}
+              onReplied={onReplied}
+            />
           )}
-          <Stack direction="row" justifyContent="center" my={1}>
-            <Button
-              onClick={currentDialog == 'comment' ? sendComment : undefined}
-              disabled={dialogPending}
-            >
-              发布
-            </Button>
-          </Stack>
         </Box>
       </DraggableDialog>
     </Box>

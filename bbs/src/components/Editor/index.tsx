@@ -1,7 +1,7 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 
 import {
   Divider,
@@ -27,6 +27,7 @@ type props = IOptions & {
 
 const Editor = ({ setVd, onKeyDown, ...other }: props) => {
   const { state } = useAppState()
+  const vditorRef = createRef<HTMLDivElement>()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
   const theme = state.theme === 'light' ? undefined : 'dark'
   const smilyAnchor = useRef<HTMLElement>()
@@ -34,7 +35,10 @@ const Editor = ({ setVd, onKeyDown, ...other }: props) => {
   const closeSmily = () => setSmilyOpen(false)
   const [selectedSmilyKind, setSmilyKind] = useState(smilyData[0])
   useEffect(() => {
-    const vd = new Vditor('vditor', {
+    if (!vditorRef.current) {
+      return
+    }
+    const vd = new Vditor(vditorRef.current, {
       after: () => {
         setVditor(vd)
         setVd(vd)
@@ -77,7 +81,7 @@ const Editor = ({ setVd, onKeyDown, ...other }: props) => {
   }, [state.theme, vditor])
   return (
     <>
-      <div id="vditor" className="vditor flex-1" onKeyDown={onKeyDown} />
+      <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
       <Menu
         anchorEl={smilyAnchor.current}
         open={smilyOpen}

@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 
 import { PostThreadDetails, postThread, replyThreads } from '@/apis/thread'
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails, PostFloor } from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
@@ -54,6 +54,7 @@ const PostEditor = ({
   kind,
   threadId,
   postId,
+  replyPost,
   onReplied,
 }: {
   forum?: ForumDetails
@@ -61,6 +62,7 @@ const PostEditor = ({
   kind?: PostEditorKind
   threadId?: number
   postId?: number
+  replyPost?: PostFloor
   onReplied?: () => void
 }) => {
   kind = kind || 'newthread'
