@@ -170,13 +170,13 @@ export const customRenderers = (rendererType: string): ILuteRender => {
           } else {
             console.error('Unknown render state type', state)
           }
-        }
-        if (
-          ['SpinVditorSVDOM', 'SpinVditorIRDOM', 'Md2VditorIRDOM'].includes(
-            rendererType
-          )
-        ) {
-          return ['', Lute.WalkContinue]
+          if (
+            rendererType == 'SpinVditorSVDOM' ||
+            (['SpinVditorIRDOM', 'Md2VditorIRDOM'].includes(rendererType) &&
+              state.type == 'link')
+          ) {
+            return defaultRenderResult()
+          }
         }
         return [html, Lute.WalkContinue]
       }
