@@ -29,7 +29,7 @@ const Editor = ({ setVd, onKeyDown, ...other }: props) => {
   const { state } = useAppState()
   const vditorRef = createRef<HTMLDivElement>()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
-  const theme = state.theme === 'light' ? undefined : 'dark'
+  const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
   const smilyAnchor = useRef<HTMLElement>()
   const [smilyOpen, setSmilyOpen] = useState(false)
   const closeSmily = () => setSmilyOpen(false)
@@ -70,13 +70,12 @@ const Editor = ({ setVd, onKeyDown, ...other }: props) => {
       }),
       preview: getPreviewThemeOptions(state.theme),
       ...other,
-      theme,
+      theme: theme(),
     })
-  }, [state.theme])
-
+  }, [])
   useEffect(() => {
     if (vditor) {
-      vditor.setTheme(theme || 'classic', theme)
+      vditor.setTheme(theme(), state.theme)
     }
   }, [state.theme, vditor])
   return (
