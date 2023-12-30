@@ -9,10 +9,12 @@ const PostOptions = ({
   forum,
   initialValue,
   valueRef,
+  onChanged,
 }: {
   forum?: ForumDetails
   initialValue?: PostThreadDetails
   valueRef?: RefObject<Partial<PostThreadDetails>>
+  onChanged?: () => void
 }) => {
   const [anonymous, setAnonymous] = useState(
     initialValue?.is_anonymous || false
@@ -29,6 +31,7 @@ const PostOptions = ({
                   const checked = e.target.checked
                   setAnonymous(checked)
                   valueRef?.current && (valueRef.current.is_anonymous = checked)
+                  onChanged && onChanged()
                 }}
               />
             }

@@ -28,6 +28,26 @@ import PostOptions from './PostOptions'
 
 export type PostEditorKind = 'newthread' | 'reply'
 
+const Author = ({ anonymous }: { anonymous: boolean }) => {
+  const { state } = useAppState()
+  return (
+    <Box mr={2}>
+      <Avatar
+        uid={anonymous ? 0 : state.user.uid}
+        sx={{ width: 96, height: 96 }}
+        variant="rounded"
+      />
+      <Typography mt={1} textAlign="center">
+        {anonymous ? (
+          '匿名'
+        ) : (
+          <Link underline="hover">{state.user.username}</Link>
+        )}
+      </Typography>
+    </Box>
+  )
+}
+
 const PostEditor = ({
   forum,
   forumLoading,
@@ -49,7 +69,6 @@ const PostEditor = ({
   }
 
   const navigate = useNavigate()
-  const { state } = useAppState()
   const buttonText = kind == 'newthread' ? '发布主题' : '发表回复'
   const [vd, setVd] = useState<Vditor>() // editor ref
 
@@ -60,6 +79,9 @@ const PostEditor = ({
   } = useSnackbar()
   const postThreadRef = useRef<Partial<PostThreadDetails>>({})
   const [postPending, setPostPending] = useState(false)
+  const [anonymous, setAnonymous] = useState(
+    !!postThreadRef.current.is_anonymous
+  )
 
   const validateBeforeNewThread = () => {
     if (!postThreadRef.current.forum_id) {
@@ -142,6 +164,10 @@ const PostEditor = ({
     }
   }
 
+  const handleOptionsChange = () => {
+    setAnonymous(!!postThreadRef.current.is_anonymous)
+  }
+
   return (
     <>
       {forumLoading ? (
@@ -151,27 +177,22 @@ const PostEditor = ({
           <PostNotice forum={forum} position={kind} />
         </>
       )}
-      <ThreadPostHeader
-        kind={kind}
-        selectedForum={forum}
-        valueRef={postThreadRef}
-      />
       <Stack direction="row">
-        <Box mr={2}>
-          <Avatar
-            uid={state.user.uid}
-            sx={{ width: 96, height: 96 }}
-            variant="rounded"
+        <Author anonymous={anonymous} />
+        <Box flexGrow={1}>
+          <ThreadPostHeader
+            kind={kind}
+            selectedForum={forum}
+            valueRef={postThreadRef}
           />
-          <Link underline="hover">
-            <Typography mt={1} textAlign="center">
-              {state.user.username}
-            </Typography>
-          </Link>
+          <Editor minHeight={300} setVd={setVd} onKeyDown={handleKeyDown} />
+          <PostOptions
+            forum={forum}
+            valueRef={postThreadRef}
+            onChanged={handleOptionsChange}
+          />
         </Box>
-        <Editor minHeight={300} setVd={setVd} onKeyDown={handleKeyDown} />
       </Stack>
-      <PostOptions forum={forum} valueRef={postThreadRef} />
       <Box className="text-center">
         <Button disabled={postPending} onClick={handleSubmit}>
           {postPending ? '请稍候...' : buttonText}
