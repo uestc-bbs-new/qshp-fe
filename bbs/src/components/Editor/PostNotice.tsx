@@ -40,7 +40,7 @@ const PostNotice = ({
         message = p.poll
         break
     }
-    if (message) {
+    if (message.trim()) {
       return (
         <Box mb={2}>
           <RichTextRenderer

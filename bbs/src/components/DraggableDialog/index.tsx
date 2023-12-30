@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogProps,
   DialogTitle,
+  DialogTitleProps,
   Paper,
   PaperProps,
 } from '@mui/material'
@@ -22,16 +23,22 @@ const DialogPaper = (props: PaperProps) => (
 
 type DraggableDialogProps = {
   dialogTitle: React.ReactNode
+  dialogTitleProps?: DialogTitleProps
   children: React.ReactNode
 }
 
 const DraggableDialog = ({
   dialogTitle,
+  dialogTitleProps,
   children,
   ...props
 }: DialogProps & DraggableDialogProps) => (
   <Dialog {...props} PaperComponent={DialogPaper} aria-labelledby={handleId}>
-    <DialogTitle sx={{ cursor: 'move' }} id={handleId}>
+    <DialogTitle
+      {...dialogTitleProps}
+      sx={{ ...dialogTitleProps?.sx, cursor: 'move' }}
+      id={handleId}
+    >
       {dialogTitle}
     </DialogTitle>
     {children}

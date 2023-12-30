@@ -366,6 +366,7 @@ function Thread() {
             </IconButton>
           </Stack>
         }
+        dialogTitleProps={{ sx: { pl: 2.5, pr: 1.5, py: 1 } }}
       >
         <Box px={2} pb={currentDialog == 'reply' ? 1.5 : undefined}>
           {currentDialog == 'comment' ? (
