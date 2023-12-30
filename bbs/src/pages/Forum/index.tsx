@@ -24,6 +24,7 @@ import { getThreadList } from '@/apis/common'
 import { ForumDetails, ThreadType } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'
+import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link, { MenuItemLink } from '@/components/Link'
 import ThreadItem from '@/components/ThreadItem'
@@ -352,7 +353,7 @@ function Forum() {
               />
             </>
           )}
-          {/* <Edit></Edit> */}
+          {forumDetails && <PostEditor forum={forumDetails} />}
         </>
       )}
     </Box>
