@@ -353,7 +353,11 @@ function Forum() {
               />
             </>
           )}
-          {forumDetails && <PostEditor forum={forumDetails} />}
+          {forumDetails && (
+            <Card py={1.5}>
+              <PostEditor forum={forumDetails} />
+            </Card>
+          )}
         </>
       )}
     </Box>
