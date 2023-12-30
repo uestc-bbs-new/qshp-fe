@@ -1,18 +1,9 @@
 import Vditor from 'vditor'
 
-import { createRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Skeleton,
-  Snackbar,
-} from '@mui/material'
+import { Alert, Box, Button, Skeleton, Snackbar } from '@mui/material'
 
 import { PostThreadDetails, postThread } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/response'
@@ -22,6 +13,7 @@ import { useSnackbar } from '@/components/Snackbar'
 import { pages } from '@/utils/routes'
 
 import { ThreadPostHeader } from './PostHeader'
+import PostOptions from './PostOptions'
 
 const PostEditor = ({
   forum,
@@ -40,7 +32,6 @@ const PostEditor = ({
     show: showError,
   } = useSnackbar()
   const postThreadRef = useRef<Partial<PostThreadDetails>>({})
-  const anonymousRef = createRef<HTMLInputElement>()
   const [postPending, setPostPending] = useState(false)
 
   useEffect(() => {
@@ -79,7 +70,6 @@ const PostEditor = ({
       forum_id: postThreadRef.current.forum_id,
       format: 2,
       message,
-      is_anonymous: anonymousRef.current?.checked,
     })
       .then((result) => {
         vd?.setValue('')
@@ -101,16 +91,7 @@ const PostEditor = ({
       )}
       <ThreadPostHeader selectedForum={forum} valueRef={postThreadRef} />
       <Editor minHeight={300} setVd={setVd} />
-      <Box>
-        {forum?.can_post_anonymously && (
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox inputRef={anonymousRef} />}
-              label="匿名发帖"
-            />
-          </FormGroup>
-        )}
-      </Box>
+      <PostOptions forum={forum} valueRef={postThreadRef} />
       <Box className="text-center">
         <Button disabled={postPending} onClick={handleSubmit}>
           {postPending ? '请稍候...' : '发布主题'}
