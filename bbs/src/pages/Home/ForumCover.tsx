@@ -22,28 +22,13 @@ import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
+import { getForumCover } from './forumCoverMap'
+
 type ForumData = {
   data: Forum
 }
 
 const ForumCover = ({ data }: ForumData) => {
-  const coverImg = new URL(
-    `../../assets/forumCover/${data.name}.jpg`,
-    import.meta.url
-  )
-
-  const defaultImg = new URL(
-    `../../assets/forumCover/default.jpg`,
-    import.meta.url
-  )
-
-  let imgUrl
-  if (coverImg.pathname === '/undefined') {
-    imgUrl = defaultImg.href
-  } else {
-    imgUrl = coverImg.href
-  }
-
   return (
     <Box
       className="relative rounded text-white overflow-hidden"
@@ -52,7 +37,7 @@ const ForumCover = ({ data }: ForumData) => {
       <Box
         className="absolute top-0 left-0 h-full w-full"
         style={{
-          backgroundImage: `url(${imgUrl})`,
+          backgroundImage: `url(${getForumCover(data.fid)})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(3px)',
