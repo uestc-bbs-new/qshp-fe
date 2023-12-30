@@ -1,6 +1,4 @@
-import Vditor from 'vditor'
-
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import {
   useLocation,
@@ -13,9 +11,6 @@ import { Close } from '@mui/icons-material'
 import {
   Box,
   Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   IconButton,
   List,
   ListItem,
@@ -31,22 +26,19 @@ import {
   getThreadsInfo,
   kPostPageSize,
   postComment,
-  replyThreads,
 } from '@/apis/thread'
 import {
   ForumDetails,
   PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
-import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import DraggableDialog from '@/components/DraggableDialog'
-import Editor from '@/components/Editor'
+import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
 import { useAppState } from '@/states'
-import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
@@ -68,12 +60,12 @@ const ForumPagination = (props: {
 )
 
 function Thread() {
-  const { state } = useAppState()
-  const [vd, setVd] = useState<Vditor>()
+  const { state, dispatch } = useAppState()
+  const navigate = useNavigate()
 
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
-  const thread_id = useParams()['id'] as string
+  const threadId = parseInt(useParams()['id'] || '')
   const [replyRefresh, setReplyRefresh] = useState(0)
   const [threadDetails, setThreadDetails] = useState<ThreadType | undefined>(
     undefined
@@ -97,7 +89,7 @@ function Thread() {
     const authorId = searchParams.get('authorid')
     const orderType = searchParams.get('ordertype')
     return {
-      thread_id,
+      thread_id: threadId,
       page: parseInt(searchParams.get('page') || '1') || 1,
       author_id: (authorId && parseInt(authorId)) || undefined,
       order_type: orderType || undefined,
@@ -108,9 +100,6 @@ function Thread() {
 
   const [query, setQuery] = useState(initQuery())
 
-  const { dispatch } = useAppState()
-  const navigate = useNavigate()
-  const anonymousRef = createRef<HTMLInputElement>()
   const {
     data: info,
     error,
@@ -148,7 +137,7 @@ function Thread() {
           })
           if (commentPids.length || ratePids.length) {
             const details = await getPostDetails({
-              threadId: Number(thread_id),
+              threadId,
               commentPids,
               ratePids,
             })
@@ -162,24 +151,15 @@ function Thread() {
     }
   )
 
-  const handleSubmit = async () => {
-    if (vd?.getValue()) {
-      await replyThreads({
-        thread_id: Number(thread_id),
-        message: vd?.getValue(),
-        is_anonymous: anonymousRef.current?.checked,
-        post_id: replyFloor.current?.post_id,
-      })
-      vd?.setValue('')
-      navigate(
-        `${location.pathname}?${searchParamsAssign(searchParams, {
-          // total + 1 because a new reply was posted just now and info is not yet refreshed.
-          page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
-        })}`,
-        { preventScrollReset: true }
-      )
-      setReplyRefresh(replyRefresh + 1)
-    }
+  const onReplied = () => {
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        // total + 1 because a new reply was posted just now and info is not yet refreshed.
+        page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
+      })}`,
+      { preventScrollReset: true }
+    )
+    setReplyRefresh(replyRefresh + 1)
   }
 
   useEffect(() => {
@@ -192,14 +172,14 @@ function Thread() {
 
   useEffect(() => {
     let threadChanged = false
-    if (thread_id != query.thread_id) {
+    if (threadId != query.thread_id) {
       setThreadDetails(undefined)
       setForumDetails(undefined)
       threadChanged = true
     }
     setQuery(initQuery(threadChanged))
     refetch()
-  }, [thread_id, searchParams, replyRefresh, state.user.uid])
+  }, [threadId, searchParams, replyRefresh, state.user.uid])
 
   const replyFloor = useRef<PostFloor | undefined>(undefined)
 
@@ -211,20 +191,15 @@ function Thread() {
     // 正则处理回复信息
     const exp = /\[\/quote\]\n\n([\s\S]*)/
     msg = exp.test(msg) ? exp.exec(msg)![1] : msg
-    vd?.focus()
-    vd?.setValue('')
-    vd?.insertValue(
-      `> ${post.author} 发表于 [${chineseTime(post.dateline * 1000, {
-        full: true,
-      })}](/goto/${post.post_id})
-> ${msg}\n\n`
-    )
+    //     vd?.focus()
+    //     vd?.setValue('')
+    //     vd?.insertValue(
+    //       `> ${post.author} 发表于 [${chineseTime(post.dateline * 1000, {
+    //         full: true,
+    //       })}](/goto/${post.post_id})
+    // > ${msg}\n\n`
+    //     )
     quickReplyRef.current?.scrollIntoView()
-  }
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.ctrlKey && e.key == 'Enter') {
-      handleSubmit()
-    }
   }
 
   const handleComment = (post: PostFloor) => {
@@ -367,40 +342,20 @@ function Thread() {
             page={query.page}
             onChange={handlePageChange}
           />
-          <Card className="py-4">
-            <Stack direction="row">
-              <Avatar
-                className="mr-4"
-                alt="test"
-                uid={state.user.uid}
-                sx={{ width: 120, height: 120 }}
-                variant="rounded"
-              />
-              <Box className="flex-1" sx={scrollAnchorSx} ref={quickReplyRef}>
-                <Editor
-                  setVd={setVd}
-                  minHeight={300}
-                  onKeyDown={handleKeyDown}
-                />
-                {/* TODO(fangjue): Extract PostOptions component. */}
-                <Box>
-                  {forumDetails?.can_post_anonymously && (
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox inputRef={anonymousRef} />}
-                        label="匿名发帖"
-                      />
-                    </FormGroup>
-                  )}
+          {forumDetails && (
+            <Card className="py-4" sx={scrollAnchorSx} ref={quickReplyRef}>
+              <Stack direction="row">
+                <Box className="flex-1">
+                  <PostEditor
+                    kind="reply"
+                    forum={forumDetails}
+                    threadId={threadId}
+                    onReplied={onReplied}
+                  />
                 </Box>
-                <Box className="text-right">
-                  <Button variant="text" onClick={handleSubmit}>
-                    回复帖子
-                  </Button>
-                </Box>
-              </Box>
-            </Stack>
-          </Card>
+              </Stack>
+            </Card>
+          )}
         </>
       )}
       <DraggableDialog

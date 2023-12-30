@@ -1,3 +1,5 @@
+import { forwardRef } from 'react'
+
 import { Box, BoxProps, Divider, Typography, useTheme } from '@mui/material'
 
 type props = BoxProps & {
@@ -18,11 +20,15 @@ const CardHead = ({ header }: { header: string }) => {
   )
 }
 
-const Card = ({ children, header, tiny, className, ...other }: props) => {
+const Card = forwardRef(function Card(
+  { children, header, tiny, className, ...other }: props,
+  ref
+) {
   const theme = useTheme()
   return (
     <Box
       {...other}
+      ref={ref}
       className={`rounded-lg shadow-lg ${tiny ? 'px-2' : 'px-4'} ${className}`}
       style={{
         ...other.style,
@@ -33,6 +39,6 @@ const Card = ({ children, header, tiny, className, ...other }: props) => {
       <Box>{children}</Box>
     </Box>
   )
-}
+})
 
 export default Card

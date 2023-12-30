@@ -15,12 +15,15 @@ import { ForumDetails } from '@/common/interfaces/response'
 import { pages } from '@/utils/routes'
 
 import { ForumSelect } from './ForumSelect'
+import { PostEditorKind } from './PostEditor'
 
 export const ThreadPostHeader = ({
+  kind,
   selectedForum,
   initialValue,
   valueRef,
 }: {
+  kind: PostEditorKind
   selectedForum?: ForumDetails
   initialValue?: PostThreadDetails
   valueRef?: RefObject<Partial<PostThreadDetails>>
@@ -39,42 +42,48 @@ export const ThreadPostHeader = ({
   return (
     <>
       <Stack direction="row" className="pb-4">
-        <TextField
-          value={selectedForum?.name || '请选择版块'}
-          sx={{ minWidth: '12em' }}
-          onClick={() => setOpenForumSelect(true)}
-        />
-        {threadTypes.length > 0 && (
-          <FormControl sx={{ minWidth: `12em` }}>
-            <InputLabel id="post-typeid-label">请选择分类</InputLabel>
-            <Select
-              value={typeId}
-              label="请选择分类"
-              labelId="post-typeid-label"
-              onChange={(e) => {
-                const typeId = e.target.value
-                setTypeId(typeId)
-                valueRef?.current && (valueRef.current.type_id = typeId)
-              }}
-            >
-              {selectedForum?.thread_types.map((item) => (
-                <MenuItem key={item.name} value={item.type_id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {kind == 'newthread' && (
+          <>
+            <TextField
+              value={selectedForum?.name || '请选择版块'}
+              sx={{ minWidth: '12em' }}
+              onClick={() => setOpenForumSelect(true)}
+            />
+            {threadTypes.length > 0 && (
+              <FormControl sx={{ minWidth: `12em` }}>
+                <InputLabel id="post-typeid-label">请选择分类</InputLabel>
+                <Select
+                  value={typeId}
+                  label="请选择分类"
+                  labelId="post-typeid-label"
+                  onChange={(e) => {
+                    const typeId = e.target.value
+                    setTypeId(typeId)
+                    valueRef?.current && (valueRef.current.type_id = typeId)
+                  }}
+                >
+                  {selectedForum?.thread_types.map((item) => (
+                    <MenuItem key={item.name} value={item.type_id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </>
         )}
-        <TextField
-          fullWidth
-          label="标题"
-          value={subject}
-          onChange={(e) => {
-            const subject = e.target.value
-            setSubject(subject)
-            valueRef?.current && (valueRef.current.subject = subject)
-          }}
-        />
+        {kind != 'reply' && (
+          <TextField
+            fullWidth
+            label="标题"
+            value={subject}
+            onChange={(e) => {
+              const subject = e.target.value
+              setSubject(subject)
+              valueRef?.current && (valueRef.current.subject = subject)
+            }}
+          />
+        )}
       </Stack>
       <ForumSelect
         open={openForumSelect}

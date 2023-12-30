@@ -22,7 +22,7 @@ export const getThreadsInfo = async ({
   thread_details,
   forum_details,
 }: {
-  thread_id: string
+  thread_id: number
   page?: number
   author_id?: number
   order_type?: string
