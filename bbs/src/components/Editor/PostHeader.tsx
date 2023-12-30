@@ -41,16 +41,16 @@ export const ThreadPostHeader = ({
 
   return (
     <>
-      <Stack direction="row" className="pb-4">
+      <Stack direction="row" className={kind != 'reply' ? 'pb-4' : undefined}>
         {kind == 'newthread' && (
           <>
             <TextField
               value={selectedForum?.name || '请选择版块'}
-              sx={{ minWidth: '12em' }}
+              sx={{ minWidth: '12em', mr: 1 }}
               onClick={() => setOpenForumSelect(true)}
             />
             {threadTypes.length > 0 && (
-              <FormControl sx={{ minWidth: `12em` }}>
+              <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
                 <InputLabel id="post-typeid-label">请选择分类</InputLabel>
                 <Select
                   value={typeId}

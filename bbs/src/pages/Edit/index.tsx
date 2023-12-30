@@ -46,7 +46,7 @@ const Edit = () => {
   }, [selectedForum])
   return (
     <Box className="flex-1" mt={2} position="relative">
-      <Card py={0.5}>
+      <Card pt={0.5} pb={1.5}>
         <PostEditor forum={selectedForum} forumLoading={isFetching} />
       </Card>
     </Box>

@@ -193,8 +193,12 @@ const PostEditor = ({
           />
         </Box>
       </Stack>
-      <Box className="text-center">
-        <Button disabled={postPending} onClick={handleSubmit}>
+      <Box className="text-center" mt={1.5}>
+        <Button
+          variant="contained"
+          disabled={postPending}
+          onClick={handleSubmit}
+        >
           {postPending ? '请稍候...' : buttonText}
         </Button>
       </Box>
