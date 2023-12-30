@@ -18,7 +18,6 @@ import { Forum } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
-import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -62,12 +61,6 @@ const ForumCover = ({ data }: ForumData) => {
           </Link>
           <Typography>{data.todayposts || ''}</Typography>
         </Stack>
-
-        {/* <Stack direction="row">
-          <UserCard uid={12}>
-            <>管理员</>
-          </UserCard>
-        </Stack> */}
 
         <Stack direction="row" className="mt-4" minHeight={40}>
           {!!data.latest_thread?.thread_id && (
@@ -125,7 +118,6 @@ const ForumCover = ({ data }: ForumData) => {
 
 export const ForumGroup = ({ data }: ForumData) => {
   const [open, setOpen] = useState(true)
-  const { state } = useAppState()
   const theme = useTheme()
 
   const handleClick = () => {
