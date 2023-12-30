@@ -1,35 +1,8 @@
 // TODO: How to take the @ user information to request?
 import { getUsername } from '@/apis/thread'
 
-import { customRenderers } from './renderer'
-
-const common = {
-  cdn: '/third_party/vditor-patched-0.1',
-}
-const commonEmojiPath = {
-  emojiPath: `${common.cdn}/dist/images/emoji`,
-}
-
-type Mode = 'light' | 'dark'
-
-const previewCommon = (mode: Mode) => ({
-  theme: {
-    current: mode,
-    path: `${common.cdn}/dist/css/content-theme`,
-  },
-})
-
-export const getPreviewThemeOptions = (mode: Mode): IPreview => ({
-  ...previewCommon(mode),
-})
-
-export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
-  ...common,
-  mode,
-  ...previewCommon(mode),
-  ...commonEmojiPath,
-  renderers: customRenderers('Preview'),
-})
+import { customRenderers } from '../RichText/renderer'
+import { common, commonEmojiPath } from '../RichText/vditorConfig'
 
 const options = ({
   smilyToolbarItem,

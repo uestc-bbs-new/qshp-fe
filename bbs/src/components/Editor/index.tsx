@@ -15,9 +15,10 @@ import {
 
 import { useAppState } from '@/states'
 
-import options, { getPreviewThemeOptions } from './config'
-import { kSmilyBasePath } from './renderer'
-import { smilyData } from './smilyData'
+import { kSmilyBasePath } from '../RichText/renderer'
+import { smilyData } from '../RichText/smilyData'
+import { getPreviewThemeOptions } from '../RichText/vditorConfig'
+import options from './vditorConfig'
 
 type props = IOptions & {
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>

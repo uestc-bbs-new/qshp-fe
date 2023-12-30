@@ -5,7 +5,7 @@ import { createRef, useEffect } from 'react'
 import { Typography } from '@mui/material'
 
 import { PostFloor } from '@/common/interfaces/response'
-import { getPreviewOptions } from '@/components/Editor/config'
+import { getPreviewOptions } from '@/components/RichText/vditorConfig'
 import { useAppState } from '@/states'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

@@ -2,7 +2,7 @@ import { ForumDetails } from '@/common/interfaces/response'
 
 import { RichTextRenderer } from '../RichText'
 
-export const PostNotice = ({
+const PostNotice = ({
   forum,
   position,
   mobile,
@@ -46,3 +46,5 @@ export const PostNotice = ({
   }
   return <></>
 }
+
+export default PostNotice
