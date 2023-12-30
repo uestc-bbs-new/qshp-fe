@@ -90,26 +90,24 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const postThreadRef = useRef<PostEditorValue>({})
+  const valueRef = useRef<PostEditorValue>({})
   const [postPending, setPostPending] = useState(false)
-  const [anonymous, setAnonymous] = useState(
-    !!postThreadRef.current.is_anonymous
-  )
+  const [anonymous, setAnonymous] = useState(!!valueRef.current.is_anonymous)
 
   const validateBeforeNewThread = () => {
-    if (!postThreadRef.current.forum_id) {
+    if (!valueRef.current.forum_id) {
       showError('请选择合适的版块。')
       return false
     }
     if (
       forum?.thread_types?.length &&
       !forum?.optional_thread_type &&
-      !postThreadRef.current.type_id
+      !valueRef.current.type_id
     ) {
       showError('请选择合适的分类。')
       return false
     }
-    if (!postThreadRef.current?.subject) {
+    if (!valueRef.current?.subject) {
       showError('请输入标题。')
       return false
     }
@@ -118,7 +116,7 @@ const PostEditor = ({
   }
 
   useEffect(() => {
-    postThreadRef.current.forum_id = forum?.fid
+    valueRef.current.forum_id = forum?.fid
   }, [forum?.fid])
 
   const handleError = () => {
@@ -143,9 +141,9 @@ const PostEditor = ({
     setPostPending(true)
     if (kind == 'newthread') {
       postThread({
-        ...postThreadRef.current,
+        ...valueRef.current,
         // |forum_id| must not be undefined because it is already validated.
-        forum_id: postThreadRef.current.forum_id as number,
+        forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
       })
@@ -158,9 +156,9 @@ const PostEditor = ({
       replyThreads({
         thread_id: threadId,
         post_id: postId,
-        message: (postThreadRef.current.quoteMessagePrepend || '') + message,
+        message: (valueRef.current.quoteMessagePrepend || '') + message,
         format: 2,
-        is_anonymous: postThreadRef.current.is_anonymous,
+        is_anonymous: valueRef.current.is_anonymous,
       })
         .then(() => {
           vd?.setValue('')
@@ -178,7 +176,7 @@ const PostEditor = ({
   }
 
   const handleOptionsChange = () => {
-    setAnonymous(!!postThreadRef.current.is_anonymous)
+    setAnonymous(!!valueRef.current.is_anonymous)
   }
 
   return (
@@ -194,15 +192,15 @@ const PostEditor = ({
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}
-            valueRef={postThreadRef}
+            valueRef={valueRef}
           />
           {replyPost && replyPost.position > 1 && (
-            <ReplyQuote post={replyPost} valueRef={postThreadRef} />
+            <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
           <Editor minHeight={300} setVd={setVd} onKeyDown={handleKeyDown} />
           <PostOptions
             forum={forum}
-            valueRef={postThreadRef}
+            valueRef={valueRef}
             onChanged={handleOptionsChange}
           />
         </Box>
