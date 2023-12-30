@@ -80,7 +80,7 @@ export type ReplyThreadDetails = PostCommonDetails & {
   post_id?: number
 }
 
-export const replyThreads = (details: ReplyThreadDetails) => {
+export const replyThread = (details: ReplyThreadDetails) => {
   return request.post<PostDetails>(`${commonUrl}/post/post`, {
     ...details,
     format: 2,

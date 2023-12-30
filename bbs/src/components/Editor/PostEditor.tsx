@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { postThread, replyThreads } from '@/apis/thread'
+import { postThread, replyThread } from '@/apis/thread'
 import { ForumDetails, PostFloor } from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
@@ -153,7 +153,7 @@ const PostEditor = ({
         })
         .catch(handleError)
     } else if (kind == 'reply' && threadId) {
-      replyThreads({
+      replyThread({
         thread_id: threadId,
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
