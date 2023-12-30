@@ -177,9 +177,7 @@ const PostEditor = ({
       {forumLoading ? (
         <Skeleton height={53} />
       ) : (
-        <>
-          <PostNotice forum={forum} position={kind} />
-        </>
+        <PostNotice forum={forum} position={kind} />
       )}
       <Stack direction="row">
         <Author anonymous={anonymous} />
