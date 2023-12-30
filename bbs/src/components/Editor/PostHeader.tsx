@@ -16,6 +16,7 @@ import { pages } from '@/utils/routes'
 
 import { ForumSelect } from './ForumSelect'
 import { PostEditorKind } from './PostEditor'
+import { PostEditorValue } from './types'
 
 export const ThreadPostHeader = ({
   kind,
@@ -26,7 +27,7 @@ export const ThreadPostHeader = ({
   kind: PostEditorKind
   selectedForum?: ForumDetails
   initialValue?: PostThreadDetails
-  valueRef?: RefObject<Partial<PostThreadDetails>>
+  valueRef?: RefObject<PostEditorValue>
 }) => {
   const navigate = useNavigate()
 

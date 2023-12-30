@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { PostThreadDetails, postThread, replyThreads } from '@/apis/thread'
+import { postThread, replyThreads } from '@/apis/thread'
 import { ForumDetails, PostFloor } from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
@@ -25,6 +25,8 @@ import Avatar from '../Avatar'
 import Link from '../Link'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
+import ReplyQuote from './ReplyQuote'
+import { PostEditorValue } from './types'
 
 export type PostEditorKind = 'newthread' | 'reply'
 
@@ -79,7 +81,7 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const postThreadRef = useRef<Partial<PostThreadDetails>>({})
+  const postThreadRef = useRef<PostEditorValue>({})
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(
     !!postThreadRef.current.is_anonymous
@@ -147,7 +149,7 @@ const PostEditor = ({
       replyThreads({
         thread_id: threadId,
         post_id: postId,
-        message,
+        message: (postThreadRef.current.quoteMessagePrepend || '') + message,
         format: 2,
         is_anonymous: postThreadRef.current.is_anonymous,
       })
@@ -187,6 +189,9 @@ const PostEditor = ({
             selectedForum={forum}
             valueRef={postThreadRef}
           />
+          {replyPost && replyPost.position > 1 && (
+            <ReplyQuote post={replyPost} valueRef={postThreadRef} />
+          )}
           <Editor minHeight={300} setVd={setVd} onKeyDown={handleKeyDown} />
           <PostOptions
             forum={forum}

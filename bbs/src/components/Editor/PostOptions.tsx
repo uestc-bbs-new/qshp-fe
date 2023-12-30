@@ -5,6 +5,8 @@ import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import { PostThreadDetails } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/response'
 
+import { PostEditorValue } from './types'
+
 const PostOptions = ({
   forum,
   initialValue,
@@ -13,7 +15,7 @@ const PostOptions = ({
 }: {
   forum?: ForumDetails
   initialValue?: PostThreadDetails
-  valueRef?: RefObject<Partial<PostThreadDetails>>
+  valueRef?: RefObject<PostEditorValue>
   onChanged?: () => void
 }) => {
   const [anonymous, setAnonymous] = useState(
