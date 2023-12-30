@@ -1,6 +1,6 @@
-import { Box, Divider, Typography, useTheme } from '@mui/material'
+import { Box, BoxProps, Divider, Typography, useTheme } from '@mui/material'
 
-type props = {
+type props = BoxProps & {
   children: React.ReactElement
   header?: string
   tiny?: boolean
@@ -18,12 +18,14 @@ const CardHead = ({ header }: { header: string }) => {
   )
 }
 
-const Card = ({ children, header, tiny, className }: props) => {
+const Card = ({ children, header, tiny, className, ...other }: props) => {
   const theme = useTheme()
   return (
     <Box
+      {...other}
       className={`rounded-lg shadow-lg ${tiny ? 'px-2' : 'px-4'} ${className}`}
       style={{
+        ...other.style,
         backgroundColor: theme.palette.background.paper,
       }}
     >

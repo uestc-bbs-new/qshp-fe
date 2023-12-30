@@ -60,6 +60,7 @@ export const getThreadsInfo = async ({
 export type PostCommonDetails = {
   subject?: string
   message: string
+  format: number
   is_anonymous?: boolean
 }
 

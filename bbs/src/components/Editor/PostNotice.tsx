@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box'
+
 import { ForumDetails } from '@/common/interfaces/response'
 
 import { RichTextRenderer } from '../RichText'
@@ -40,7 +42,12 @@ const PostNotice = ({
     }
     if (message) {
       return (
-        <RichTextRenderer message={message} format={forum.post_notice_format} />
+        <Box my={2}>
+          <RichTextRenderer
+            message={message}
+            format={forum.post_notice_format}
+          />
+        </Box>
       )
     }
   }
