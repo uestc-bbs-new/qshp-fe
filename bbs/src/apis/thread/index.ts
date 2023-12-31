@@ -66,7 +66,7 @@ export type PostCommonDetails = {
 
 export type PostThreadDetails = PostCommonDetails & {
   forum_id: number
-  type_id?: string
+  type_id?: number
 }
 
 export const postThread = (details: PostThreadDetails) => {

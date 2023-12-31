@@ -45,12 +45,14 @@ export const ThreadPostHeader = ({
     <>
       <Stack direction="row" className={kind != 'reply' ? 'pb-4' : undefined}>
         {kind == 'newthread' && (
+          <TextField
+            value={selectedForum?.name || '请选择版块'}
+            sx={{ minWidth: '12em', mr: 1 }}
+            onClick={() => setOpenForumSelect(true)}
+          />
+        )}
+        {(kind == 'newthread' || kind == 'edit') && (
           <>
-            <TextField
-              value={selectedForum?.name || '请选择版块'}
-              sx={{ minWidth: '12em', mr: 1 }}
-              onClick={() => setOpenForumSelect(true)}
-            />
             {threadTypes.length > 0 && (
               <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
                 <InputLabel id="post-typeid-label">请选择分类</InputLabel>
@@ -59,7 +61,12 @@ export const ThreadPostHeader = ({
                   label="请选择分类"
                   labelId="post-typeid-label"
                   onChange={(e) => {
-                    const typeId = e.target.value
+                    let typeId: number | undefined = parseInt(
+                      e.target.value.toString() || ''
+                    )
+                    if (isNaN(typeId)) {
+                      typeId = undefined
+                    }
                     setTypeId(typeId)
                     valueRef?.current && (valueRef.current.type_id = typeId)
                   }}

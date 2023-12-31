@@ -66,7 +66,6 @@ function Thread() {
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
   const threadId = parseInt(useParams()['id'] || '')
-  const [replyRefresh, setReplyRefresh] = useState(0)
   const [threadDetails, setThreadDetails] = useState<ThreadType | undefined>(
     undefined
   )
@@ -150,18 +149,34 @@ function Thread() {
     }
   )
 
-  const onSubmitted = () => {
-    setDialogOpen(false)
-    if (currentDialog == 'reply') {
-      navigate(
-        `${location.pathname}?${searchParamsAssign(searchParams, {
-          // total + 1 because a new reply was posted just now and info is not yet refreshed.
-          page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
-        })}`,
-        { preventScrollReset: true }
-      )
+  const onSubmitted = (action?: string, fromDialog?: boolean) => {
+    if (fromDialog) {
+      setDialogOpen(false)
     }
-    setReplyRefresh(replyRefresh + 1)
+
+    if (action == 'reply') {
+      const newPage = info?.total
+        ? Math.ceil((info?.total + 1) / kPostPageSize)
+        : 1
+      if (newPage != query.page) {
+        navigate(
+          `${location.pathname}?${searchParamsAssign(searchParams, {
+            // total + 1 because a new reply was posted just now and info is not yet refreshed.
+            page: newPage,
+          })}`,
+          { preventScrollReset: true }
+        )
+      } else {
+        refetch()
+      }
+    } else if (action == 'edit') {
+      if (activePost?.position == 1) {
+        setQuery(initQuery(true))
+        refetch()
+      } else {
+        refetch()
+      }
+    }
   }
 
   useEffect(() => {
@@ -180,8 +195,7 @@ function Thread() {
       threadChanged = true
     }
     setQuery(initQuery(threadChanged))
-    refetch()
-  }, [threadId, searchParams, replyRefresh, state.user.uid])
+  }, [threadId, searchParams, state.user.uid])
 
   const [activePost, setActivePost] = useState<PostFloor>()
 
@@ -241,6 +255,20 @@ function Thread() {
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) =>
     setSearchParams(searchParamsAssign(searchParams, { page }))
 
+  const getEditorInitialValue = (
+    post: PostFloor,
+    threadDetails?: ThreadType
+  ) => {
+    return {
+      subject: post.subject,
+      message: post?.message,
+      format: post?.format,
+      is_anonymous: !!post.is_anonymous,
+      ...(threadDetails && {
+        type_id: threadDetails.type_id,
+      }),
+    }
+  }
   return (
     <Box className="flex-1" minWidth="1em">
       {isError ? (
@@ -354,7 +382,7 @@ function Thread() {
                     kind="reply"
                     forum={forumDetails}
                     threadId={threadId}
-                    onSubmitted={onSubmitted}
+                    onSubmitted={() => onSubmitted('reply')}
                   />
                 </Box>
               </Stack>
@@ -417,16 +445,14 @@ function Thread() {
               postId={activePost?.post_id}
               replyPost={currentDialog == 'reply' ? activePost : undefined}
               initialValue={
-                currentDialog == 'edit'
-                  ? {
-                      subject: activePost?.subject,
-                      message: activePost?.message,
-                      format: activePost?.format,
-                      is_anonymous: !!activePost?.is_anonymous,
-                    }
+                currentDialog == 'edit' && activePost
+                  ? getEditorInitialValue(
+                      activePost,
+                      activePost.position == 1 ? threadDetails : undefined
+                    )
                   : undefined
               }
-              onSubmitted={onSubmitted}
+              onSubmitted={() => onSubmitted(currentDialog, true)}
             />
           )}
         </Box>
