@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { postThread, replyThread } from '@/apis/thread'
+import { editPost, postThread, replyThread } from '@/apis/thread'
 import { ForumDetails, PostFloor } from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
@@ -28,7 +28,7 @@ import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
 import { PostEditorValue } from './types'
 
-export type PostEditorKind = 'newthread' | 'reply'
+export type PostEditorKind = 'newthread' | 'reply' | 'edit'
 
 const Author = ({
   small,
@@ -64,7 +64,8 @@ const PostEditor = ({
   threadId,
   postId,
   replyPost,
-  onReplied,
+  initialValue,
+  onSubmitted,
   smallAuthor,
 }: {
   forum?: ForumDetails
@@ -73,7 +74,8 @@ const PostEditor = ({
   threadId?: number
   postId?: number
   replyPost?: PostFloor
-  onReplied?: () => void
+  initialValue?: PostEditorValue
+  onSubmitted?: () => void
   smallAuthor?: boolean
 }) => {
   kind = kind || 'newthread'
@@ -82,7 +84,9 @@ const PostEditor = ({
   }
 
   const navigate = useNavigate()
-  const buttonText = kind == 'newthread' ? '发布主题' : '发表回复'
+  const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
+    kind
+  ]
   const [vd, setVd] = useState<Vditor>() // editor ref
 
   const {
@@ -90,7 +94,7 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const valueRef = useRef<PostEditorValue>({})
+  const valueRef = useRef<PostEditorValue>(initialValue || {})
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!valueRef.current.is_anonymous)
 
@@ -157,13 +161,23 @@ const PostEditor = ({
         thread_id: threadId,
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
-        format: 2,
         is_anonymous: valueRef.current.is_anonymous,
       })
         .then(() => {
           vd?.setValue('')
           setPostPending(false)
-          onReplied && onReplied()
+          onSubmitted && onSubmitted()
+        })
+        .catch(handleError)
+    } else if (kind == 'edit' && threadId && postId) {
+      editPost({
+        thread_id: threadId,
+        post_id: postId,
+        ...valueRef.current,
+        message,
+      })
+        .then(() => {
+          onSubmitted && onSubmitted()
         })
         .catch(handleError)
     }
@@ -192,12 +206,18 @@ const PostEditor = ({
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}
+            initialValue={initialValue}
             valueRef={valueRef}
           />
           {replyPost && replyPost.position > 1 && (
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
-          <Editor minHeight={300} setVd={setVd} onKeyDown={handleKeyDown} />
+          <Editor
+            minHeight={300}
+            initialValue={initialValue?.message}
+            setVd={setVd}
+            onKeyDown={handleKeyDown}
+          />
           <PostOptions
             forum={forum}
             valueRef={valueRef}

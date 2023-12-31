@@ -10,7 +10,6 @@ import {
   TextField,
 } from '@mui/material'
 
-import { PostThreadDetails } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/response'
 import { pages } from '@/utils/routes'
 
@@ -26,7 +25,7 @@ export const ThreadPostHeader = ({
 }: {
   kind: PostEditorKind
   selectedForum?: ForumDetails
-  initialValue?: PostThreadDetails
+  initialValue?: PostEditorValue
   valueRef?: RefObject<PostEditorValue>
 }) => {
   const navigate = useNavigate()
@@ -35,6 +34,8 @@ export const ThreadPostHeader = ({
   const [openForumSelect, setOpenForumSelect] = useState(false)
   const [subject, setSubject] = useState(initialValue?.subject || '')
   const [typeId, setTypeId] = useState(initialValue?.type_id)
+
+  const shouldRenderSubject = kind != 'reply' && (kind != 'edit' || subject)
 
   if (initialValue && valueRef?.current) {
     Object.assign(valueRef.current, initialValue)
@@ -73,7 +74,7 @@ export const ThreadPostHeader = ({
             )}
           </>
         )}
-        {kind != 'reply' && (
+        {shouldRenderSubject && (
           <TextField
             fullWidth
             label="标题"

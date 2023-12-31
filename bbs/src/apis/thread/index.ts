@@ -60,7 +60,7 @@ export const getThreadsInfo = async ({
 export type PostCommonDetails = {
   subject?: string
   message: string
-  format: number
+  format?: number
   is_anonymous?: boolean
 }
 
@@ -85,6 +85,15 @@ export const replyThread = (details: ReplyThreadDetails) => {
     ...details,
     format: 2,
   })
+}
+
+export type EditPostDetails = Partial<PostThreadDetails> & {
+  thread_id: number
+  post_id: number
+}
+
+export const editPost = (details: EditPostDetails) => {
+  return request.post<PostDetails>(`${commonUrl}/post/edit`, details)
 }
 
 export const getPostDetails = (params: {

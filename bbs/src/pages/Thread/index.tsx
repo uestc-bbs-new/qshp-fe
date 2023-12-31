@@ -78,11 +78,10 @@ function Thread() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] = useState<
-    'reply' | 'comment' | undefined
+    'reply' | 'edit' | 'comment' | undefined
   >(undefined)
   const [dialogPending, setDialogPending] = useState(false)
   const [commentError, setCommentError] = useState(false)
-  const activePost = useRef<PostFloor>()
   const commentMessage = useRef<HTMLInputElement>()
 
   const initQuery = (threadChanged?: boolean) => {
@@ -151,15 +150,17 @@ function Thread() {
     }
   )
 
-  const onReplied = () => {
+  const onSubmitted = () => {
     setDialogOpen(false)
-    navigate(
-      `${location.pathname}?${searchParamsAssign(searchParams, {
-        // total + 1 because a new reply was posted just now and info is not yet refreshed.
-        page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
-      })}`,
-      { preventScrollReset: true }
-    )
+    if (currentDialog == 'reply') {
+      navigate(
+        `${location.pathname}?${searchParamsAssign(searchParams, {
+          // total + 1 because a new reply was posted just now and info is not yet refreshed.
+          page: info?.total ? Math.ceil((info?.total + 1) / kPostPageSize) : 1,
+        })}`,
+        { preventScrollReset: true }
+      )
+    }
     setReplyRefresh(replyRefresh + 1)
   }
 
@@ -182,35 +183,42 @@ function Thread() {
     refetch()
   }, [threadId, searchParams, replyRefresh, state.user.uid])
 
-  const [replyPost, setReplyPost] = useState<PostFloor>()
+  const [activePost, setActivePost] = useState<PostFloor>()
 
   const quickReplyRef = useRef<HTMLElement>()
   const handleReply = (post: PostFloor) => {
-    setReplyPost(post)
+    setActivePost(post)
     setCurrentDialog('reply')
     setDialogOpen(true)
   }
 
   const handleComment = (post: PostFloor) => {
-    activePost.current = post
+    setActivePost(post)
     setCurrentDialog('comment')
     setDialogPending(false)
     setCommentError(false)
     setDialogOpen(true)
   }
   const sendComment = () => {
-    if (commentMessage.current?.value && activePost.current) {
-      const post = activePost.current
+    if (commentMessage.current?.value && activePost) {
       setDialogPending(true)
-      postComment(post.thread_id, post.post_id, commentMessage.current.value)
+      postComment(
+        activePost.thread_id,
+        activePost.post_id,
+        commentMessage.current.value
+      )
         .then(() => {
           closeDialog()
           setPostDetails(
             Object.assign({}, postDetails, {
-              [post.post_id]: Object.assign({}, postDetails[post.post_id], {
-                commentsRefresh:
-                  (postDetails[post.post_id]?.commentsRefresh || 0) + 1,
-              }),
+              [activePost.post_id]: Object.assign(
+                {},
+                postDetails[activePost.post_id],
+                {
+                  commentsRefresh:
+                    (postDetails[activePost.post_id]?.commentsRefresh || 0) + 1,
+                }
+              ),
             })
           )
         })
@@ -218,6 +226,12 @@ function Thread() {
     } else {
       setCommentError(true)
     }
+  }
+
+  const handleEdit = (post: PostFloor) => {
+    setActivePost(post)
+    setCurrentDialog('edit')
+    setDialogOpen(true)
   }
 
   const currentlyReversed =
@@ -253,6 +267,7 @@ function Thread() {
                         forumDetails={forumDetails}
                         onReply={handleReply}
                         onComment={handleComment}
+                        onEdit={handleEdit}
                         threadControls={
                           <>
                             <Link
@@ -339,7 +354,7 @@ function Thread() {
                     kind="reply"
                     forum={forumDetails}
                     threadId={threadId}
-                    onReplied={onReplied}
+                    onSubmitted={onSubmitted}
                   />
                 </Box>
               </Stack>
@@ -359,7 +374,11 @@ function Thread() {
             alignItems="center"
           >
             <Typography>
-              {currentDialog == 'comment' ? '点评' : '回复'}
+              {
+                { comment: '点评', reply: '回复', edit: '编辑' }[
+                  currentDialog || 'comment'
+                ]
+              }
             </Typography>
             <IconButton onClick={closeDialog}>
               <Close />
@@ -368,7 +387,7 @@ function Thread() {
         }
         dialogTitleProps={{ sx: { pl: 2.5, pr: 1.5, py: 1 } }}
       >
-        <Box px={2} pb={currentDialog == 'reply' ? 1.5 : undefined}>
+        <Box px={2} pb={currentDialog == 'comment' ? undefined : 1.5}>
           {currentDialog == 'comment' ? (
             <>
               <TextField
@@ -391,12 +410,23 @@ function Thread() {
             </>
           ) : (
             <PostEditor
-              kind="reply"
+              kind={currentDialog}
               smallAuthor
               forum={forumDetails}
               threadId={threadId}
-              replyPost={replyPost}
-              onReplied={onReplied}
+              postId={activePost?.post_id}
+              replyPost={currentDialog == 'reply' ? activePost : undefined}
+              initialValue={
+                currentDialog == 'edit'
+                  ? {
+                      subject: activePost?.subject,
+                      message: activePost?.message,
+                      format: activePost?.format,
+                      is_anonymous: !!activePost?.is_anonymous,
+                    }
+                  : undefined
+              }
+              onSubmitted={onSubmitted}
             />
           )}
         </Box>

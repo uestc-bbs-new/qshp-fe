@@ -4,14 +4,17 @@ import { Button, Stack } from '@mui/material'
 
 import { votePost } from '@/apis/thread'
 import { PostFloor } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 
 type FooterProps = {
   post: PostFloor
   onReply?: () => void
   onComment?: () => void
+  onEdit?: () => void
 }
 
-const Footer = ({ post, onReply, onComment }: FooterProps) => {
+const Footer = ({ post, onReply, onComment, onEdit }: FooterProps) => {
+  const { state } = useAppState()
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
 
@@ -38,6 +41,11 @@ const Footer = ({ post, onReply, onComment }: FooterProps) => {
       <Button variant="text" onClick={onReply}>
         回复
       </Button>
+      {post.author_id == state.user.uid && (
+        <Button variant="text" onClick={onEdit}>
+          编辑
+        </Button>
+      )}
       {post.position > 1 && (
         <>
           <Button variant="text" onClick={() => vote(true)}>

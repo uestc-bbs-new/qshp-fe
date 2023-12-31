@@ -21,11 +21,12 @@ import { getPreviewThemeOptions } from '../RichText/vditorConfig'
 import options from './vditorConfig'
 
 type props = IOptions & {
+  initialValue?: string
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
   onKeyDown?: React.KeyboardEventHandler
 }
 
-const Editor = ({ setVd, onKeyDown, ...other }: props) => {
+const Editor = ({ initialValue, setVd, onKeyDown, ...other }: props) => {
   const { state } = useAppState()
   const vditorRef = createRef<HTMLDivElement>()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
@@ -40,6 +41,9 @@ const Editor = ({ setVd, onKeyDown, ...other }: props) => {
     }
     const vd = new Vditor(vditorRef.current, {
       after: () => {
+        if (initialValue) {
+          vd.setValue(initialValue)
+        }
         setVditor(vd)
         setVd(vd)
       },
