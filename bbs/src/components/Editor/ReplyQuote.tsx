@@ -36,15 +36,17 @@ const ReplyQuote = ({
       .filter((line) => line.trim())
       .map((line) =>
         line
-          .replace(/![.+?]\((?:s|a|i)\)|^#{1,3}\s|<.+?>/gm, '')
+          .replace(/!\[.+?\]\((?:s|a|i)\)|^#{1,3}\s|<.+?>/gm, '')
           .replace(/!?\[(.+?)\]\(.+?\)/g, '$1')
       )
   }
-  lines = lines.map((line) =>
-    line.length > kMaxQuoteLineLength
-      ? `${line.substring(0, kMaxQuoteLineLength)}...` // TODO: Grapheme
-      : line
-  )
+  lines = lines
+    .map((line) =>
+      line.length > kMaxQuoteLineLength
+        ? `${line.substring(0, kMaxQuoteLineLength)}...` // TODO: Grapheme
+        : line
+    )
+    .filter((line) => line.trim())
   if (lines.length == 0) {
     lines = ['...']
   }
