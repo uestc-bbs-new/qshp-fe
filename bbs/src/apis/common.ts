@@ -34,7 +34,7 @@ export const makeThreadTypesMap = (forum?: ForumDetails) => {
 }
 
 export const getForumList = () => {
-  return request.get<Forum[]>(`${commonUrl}//forum/list`)
+  return request.get<Forum[]>(`${commonUrl}/forum/list`)
 }
 export const getForumDetails = (forum_id: string) => {
   return request.get<ForumDetails>(`${commonUrl}/forum/details`, {
