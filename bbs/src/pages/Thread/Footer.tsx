@@ -46,7 +46,7 @@ const Footer = ({ post, onReply, onComment, onEdit }: FooterProps) => {
           编辑
         </Button>
       )}
-      {post.position > 1 && (
+      {(post.position > 1 || !post.is_first) && (
         <>
           <Button variant="text" onClick={() => vote(true)}>
             支持{!!support && ` (${support})`}

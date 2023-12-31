@@ -103,7 +103,9 @@ const Floor = ({
   onEdit,
 }: props) => {
   const gotoLink =
-    post.position == 1 ? pages.thread(post.thread_id) : pages.goto(post.post_id)
+    post.position == 1 && post.is_first
+      ? pages.thread(post.thread_id)
+      : pages.goto(post.post_id)
   return (
     <Box pt={1.75} pb={1}>
       <Stack direction="row">
@@ -125,7 +127,7 @@ const Floor = ({
           {/* <Typography  */}
         </Box>
         <Box className="flex-1" minWidth="1em">
-          {post.position == 1 && (
+          {post.position == 1 && !!post.is_first && (
             <PostSubject
               post={post}
               thread={threadDetails}
@@ -137,7 +139,7 @@ const Floor = ({
             alignItems="center"
             justifyContent="space-between"
             className="text-sm text-slate-300"
-            mt={post.position == 1 ? 0.5 : undefined}
+            mt={post.position == 1 && post.is_first ? 0.5 : undefined}
             mb={1}
           >
             <Stack direction="row">
@@ -174,7 +176,7 @@ const Floor = ({
             </Stack>
           </Stack>
           <PostStatus post={post} />
-          {post.position > 1 && (
+          {(post.position > 1 || !post.is_first) && (
             <PostSubject
               post={post}
               thread={threadDetails}
@@ -182,7 +184,7 @@ const Floor = ({
             />
           )}
           {children}
-          {post.position == 1 && (
+          {post.position == 1 && !!post.is_first && (
             <PollExtension threadDetails={threadDetails} />
           )}
           <PostExtraDetailsContainer

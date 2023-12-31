@@ -209,7 +209,7 @@ const PostEditor = ({
             initialValue={initialValue}
             valueRef={valueRef}
           />
-          {replyPost && replyPost.position > 1 && (
+          {replyPost && (replyPost.position > 1 || !replyPost.is_first) && (
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
           <Editor

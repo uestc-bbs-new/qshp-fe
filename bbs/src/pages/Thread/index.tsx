@@ -170,7 +170,7 @@ function Thread() {
         refetch()
       }
     } else if (action == 'edit') {
-      if (activePost?.position == 1) {
+      if (activePost?.position == 1 && activePost?.is_first) {
         setQuery(initQuery(true))
         refetch()
       } else {
@@ -317,7 +317,7 @@ function Thread() {
                             >
                               {query.author_id ? '查看全部' : '只看该作者'}
                             </Link>
-                            {item.position == 1 && (
+                            {item.position == 1 && !!item.is_first && (
                               <Link
                                 color="inherit"
                                 className="hover:text-blue-500"
@@ -347,8 +347,8 @@ function Thread() {
                           <PostRenderer post={item} />
                         </Box>
                         {threadDetails &&
-                          item.is_first == 1 &&
-                          item.position == 1 && (
+                          item.position == 1 &&
+                          item.is_first == 1 && (
                             <ThreadLikes
                               tid={threadDetails.thread_id}
                               values={[item.support, item.oppose]}
@@ -448,7 +448,9 @@ function Thread() {
                 currentDialog == 'edit' && activePost
                   ? getEditorInitialValue(
                       activePost,
-                      activePost.position == 1 ? threadDetails : undefined
+                      activePost.position == 1 && activePost.is_first
+                        ? threadDetails
+                        : undefined
                     )
                   : undefined
               }
