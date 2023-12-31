@@ -96,7 +96,7 @@ const PostEditor = ({
   } = useSnackbar()
   const valueRef = useRef<PostEditorValue>(initialValue || {})
   const [postPending, setPostPending] = useState(false)
-  const [anonymous, setAnonymous] = useState(!!valueRef.current.is_anonymous)
+  const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -220,6 +220,7 @@ const PostEditor = ({
           />
           <PostOptions
             forum={forum}
+            initialValue={initialValue}
             valueRef={valueRef}
             onChanged={handleOptionsChange}
           />

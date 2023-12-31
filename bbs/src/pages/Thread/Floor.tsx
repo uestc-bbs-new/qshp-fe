@@ -112,11 +112,13 @@ const Floor = ({
             <div>
               <Avatar
                 className="m-auto"
-                uid={post.author_id}
+                uid={post.is_anonymous ? 0 : post.author_id}
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
               />
-              <div className="text-center text-blue-500">{post.author}</div>
+              <div className="text-center text-blue-500">
+                {post.is_anonymous ? '匿名' : post.author}
+              </div>
             </div>
           </UserCard>
 
