@@ -8,7 +8,7 @@ import axios, {
 } from 'axios'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
-const commonUrl = '/star/api/forum/v1'
+const commonUrl = '/star/api/v1'
 
 const apiResultCode = {
   success: 0,

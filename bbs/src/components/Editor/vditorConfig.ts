@@ -41,7 +41,7 @@ const options = ({
   upload: {
     accept: 'image/*,.mp3, .wav, .rar',
     token: 'test',
-    url: '/dev/star/api/forum/v1/global/upload/files',
+    url: '/dev/star/api/v1/global/upload/files',
     linkToImgUrl: '/api/upload/fetch',
     filename(name) {
       return name

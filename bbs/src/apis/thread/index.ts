@@ -70,7 +70,7 @@ export type PostThreadDetails = PostCommonDetails & {
 }
 
 export const postThread = (details: PostThreadDetails) => {
-  return request.post(`${commonUrl}/post/thread`, {
+  return request.post(`${commonUrl}/thread/new`, {
     ...details,
   })
 }
@@ -81,7 +81,7 @@ export type ReplyThreadDetails = PostCommonDetails & {
 }
 
 export const replyThread = (details: ReplyThreadDetails) => {
-  return request.post<PostDetails>(`${commonUrl}/post/post`, {
+  return request.post<PostDetails>(`${commonUrl}/thread/reply`, {
     ...details,
     format: 2,
   })
