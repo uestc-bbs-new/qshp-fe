@@ -35,7 +35,7 @@ const MarkdownPostRenderer = ({ message }: { message: string }) => {
   useEffect(() => {
     el.current &&
       Vditor.preview(el.current, message, getPreviewOptions(state.theme))
-  }, [])
+  }, [message])
   return (
     <div className="rich-text-content rich-text-content-markdown">
       <Typography color="text.primary" ref={el}></Typography>
