@@ -1,7 +1,7 @@
 import React from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Box, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
@@ -13,6 +13,7 @@ import { pages } from '@/utils/routes'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
+import { PostExtraDetailsContainer } from './PostExtraDetails'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
 import ThreadLikes from './ThreadLikes'
@@ -53,31 +54,6 @@ function PostSubject({
     )
   }
   return <Typography fontWeight="bold">{post.subject}</Typography>
-}
-
-const PostExtraDetailsContainer = ({
-  children,
-  loading,
-  hasContent,
-}: {
-  children?: React.ReactElement
-  loading: boolean
-  hasContent: boolean
-}) => {
-  return (
-    <>
-      {(hasContent || loading) && (
-        <Box my={2}>
-          {hasContent && children}
-          {loading && [
-            <Skeleton key={1} height={50} />,
-            <Skeleton key={2} height={50} />,
-            <Skeleton key={3} height={50} />,
-          ]}
-        </Box>
-      )}
-    </>
-  )
 }
 
 type props = {

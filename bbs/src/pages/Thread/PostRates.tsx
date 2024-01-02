@@ -1,10 +1,7 @@
 import { useState } from 'react'
 
-import { Close, ExpandMore } from '@mui/icons-material'
+import { Close, Reviews } from '@mui/icons-material'
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Button,
   Dialog,
   DialogContent,
@@ -23,6 +20,8 @@ import { PostRate, PostRateStat } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+
+import { PostExtraDetailsAccordian } from './PostExtraDetails'
 
 const kCreditNamesToPromote = ['威望', '奖励券']
 const kCreditNamesInOrder = ['威望', '水滴', '奖励券']
@@ -58,55 +57,50 @@ const PostRates = ({
   const closeMore = () => setMoreOpen(false)
 
   return (
-    <Accordion defaultExpanded disableGutters>
-      <AccordionSummary expandIcon={<ExpandMore />}>
-        <Typography variant="h6">评分</Typography>
-      </AccordionSummary>
-      <AccordionDetails sx={{ paddingY: 0 }}>
-        <RateTable
-          rates={initialRates}
-          rateStat={rateStat}
-          usedCredits={usedCredits}
-        />
-        {rates.length > initialRates.length && (
-          <>
-            <Stack direction="row" justifyContent="flex-end" my={1}>
-              <Button onClick={() => setMoreOpen(true)}>查看更多</Button>
-            </Stack>
-            <Dialog
-              open={moreOpen}
-              fullWidth
-              maxWidth="md"
-              onClose={closeMore}
-              sx={{
-                maxHeight: '80%',
-                margin: 'auto',
-              }}
-            >
-              <DialogTitle>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography>查看全部评分</Typography>
-                  <IconButton onClick={closeMore}>
-                    <Close />
-                  </IconButton>
-                </Stack>
-              </DialogTitle>
-              <DialogContent>
-                <RateTable
-                  rates={rates}
-                  rateStat={rateStat}
-                  usedCredits={usedCredits}
-                />
-              </DialogContent>
-            </Dialog>
-          </>
-        )}
-      </AccordionDetails>
-    </Accordion>
+    <PostExtraDetailsAccordian Icon={Reviews} title="评分">
+      <RateTable
+        rates={initialRates}
+        rateStat={rateStat}
+        usedCredits={usedCredits}
+      />
+      {rates.length > initialRates.length && (
+        <>
+          <Stack direction="row" justifyContent="flex-end" my={1}>
+            <Button onClick={() => setMoreOpen(true)}>查看更多</Button>
+          </Stack>
+          <Dialog
+            open={moreOpen}
+            fullWidth
+            maxWidth="md"
+            onClose={closeMore}
+            sx={{
+              maxHeight: '80%',
+              margin: 'auto',
+            }}
+          >
+            <DialogTitle>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography>查看全部评分</Typography>
+                <IconButton onClick={closeMore}>
+                  <Close />
+                </IconButton>
+              </Stack>
+            </DialogTitle>
+            <DialogContent>
+              <RateTable
+                rates={rates}
+                rateStat={rateStat}
+                usedCredits={usedCredits}
+              />
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
+    </PostExtraDetailsAccordian>
   )
 }
 
@@ -157,7 +151,7 @@ const RateTable = ({
         {rates.map((rate, index) => (
           <TableRow key={index}>
             <TableCell>
-              <Link to={`/user/${rate.user_id}`}>
+              <Link to={`/user/${rate.user_id}`} underline="hover">
                 <Stack direction="row" alignItems="center">
                   <Avatar
                     sx={{
@@ -166,9 +160,12 @@ const RateTable = ({
                       display: 'inline-block',
                       verticalAlign: 'middle',
                     }}
+                    variant="rounded"
                     uid={rate.user_id}
                   />
-                  <Typography ml={1}>{rate.username}</Typography>
+                  <Typography ml={1} fontWeight="bold">
+                    {rate.username}
+                  </Typography>
                 </Stack>
               </Link>
             </TableCell>
