@@ -81,7 +81,7 @@ const Poll = ({
   }
 
   return (
-    <Stack alignItems="center" my={2.5} position="relative">
+    <Stack alignItems="center" my={6} position="relative">
       <Stack direction="row">
         <Typography mr={1}>{poll.multiple ? '多' : '单'}选投票</Typography>
         {poll.multiple && (
@@ -207,7 +207,7 @@ const PollOption = ({
             style={{
               ...barStyle,
               backgroundColor: '#F5F6F7',
-              width: '400px',
+              width: '500px',
             }}
           >
             <div

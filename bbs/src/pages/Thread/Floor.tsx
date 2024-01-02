@@ -15,6 +15,7 @@ import Footer from './Footer'
 import PostComments from './PostComments'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
+import ThreadLikes from './ThreadLikes'
 import PollExtension from './extension/Poll'
 import { PostExtraDetailsEx } from './types'
 
@@ -186,6 +187,12 @@ const Floor = ({
           {children}
           {post.position == 1 && !!post.is_first && (
             <PollExtension threadDetails={threadDetails} />
+          )}
+          {threadDetails && post.position == 1 && post.is_first == 1 && (
+            <ThreadLikes
+              tid={threadDetails.thread_id}
+              values={[post.support, post.oppose]}
+            />
           )}
           <PostExtraDetailsContainer
             loading={!!post.has_comment && !postDetails}

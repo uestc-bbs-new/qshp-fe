@@ -44,7 +44,6 @@ import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
-import ThreadLikes from './ThreadLikes'
 import { PostDetailsByPostIdEx } from './types'
 
 const ForumPagination = (props: {
@@ -346,14 +345,6 @@ function Thread() {
                         <Box paddingRight="1.5em">
                           <PostRenderer post={item} />
                         </Box>
-                        {threadDetails &&
-                          item.position == 1 &&
-                          item.is_first == 1 && (
-                            <ThreadLikes
-                              tid={threadDetails.thread_id}
-                              values={[item.support, item.oppose]}
-                            />
-                          )}
                       </Floor>
                     </section>
                   </Card>

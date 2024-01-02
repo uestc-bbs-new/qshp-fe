@@ -153,32 +153,30 @@ const ThreadLikes = ({
   }
 
   return (
-    <Box>
-      <Stack
-        direction="row"
-        width={width}
-        height={height}
+    <Stack
+      direction="row"
+      width={width}
+      height={height}
+      borderRadius={borderRadius}
+      mx="auto"
+      my={3}
+    >
+      <ThreadLikeLabel
+        tid={tid}
+        index={0}
         borderRadius={borderRadius}
-        mx="auto"
-        my={3}
-      >
-        <ThreadLikeLabel
-          tid={tid}
-          index={0}
-          borderRadius={borderRadius}
-          values={newValues}
-          onIncrement={onIncrement}
-        />
-        <ThreadLikeMiddlePart borderRadius={borderRadius} values={newValues} />
-        <ThreadLikeLabel
-          tid={tid}
-          index={1}
-          borderRadius={borderRadius}
-          values={newValues}
-          onIncrement={onIncrement}
-        />
-      </Stack>
-    </Box>
+        values={newValues}
+        onIncrement={onIncrement}
+      />
+      <ThreadLikeMiddlePart borderRadius={borderRadius} values={newValues} />
+      <ThreadLikeLabel
+        tid={tid}
+        index={1}
+        borderRadius={borderRadius}
+        values={newValues}
+        onIncrement={onIncrement}
+      />
+    </Stack>
   )
 }
 
