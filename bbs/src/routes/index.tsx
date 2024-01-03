@@ -1,5 +1,6 @@
 import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
 
+import Continue, { ContinueLoader } from '@/pages/Continue'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
 import Goto from '@/pages/Goto'
@@ -10,9 +11,11 @@ import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 
+import routes from './routes'
+
 // import NotFound from '@/pages/ErrorPage'
 
-const router = createBrowserRouter([
+routes.current = [
   {
     path: '/',
     element: (
@@ -38,8 +41,16 @@ const router = createBrowserRouter([
         id: 'settings',
         element: <Settings />,
       },
+      {
+        path: '/continue',
+        id: 'continue',
+        loader: ContinueLoader,
+        element: <Continue />,
+      },
     ],
   },
-])
+]
+
+const router = createBrowserRouter(routes.current)
 
 export default router

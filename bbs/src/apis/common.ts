@@ -2,6 +2,7 @@ import {
   BBSInfo,
   Forum,
   ForumDetails,
+  IdasSignInResult,
   Thread,
   ThreadBasics,
   ThreadList,
@@ -143,6 +144,13 @@ export const signIn = (params: {
       keep_signed_in: params.keep_signed_in,
     },
     { headers: { 'X-UESTC-BBS-Captcha': params.captcha_value } }
+  )
+}
+
+export const idasSignIn = (params: { continue: string; ticket: string }) => {
+  return authService.post<IdasSignInResult>(
+    `${commonUrl}/auth/signin/idas`,
+    params
   )
 }
 

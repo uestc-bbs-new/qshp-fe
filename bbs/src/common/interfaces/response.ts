@@ -332,3 +332,13 @@ export interface UserNameFind {
   total: number
   rows: UserName[]
 }
+
+export type IdasSignInResult =
+  | string
+  | {
+      new_user?: boolean
+      users?: {
+        uid: number
+        username: string
+      }[]
+    }
