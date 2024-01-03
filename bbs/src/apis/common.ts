@@ -91,7 +91,7 @@ export const searchThreads = (params: object) => {
 
 export const searchUsers = (params: object) => {
   return request.get<{ total: number; rows: UserInfo[] }>(
-    `${commonUrl}/global/search`,
+    `${commonUrl}/global/search/`,
     { params: params }
   )
 }
