@@ -342,4 +342,5 @@ export type IdasSignInResult =
         username: string
       }[]
       ephemeral_authorization: string
+      remaining_registers?: number
     }
