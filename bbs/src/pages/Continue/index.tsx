@@ -1,4 +1,10 @@
-import { matchRoutes, redirect, useLoaderData } from 'react-router-dom'
+import { useState } from 'react'
+import {
+  matchRoutes,
+  redirect,
+  useLoaderData,
+  useNavigate,
+} from 'react-router-dom'
 
 import {
   Dialog,
@@ -12,7 +18,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { idasSignIn } from '@/apis/common'
+import { idasChooseUser, idasSignIn } from '@/apis/common'
 import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
@@ -22,10 +28,30 @@ const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const kTicket = 'ticket'
 
 const Continue = () => {
-  const idasResult = useLoaderData() as IdasSignInResult
-
+  const idasResult = useLoaderData() as IdasSignInResult & {
+    ticket: string
+    continue: string
+  }
   if (typeof idasResult == 'string') {
-    return
+    return <></>
+  }
+
+  const [pending, setPending] = useState(false)
+  const navigate = useNavigate()
+  const signIn = (user_id: number) => {
+    setPending(true)
+    idasChooseUser({
+      user_id,
+      ticket: idasResult.ticket,
+      ephemeral_authorization: idasResult.ephemeral_authorization,
+    })
+      .then((authorization) => {
+        setAuthorizationHeader(authorization)
+        navigate(idasResult.continue, {
+          replace: true,
+        })
+      })
+      .catch(() => setPending(false))
   }
 
   return (
@@ -38,7 +64,10 @@ const Continue = () => {
             <List>
               {idasResult.users.map((user, index) => (
                 <ListItem key={index}>
-                  <ListItemButton>
+                  <ListItemButton
+                    disabled={pending}
+                    onClick={() => signIn(user.uid)}
+                  >
                     <ListItemIcon>
                       <Avatar uid={user.uid} />
                     </ListItemIcon>
@@ -73,11 +102,12 @@ export const ContinueLoader = async ({ request }: { request: Request }) => {
   const continuePath = `${kIdasOrigin}${url.pathname}?${originalSearchParams}`
   if (ticket) {
     const result = await idasSignIn({ continue: continuePath, ticket })
+    const path = sanitizeContinuePath(searchParams.get('path'))
     if (typeof result == 'string') {
       setAuthorizationHeader(result)
-      return redirect(sanitizeContinuePath(searchParams.get('path')))
+      return redirect(path)
     }
-    return result
+    return { ...result, ticket, continue: path }
   }
 }
 

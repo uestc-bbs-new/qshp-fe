@@ -154,6 +154,14 @@ export const idasSignIn = (params: { continue: string; ticket: string }) => {
   )
 }
 
+export const idasChooseUser = (params: {
+  user_id: number
+  ticket: string
+  ephemeral_authorization: string
+}) => {
+  return authService.post<string>(`${commonUrl}/auth/signin/user`, params)
+}
+
 export const signOut = () => {
   return authService.post(`${commonUrl}/auth/signout`)
 }
