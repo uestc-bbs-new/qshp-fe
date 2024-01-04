@@ -353,7 +353,7 @@ function Forum() {
               />
             </>
           )}
-          {forumDetails && (
+          {forumDetails?.can_post_thread && (
             <Card py={1.5}>
               <PostEditor forum={forumDetails} />
             </Card>
