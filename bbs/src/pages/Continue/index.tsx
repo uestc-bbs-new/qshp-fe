@@ -24,7 +24,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { idasChooseUser, idasSignIn } from '@/apis/common'
+import { idasChooseUser, idasFreshman, idasSignIn } from '@/apis/common'
 import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
@@ -40,9 +40,6 @@ type IdasResultEx = IdasSignInResult & {
 
 const Continue = () => {
   const idasResult = useLoaderData() as IdasResultEx
-  if (typeof idasResult == 'string') {
-    return <></>
-  }
 
   const [pending, setPending] = useState(false)
   const [forceRegister, setRegister] = useState(false)
@@ -88,19 +85,21 @@ const Continue = () => {
                   </ListItemButton>
                 </ListItem>
               ))}
-              <ListItem key="new">
-                <ListItemButton
-                  disabled={pending}
-                  onClick={() => setRegister(true)}
-                >
-                  <ListItemIcon>
-                    <MuiAvatar variant="rounded">
-                      <PersonAddAlt1 />
-                    </MuiAvatar>
-                  </ListItemIcon>
-                  <Typography>注册新用户</Typography>
-                </ListItemButton>
-              </ListItem>
+              {!!idasResult.remaining_registers && (
+                <ListItem key="new">
+                  <ListItemButton
+                    disabled={pending}
+                    onClick={() => setRegister(true)}
+                  >
+                    <ListItemIcon>
+                      <MuiAvatar variant="rounded">
+                        <PersonAddAlt1 />
+                      </MuiAvatar>
+                    </ListItemIcon>
+                    <Typography>注册新用户</Typography>
+                  </ListItemButton>
+                </ListItem>
+              )}
             </List>
           </>
         ) : (
@@ -110,7 +109,10 @@ const Continue = () => {
                 ? '请填写注册信息：'
                 : '您还未注册过清水河畔账号，清填写信息完成注册：'}
             </Typography>
-            <RegisterForm idasResult={idasResult} />
+            <RegisterForm
+              idasResult={idasResult}
+              onClose={() => setRegister(false)}
+            />
           </>
         )}
       </DialogContent>
@@ -118,9 +120,27 @@ const Continue = () => {
   )
 }
 
-const RegisterForm = ({ idasResult }: { idasResult: IdasResultEx }) => {
+const RegisterForm = ({
+  idasResult,
+  onClose,
+}: {
+  idasResult: IdasResultEx
+  onClose: () => void
+}) => {
+  const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {}
+  const goFreshmanOrBack = async () => {
+    if (idasResult.users) {
+      onClose()
+    } else {
+      await idasFreshman({
+        ticket: idasResult.ticket,
+        ephemeral_authorization: idasResult.ephemeral_authorization,
+      })
+      navigate(idasResult.continue, { replace: true })
+    }
+  }
   return (
     <form onSubmit={onSubmit} ref={formRef}>
       <Grid container alignItems="center" rowSpacing={2}>
@@ -162,8 +182,8 @@ const RegisterForm = ({ idasResult }: { idasResult: IdasResultEx }) => {
       </Grid>
       <Stack direction="row" justifyContent="center" alignItems="center" my={2}>
         <Button variant="contained">立即注册</Button>
-        <Button variant="outlined" sx={{ ml: 2 }}>
-          到处逛逛，稍后注册
+        <Button variant="outlined" sx={{ ml: 2 }} onClick={goFreshmanOrBack}>
+          {idasResult.users ? '返回' : '到处逛逛，稍后注册'}
         </Button>
       </Stack>
     </form>
@@ -186,8 +206,8 @@ export const ContinueLoader = async ({ request }: { request: Request }) => {
   if (ticket) {
     const result = await idasSignIn({ continue: continuePath, ticket })
     const path = sanitizeContinuePath(searchParams.get('path'))
-    if (typeof result == 'string') {
-      setAuthorizationHeader(result)
+    if (result.authorization) {
+      setAuthorizationHeader(result.authorization)
       return redirect(path)
     }
     return { ...result, ticket, continue: path }

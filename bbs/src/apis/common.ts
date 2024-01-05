@@ -162,6 +162,13 @@ export const idasChooseUser = (params: {
   return authService.post<string>(`${commonUrl}/auth/signin/user`, params)
 }
 
+export const idasFreshman = (params: {
+  ticket: string
+  ephemeral_authorization: string
+}) => {
+  return authService.post<string>(`${commonUrl}/auth/signin/freshman`, params)
+}
+
 export const signOut = () => {
   return authService.post(`${commonUrl}/auth/signout`)
 }

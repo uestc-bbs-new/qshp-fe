@@ -333,14 +333,13 @@ export interface UserNameFind {
   rows: UserName[]
 }
 
-export type IdasSignInResult =
-  | string
-  | {
-      new_user?: boolean
-      users?: {
-        uid: number
-        username: string
-      }[]
-      ephemeral_authorization: string
-      remaining_registers?: number
-    }
+export type IdasSignInResult = {
+  authorization?: string
+  new_user?: boolean
+  users?: {
+    uid: number
+    username: string
+  }[]
+  ephemeral_authorization: string
+  remaining_registers?: number
+}
