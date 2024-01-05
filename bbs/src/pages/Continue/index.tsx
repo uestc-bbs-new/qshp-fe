@@ -18,6 +18,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Avatar as MuiAvatar,
   Stack,
   TextField,
   Typography,
@@ -79,7 +80,7 @@ const Continue = () => {
                     onClick={() => signIn(user.uid)}
                   >
                     <ListItemIcon>
-                      <Avatar uid={user.uid} />
+                      <Avatar uid={user.uid} variant="rounded" />
                     </ListItemIcon>
                     <ListItemText>
                       <Typography>{user.username}</Typography>
@@ -93,7 +94,9 @@ const Continue = () => {
                   onClick={() => setRegister(true)}
                 >
                   <ListItemIcon>
-                    <PersonAddAlt1 />
+                    <MuiAvatar variant="rounded">
+                      <PersonAddAlt1 />
+                    </MuiAvatar>
                   </ListItemIcon>
                   <Typography>注册新用户</Typography>
                 </ListItemButton>
