@@ -168,6 +168,16 @@ export const idasFreshman = (params: {
 }) => {
   return authService.post<string>(`${commonUrl}/auth/signin/freshman`, params)
 }
+export const register = (params: {
+  ticket: string
+  ephemeral_authorization: string
+  username: string
+  password: string
+  email: string
+  invitation?: string
+}) => {
+  return authService.post<string>(`${commonUrl}/auth/register`, params)
+}
 
 export const signOut = () => {
   return authService.post(`${commonUrl}/auth/signout`)

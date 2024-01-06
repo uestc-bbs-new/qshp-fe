@@ -24,7 +24,12 @@ import {
   Typography,
 } from '@mui/material'
 
-import { idasChooseUser, idasFreshman, idasSignIn } from '@/apis/common'
+import {
+  idasChooseUser,
+  idasFreshman,
+  idasSignIn,
+  register,
+} from '@/apis/common'
 import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
@@ -141,6 +146,29 @@ const RegisterForm = ({
       navigate(idasResult.continue, { replace: true })
     }
   }
+  const handleRegister = async () => {
+    if (!formRef.current) {
+      return
+    }
+    const data = new FormData(formRef.current)
+    const username = data.get('username')
+    const password = data.get('password')
+    const password2 = data.get('password2')
+    const email = data.get('email')
+    if (!username || !password || !email) {
+      return
+    }
+    setAuthorizationHeader(
+      await register({
+        ticket: idasResult.ticket,
+        ephemeral_authorization: idasResult.ephemeral_authorization,
+        username: username.toString(),
+        password: password.toString(),
+        email: email.toString(),
+      })
+    )
+    navigate(idasResult.continue, { replace: true })
+  }
   return (
     <form onSubmit={onSubmit} ref={formRef}>
       <Grid container alignItems="center" rowSpacing={2}>
@@ -181,7 +209,9 @@ const RegisterForm = ({
         </Grid>
       </Grid>
       <Stack direction="row" justifyContent="center" alignItems="center" my={2}>
-        <Button variant="contained">立即注册</Button>
+        <Button variant="contained" onClick={handleRegister}>
+          立即注册
+        </Button>
         <Button variant="outlined" sx={{ ml: 2 }} onClick={goFreshmanOrBack}>
           {idasResult.users ? '返回' : '到处逛逛，稍后注册'}
         </Button>
