@@ -3,11 +3,12 @@ import { useState } from 'react'
 import { Button, Stack } from '@mui/material'
 
 import { votePost } from '@/apis/thread'
-import { ForumDetails, PostFloor } from '@/common/interfaces/response'
+import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
 type FooterProps = {
   forumDetails?: ForumDetails
+  threadDetails?: Thread
   post: PostFloor
   onReply?: () => void
   onComment?: () => void
@@ -16,6 +17,7 @@ type FooterProps = {
 
 const Footer = ({
   forumDetails,
+  threadDetails,
   post,
   onReply,
   onComment,
@@ -25,7 +27,7 @@ const Footer = ({
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
 
-  const canReply = forumDetails?.can_post_reply
+  const canReply = forumDetails?.can_post_reply && threadDetails?.can_reply
 
   const vote = async (supportPost: boolean) => {
     if (

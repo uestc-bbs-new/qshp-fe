@@ -365,7 +365,7 @@ function Thread() {
             page={query.page}
             onChange={handlePageChange}
           />
-          {forumDetails?.can_post_reply && (
+          {forumDetails?.can_post_reply && threadDetails?.can_reply && (
             <Card className="py-4" sx={scrollAnchorSx} ref={quickReplyRef}>
               <Stack direction="row">
                 <Box className="flex-1">

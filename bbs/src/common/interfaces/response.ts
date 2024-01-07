@@ -90,6 +90,7 @@ export type Thread = ThreadBasics & {
   max_position: number
   comments: number
   reverse_replies: boolean
+  can_reply: boolean
   poll?: ThreadPollDetails
 }
 

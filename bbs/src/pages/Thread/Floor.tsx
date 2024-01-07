@@ -197,6 +197,7 @@ const Floor = ({
           </PostExtraDetailsContainer>
           <Footer
             forumDetails={forumDetails}
+            threadDetails={threadDetails}
             post={post}
             onReply={() => onReply(post)}
             onComment={() => onComment(post)}
