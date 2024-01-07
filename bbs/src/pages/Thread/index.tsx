@@ -154,19 +154,24 @@ function Thread() {
     }
 
     if (action == 'reply') {
-      const newPage = info?.total
-        ? Math.ceil((info?.total + 1) / kPostPageSize)
-        : 1
-      if (newPage != query.page) {
-        navigate(
-          `${location.pathname}?${searchParamsAssign(searchParams, {
-            // total + 1 because a new reply was posted just now and info is not yet refreshed.
-            page: newPage,
-          })}`,
-          { preventScrollReset: true }
-        )
-      } else {
+      if (currentlyReversed) {
         refetch()
+        window.scrollTo({ top: 0 })
+      } else {
+        const newPage = info?.total
+          ? Math.ceil((info?.total + 1) / kPostPageSize)
+          : 1
+        if (newPage != query.page) {
+          navigate(
+            `${location.pathname}?${searchParamsAssign(searchParams, {
+              // total + 1 because a new reply was posted just now and info is not yet refreshed.
+              page: newPage,
+            })}`,
+            { preventScrollReset: true }
+          )
+        } else {
+          refetch()
+        }
       }
     } else if (action == 'edit') {
       if (activePost?.position == 1 && activePost?.is_first) {
