@@ -156,7 +156,7 @@ function Thread() {
     if (action == 'reply') {
       if (currentlyReversed) {
         refetch()
-        window.scrollTo({ top: 0 })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         const newPage = info?.total
           ? Math.ceil((info?.total + 1) / kPostPageSize)
