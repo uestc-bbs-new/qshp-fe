@@ -6,8 +6,10 @@ import { common, commonEmojiPath } from '../RichText/vditorConfig'
 
 const options = ({
   smilyToolbarItem,
+  fullscreenToolbarItem,
 }: {
   smilyToolbarItem?: IMenuItem
+  fullscreenToolbarItem?: IMenuItem
 }): IOptions => ({
   ...common,
   luteRenderers: {
@@ -87,7 +89,7 @@ const options = ({
     '|',
     'undo',
     'redo',
-    'fullscreen',
+    ...(fullscreenToolbarItem ? [fullscreenToolbarItem] : ['fullscreen']),
   ],
 })
 
