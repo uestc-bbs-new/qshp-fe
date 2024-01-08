@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 
 import { Sms } from '@mui/icons-material'
-import { Box, Pagination, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Pagination, Skeleton, Typography } from '@mui/material'
 
 import { getPostDetails } from '@/apis/thread'
 import { PostFloor } from '@/common/interfaces/response'
@@ -62,12 +62,7 @@ const PostComments = ({
               time = ' ' + time
             }
             return (
-              <Stack
-                key={comment.id}
-                direction="row"
-                alignItems="baseline"
-                my={2}
-              >
+              <Box key={comment.id} my={2}>
                 <Link to={`/user/${comment.author_id}`} underline="hover">
                   <Avatar
                     sx={{
@@ -98,11 +93,14 @@ const PostComments = ({
                 </span>
                 <span
                   className="text-sm text-slate-300"
-                  style={{ verticalAlign: 'middle', marginLeft: '1em' }}
+                  style={{
+                    verticalAlign: 'middle',
+                    marginLeft: '1em',
+                  }}
                 >
                   发表于{time}
                 </span>
-              </Stack>
+              </Box>
             )
           })}
       {currentPostDetails?.comment_pages &&
