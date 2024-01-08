@@ -144,6 +144,8 @@ export const pollVote = (thread_id: number, options: number[]) => {
   })
 }
 
+export const kMaxCommentLength = 255
+
 export const postComment = (
   thread_id: number,
   post_id: number,

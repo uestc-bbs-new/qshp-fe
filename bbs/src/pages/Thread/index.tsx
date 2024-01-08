@@ -24,6 +24,7 @@ import {
 import {
   getPostDetails,
   getThreadsInfo,
+  kMaxCommentLength,
   kPostPageSize,
   postComment,
 } from '@/apis/thread'
@@ -79,7 +80,7 @@ function Thread() {
     'reply' | 'edit' | 'comment' | undefined
   >(undefined)
   const [dialogPending, setDialogPending] = useState(false)
-  const [commentError, setCommentError] = useState(false)
+  const [commentError, setCommentError] = useState('')
   const commentMessage = useRef<HTMLInputElement>()
 
   const initQuery = (threadChanged?: boolean) => {
@@ -214,11 +215,21 @@ function Thread() {
     setActivePost(post)
     setCurrentDialog('comment')
     setDialogPending(false)
-    setCommentError(false)
+    setCommentError('')
     setDialogOpen(true)
   }
+  const handleCommentChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) =>
+    setCommentError(
+      e.target.value.length > kMaxCommentLength
+        ? `最长不超过 ${kMaxCommentLength} 字符。`
+        : !e.target.value.trim()
+          ? '请输入点评内容。'
+          : ''
+    )
   const sendComment = () => {
-    if (commentMessage.current?.value && activePost) {
+    if (commentMessage.current?.value && activePost && !commentError) {
       setDialogPending(true)
       postComment(
         activePost.thread_id,
@@ -241,8 +252,8 @@ function Thread() {
           )
         })
         .finally(() => setDialogPending(false))
-    } else {
-      setCommentError(true)
+    } else if (!commentError) {
+      setCommentError('请输入点评内容。')
     }
   }
 
@@ -418,9 +429,10 @@ function Thread() {
                 fullWidth
                 multiline
                 required
-                error={commentError}
-                helperText={commentError && '请输入内容。'}
+                error={!!commentError}
+                helperText={commentError}
                 inputRef={commentMessage}
+                onChange={handleCommentChange}
               />
               <Stack direction="row" justifyContent="center" my={1}>
                 <Button
