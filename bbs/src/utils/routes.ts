@@ -39,6 +39,20 @@ const withSearchAndHash = (
 type SettingsSubPage = 'profile' | 'privacy' | 'password'
 type MessagesSubPage = undefined
 
+const kIdasOrigin = `https://bbs.uestc.edu.cn`
+const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
+const kIdasContinueBase = `${kIdasOrigin}/continue`
+export const gotoIdas = () => {
+  location.href = `${idasUrlBase}?service=${encodeURIComponent(
+    withSearchAndHash(
+      kIdasContinueBase,
+      new URLSearchParams({
+        path: `${location.pathname}${location.search}`,
+      })
+    )
+  )}`
+}
+
 export const pages = {
   index: () => `/`,
 
@@ -56,4 +70,4 @@ export const pages = {
     `/settings${subPage ? `/${subPage}` : ''}`,
 }
 
-export { useActiveRoute }
+export { useActiveRoute, kIdasOrigin }

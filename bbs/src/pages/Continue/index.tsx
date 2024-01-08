@@ -34,8 +34,8 @@ import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
 import { setAuthorizationHeader } from '@/utils/authHeader'
+import { kIdasOrigin } from '@/utils/routes'
 
-const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const kTicket = 'ticket'
 
 type IdasResultEx = IdasSignInResult & {

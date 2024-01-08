@@ -15,6 +15,8 @@ import {
   IconButton,
   Snackbar,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material'
@@ -22,6 +24,7 @@ import {
 import { signIn } from '@/apis/common'
 import { useAppState } from '@/states'
 import { setAuthorizationHeader } from '@/utils/authHeader'
+import { gotoIdas } from '@/utils/routes'
 
 const LoginDialog = ({ open }: { open: boolean }) => {
   const { state, dispatch } = useAppState()
@@ -115,10 +118,12 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       </DialogTitle>
       <DialogContent>
         {state.login.prompt && (
-          <Alert severity="info" className="mb-5">
-            {state.login.prompt}
-          </Alert>
+          <Alert severity="info">{state.login.prompt}</Alert>
         )}
+        <Tabs value={0} sx={{ my: 1.5 }}>
+          <Tab label="用户名密码登录" />
+          <Tab label="统一身份认证登录" onClick={gotoIdas} />
+        </Tabs>
         <form onSubmit={onSubmit} ref={formRef}>
           <Grid container alignItems="center" rowSpacing={2}>
             <Grid item xs={4}>
