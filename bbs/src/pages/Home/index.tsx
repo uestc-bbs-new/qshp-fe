@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useQuery } from 'react-query'
 
 import { Box, List, Skeleton, Stack, Typography, useTheme } from '@mui/material'
@@ -17,9 +18,16 @@ const Home = () => {
   const { state } = useAppState()
 
   const theme = useTheme()
-  const { data: topLists, isLoading } = useQuery('toplist', () => {
+  const {
+    data: topLists,
+    isLoading,
+    refetch,
+  } = useQuery('toplist', () => {
     return getTopLists(['newreply', 'newthread', 'digest'])
   })
+  useEffect(() => {
+    refetch()
+  }, [state.user.uid])
   return (
     <>
       <Banner src={headerImg}>
@@ -34,7 +42,7 @@ const Home = () => {
       {!topLists && isLoading ? (
         <Skeleton height={394} />
       ) : (
-        topLists && <HeaderCards topLists={topLists} />
+        topLists && state.user.uid && <HeaderCards topLists={topLists} />
       )}
       <CampusService />
 
