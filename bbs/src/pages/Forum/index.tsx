@@ -22,6 +22,7 @@ import { SelectInputProps } from '@mui/material/Select/SelectInput'
 
 import { getThreadList } from '@/apis/common'
 import { ForumDetails, ThreadType } from '@/common/interfaces/response'
+import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -255,57 +256,98 @@ function Forum() {
   }
 
   return (
-    <Box className="flex-1" style={{ marginTop: '20px' }}>
-      {isError ? (
-        <Error isError={isError} error={error} onRefresh={refetch} />
-      ) : (
-        <>
-          {isFetching && !forumDetails ? (
-            <Card>
-              <List>
-                <ListItem>
-                  <Skeleton className="w-full" height={81}></Skeleton>
-                </ListItem>
-              </List>
-            </Card>
-          ) : forumDetails ? (
-            <Head data={forumDetails}></Head>
-          ) : null}
-          {forumDetails?.children?.length && (
-            <SubForums>{forumDetails.children}</SubForums>
-          )}
-          {!!(isFetching || threadList?.rows?.length) && (
-            <>
-              <ForumPagination
-                count={total}
-                page={query.page}
-                onChange={handlePageChange}
-                ref={threadListTop}
-              />
-              <Stack direction="row" sx={{ flexWrap: 'wrap' }} my={2.5} px={2}>
-                {(forumDetails?.thread_types || []).length > 0 && (
-                  <ThreadTypeFilter key="all" forumId={forumId} />
-                )}
-                {forumDetails?.thread_types.map((item, index) => (
-                  <ThreadTypeFilter key={index} forumId={forumId} type={item} />
-                ))}
-              </Stack>
+    <Stack direction="row">
+      <Box className="flex-1" style={{ marginTop: '20px' }}>
+        {isError ? (
+          <Error isError={isError} error={error} onRefresh={refetch} />
+        ) : (
+          <>
+            {isFetching && !forumDetails ? (
               <Card>
-                <>
-                  {threadList?.rows?.some(
-                    (item: any) => item.display_order > 0
-                  ) && (
-                    <Top>
+                <List>
+                  <ListItem>
+                    <Skeleton className="w-full" height={81}></Skeleton>
+                  </ListItem>
+                </List>
+              </Card>
+            ) : forumDetails ? (
+              <Head data={forumDetails}></Head>
+            ) : null}
+            {forumDetails?.children?.length && (
+              <SubForums>{forumDetails.children}</SubForums>
+            )}
+            {!!(isFetching || threadList?.rows?.length) && (
+              <>
+                <ForumPagination
+                  count={total}
+                  page={query.page}
+                  onChange={handlePageChange}
+                  ref={threadListTop}
+                />
+                <Stack
+                  direction="row"
+                  sx={{ flexWrap: 'wrap' }}
+                  my={2.5}
+                  px={2}
+                >
+                  {(forumDetails?.thread_types || []).length > 0 && (
+                    <ThreadTypeFilter key="all" forumId={forumId} />
+                  )}
+                  {forumDetails?.thread_types.map((item, index) => (
+                    <ThreadTypeFilter
+                      key={index}
+                      forumId={forumId}
+                      type={item}
+                    />
+                  ))}
+                </Stack>
+                <Card>
+                  <>
+                    {threadList?.rows?.some(
+                      (item: any) => item.display_order > 0
+                    ) && (
+                      <Top>
+                        {isFetching ? (
+                          <List>
+                            <ListItem>
+                              <Skeleton
+                                className="w-full"
+                                height={81}
+                              ></Skeleton>
+                            </ListItem>
+                          </List>
+                        ) : (
+                          <List>
+                            {threadList?.rows
+                              ?.filter((item: any) => item.display_order > 0)
+                              .map((item: any) => (
+                                <ThreadItem
+                                  data={item}
+                                  key={item.thread_id}
+                                  forumDetails={forumDetails}
+                                />
+                              ))}
+                          </List>
+                        )}
+                      </Top>
+                    )}
+                    <Normal
+                      query={query}
+                      searchParams={searchParams}
+                      onChange={() => threadListTop.current?.scrollIntoView()}
+                    >
                       {isFetching ? (
                         <List>
-                          <ListItem>
-                            <Skeleton className="w-full" height={81}></Skeleton>
-                          </ListItem>
+                          {[...Array(8)].map((_, index) => (
+                            <ListItem key={index}>
+                              <Skeleton className="w-full" height={100} />
+                            </ListItem>
+                          ))}
                         </List>
                       ) : (
                         <List>
                           {threadList?.rows
-                            ?.filter((item: any) => item.display_order > 0)
+                            ?.filter((item: any) => item.display_order === 0)
                             .map((item: any) => (
                               <ThreadItem
                                 data={item}
@@ -315,52 +357,26 @@ function Forum() {
                             ))}
                         </List>
                       )}
-                    </Top>
-                  )}
-                  <Normal
-                    query={query}
-                    searchParams={searchParams}
-                    onChange={() => threadListTop.current?.scrollIntoView()}
-                  >
-                    {isFetching ? (
-                      <List>
-                        {[...Array(8)].map((_, index) => (
-                          <ListItem key={index}>
-                            <Skeleton className="w-full" height={100} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    ) : (
-                      <List>
-                        {threadList?.rows
-                          ?.filter((item: any) => item.display_order === 0)
-                          .map((item: any) => (
-                            <ThreadItem
-                              data={item}
-                              key={item.thread_id}
-                              forumDetails={forumDetails}
-                            />
-                          ))}
-                      </List>
-                    )}
-                  </Normal>
-                </>
+                    </Normal>
+                  </>
+                </Card>
+                <ForumPagination
+                  count={total}
+                  page={query.page}
+                  onChange={handlePageChange}
+                />
+              </>
+            )}
+            {forumDetails?.can_post_thread && (
+              <Card py={1.5}>
+                <PostEditor forum={forumDetails} />
               </Card>
-              <ForumPagination
-                count={total}
-                page={query.page}
-                onChange={handlePageChange}
-              />
-            </>
-          )}
-          {forumDetails?.can_post_thread && (
-            <Card py={1.5}>
-              <PostEditor forum={forumDetails} />
-            </Card>
-          )}
-        </>
-      )}
-    </Box>
+            )}
+          </>
+        )}
+      </Box>
+      <Aside />
+    </Stack>
   )
 }
 export default Forum
