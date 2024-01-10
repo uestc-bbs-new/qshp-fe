@@ -44,6 +44,9 @@ importers:
       react-draggable:
         specifier: ^4.4.6
         version: registry.npmmirror.com/react-draggable@4.4.6(react-dom@18.2.0)(react@18.2.0)
+      react-google-recaptcha:
+        specifier: ^3.1.0
+        version: registry.npmmirror.com/react-google-recaptcha@3.1.0(react@18.2.0)
       react-hook-form:
         specifier: ^7.49.2
         version: registry.npmmirror.com/react-hook-form@7.49.2(react@18.2.0)
@@ -78,6 +81,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: registry.npmmirror.com/@types/react-dom@18.2.18
+      '@types/react-google-recaptcha':
+        specifier: ^2.1.8
+        version: registry.npmmirror.com/@types/react-google-recaptcha@2.1.8
       '@types/react-swipeable-views':
         specifier: ^0.13.5
         version: registry.npmmirror.com/@types/react-swipeable-views@0.13.5
@@ -1557,6 +1563,14 @@ packages:
     resolution: {integrity: sha512-TJxDm6OfAX2KJWJdMEVTwWke5Sc/E/RlnPGvGfS0W7+6ocy2xhDVQVh/KvC2Uf7kACs+gDytdusDSdWfWkaNzw==, tarball: https://registry.npmmirror.com/@types/react-dom/-/react-dom-18.2.18.tgz}
     name: '@types/react-dom'
     version: 18.2.18
+    dependencies:
+      '@types/react': registry.npmmirror.com/@types/react@18.2.45
+    dev: true
+
+  registry.npmmirror.com/@types/react-google-recaptcha@2.1.8:
+    resolution: {integrity: sha512-nYI3ZDoteZ0g4FYusyKWqz7AZqRdu70R3wDkosCcN0peb2WLn57i0Alm4IPiCRIx59yTUVPTiOELZH08gV1wXA==, tarball: https://registry.npmmirror.com/@types/react-google-recaptcha/-/react-google-recaptcha-2.1.8.tgz}
+    name: '@types/react-google-recaptcha'
+    version: 2.1.8
     dependencies:
       '@types/react': registry.npmmirror.com/@types/react@18.2.45
     dev: true
@@ -4625,6 +4639,19 @@ packages:
     version: 1.2.3
     dev: true
 
+  registry.npmmirror.com/react-async-script@1.2.0(react@18.2.0):
+    resolution: {integrity: sha512-bCpkbm9JiAuMGhkqoAiC0lLkb40DJ0HOEJIku+9JDjxX3Rcs+ztEOG13wbrOskt3n2DTrjshhaQ/iay+SnGg5Q==, tarball: https://registry.npmmirror.com/react-async-script/-/react-async-script-1.2.0.tgz}
+    id: registry.npmmirror.com/react-async-script/1.2.0
+    name: react-async-script
+    version: 1.2.0
+    peerDependencies:
+      react: '>=16.4.1'
+    dependencies:
+      hoist-non-react-statics: registry.npmmirror.com/hoist-non-react-statics@3.3.2
+      prop-types: registry.npmmirror.com/prop-types@15.8.1
+      react: registry.npmmirror.com/react@18.2.0
+    dev: false
+
   registry.npmmirror.com/react-dom@18.2.0(react@18.2.0):
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==, tarball: https://registry.npmmirror.com/react-dom/-/react-dom-18.2.0.tgz}
     id: registry.npmmirror.com/react-dom/18.2.0
@@ -4665,6 +4692,19 @@ packages:
       prop-types: registry.npmmirror.com/prop-types@15.8.1
       react: registry.npmmirror.com/react@18.2.0
       warning: registry.npmmirror.com/warning@4.0.3
+
+  registry.npmmirror.com/react-google-recaptcha@3.1.0(react@18.2.0):
+    resolution: {integrity: sha512-cYW2/DWas8nEKZGD7SCu9BSuVz8iOcOLHChHyi7upUuVhkpkhYG/6N3KDiTQ3XAiZ2UAZkfvYKMfAHOzBOcGEg==, tarball: https://registry.npmmirror.com/react-google-recaptcha/-/react-google-recaptcha-3.1.0.tgz}
+    id: registry.npmmirror.com/react-google-recaptcha/3.1.0
+    name: react-google-recaptcha
+    version: 3.1.0
+    peerDependencies:
+      react: '>=16.4.1'
+    dependencies:
+      prop-types: registry.npmmirror.com/prop-types@15.8.1
+      react: registry.npmmirror.com/react@18.2.0
+      react-async-script: registry.npmmirror.com/react-async-script@1.2.0(react@18.2.0)
+    dev: false
 
   registry.npmmirror.com/react-hook-form@7.49.2(react@18.2.0):
     resolution: {integrity: sha512-TZcnSc17+LPPVpMRIDNVITY6w20deMdNi6iehTFLV1x8SqThXGwu93HjlUVU09pzFgZH7qZOvLMM7UYf2ShAHA==, tarball: https://registry.npmmirror.com/react-hook-form/-/react-hook-form-7.49.2.tgz}

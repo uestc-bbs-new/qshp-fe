@@ -134,7 +134,8 @@ export const signIn = (params: {
   username: string
   password: string
   keep_signed_in: boolean
-  captcha_value: string
+  captcha_value?: string
+  captcha_type?: string
 }) => {
   return authService.post<string>(
     `${commonUrl}/auth/signin`,
@@ -143,7 +144,16 @@ export const signIn = (params: {
       password: params.password,
       keep_signed_in: params.keep_signed_in,
     },
-    { headers: { 'X-UESTC-BBS-Captcha': params.captcha_value } }
+    {
+      headers: {
+        ...(params.captcha_value && {
+          'X-UESTC-BBS-Captcha': params.captcha_value,
+        }),
+        ...(params.captcha_type && {
+          'X-UESTC-BBS-Captcha-Type': params.captcha_type,
+        }),
+      },
+    }
   )
 }
 

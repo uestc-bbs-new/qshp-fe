@@ -1,5 +1,3 @@
-import HCaptcha from '@hcaptcha/react-hcaptcha'
-
 import React, { useRef, useState } from 'react'
 
 import { Close } from '@mui/icons-material'
@@ -26,11 +24,16 @@ import { useAppState } from '@/states'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import { gotoIdas } from '@/utils/routes'
 
+import Captcha, {
+  CaptchaConfiguration,
+  Captcha as CaptchaType,
+} from '../Captcha'
+
 const LoginDialog = ({ open }: { open: boolean }) => {
   const { state, dispatch } = useAppState()
   const formRef = useRef<HTMLFormElement>(null)
-  const hCaptchaToken = useRef('')
-  const hCaptchaRef = useRef<HCaptcha>(null)
+  const [captcha, setCaptcha] = useState<CaptchaConfiguration>()
+  const captchaRef = useRef<CaptchaType>()
   const [signinPending, setSigninPending] = useState(false)
   const close = () => dispatch({ type: 'close login' })
   type FormData = {
@@ -50,10 +53,6 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       prompt && showError('请输入用户名与密码。')
       return null
     }
-    if (!hCaptchaToken.current) {
-      prompt && showError('请完成验证后登录')
-      return null
-    }
     return {
       username: username.toString(),
       password: password.toString(),
@@ -68,32 +67,45 @@ const LoginDialog = ({ open }: { open: boolean }) => {
     }
     doSignIn(formData)
   }
-  const doSignIn = async (formData: FormData) => {
+  const doSignIn = async (formData: FormData, captchaValue?: string) => {
     try {
       setSigninPending(true)
       const authorization = await signIn({
         username: formData.username,
         password: formData.password,
         keep_signed_in: formData.keepSignedIn,
-        captcha_value: hCaptchaToken.current,
+        ...(captchaValue && {
+          captcha_value: captchaValue,
+          captcha_type: captcha?.name,
+        }),
       })
       if (authorization) {
         setAuthorizationHeader(authorization)
         close()
       }
-    } catch (e) {
-      showError((e as { message?: string })?.message || '登录失败！')
-      hCaptchaRef.current?.resetCaptcha()
-      console.error(e)
+    } catch (e_) {
+      const e = e_ as
+        | {
+            type: string
+            code: number
+            message: string
+            details: { data: CaptchaConfiguration[] }
+          }
+        | undefined
+      if (e?.type == 'api' && e?.code == 1) {
+        setCaptcha(e.details.data[0])
+      } else {
+        showError(e?.message || '登录失败！')
+      }
+      captchaRef.current?.reset()
     } finally {
       setSigninPending(false)
     }
   }
-  const onCaptchaVerify = (token: string, _: string) => {
-    hCaptchaToken.current = token
+  const onCaptchaVerified = (token: string) => {
     const formData = verifyForm(false)
     if (formData) {
-      doSignIn(formData)
+      doSignIn(formData, token)
     }
   }
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -143,13 +155,18 @@ const LoginDialog = ({ open }: { open: boolean }) => {
             control={<Checkbox name="keep_signed_in" value="1" />}
             label="自动登录"
           />
-          <div style={{ textAlign: 'center' }}>
-            <HCaptcha
-              sitekey="52100d97-0777-4497-8852-e380d5b3430b"
-              onVerify={onCaptchaVerify}
-              ref={hCaptchaRef}
-            />
-          </div>
+          {captcha && (
+            <>
+              <Alert severity="info">请完成验证后登录：</Alert>
+              <Stack alignItems="center" my={1}>
+                <Captcha
+                  captcha={captcha}
+                  onVerified={onCaptchaVerified}
+                  ref={captchaRef}
+                />
+              </Stack>
+            </>
+          )}
           <Stack direction="row" justifyContent="center">
             <Button type="submit" disabled={signinPending}>
               {signinPending ? '请稍候...' : '登录'}
