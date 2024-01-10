@@ -59,6 +59,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
         return {
           ...state,
           user: action.payload,
+          ...(action.payload.uid && { login: { open: false } }),
         }
       }
       return state
