@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { signOut } from '@/apis/common'
+import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
 import { Theme, useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'

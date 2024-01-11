@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { signIn } from '@/apis/common'
+import { signIn } from '@/apis/auth'
 import { useAppState } from '@/states'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import { gotoIdas } from '@/utils/routes'

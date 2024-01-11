@@ -1,6 +1,8 @@
 import { IdasSignInResult } from '@/common/interfaces/response'
 import { authService, commonUrl } from '@/utils/request'
 
+const authUrl = `${commonUrl}/auth`
+
 export type EphemeralAuthorization = {
   ticket: string
   ephemeral_authorization: string
@@ -14,7 +16,7 @@ export const signIn = (params: {
   captcha_type?: string
 }) => {
   return authService.post<string>(
-    `${commonUrl}/auth/signin`,
+    `${authUrl}/signin`,
     {
       username: params.username,
       password: params.password,
@@ -34,10 +36,7 @@ export const signIn = (params: {
 }
 
 export const idasSignIn = (params: { continue: string; ticket: string }) => {
-  return authService.post<IdasSignInResult>(
-    `${commonUrl}/auth/signin/idas`,
-    params
-  )
+  return authService.post<IdasSignInResult>(`${authUrl}/signin/idas`, params)
 }
 
 export const idasChooseUser = (
@@ -45,23 +44,32 @@ export const idasChooseUser = (
     user_id: number
   }
 ) => {
-  return authService.post<string>(`${commonUrl}/auth/signin/user`, params)
+  return authService.post<string>(`${authUrl}/signin/user`, params)
 }
 
 export const idasFreshman = (params: EphemeralAuthorization) => {
-  return authService.post<string>(`${commonUrl}/auth/signin/freshman`, params)
+  return authService.post<string>(`${authUrl}/signin/freshman`, params)
 }
-export const register = (params: {
-  ticket: string
-  ephemeral_authorization: string
-  username: string
-  password: string
-  email: string
-  invitation?: string
-}) => {
-  return authService.post<string>(`${commonUrl}/auth/register`, params)
+
+export const checkUserName = (
+  params: EphemeralAuthorization & {
+    username: string
+  }
+) => {
+  return authService.post<boolean>(`${authUrl}/register/check`, params)
+}
+
+export const register = (
+  params: EphemeralAuthorization & {
+    username: string
+    password: string
+    email: string
+    invitation?: string
+  }
+) => {
+  return authService.post<string>(`${authUrl}/register`, params)
 }
 
 export const signOut = () => {
-  return authService.post(`${commonUrl}/auth/signout`)
+  return authService.post(`${authUrl}/signout`)
 }

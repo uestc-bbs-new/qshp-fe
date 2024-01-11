@@ -24,7 +24,13 @@ import {
   Typography,
 } from '@mui/material'
 
-import { idasChooseUser, idasFreshman, idasSignIn, register } from '@/apis/auth'
+import {
+  checkUserName,
+  idasChooseUser,
+  idasFreshman,
+  idasSignIn,
+  register,
+} from '@/apis/auth'
 import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
@@ -163,6 +169,16 @@ const RegisterForm = ({
       return
     }
     setUserNameError('')
+    if (
+      !(await checkUserName({
+        ticket: idasResult.ticket,
+        ephemeral_authorization: idasResult.ephemeral_authorization,
+        username,
+      })) &&
+      getFormField('username') == username
+    ) {
+      setUserNameError('该用户名已注册，请重新输入。')
+    }
   }
   const validatePassword = async (confirmPassword?: boolean) => {
     const password = getFormField('password')
