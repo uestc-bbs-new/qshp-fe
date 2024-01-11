@@ -227,20 +227,22 @@ export const ContinueLoader = async ({ request }: { request: Request }) => {
   const url = new URL(request.url)
   const searchParams = url.searchParams
   const ticket = searchParams.get(kTicket)
+  const path = sanitizeContinuePath(searchParams.get('path'))
   if (!ticket) {
-    throw 'Invalid signin'
+    return redirect(path)
   }
   const originalSearchParams = new URLSearchParams(searchParams)
   originalSearchParams.delete(kTicket)
   const continuePath = `${kIdasOrigin}${url.pathname}?${originalSearchParams}`
-  if (ticket) {
+  try {
     const result = await idasSignIn({ continue: continuePath, ticket })
-    const path = sanitizeContinuePath(searchParams.get('path'))
     if (result.authorization) {
       setAuthorizationHeader(result.authorization)
       return redirect(path)
     }
     return { ...result, ticket, continue: path }
+  } catch (_) {
+    return redirect(path)
   }
 }
 
