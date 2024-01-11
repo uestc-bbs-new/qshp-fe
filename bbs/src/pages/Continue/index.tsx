@@ -125,6 +125,10 @@ const Continue = () => {
   )
 }
 
+const kMinUserNameLength = 3
+const kMaxUserNameLength = 15
+const kMinPasswordLength = 10
+
 const RegisterForm = ({
   idasResult,
   onClose,
@@ -134,7 +138,9 @@ const RegisterForm = ({
 }) => {
   const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {}
+  const [userNameError, setUserNameError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [passwordError2, setPasswordError2] = useState('')
   const goFreshmanOrBack = async () => {
     if (idasResult.users) {
       onClose()
@@ -146,14 +152,47 @@ const RegisterForm = ({
       navigate(idasResult.continue, { replace: true })
     }
   }
+  const getFormField = (name: string) => {
+    if (!formRef.current) {
+      return ''
+    }
+    return (new FormData(formRef.current).get(name) || '').toString()
+  }
+  const validateUserName = async () => {
+    const username = getFormField('username')
+    if (
+      username.length < kMinUserNameLength ||
+      username.length > kMaxUserNameLength
+    ) {
+      setUserNameError('用户名长度为 3~15 个字符。')
+      return
+    }
+    setUserNameError('')
+  }
+  const validatePassword = async (confirmPassword?: boolean) => {
+    const password = getFormField('password')
+    const password2 = getFormField('password2')
+    if (password.length < kMinPasswordLength) {
+      setPasswordError(`密码至少 ${kMinPasswordLength} 位。`)
+      return
+    }
+    if (confirmPassword && password2 != password) {
+      setPasswordError2('两次输入的密码不同，请重新输入。')
+      return
+    }
+    setPasswordError('')
+    setPasswordError2('')
+  }
   const handleRegister = async () => {
     if (!formRef.current) {
+      return
+    }
+    if (userNameError || passwordError) {
       return
     }
     const data = new FormData(formRef.current)
     const username = data.get('username')
     const password = data.get('password')
-    const password2 = data.get('password2')
     const email = data.get('email')
     if (!username || !password || !email) {
       return
@@ -170,7 +209,7 @@ const RegisterForm = ({
     navigate(idasResult.continue, { replace: true })
   }
   return (
-    <form onSubmit={onSubmit} ref={formRef}>
+    <form ref={formRef}>
       <Grid container alignItems="center" rowSpacing={2}>
         <Grid item xs={4}>
           <Typography>用户名：</Typography>
@@ -180,7 +219,11 @@ const RegisterForm = ({
             autoFocus
             fullWidth
             name="username"
-            helperText="注册后不能随意修改用户名，请认真考虑后填写。"
+            helperText={
+              userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
+            }
+            error={!!userNameError}
+            onBlur={validateUserName}
             required
           />
         </Grid>
@@ -192,14 +235,26 @@ const RegisterForm = ({
             type="password"
             fullWidth
             name="password"
-            helperText="建议设置一个安全的河畔密码并妥善保存，以便今后登录。"
+            error={!!passwordError || !!passwordError2}
+            helperText={
+              passwordError ||
+              passwordError2 ||
+              '建议设置一个安全的河畔密码并妥善保存，以便今后登录。'
+            }
+            onBlur={() => validatePassword()}
           />
         </Grid>
         <Grid item xs={4}>
           <Typography>确认密码：</Typography>
         </Grid>
         <Grid item xs={8}>
-          <TextField type="password" fullWidth name="password2" />
+          <TextField
+            type="password"
+            fullWidth
+            name="password2"
+            error={!!passwordError2}
+            onBlur={() => validatePassword(true)}
+          />
         </Grid>
         <Grid item xs={4}>
           <Typography>Email：</Typography>
