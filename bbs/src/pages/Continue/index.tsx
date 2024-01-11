@@ -24,12 +24,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import {
-  idasChooseUser,
-  idasFreshman,
-  idasSignIn,
-  register,
-} from '@/apis/common'
+import { idasChooseUser, idasFreshman, idasSignIn, register } from '@/apis/auth'
 import { IdasSignInResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'

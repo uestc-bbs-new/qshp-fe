@@ -2,7 +2,6 @@ import {
   BBSInfo,
   Forum,
   ForumDetails,
-  IdasSignInResult,
   Thread,
   ThreadBasics,
   ThreadList,
@@ -128,67 +127,4 @@ export const getThreadList = async (params: {
 
 export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
-}
-
-export const signIn = (params: {
-  username: string
-  password: string
-  keep_signed_in: boolean
-  captcha_value?: string
-  captcha_type?: string
-}) => {
-  return authService.post<string>(
-    `${commonUrl}/auth/signin`,
-    {
-      username: params.username,
-      password: params.password,
-      keep_signed_in: params.keep_signed_in,
-    },
-    {
-      headers: {
-        ...(params.captcha_value && {
-          'X-UESTC-BBS-Captcha': params.captcha_value,
-        }),
-        ...(params.captcha_type && {
-          'X-UESTC-BBS-Captcha-Type': params.captcha_type,
-        }),
-      },
-    }
-  )
-}
-
-export const idasSignIn = (params: { continue: string; ticket: string }) => {
-  return authService.post<IdasSignInResult>(
-    `${commonUrl}/auth/signin/idas`,
-    params
-  )
-}
-
-export const idasChooseUser = (params: {
-  user_id: number
-  ticket: string
-  ephemeral_authorization: string
-}) => {
-  return authService.post<string>(`${commonUrl}/auth/signin/user`, params)
-}
-
-export const idasFreshman = (params: {
-  ticket: string
-  ephemeral_authorization: string
-}) => {
-  return authService.post<string>(`${commonUrl}/auth/signin/freshman`, params)
-}
-export const register = (params: {
-  ticket: string
-  ephemeral_authorization: string
-  username: string
-  password: string
-  email: string
-  invitation?: string
-}) => {
-  return authService.post<string>(`${commonUrl}/auth/register`, params)
-}
-
-export const signOut = () => {
-  return authService.post(`${commonUrl}/auth/signout`)
 }
