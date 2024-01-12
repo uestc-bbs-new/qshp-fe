@@ -16,20 +16,49 @@ export const chineseTime = (
   if (options?.full) {
     return dayjs(time).format('YYYY-MM-DD HH:mm')
   }
-  if (Date.now() - time < 1000 * 60) {
-    return '刚刚'
+  const now = new Date()
+  let format = 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm')
+  if (time > now.getTime()) {
+    return dayjs(time).format(format)
+  } else {
+    if (time > now.getTime() - 1000 * 60 && time < now.getTime()) {
+      return '刚刚'
+    }
+    if (Date.now() - time < 1000 * 60 * 60 * 3) {
+      return dayjs(time).fromNow()
+    }
   }
-  if (Date.now() - time < 1000 * 60 * 60 * 3) {
-    return dayjs(time).fromNow()
+  const date = new Date(time)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - 1
+  )
+  let dayOffset = now.getDay() - 1
+  if (dayOffset === -1) {
+    dayOffset = 6
   }
-  return dayjs(time).calendar(null, {
-    sameDay: '[今天] HH:mm', // The same day ( Today at 2:30 AM )
-    nextDay: '[明天] HH:mm', // The next day ( Tomorrow at 2:30 AM )
-    nextWeek: 'dddd HH:mm', // The next week ( Sunday at 2:30 AM )
-    lastDay: '[昨天] HH:mm', // The day before ( Yesterday at 2:30 AM )
-    lastWeek: '[上周] dddd HH:mm', // Last week ( Last Monday at 2:30 AM )
-    sameElse: 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm'), // Everything else ( 17/10/2011 )
-  })
+  const beginOfWeek = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - dayOffset
+  )
+  const lastWeek = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - dayOffset - 7
+  )
+  if (date.getTime() >= today.getTime()) {
+    format = '[今天] HH:mm'
+  } else if (date.getTime() >= yesterday.getTime()) {
+    format = '[昨天] HH:mm'
+  } else if (date.getTime() >= beginOfWeek.getTime()) {
+    format = 'dddd HH:mm'
+  } else if (date.getTime() >= lastWeek.getTime()) {
+    format = '[上]ddd HH:mm'
+  }
+  return dayjs(time).format(format)
 }
 
 export const chineseDuration = (seconds: number) =>
