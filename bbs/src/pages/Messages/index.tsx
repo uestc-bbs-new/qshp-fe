@@ -24,7 +24,7 @@ const Messages = () => {
   const route = useActiveRoute()
   return (
     <Stack direction="row" alignItems="flex-start" mt={2}>
-      <Paper sx={{ width: 180, mr: 4 }}>
+      <Paper sx={{ width: 180, mr: 4, flewGrow: 0, flexShrink: 0 }}>
         <List disablePadding>
           {navItems.map((item, index) => (
             <Link
