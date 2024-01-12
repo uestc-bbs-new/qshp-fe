@@ -12,9 +12,7 @@ const useActiveRoute = () => {
     handle: unknown
   } | null>(null)
   useEffect(() => {
-    if (matches.length > 0) {
-      setActiveRoute(matches[matches.length - 1])
-    }
+    setActiveRoute(matches.length > 0 ? matches[matches.length - 1] : null)
   }, [location])
   return activeRoute
 }
@@ -37,7 +35,7 @@ const withSearchAndHash = (
 }
 
 type SettingsSubPage = 'profile' | 'privacy' | 'password'
-type MessagesSubPage = undefined
+type MessagesSubPage = string
 
 const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`

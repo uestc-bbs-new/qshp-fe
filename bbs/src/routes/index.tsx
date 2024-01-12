@@ -7,6 +7,8 @@ import Goto from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
+import Notifications from '@/pages/Messages/Notifications'
+import Pm from '@/pages/Messages/Pm'
 import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
@@ -35,7 +37,32 @@ routes.current = [
         element: <Thread />,
       },
       { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
-      { path: '/messages', id: 'messages', element: <Messages /> },
+      {
+        path: '/messages',
+        element: <Messages />,
+        children: [
+          {
+            id: 'messages',
+            index: true,
+            element: <Pm />,
+          },
+          {
+            id: 'pm',
+            path: 'pm/:uid?',
+            element: <Pm />,
+          },
+          {
+            id: 'posts',
+            path: 'posts/:kind?',
+            element: <Notifications />,
+          },
+          {
+            id: 'system',
+            path: 'system/:kind?',
+            element: <Notifications />,
+          },
+        ],
+      },
       {
         path: '/settings/:id?',
         id: 'settings',
