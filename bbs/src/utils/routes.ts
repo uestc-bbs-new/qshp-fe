@@ -35,7 +35,6 @@ const withSearchAndHash = (
 }
 
 type SettingsSubPage = 'profile' | 'privacy' | 'password'
-type MessagesSubPage = string
 
 const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
@@ -61,8 +60,10 @@ export const pages = {
   goto: (post_id: number) => `/goto/${post_id}`,
   post: (forum_id?: number) => `/post${forum_id ? `/${forum_id}` : ''}`,
 
-  messages: (subPage?: MessagesSubPage) =>
+  messages: (subPage?: MessageGroup) =>
     `/messages${subPage ? `/${subPage}` : ''}`,
+  notifications: (group: NotificationGroup, kind: string) =>
+    `/messages/${group}/${kind}`,
 
   settings: (subPage?: SettingsSubPage) =>
     `/settings${subPage ? `/${subPage}` : ''}`,

@@ -31,7 +31,7 @@ const Messages = () => {
               underline="none"
               color="inherit"
               key={index}
-              to={pages.messages(item.id)}
+              to={pages.messages(item.id as MessageGroup)}
             >
               <ListItemButton selected={item.id == route?.id}>
                 {item.text}

@@ -2,6 +2,8 @@ import {
   BBSInfo,
   Forum,
   ForumDetails,
+  GenericList,
+  Notification,
   Thread,
   ThreadBasics,
   ThreadList,
@@ -127,4 +129,17 @@ export const getThreadList = async (params: {
 
 export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
+}
+
+export const getNotifications = (params: {
+  kind?: string
+  page?: number
+  pageSize?: number
+}) => {
+  return request.get<GenericList<Notification>>(
+    `${commonUrl}/view/message/notice`,
+    {
+      params,
+    }
+  )
 }

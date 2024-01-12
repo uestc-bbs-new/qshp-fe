@@ -344,3 +344,14 @@ export type IdasSignInResult = {
   ephemeral_authorization: string
   remaining_registers?: number
 }
+
+export type GenericList<T> = {
+  total: number
+  rows: T[]
+}
+
+export type Notification = {
+  author_id: number
+  note: string
+  dateline: number
+}
