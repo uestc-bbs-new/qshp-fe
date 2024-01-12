@@ -137,7 +137,7 @@ export const getNotifications = (params: {
   pageSize?: number
 }) => {
   return request.get<GenericList<Notification>>(
-    `${commonUrl}/view/message/notice`,
+    `${commonUrl}/message/notification`,
     {
       params,
     }

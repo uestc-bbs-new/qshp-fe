@@ -347,11 +347,12 @@ export type IdasSignInResult = {
 
 export type GenericList<T> = {
   total: number
+  page_size: number
   rows: T[]
 }
 
 export type Notification = {
   author_id: number
-  note: string
+  html_message: string
   dateline: number
 }
