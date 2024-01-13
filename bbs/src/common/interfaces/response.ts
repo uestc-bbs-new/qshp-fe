@@ -356,3 +356,20 @@ export type Notification = {
   html_message: string
   dateline: number
 }
+
+export type ChatConversation = {
+  conversation_id: number
+  unread: boolean
+  to_uid: number
+  to_username: string
+  last_author_id: number
+  last_author: string
+  last_summary: string
+  message_count?: number
+  last_update: number
+  last_dateline: number
+  create_time: number
+  author_id: number
+  type: 'personal' | 'group'
+  subject: string
+}

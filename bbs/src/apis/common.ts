@@ -1,5 +1,6 @@
 import {
   BBSInfo,
+  ChatConversation,
   Forum,
   ForumDetails,
   GenericList,
@@ -131,13 +132,18 @@ export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
 }
 
-export const getNotifications = (params: {
-  kind?: string
-  page?: number
-  pageSize?: number
-}) => {
+export const getNotifications = (params: { kind?: string; page?: number }) => {
   return request.get<GenericList<Notification>>(
-    `${commonUrl}/message/notification`,
+    `${commonUrl}/messages/notifications`,
+    {
+      params,
+    }
+  )
+}
+
+export const getChatList = (params: { page?: number }) => {
+  return request.get<GenericList<ChatConversation>>(
+    `${commonUrl}/messages/chat/list`,
     {
       params,
     }

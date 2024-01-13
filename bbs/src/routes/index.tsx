@@ -47,8 +47,8 @@ routes.current = [
             element: <Pm />,
           },
           {
-            id: 'pm',
-            path: 'pm/:uid?',
+            id: 'chat',
+            path: 'chat/:plid?',
             element: <Pm />,
           },
           {

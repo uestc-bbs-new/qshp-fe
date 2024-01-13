@@ -7,7 +7,7 @@ import { pages, useActiveRoute } from '@/utils/routes'
 
 const navItems = [
   {
-    id: 'pm',
+    id: 'chat',
     text: '站内信',
   },
   {
