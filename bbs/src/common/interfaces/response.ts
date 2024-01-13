@@ -365,7 +365,8 @@ export type ChatConversation = {
   last_author_id: number
   last_author: string
   last_summary: string
-  message_count?: number
+  member_count?: number
+  message_count: number
   last_update: number
   last_dateline: number
   create_time: number

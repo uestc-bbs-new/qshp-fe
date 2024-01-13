@@ -64,9 +64,20 @@ export const pages = {
     `/messages${subPage ? `/${subPage}` : ''}`,
   notifications: (group: NotificationGroup, kind: string) =>
     `/messages/${group}/${kind}`,
+  chat: (conversationId?: number) =>
+    `/messages/chat${conversationId ? `/${conversationId}` : ''}`,
 
   settings: (subPage?: SettingsSubPage) =>
     `/settings${subPage ? `/${subPage}` : ''}`,
+
+  user: (params?: { uid?: number; username?: string }) =>
+    `/user/${
+      params?.username
+        ? `name/${params.username}`
+        : params?.uid
+          ? params.uid
+          : 'me'
+    }`,
 }
 
 export { useActiveRoute, kIdasOrigin }
