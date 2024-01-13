@@ -52,6 +52,11 @@ routes.current = [
             element: <Pm />,
           },
           {
+            id: 'chat_user',
+            path: 'chat/user/:uid?',
+            element: <Pm />,
+          },
+          {
             id: 'posts',
             path: 'posts/:kind?',
             element: <Notifications />,

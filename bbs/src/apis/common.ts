@@ -1,6 +1,7 @@
 import {
   BBSInfo,
   ChatConversation,
+  ChatMessage,
   Forum,
   ForumDetails,
   GenericList,
@@ -146,6 +147,25 @@ export const getChatList = (params: { page?: number }) => {
     `${commonUrl}/messages/chat/list`,
     {
       params,
+    }
+  )
+}
+
+export const getChatMessages = ({
+  uid,
+  chatId,
+  chatList,
+  ...params
+}: {
+  uid?: number
+  chatId?: number
+  chatList?: boolean
+  page?: number
+}) => {
+  return request.get<GenericList<ChatMessage>>(
+    `${commonUrl}/messages/chat/${uid ? `user/${uid}` : chatId}`,
+    {
+      params: { ...params, ...(chatList && { chatList }) },
     }
   )
 }

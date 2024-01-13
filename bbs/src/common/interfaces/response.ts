@@ -345,9 +345,13 @@ export type IdasSignInResult = {
   remaining_registers?: number
 }
 
-export type GenericList<T> = {
+export type PaginationParams = {
   total: number
   page_size: number
+  page: number
+}
+
+export type GenericList<T> = PaginationParams & {
   rows: T[]
 }
 
@@ -373,4 +377,12 @@ export type ChatConversation = {
   author_id: number
   type: 'personal' | 'group'
   subject: string
+}
+
+export type ChatMessage = {
+  message_id: number
+  author_id: number
+  author: string
+  dateline: number
+  message: string
 }
