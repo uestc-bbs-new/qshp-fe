@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { useState } from 'react'
-import { useQuery } from 'react-query'
 
 import { Box, List, Skeleton, Tab, Tabs } from '@mui/material'
 
@@ -10,7 +11,10 @@ import { useActiveRoute } from '@/utils/routes'
 
 const Aside = () => {
   const [id, setId] = useState(1)
-  const { data: hot, isLoading } = useQuery(['hotThread'], () => getBBSInfo())
+  const { data: hot, isLoading } = useQuery({
+    queryKey: ['hotThread'],
+    queryFn: () => getBBSInfo(),
+  })
   const activeRoute = useActiveRoute()
 
   const handleChange = (event: React.SyntheticEvent, newId: number) => {

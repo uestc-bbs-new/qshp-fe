@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import React, { useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
 import {
   useLocation,
   useNavigate,
@@ -104,50 +105,50 @@ function Thread() {
     isError: isError,
     isLoading: infoLoading,
     refetch,
-  } = useQuery(
-    ['thread', query],
-    () => {
+  } = useQuery({
+    queryKey: ['thread', query],
+    queryFn: () => {
       return getThreadsInfo(query)
     },
-    {
-      onSuccess: async (data) => {
-        if (data && data.thread) {
-          setThreadDetails(data.thread)
-          dispatch({ type: 'set thread', payload: data.thread })
-        }
-        if (data && data.forum) {
-          setForumDetails(data.forum)
-          dispatch({ type: 'set forum', payload: data.forum })
-        }
-        if (data && data.total) {
-          setTotalPages(Math.ceil(data.total / kPostPageSize))
-        }
-        if (data && data.rows) {
-          const commentPids: number[] = []
-          const ratePids: number[] = []
-          data.rows.forEach((post) => {
-            if (post.has_comment) {
-              commentPids.push(post.post_id)
-            }
-            if (post.has_rate) {
-              ratePids.push(post.post_id)
-            }
-          })
-          if (commentPids.length || ratePids.length) {
-            const details = await getPostDetails({
-              threadId,
-              commentPids,
-              ratePids,
-            })
-            commentPids
-              .concat(ratePids)
-              .forEach((pid) => !details[pid] && (details[pid] = {}))
-            setPostDetails(details)
+  })
+  useEffect(() => {
+    ;(async () => {
+      if (info && info.thread) {
+        setThreadDetails(info.thread)
+        dispatch({ type: 'set thread', payload: info.thread })
+      }
+      if (info && info.forum) {
+        setForumDetails(info.forum)
+        dispatch({ type: 'set forum', payload: info.forum })
+      }
+      if (info && info.total) {
+        setTotalPages(Math.ceil(info.total / kPostPageSize))
+      }
+      if (info && info.rows) {
+        const commentPids: number[] = []
+        const ratePids: number[] = []
+        info.rows.forEach((post) => {
+          if (post.has_comment) {
+            commentPids.push(post.post_id)
           }
+          if (post.has_rate) {
+            ratePids.push(post.post_id)
+          }
+        })
+        if (commentPids.length || ratePids.length) {
+          const details = await getPostDetails({
+            threadId,
+            commentPids,
+            ratePids,
+          })
+          commentPids
+            .concat(ratePids)
+            .forEach((pid) => !details[pid] && (details[pid] = {}))
+          setPostDetails(details)
         }
-      },
-    }
-  )
+      }
+    })()
+  }, [info])
 
   const onSubmitted = (action?: string, fromDialog?: boolean) => {
     if (fromDialog) {

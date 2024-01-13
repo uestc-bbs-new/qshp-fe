@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { useEffect } from 'react'
-import { useQuery } from 'react-query'
 
 import { Box, List, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 
@@ -22,8 +23,11 @@ const Home = () => {
     data: topLists,
     isLoading,
     refetch,
-  } = useQuery('toplist', () => {
-    return getTopLists(['newreply', 'newthread', 'digest'])
+  } = useQuery({
+    queryKey: ['toplist'],
+    queryFn: () => {
+      return getTopLists(['newreply', 'newthread', 'digest'])
+    },
   })
   useEffect(() => {
     refetch()

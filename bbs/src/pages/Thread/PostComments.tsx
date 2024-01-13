@@ -1,5 +1,6 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 
 import { Sms } from '@mui/icons-material'
 import { Box, Pagination, Skeleton, Typography } from '@mui/material'
@@ -32,10 +33,10 @@ const PostComments = ({
   const {
     data: currentPostDetails,
     isLoading,
-    isPreviousData,
+    isPlaceholderData,
   } = useQuery({
     queryKey,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     queryFn: async ({ queryKey }) => {
       const [_, { post_id, page }] = queryKey
       if (page == 1 && postDetails?.comments && !postDetails?.commentsRefresh) {
@@ -53,7 +54,7 @@ const PostComments = ({
   })
   return (
     <PostExtraDetailsAccordian Icon={Sms} title="点评">
-      {(isLoading || isPreviousData) &&
+      {(isLoading || isPlaceholderData) &&
       ((page == 1 && !postDetails?.commentsRefresh) || page != 1)
         ? [...Array(10)].map((_, index) => <Skeleton key={index} height={50} />)
         : currentPostDetails?.comments?.map((comment) => {

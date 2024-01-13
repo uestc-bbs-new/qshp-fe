@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { Box } from '@mui/material'
 
@@ -11,16 +12,15 @@ import PostEditor from '@/components/Editor/PostEditor'
 import { useAppState } from '@/states'
 
 const Edit = () => {
-  const navigate = useNavigate()
   const { dispatch } = useAppState()
   const routeParam = useParams()
   const routeState = useLocation().state
   const [query, setQuery] = useState({
     fid: routeParam.fid,
   })
-  const { data: selectedForum, isFetching } = useQuery<ForumDetails>(
-    ['forumDetails', query],
-    async () => {
+  const { data: selectedForum, isFetching } = useQuery<ForumDetails>({
+    queryKey: ['forumDetails', query],
+    queryFn: async () => {
       if (query.fid) {
         if (
           query.fid == routeState?.forum?.fid &&
@@ -34,8 +34,8 @@ const Edit = () => {
         }
       }
       return undefined
-    }
-  )
+    },
+  })
 
   useEffect(() => {
     setQuery({ fid: routeParam.fid })

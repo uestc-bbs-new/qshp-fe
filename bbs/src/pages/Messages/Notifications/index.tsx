@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 import {
@@ -53,7 +54,8 @@ const Notifications = () => {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const { data } = useQuery(['messages', query], {
+  const { data } = useQuery({
+    queryKey: ['messages', query],
     queryFn: () => getNotifications(query),
     refetchOnMount: true,
   })

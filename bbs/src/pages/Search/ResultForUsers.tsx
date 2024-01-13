@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
 import { Box, Grid, Pagination, Stack, Typography } from '@mui/material'
@@ -28,17 +29,15 @@ const RersultForUsers = ({
   const [currentPage, setCurrentPage] = useState(1)
   const location = useLocation()
   const [currentName, setCurrentName] = useState(target)
-  const { data, refetch } = useQuery(
-    ['search'],
-    () => searchUsers({ username: currentName, page: currentPage }),
+  const { data, refetch } = useQuery({
+    queryKey: ['search'],
+    queryFn: () => searchUsers({ username: currentName, page: currentPage }),
     // searchType == 'username'
     //   ? searchUsers({ username: currentName, page: currentPage })
     //   : searchUsers_uid({ uid: currentName, page: currentPage })
-    {
-      // close auto fetch when preload
-      enabled: true,
-    }
-  )
+    // close auto fetch when preload
+    enabled: true,
+  })
 
   useEffect(() => {
     window.scrollTo(0, 0)

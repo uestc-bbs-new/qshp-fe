@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 
 import { Box, List, Pagination, Paper, Stack, Typography } from '@mui/material'
@@ -25,19 +26,15 @@ const RersultForPost = ({
 }: resultProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentName, setCurrentName] = useState(name)
-  const { data, refetch } = useQuery(
-    ['search'],
-    () =>
+  const { data, refetch } = useQuery({
+    queryKey: ['search'],
+    queryFn: () =>
       searchThreads({
         pageSize: 10,
         pageNum: currentPage,
         keyWord: currentName,
       }),
-    {
-      // close auto fetch when preload
-      enabled: true,
-    }
-  )
+  })
 
   const location = useLocation()
   useEffect(() => {

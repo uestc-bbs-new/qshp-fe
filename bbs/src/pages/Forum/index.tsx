@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -221,17 +222,20 @@ function Forum() {
     isFetching,
     isError,
     error,
-  } = useQuery(['getThread', query], () => getThreadList(query), {
-    onSuccess: (data: any) => {
-      if (data && data.total) {
-        setTotal(Math.ceil(data.total / pageSize))
-      }
-      if (data && data.forum) {
-        setForumDetails(data.forum)
-        dispatch({ type: 'set forum', payload: data.forum })
-      }
-    },
+  } = useQuery({
+    queryKey: ['getThread', query],
+    queryFn: () => getThreadList(query),
   })
+
+  useEffect(() => {
+    if (threadList && threadList.total) {
+      setTotal(Math.ceil(threadList.total / pageSize))
+    }
+    if (threadList && threadList.forum) {
+      setForumDetails(threadList.forum)
+      dispatch({ type: 'set forum', payload: threadList.forum })
+    }
+  }, [threadList])
 
   useEffect(() => {
     setForumDetails(undefined)

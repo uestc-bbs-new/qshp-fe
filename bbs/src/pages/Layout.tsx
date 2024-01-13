@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { useEffect } from 'react'
-import { useQuery } from 'react-query'
 import { Outlet } from 'react-router-dom'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
@@ -20,19 +21,21 @@ const Layout = () => {
   const drawerWidth = 210
 
   // read partition
-  const query = useQuery(['formList'], () => getForumList(), {
+  const { data, refetch } = useQuery({
+    queryKey: ['formList'],
+    queryFn: () => getForumList(),
     // catchTime: 60 * 1000,
     // staleTime: 30 * 1000
-    onSuccess: (data) => {
-      dispatch({
-        type: 'set forumList',
-        payload: data,
-      })
-    },
   })
+  useEffect(() => {
+    dispatch({
+      type: 'set forumList',
+      payload: data,
+    })
+  }, [data])
   // Refresh forum list after signin change.
   useEffect(() => {
-    query.refetch()
+    refetch()
   }, [state.user.uid])
 
   return (

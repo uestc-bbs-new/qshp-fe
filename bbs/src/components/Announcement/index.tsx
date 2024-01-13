@@ -1,6 +1,7 @@
 // TODO: this carousel component should be replaced due to long time no maintain
+import { useQuery } from '@tanstack/react-query'
+
 import React, { useState } from 'react'
-import { useQuery } from 'react-query'
 import SwipeableViews from 'react-swipeable-views'
 import { autoPlay } from 'react-swipeable-views-utils'
 
@@ -53,13 +54,10 @@ const AutoPlay = autoPlay(SwipeableViews)
 const Announcement = () => {
   const theme = useTheme()
   const [index, setIndex] = useState(0)
-  const { data, refetch } = useQuery(
-    ['announcement'],
-    () => getAnnouncement(),
-    {
-      enabled: true,
-    }
-  )
+  const { data, refetch } = useQuery({
+    queryKey: ['announcement'],
+    queryFn: () => getAnnouncement(),
+  })
 
   const handleIndexChange = (index: number) => {
     setIndex(index)
