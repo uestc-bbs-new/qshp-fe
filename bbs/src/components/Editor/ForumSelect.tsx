@@ -210,7 +210,7 @@ const ForumButton = ({
                   ]
                 : []
               ).concat(
-                item.children.map((sub, index) => (
+                item.children?.map((sub, index) => (
                   <MenuItem
                     key={index}
                     selected={sub.fid == fid}
