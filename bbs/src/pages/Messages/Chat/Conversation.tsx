@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-import { useState } from 'react'
+import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
 import { Box, List, ListItem, Paper, Stack, Typography } from '@mui/material'
@@ -52,10 +52,13 @@ const Conversation = ({
       active,
     }
   }
+  const initQuery = () => {
+    return { chatId, uid }
+  }
   const init = initChatList(initialList || [])
   const [activeConversation, setActiveConversation] = useState(init.active)
   const [chatList, setChatList] = useState(init.list)
-  const [query, setQuery] = useState({ chatId, uid })
+  const [query, setQuery] = useState(initQuery())
   const [pagination, setPagination] = useState<PaginationParams>()
   const { data, fetchNextPage } = useInfiniteQuery({
     queryKey: ['chat', query],
@@ -73,8 +76,12 @@ const Conversation = ({
       return result.rows.reverse()
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) =>
-      lastPageParam + 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => {
+      if (lastPage.length == 0) {
+        return null
+      }
+      return lastPageParam + 1
+    },
   })
   const { observe } = useInView({
     rootMargin: '50px 0px',
@@ -83,24 +90,49 @@ const Conversation = ({
       fetchNextPage()
     },
   })
+  const scrollContainer = createRef<HTMLUListElement>()
+  const lastScrollHeight = useRef<number>()
+  useLayoutEffect(() => {
+    if (!scrollContainer.current) {
+      return
+    }
+    if (!pagination) {
+      scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
+    } else {
+      scrollContainer.current.scrollTop += Math.max(
+        0,
+        scrollContainer.current.scrollHeight - (lastScrollHeight.current || 0)
+      )
+    }
+    lastScrollHeight.current = scrollContainer.current.scrollHeight
+  }, [data])
+  useEffect(() => {
+    setQuery(initQuery())
+  }, [chatId, uid])
   return (
-    <Stack direction="row">
-      <Box sx={{ width: 200 }}>
+    <Stack direction="row" maxHeight="calc(100vh - 200px)">
+      <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
         <ConversationList
           list={chatList}
           lite={true}
           activeConversation={activeConversation}
         />
       </Box>
-      <List sx={{ p: 1 }}>
+      <List sx={{ p: 1, overflow: 'auto' }} ref={scrollContainer}>
+        <ListItem
+          key={`loading-${pagination?.page}`}
+          ref={observe}
+          sx={{ justifyContent: 'center' }}
+        >
+          <Typography>正在加载...</Typography>
+        </ListItem>
         {data?.pages
           .slice()
           .reverse()
           .map((page, i) =>
-            page.reverse().map((item, j) => (
+            page.map((item, j) => (
               <ListItem
                 key={`${i}-${j}`}
-                ref={i == 0 && j == 0 ? observe : null}
                 sx={{
                   justifyContent:
                     item.author_id == state.user.uid
@@ -122,7 +154,9 @@ const Conversation = ({
                     {item.author}
                   </Typography>
                   <Paper elevation={3} sx={{ p: 1 }}>
-                    <Typography>{item.message}</Typography>
+                    <Typography sx={{ lineBreak: 'anywhere' }}>
+                      {item.message}
+                    </Typography>
                     <Typography
                       variant="subtitle2"
                       textAlign="right"
