@@ -22,6 +22,8 @@ import { chineseTime } from '@/utils/dayjs'
 import { pages, useActiveRoute } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
+import NotificationRenderer from './NotificationRenderer'
+
 const kinds = {
   posts: [
     { id: 'reply', text: '回复' },
@@ -85,7 +87,7 @@ const Notifications = () => {
               <Avatar uid={item.author_id} variant="rounded" sx={{ mr: 1 }} />
               <Box>
                 <Typography>{chineseTime(item.dateline * 1000)}</Typography>
-                <div dangerouslySetInnerHTML={{ __html: item.html_message }} />
+                <NotificationRenderer item={item} />
               </Box>
             </Stack>
           </ListItem>

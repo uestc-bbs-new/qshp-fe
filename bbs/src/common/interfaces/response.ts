@@ -355,10 +355,18 @@ export type GenericList<T> = PaginationParams & {
   rows: T[]
 }
 
+export type NotificationKind = 'reply'
+
 export type Notification = {
+  author: string
   author_id: number
   html_message: string
   dateline: number
+
+  kind?: NotificationKind
+  thread_id?: number
+  post_id?: number
+  subject?: string
 }
 
 export type ChatConversation = {
