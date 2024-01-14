@@ -28,10 +28,11 @@ const Layout = () => {
     // staleTime: 30 * 1000
   })
   useEffect(() => {
-    dispatch({
-      type: 'set forumList',
-      payload: data,
-    })
+    data &&
+      dispatch({
+        type: 'set forumList',
+        payload: data,
+      })
   }, [data])
   // Refresh forum list after signin change.
   useEffect(() => {
