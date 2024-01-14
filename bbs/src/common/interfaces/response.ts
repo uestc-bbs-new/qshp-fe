@@ -355,7 +355,7 @@ export type GenericList<T> = PaginationParams & {
   rows: T[]
 }
 
-export type NotificationKind = 'reply'
+export type NotificationKind = 'reply' | 'comment'
 
 export type Notification = {
   author: string
