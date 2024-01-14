@@ -59,6 +59,7 @@ const Notifications = () => {
     queryFn: () => getNotifications(query),
     refetchOnMount: true,
   })
+  const totalPages = Math.ceil((data?.total || 1) / (data?.page_size || 1))
 
   useEffect(() => {
     setQuery(initQuery())
@@ -90,17 +91,19 @@ const Notifications = () => {
           </ListItem>
         ))}
       </List>
-      <Stack alignItems="center" my={1.5}>
-        <Pagination
-          boundaryCount={3}
-          siblingCount={1}
-          count={Math.ceil((data?.total || 1) / (data?.page_size || 1))}
-          page={query.page}
-          onChange={(_, page) =>
-            setSearchParams(searchParamsAssign(searchParams, { page }))
-          }
-        />
-      </Stack>
+      {totalPages > 1 && (
+        <Stack alignItems="center" my={1.5}>
+          <Pagination
+            boundaryCount={3}
+            siblingCount={1}
+            count={totalPages}
+            page={query.page}
+            onChange={(_, page) =>
+              setSearchParams(searchParamsAssign(searchParams, { page }))
+            }
+          />
+        </Stack>
+      )}
     </Paper>
   )
 }
