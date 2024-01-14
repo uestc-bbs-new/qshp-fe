@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Box, List, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 
@@ -17,6 +18,7 @@ import { ForumGroup } from './ForumCover'
 
 const Home = () => {
   const { state } = useAppState()
+  const location = useLocation()
 
   const theme = useTheme()
   const {
@@ -31,7 +33,7 @@ const Home = () => {
   })
   useEffect(() => {
     refetch()
-  }, [state.user.uid])
+  }, [state.user.uid, location.key])
   return (
     <>
       <Banner src={headerImg}>
