@@ -24,19 +24,19 @@ const MessageTabs = () => {
     >
       <MenuItem
         component={MenuItemLink}
-        to={pages.messages()}
+        to={pages.messages('chat')}
         className="flex justify-between"
       >
-        提醒{' '}
-        <Badge color="warning" badgeContent={state.user.new_notification} />
+        站内信 <Badge color="warning" badgeContent={state.user.new_pm} />
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
         component={MenuItemLink}
-        to={pages.messages()}
+        to={pages.messages('posts')}
         className="flex justify-between"
       >
-        站内信 <Badge color="warning" badgeContent={state.user.new_pm} />
+        提醒{' '}
+        <Badge color="warning" badgeContent={state.user.new_notification} />
       </MenuItem>
     </Box>
   )
