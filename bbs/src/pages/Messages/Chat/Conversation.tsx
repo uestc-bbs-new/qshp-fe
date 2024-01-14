@@ -42,7 +42,7 @@ const Conversation = ({
             unread: false,
             to_uid: uid || 0,
             to_username: '',
-          },
+          } as ChatConversation, // TODO(fangjue): Fix it later.
         ],
       }
     }
