@@ -7,8 +7,8 @@ import Goto from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
+import Chat from '@/pages/Messages/Chat'
 import Notifications from '@/pages/Messages/Notifications'
-import Pm from '@/pages/Messages/Pm'
 import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
@@ -44,17 +44,17 @@ routes.current = [
           {
             id: 'messages',
             index: true,
-            element: <Pm />,
+            element: <Chat />,
           },
           {
             id: 'chat',
             path: 'chat/:plid?',
-            element: <Pm />,
+            element: <Chat />,
           },
           {
             id: 'chat_user',
             path: 'chat/user/:uid?',
-            element: <Pm />,
+            element: <Chat />,
           },
           {
             id: 'posts',

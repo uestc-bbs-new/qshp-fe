@@ -21,7 +21,7 @@ const tryParseInt = (value?: string) => {
   return parsedResult
 }
 
-const Pm = () => {
+const Chat = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const chatId = tryParseInt(useParams()['plid'])
   const uid = tryParseInt(useParams()['uid'])
@@ -58,4 +58,4 @@ const Pm = () => {
   )
 }
 
-export default Pm
+export default Chat
