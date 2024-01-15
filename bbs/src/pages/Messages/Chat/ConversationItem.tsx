@@ -1,5 +1,6 @@
 import { Groups } from '@mui/icons-material'
 import {
+  Badge,
   ListItem,
   ListItemButton,
   Avatar as MuiAvatar,
@@ -18,10 +19,12 @@ const ConversationItem = ({
   chat,
   selected,
   lite,
+  summary,
 }: {
   chat: ChatConversation
   selected?: boolean
   lite?: boolean
+  summary?: boolean
 }) => {
   const liteProps = lite
     ? {
@@ -32,12 +35,12 @@ const ConversationItem = ({
   return (
     <ListItem key={chat.conversation_id} disableGutters disablePadding>
       <ListItemButton
-        selected={selected}
+        selected={selected || chat.unread}
         component={Link}
         to={pages.chat(chat.conversation_id)}
       >
         <Stack direction="row" {...liteProps}>
-          <ChatAvatar chat={chat} />
+          <ChatAvatar chat={chat} summary={summary} />
           <Stack ml={2} flexShrink={1} minWidth="1em">
             <ChatUsers chat={chat} lite={lite} />
             <Summary chat={chat} lite={lite} />
@@ -51,15 +54,28 @@ const ConversationItem = ({
   )
 }
 
-const ChatAvatar = ({ chat }: { chat: ChatConversation }) => {
-  if (chat.type == 'group') {
-    return (
+const ChatAvatar = ({
+  chat,
+  summary,
+}: {
+  chat: ChatConversation
+  summary?: boolean
+}) => {
+  const avatar =
+    chat.type == 'group' ? (
       <MuiAvatar variant="rounded">
         <Groups />
       </MuiAvatar>
+    ) : (
+      <Avatar variant="rounded" uid={chat.to_uid} />
     )
-  }
-  return <Avatar variant="rounded" uid={chat.to_uid} />
+  return !summary && chat.unread ? (
+    <Badge color="warning" variant="dot">
+      {avatar}
+    </Badge>
+  ) : (
+    avatar
+  )
 }
 
 const ChatUsers = ({

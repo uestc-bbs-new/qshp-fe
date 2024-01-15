@@ -5,8 +5,7 @@ import { guestUser } from '..'
 export type UserState = {
   uid: number
   username: string
-  // This field is not yet available while Discuz! is still running
-  // new_pm?: number
+  new_pm?: number // This field is not yet available while Discuz! is still running
   new_pm_legacy?: boolean
   new_grouppm_legacy?: boolean
   new_notification?: number
@@ -57,6 +56,8 @@ export const stateReducer = (state: State, action: StateAction): State => {
         (action.payload.uid != state.user.uid ||
           action.payload.username != state.user.username ||
           action.payload.new_pm != state.user.new_pm ||
+          action.payload.new_pm_legacy != state.user.new_pm_legacy ||
+          action.payload.new_grouppm_legacy != state.user.new_grouppm_legacy ||
           action.payload.new_notification != state.user.new_notification)
       ) {
         return {

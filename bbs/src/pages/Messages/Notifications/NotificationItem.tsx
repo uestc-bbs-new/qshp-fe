@@ -1,21 +1,64 @@
-import { Box, ListItem, Stack, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
+import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material'
+
+import { readNotification } from '@/apis/common'
 import { Notification } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
-import NotificationRenderer from './NotificationRenderer'
+import NotificationRenderer, {
+  getNotificationTarget,
+} from './NotificationRenderer'
 
-const NotificationItem = ({ item }: { item: Notification }) => (
-  <ListItem>
+const NotificationItem = ({
+  item,
+  summary,
+}: {
+  item: Notification
+  summary?: boolean
+}) => {
+  const navigate = useNavigate()
+  const avatar = (
+    <Avatar uid={item.author_id} variant="rounded" sx={{ mr: 1 }} />
+  )
+  const body = (
     <Stack direction="row">
-      <Avatar uid={item.author_id} variant="rounded" sx={{ mr: 1 }} />
+      {summary ? (
+        avatar
+      ) : (
+        <Link to={pages.user({ uid: item.author_id })}>{avatar}</Link>
+      )}
       <Box>
-        <Typography>{chineseTime(item.dateline * 1000)}</Typography>
-        <NotificationRenderer item={item} />
+        {!summary && (
+          <Typography>{chineseTime(item.dateline * 1000)}</Typography>
+        )}
+        <NotificationRenderer item={item} summary={summary} />
       </Box>
     </Stack>
-  </ListItem>
-)
+  )
+
+  const readAndOpenNotification = () => {
+    readNotification(item.id, item.kind)
+    const target = getNotificationTarget(item)
+    if (target) {
+      setTimeout(() => navigate(target), 300)
+    }
+  }
+
+  return (
+    <ListItem disablePadding={summary}>
+      {summary ? (
+        <ListItemButton onClick={readAndOpenNotification}>
+          {body}
+        </ListItemButton>
+      ) : (
+        body
+      )}
+    </ListItem>
+  )
+}
 
 export default NotificationItem

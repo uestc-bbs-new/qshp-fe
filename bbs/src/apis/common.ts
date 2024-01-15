@@ -148,6 +148,13 @@ export const getNotifications = (params: { kind?: string; page?: number }) => {
   )
 }
 
+export const readNotification = (id: number, kind?: string) =>
+  request.post(`${commonUrl}/messages/notifications/read/${id}`, undefined, {
+    params: {
+      ...(kind && { kind }),
+    },
+  })
+
 export const getChatList = (params: { page?: number }) => {
   return request.get<MessageList<ChatConversation>>(
     `${commonUrl}/messages/chat/list`,
