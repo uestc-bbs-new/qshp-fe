@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 
 import {
   Box,
@@ -11,11 +11,13 @@ import {
   Paper,
   Stack,
   Tab,
+  TabProps,
   Tabs,
   Typography,
 } from '@mui/material'
 
 import { getNotifications } from '@/apis/common'
+import { MessageCounts } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
@@ -23,6 +25,8 @@ import { pages, useActiveRoute } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
 import NotificationRenderer from './NotificationRenderer'
+
+type NotificationKindDefinition = { id: string; text: string }
 
 const kinds = {
   posts: [
@@ -67,16 +71,23 @@ const Notifications = () => {
     setQuery(initQuery())
   }, [groupName, kindName, searchParams])
 
+  const { setCount } = useOutletContext<{
+    setCount: React.Dispatch<React.SetStateAction<MessageCounts | undefined>>
+  }>()
+  useEffect(() => {
+    data?.new_messages && setCount(data.new_messages)
+  }, [data])
+
   return (
     <Paper sx={{ flexGrow: 1, p: 1 }}>
       <Tabs value={kindName}>
         {kinds[groupName].map((kind) => (
-          <Tab
-            component={Link}
-            to={pages.notifications(groupName, kind.id)}
-            label={kind.text}
+          <KindTab
             key={kind.id}
             value={kind.id}
+            groupName={groupName}
+            kind={kind}
+            newMessages={data?.new_messages}
           />
         ))}
       </Tabs>
@@ -109,4 +120,36 @@ const Notifications = () => {
     </Paper>
   )
 }
+
+const KindTab = ({
+  groupName,
+  kind,
+  newMessages,
+  ...tabProps
+}: {
+  groupName: NotificationGroup
+  kind: NotificationKindDefinition
+  newMessages?: MessageCounts
+} & TabProps) => {
+  const count =
+    newMessages &&
+    (newMessages[groupName] as { [kind: string]: number })[kind.id]
+  const label = (
+    <>
+      {kind.text}
+      {!!count && ` (${count})`}
+    </>
+  )
+  return (
+    <Tab
+      component={Link}
+      to={pages.notifications(groupName, kind.id)}
+      label={
+        count ? <span style={{ fontWeight: 'bold' }}>{label}</span> : label
+      }
+      {...tabProps}
+    />
+  )
+}
+
 export default Notifications

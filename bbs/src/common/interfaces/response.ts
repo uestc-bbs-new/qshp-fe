@@ -355,6 +355,30 @@ export type GenericList<T> = PaginationParams & {
   rows: T[]
 }
 
+export type MessageCounts = {
+  chat: number
+  posts: {
+    reply: number
+    comment: number
+    at: number
+    rate: number
+    other: number
+  }
+  system: {
+    friend: number
+    space: number
+    task: number
+    report: number
+    system: number
+    admin: number
+    app: number
+  }
+}
+
+export type MessageList<T> = GenericList<T> & {
+  new_messages?: MessageCounts
+}
+
 export type NotificationKind = 'reply' | 'comment'
 
 export type Notification = {

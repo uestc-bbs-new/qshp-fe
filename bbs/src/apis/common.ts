@@ -5,6 +5,7 @@ import {
   Forum,
   ForumDetails,
   GenericList,
+  MessageList,
   Notification,
   Thread,
   ThreadBasics,
@@ -134,7 +135,7 @@ export const getAnnouncement = () => {
 }
 
 export const getNotifications = (params: { kind?: string; page?: number }) => {
-  return request.get<GenericList<Notification>>(
+  return request.get<MessageList<Notification>>(
     `${commonUrl}/messages/notifications`,
     {
       params,
@@ -143,7 +144,7 @@ export const getNotifications = (params: { kind?: string; page?: number }) => {
 }
 
 export const getChatList = (params: { page?: number }) => {
-  return request.get<GenericList<ChatConversation>>(
+  return request.get<MessageList<ChatConversation>>(
     `${commonUrl}/messages/chat/list`,
     {
       params,
