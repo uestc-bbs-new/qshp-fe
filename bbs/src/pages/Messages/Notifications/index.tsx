@@ -4,27 +4,22 @@ import React, { useEffect, useState } from 'react'
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 
 import {
-  Box,
   List,
-  ListItem,
   Pagination,
   Paper,
   Stack,
   Tab,
   TabProps,
   Tabs,
-  Typography,
 } from '@mui/material'
 
 import { getNotifications } from '@/apis/common'
 import { MessageCounts } from '@/common/interfaces/response'
-import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
-import { chineseTime } from '@/utils/dayjs'
 import { pages, useActiveRoute } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
-import NotificationRenderer from './NotificationRenderer'
+import NotificationItem from './NotificationItem'
 
 type NotificationKindDefinition = { id: string; text: string }
 
@@ -93,15 +88,7 @@ const Notifications = () => {
       </Tabs>
       <List>
         {data?.rows.map((item, index) => (
-          <ListItem key={index}>
-            <Stack direction="row">
-              <Avatar uid={item.author_id} variant="rounded" sx={{ mr: 1 }} />
-              <Box>
-                <Typography>{chineseTime(item.dateline * 1000)}</Typography>
-                <NotificationRenderer item={item} />
-              </Box>
-            </Stack>
-          </ListItem>
+          <NotificationItem key={index} item={item} />
         ))}
       </List>
       {totalPages > 1 && (
