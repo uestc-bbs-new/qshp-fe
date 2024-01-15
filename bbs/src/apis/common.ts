@@ -6,6 +6,7 @@ import {
   ForumDetails,
   GenericList,
   MessageList,
+  MessagesSummary,
   Notification,
   Thread,
   ThreadBasics,
@@ -132,6 +133,10 @@ export const getThreadList = async (params: {
 
 export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
+}
+
+export const getMessagesSummary = () => {
+  return request.get<MessagesSummary>(`${commonUrl}/messages/summary`)
 }
 
 export const getNotifications = (params: { kind?: string; page?: number }) => {

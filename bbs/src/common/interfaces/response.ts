@@ -379,6 +379,12 @@ export type MessageList<T> = GenericList<T> & {
   new_messages?: MessageCounts
 }
 
+export type MessagesSummary = {
+  new_messages?: MessageCounts
+  new_chats?: ChatConversation[]
+  new_notifications?: Notification[]
+}
+
 export type NotificationKind = 'reply' | 'comment' | 'admin'
 
 export type Notification = {

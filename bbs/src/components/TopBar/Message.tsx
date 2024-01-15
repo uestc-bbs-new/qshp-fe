@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+import React from 'react'
 
 import { MarkunreadOutlined } from '@mui/icons-material'
-import { Badge, Box, Divider, MenuItem } from '@mui/material'
+import { Badge, Box, Divider, List, ListItem, MenuItem } from '@mui/material'
 
+import { getMessagesSummary } from '@/apis/common'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
@@ -10,17 +13,18 @@ import { pages } from '@/utils/routes'
 import { MenuItemLink } from '../Link'
 
 const MessageTabs = () => {
-  const [value, setValue] = useState(0)
   const { state } = useAppState()
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue)
-  }
+  const { data } = useQuery({
+    queryKey: ['messagesSummary'],
+    queryFn: () => getMessagesSummary(),
+  })
 
   return (
     <Box
       sx={{ borderBottom: 1, borderColor: 'divider' }}
-      className="p-2 w-40 min-w-fit"
+      minWidth="40px"
+      maxWidth="200px"
     >
       <MenuItem
         component={MenuItemLink}
@@ -48,6 +52,13 @@ const MessageTabs = () => {
           }
         />
       </MenuItem>
+      <List>
+        {data?.new_notifications
+          ?.slice(0, 5)
+          .map((item, index) => (
+            <ListItem key={index}>{item.html_message}</ListItem>
+          ))}
+      </List>
     </Box>
   )
 }
