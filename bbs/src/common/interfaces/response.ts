@@ -362,6 +362,7 @@ export type Notification = {
   author_id: number
   html_message: string
   dateline: number
+  unread: boolean
 
   kind?: NotificationKind
   thread_id?: number
