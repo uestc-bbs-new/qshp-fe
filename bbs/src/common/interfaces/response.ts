@@ -379,9 +379,10 @@ export type MessageList<T> = GenericList<T> & {
   new_messages?: MessageCounts
 }
 
-export type NotificationKind = 'reply' | 'comment'
+export type NotificationKind = 'reply' | 'comment' | 'admin'
 
 export type Notification = {
+  id: number
   author: string
   author_id: number
   html_message: string
