@@ -27,7 +27,11 @@ const MessageTabs = () => {
         to={pages.messages('chat')}
         className="flex justify-between"
       >
-        站内信 <Badge color="warning" badgeContent={state.user.new_pm} />
+        站内信{' '}
+        <Badge
+          color="warning"
+          badgeContent={state.user.new_pm_legacy ? '' : undefined}
+        />
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem
@@ -36,7 +40,13 @@ const MessageTabs = () => {
         className="flex justify-between"
       >
         提醒{' '}
-        <Badge color="warning" badgeContent={state.user.new_notification} />
+        <Badge
+          color="warning"
+          badgeContent={
+            (state.user.new_notification || 0) +
+            (state.user.new_grouppm_legacy ? 1 : 0)
+          }
+        />
       </MenuItem>
     </Box>
   )
@@ -45,7 +55,9 @@ const MessageTabs = () => {
 const MessagePopover = () => {
   const { state } = useAppState()
   const totalMessages =
-    (state.user.new_notification ?? 0) + (state.user.new_pm ?? 0)
+    (state.user.new_notification ?? 0) +
+    (state.user.new_pm_legacy ? 1 : 0) +
+    (state.user.new_grouppm_legacy ? 1 : 0)
   return (
     <>
       <Tooltip title={<MessageTabs />}>

@@ -5,7 +5,10 @@ import { guestUser } from '..'
 export type UserState = {
   uid: number
   username: string
-  new_pm?: number
+  // This field is not yet available while Discuz! is still running
+  // new_pm?: number
+  new_pm_legacy?: boolean
+  new_grouppm_legacy?: boolean
   new_notification?: number
 }
 
