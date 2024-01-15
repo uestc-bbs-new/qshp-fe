@@ -7,6 +7,7 @@ import {
   List,
   Pagination,
   Paper,
+  Skeleton,
   Stack,
   Tab,
   TabProps,
@@ -55,7 +56,7 @@ const Notifications = () => {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const { data, isFetchedAfterMount } = useQuery({
+  const { data, isLoading, isFetchedAfterMount } = useQuery({
     queryKey: ['messages', query],
     queryFn: () => getNotifications(query),
     refetchOnMount: true,
@@ -90,11 +91,15 @@ const Notifications = () => {
           />
         ))}
       </Tabs>
-      <List>
-        {data?.rows.map((item, index) => (
-          <NotificationItem key={index} item={item} />
-        ))}
-      </List>
+      {isLoading ? (
+        [...Array(10)].map((_, index) => <Skeleton key={index} height={80} />)
+      ) : (
+        <List>
+          {data?.rows.map((item) => (
+            <NotificationItem key={item.id} item={item} />
+          ))}
+        </List>
+      )}
       {totalPages > 1 && (
         <Stack alignItems="center" my={1.5}>
           <Pagination
