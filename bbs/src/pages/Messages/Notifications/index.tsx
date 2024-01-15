@@ -55,23 +55,27 @@ const Notifications = () => {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const { data } = useQuery({
+  const { data, isFetchedAfterMount } = useQuery({
     queryKey: ['messages', query],
     queryFn: () => getNotifications(query),
     refetchOnMount: true,
   })
   const totalPages = Math.ceil((data?.total || 1) / (data?.page_size || 1))
 
-  useEffect(() => {
-    setQuery(initQuery())
-  }, [groupName, kindName, searchParams])
-
+  const [newMessages, setNewMessages] = useState<MessageCounts>()
   const { setCount } = useOutletContext<{
     setCount: React.Dispatch<React.SetStateAction<MessageCounts | undefined>>
   }>()
   useEffect(() => {
-    data?.new_messages && setCount(data.new_messages)
+    if (isFetchedAfterMount && data?.new_messages) {
+      setNewMessages(data.new_messages)
+      setCount(data.new_messages)
+    }
   }, [data])
+
+  useEffect(() => {
+    setQuery(initQuery())
+  }, [groupName, kindName, searchParams])
 
   return (
     <Paper sx={{ flexGrow: 1, p: 1 }}>
@@ -82,7 +86,7 @@ const Notifications = () => {
             value={kind.id}
             groupName={groupName}
             kind={kind}
-            newMessages={data?.new_messages}
+            newMessages={newMessages}
           />
         ))}
       </Tabs>
