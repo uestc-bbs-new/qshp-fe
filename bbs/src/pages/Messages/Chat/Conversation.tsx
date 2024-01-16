@@ -25,6 +25,9 @@ import { chineseTime } from '@/utils/dayjs'
 
 import ConversationList from './ConversationList'
 
+const kStartPollDelay = 30000
+const kPollInterval = 20000
+
 const Conversation = ({
   chatId,
   uid,
@@ -37,6 +40,8 @@ const Conversation = ({
   const { state } = useAppState()
   const [chatList, setChatList] = useState(initialList)
   const [isEnded, setEnded] = useState(false)
+  const fetchedNewerMessages = useRef(false)
+  const [data, setData] = useState<ChatMessage[]>([])
   const initQuery = () => ({
     chatId,
     uid,
@@ -54,19 +59,51 @@ const Conversation = ({
     gcTime: 0,
   })
   useEffect(() => {
+    let timeoutId: number
+
     if (currentData) {
       if (currentData.chat_list) {
         setChatList(currentData.chat_list)
       }
       if (currentData.rows.length > 0) {
+        if (data.length == 0) {
+          timeoutId = setTimeout(() => setRefreshEnabled(true), kStartPollDelay)
+        }
+        fetchedNewerMessages.current = false
         setData(currentData.rows.reverse().concat(data))
       }
       if (currentData.total <= currentData.page_size) {
         setEnded(true)
       }
     }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
   }, [currentData])
-  const [data, setData] = useState<ChatMessage[]>([])
+  const [refreshEnabled, setRefreshEnabled] = useState(false)
+  const { data: latestMessages, refetch: refreshNewMessages } = useQuery({
+    queryKey: ['chatRefresh'],
+    queryFn: () =>
+      getChatMessages({
+        chatId,
+        uid,
+        newer: true,
+        dateline: data[data.length - 1].dateline,
+        messageId: data[data.length - 1].message_id,
+      }),
+    enabled: !!data.length && refreshEnabled,
+    refetchInterval: kPollInterval,
+    gcTime: 0,
+  })
+  useEffect(() => {
+    if (latestMessages && latestMessages.rows.length) {
+      fetchedNewerMessages.current = true
+      setData(data.concat(latestMessages.rows.reverse()))
+    }
+  }, [latestMessages])
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: ({ unobserve }) => {
@@ -87,9 +124,7 @@ const Conversation = ({
     if (!scrollContainer.current) {
       return
     }
-    if (query.page == 1) {
-      scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
-    } else {
+    if (!fetchedNewerMessages.current) {
       scrollContainer.current.scrollTop += Math.max(
         0,
         scrollContainer.current.scrollHeight - (lastScrollHeight.current || 0)
@@ -101,6 +136,7 @@ const Conversation = ({
     setData([])
     lastScrollHeight.current = 0
     setEnded(false)
+    setRefreshEnabled(false)
     setQuery(initQuery())
   }, [chatId, uid])
   return (
