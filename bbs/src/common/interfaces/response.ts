@@ -426,3 +426,7 @@ export type ChatMessage = {
   dateline: number
   message: string
 }
+
+export type ChatMessageList = GenericList<ChatMessage> & {
+  chat_list?: ChatConversation[]
+}

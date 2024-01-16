@@ -21,10 +21,6 @@ import { chineseTime } from '@/utils/dayjs'
 
 import ConversationList from './ConversationList'
 
-type ChatListItem = Partial<ChatConversation> & {
-  xxx?: number
-}
-
 const Conversation = ({
   chatId,
   uid,
@@ -35,35 +31,13 @@ const Conversation = ({
   initialList?: ChatConversation[]
 }) => {
   const { state } = useAppState()
-  const initChatList = (list: ChatConversation[]) => {
-    const index = list.findIndex(
-      (item) => item.conversation_id == chatId || item.to_uid == uid
-    )
-    if (index == -1) {
-      return {
-        list: [
-          {
-            conversation_id: -1,
-            unread: false,
-            to_uid: uid || 0,
-            to_username: '',
-          } as ChatConversation, // TODO(fangjue): Fix it later.
-        ],
-      }
-    }
-    return {
-      list,
-      active: list[index],
-    }
-  }
-  const init = initChatList(initialList || [])
-  const [activeConversation, setActiveConversation] = useState(init.active)
-  const [chatList, setChatList] = useState(init.list)
+  const [chatList, setChatList] = useState(initialList)
   const [isEnded, setEnded] = useState(false)
   const initQuery = () => ({
     chatId,
     uid,
     page: 1,
+    chatList: !chatList?.length,
   })
   const [query, setQuery] = useState(initQuery())
   const {
@@ -73,16 +47,14 @@ const Conversation = ({
     isFetching,
   } = useQuery({
     queryKey: ['chat', query],
-    queryFn: () =>
-      getChatMessages({
-        ...query,
-        chatList: query.page == 1,
-      }),
+    queryFn: () => getChatMessages(query),
     gcTime: 0,
   })
   useEffect(() => {
     if (currentData) {
-      console.log(currentData)
+      if (currentData.chat_list) {
+        setChatList(currentData.chat_list)
+      }
       if (currentData.rows.length > 0) {
         setData(currentData.rows.reverse().concat(data))
       }
@@ -125,20 +97,17 @@ const Conversation = ({
     lastScrollHeight.current = 0
     scheduleNextPage.current = false
     setEnded(false)
-    setActiveConversation(
-      chatList.find(
-        (item) => item.conversation_id == chatId || item.to_uid == uid
-      )
-    )
     setQuery(initQuery())
   }, [chatId, uid])
   return (
     <Stack direction="row" maxHeight="calc(100vh - 200px)">
       <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
         <ConversationList
-          list={chatList}
+          list={chatList || []}
           lite={true}
-          activeConversation={activeConversation}
+          activeConversation={chatList?.find(
+            (item) => item.conversation_id == chatId || item.to_uid == uid
+          )}
         />
       </Box>
       <List
