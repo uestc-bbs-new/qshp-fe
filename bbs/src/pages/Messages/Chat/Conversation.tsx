@@ -17,7 +17,11 @@ import {
   Typography,
 } from '@mui/material'
 
-import { ChatMessagesRequest, getChatMessages } from '@/apis/common'
+import {
+  ChatMessagesRequest,
+  getChatMessages,
+  sendChatMessage,
+} from '@/apis/common'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import { useAppState } from '@/states'
@@ -40,7 +44,7 @@ const Conversation = ({
   const { state } = useAppState()
   const [chatList, setChatList] = useState(initialList)
   const [isEnded, setEnded] = useState(false)
-  const fetchedNewerMessages = useRef(false)
+  const fetchMode = useRef('older')
   const [data, setData] = useState<ChatMessage[]>([])
   const initQuery = () => ({
     chatId,
@@ -69,7 +73,7 @@ const Conversation = ({
         if (data.length == 0) {
           timeoutId = setTimeout(() => setRefreshEnabled(true), kStartPollDelay)
         }
-        fetchedNewerMessages.current = false
+        fetchMode.current = 'older'
         setData(currentData.rows.reverse().concat(data))
       }
       if (currentData.total <= currentData.page_size) {
@@ -100,7 +104,9 @@ const Conversation = ({
   })
   useEffect(() => {
     if (latestMessages && latestMessages.rows.length) {
-      fetchedNewerMessages.current = true
+      if (fetchMode.current != 'sent') {
+        fetchMode.current = 'newer'
+      }
       setData(data.concat(latestMessages.rows.reverse()))
     }
   }, [latestMessages])
@@ -124,11 +130,14 @@ const Conversation = ({
     if (!scrollContainer.current) {
       return
     }
-    if (!fetchedNewerMessages.current) {
+    if (fetchMode.current == 'older') {
       scrollContainer.current.scrollTop += Math.max(
         0,
         scrollContainer.current.scrollHeight - (lastScrollHeight.current || 0)
       )
+    } else if (fetchMode.current == 'sent') {
+      scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
+      fetchMode.current = 'newer'
     }
     lastScrollHeight.current = scrollContainer.current.scrollHeight
   }, [data])
@@ -139,6 +148,28 @@ const Conversation = ({
     setRefreshEnabled(false)
     setQuery(initQuery())
   }, [chatId, uid])
+
+  const messageRef = useRef<HTMLTextAreaElement>()
+  const [sendPending, setSendPending] = useState(false)
+  const sendMessage = async () => {
+    if (!messageRef.current?.value) {
+      return
+    }
+    setSendPending(true)
+    try {
+      await sendChatMessage({
+        conversation_id: chatId,
+        message: messageRef.current.value,
+      })
+    } catch (_) {
+      return
+    } finally {
+      setSendPending(false)
+    }
+    messageRef.current.value = ''
+    fetchMode.current = 'sent'
+    refreshNewMessages()
+  }
   return (
     <Stack direction="row" maxHeight="calc(100vh - 200px)">
       <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
@@ -227,8 +258,13 @@ const Conversation = ({
             autoFocus
             rows={4}
             sx={{ flexGrow: 1, flexShrink: 1 }}
+            inputRef={messageRef}
           />
-          <IconButton sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}>
+          <IconButton
+            sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}
+            onClick={sendMessage}
+            disabled={sendPending}
+          >
             <Send />
           </IconButton>
         </Stack>

@@ -193,3 +193,10 @@ export const getChatMessages = ({
     }
   )
 }
+
+export const sendChatMessage = (params: {
+  usernames?: string[]
+  conversation_id?: number
+  subject?: string
+  message: string
+}) => request.post(`${commonUrl}/messages/chat`, params)
