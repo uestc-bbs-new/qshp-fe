@@ -222,7 +222,12 @@ const Conversation = ({
           p={1.5}
           alignItems="flex-end"
         >
-          <TextField multiline rows={4} sx={{ flexGrow: 1, flexShrink: 1 }} />
+          <TextField
+            multiline
+            autoFocus
+            rows={4}
+            sx={{ flexGrow: 1, flexShrink: 1 }}
+          />
           <IconButton sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}>
             <Send />
           </IconButton>
