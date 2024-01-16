@@ -3,13 +3,17 @@ import { useQuery } from '@tanstack/react-query'
 import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
+import { Send } from '@mui/icons-material'
 import {
   Box,
+  Divider,
+  IconButton,
   List,
   ListItem,
   Paper,
   Skeleton,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 
@@ -110,58 +114,81 @@ const Conversation = ({
           )}
         />
       </Box>
-      <List
-        sx={{ p: 1, overflow: 'auto', width: '100%' }}
-        ref={scrollContainer}
-      >
-        {!isEnded && !(isFetching && query.page == 1) && (
-          <ListItem
-            key={`loading-older-${chatId}-${query.page}`}
-            ref={observe}
-            sx={{ justifyContent: 'center' }}
-          >
-            <Skeleton width="100%" height={40} />
-            {isError && <Typography>加载失败</Typography>}
-          </ListItem>
-        )}
-        {data.map((item, index) => (
-          <ListItem
-            key={`${index}`}
-            sx={{
-              justifyContent:
-                item.author_id == state.user.uid ? 'flex-end' : 'flex-start',
-              alignItems: 'flex-start',
-            }}
-          >
-            {item.author_id != state.user.uid && (
-              <Avatar variant="rounded" uid={item.author_id} />
-            )}
-            <Stack mx={1} maxWidth="70%">
-              <Typography
-                textAlign={item.author_id == state.user.uid ? 'right' : 'left'}
-                mb={0.5}
-              >
-                {item.author}
-              </Typography>
-              <Paper elevation={3} sx={{ p: 1 }}>
-                <Typography sx={{ lineBreak: 'anywhere' }}>
-                  {item.message}
-                </Typography>
+      <Stack flexGrow={1}>
+        <List
+          sx={{
+            p: 1,
+            overflow: 'auto',
+            width: '100%',
+            flexGrow: 1,
+            flexShrink: 1,
+          }}
+          ref={scrollContainer}
+        >
+          {!isEnded && !(isFetching && query.page == 1) && (
+            <ListItem
+              key={`loading-older-${chatId}-${query.page}`}
+              ref={observe}
+              sx={{ justifyContent: 'center' }}
+            >
+              <Skeleton width="100%" height={40} />
+              {isError && <Typography>加载失败</Typography>}
+            </ListItem>
+          )}
+          {data.map((item, index) => (
+            <ListItem
+              key={`${index}`}
+              sx={{
+                justifyContent:
+                  item.author_id == state.user.uid ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-start',
+              }}
+            >
+              {item.author_id != state.user.uid && (
+                <Avatar variant="rounded" uid={item.author_id} />
+              )}
+              <Stack mx={1} maxWidth="70%">
                 <Typography
-                  variant="subtitle2"
-                  textAlign="right"
-                  sx={{ color: '#999' }}
+                  textAlign={
+                    item.author_id == state.user.uid ? 'right' : 'left'
+                  }
+                  mb={0.5}
                 >
-                  {chineseTime(item.dateline * 1000)}
+                  {item.author}
                 </Typography>
-              </Paper>
-            </Stack>
-            {item.author_id == state.user.uid && (
-              <Avatar variant="rounded" uid={item.author_id} />
-            )}
-          </ListItem>
-        ))}
-      </List>
+                <Paper elevation={3} sx={{ p: 1 }}>
+                  <Typography sx={{ lineBreak: 'anywhere' }}>
+                    {item.message}
+                  </Typography>
+                  <Typography
+                    variant="subtitle2"
+                    textAlign="right"
+                    sx={{ color: '#999' }}
+                  >
+                    {chineseTime(item.dateline * 1000)}
+                  </Typography>
+                </Paper>
+              </Stack>
+              {item.author_id == state.user.uid && (
+                <Avatar variant="rounded" uid={item.author_id} />
+              )}
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <Stack
+          direction="row"
+          flexGrow={0}
+          flexShrink={0}
+          p={1.5}
+          alignItems="flex-end"
+        >
+          <TextField multiline rows={4} sx={{ flexGrow: 1, flexShrink: 1 }} />
+          <IconButton sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}>
+            <Send />
+          </IconButton>
+        </Stack>
+      </Stack>
     </Stack>
   )
 }
