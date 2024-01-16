@@ -1,4 +1,4 @@
-import { IdasSignInResult } from '@/common/interfaces/response'
+import { IdasAuthResult } from '@/common/interfaces/response'
 import { authService, commonUrl } from '@/utils/request'
 
 const authUrl = `${commonUrl}/auth`
@@ -35,8 +35,12 @@ export const signIn = (params: {
   )
 }
 
-export const idasSignIn = (params: { continue: string; ticket: string }) => {
-  return authService.post<IdasSignInResult>(`${authUrl}/signin/idas`, params)
+export const idasAuth = (params: {
+  continue: string
+  ticket: string
+  signin?: boolean
+}) => {
+  return authService.post<IdasAuthResult>(`${authUrl}/idas`, params)
 }
 
 export const idasChooseUser = (

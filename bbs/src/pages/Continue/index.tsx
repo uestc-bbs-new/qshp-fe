@@ -4,6 +4,7 @@ import {
   redirect,
   useLoaderData,
   useNavigate,
+  useParams,
 } from 'react-router-dom'
 
 import { PersonAddAlt1 } from '@mui/icons-material'
@@ -26,12 +27,12 @@ import {
 
 import {
   checkUserName,
+  idasAuth,
   idasChooseUser,
   idasFreshman,
-  idasSignIn,
   register,
 } from '@/apis/auth'
-import { IdasSignInResult } from '@/common/interfaces/response'
+import { IdasAuthResult } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import routes from '@/routes/routes'
 import { setAuthorizationHeader } from '@/utils/authHeader'
@@ -39,16 +40,20 @@ import { kIdasOrigin } from '@/utils/routes'
 
 const kTicket = 'ticket'
 
-type IdasResultEx = IdasSignInResult & {
+type IdasResultEx = IdasAuthResult & {
   ticket: string
   continue: string
 }
 
+type Mode = 'signin' | 'register' | 'resetpassword'
+const kDefaultMode = 'signin'
+
 const Continue = () => {
   const idasResult = useLoaderData() as IdasResultEx
+  const mode = useParams()['mode'] as Mode | undefined
 
   const [pending, setPending] = useState(false)
-  const [forceRegister, setRegister] = useState(false)
+  const [forceRegister, setRegister] = useState(mode == 'register')
   const navigate = useNavigate()
   const signIn = (user_id: number) => {
     setPending(true)
@@ -289,7 +294,13 @@ const RegisterForm = ({
 const sanitizeContinuePath = (path: string | null) =>
   path && matchRoutes(routes.current, path) ? path : '/'
 
-export const ContinueLoader = async ({ request }: { request: Request }) => {
+export const ContinueLoader = async ({
+  request,
+  params,
+}: {
+  request: Request
+  params: { mode?: Mode }
+}) => {
   const url = new URL(request.url)
   const searchParams = url.searchParams
   const ticket = searchParams.get(kTicket)
@@ -301,7 +312,11 @@ export const ContinueLoader = async ({ request }: { request: Request }) => {
   originalSearchParams.delete(kTicket)
   const continuePath = `${kIdasOrigin}${url.pathname}?${originalSearchParams}`
   try {
-    const result = await idasSignIn({ continue: continuePath, ticket })
+    const result = await idasAuth({
+      continue: continuePath,
+      ticket,
+      signin: (params.mode || kDefaultMode) == 'signin',
+    })
     if (result.authorization) {
       setAuthorizationHeader(result.authorization)
       return redirect(path)

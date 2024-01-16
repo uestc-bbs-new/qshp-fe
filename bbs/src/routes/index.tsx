@@ -74,7 +74,7 @@ routes.current = [
         element: <Settings />,
       },
       {
-        path: '/continue',
+        path: '/continue/:mode?',
         id: 'continue',
         loader: ContinueLoader,
         element: <Continue />,

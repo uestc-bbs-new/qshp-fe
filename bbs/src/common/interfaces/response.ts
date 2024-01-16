@@ -334,7 +334,7 @@ export interface UserNameFind {
   rows: UserName[]
 }
 
-export type IdasSignInResult = {
+export type IdasAuthResult = {
   authorization?: string
   new_user?: boolean
   users?: {
