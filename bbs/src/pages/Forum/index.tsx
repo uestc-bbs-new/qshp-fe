@@ -246,7 +246,6 @@ function Forum() {
       forumChanged = true
     }
     setQuery(initQuery(forumChanged))
-    refetch()
   }, [forumId, searchParams, state.user.uid])
 
   const handlePageChange = (_: any, newPage: number) => {
