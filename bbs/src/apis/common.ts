@@ -178,7 +178,7 @@ export const getChatMessages = ({
   return request.get<GenericList<ChatMessage>>(
     `${commonUrl}/messages/chat/${uid ? `user/${uid}` : chatId}`,
     {
-      params: { ...params, ...(chatList && { chatList }) },
+      params: { ...params, chat_list: chatList ? 1 : 0 },
     }
   )
 }
