@@ -1,3 +1,5 @@
+import { forwardRef } from 'react'
+
 import { Groups } from '@mui/icons-material'
 import {
   Badge,
@@ -15,17 +17,20 @@ import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
-const ConversationItem = ({
-  chat,
-  selected,
-  lite,
-  summary,
-}: {
+type ConversationItemProps = {
   chat: ChatConversation
   selected?: boolean
   lite?: boolean
   summary?: boolean
-}) => {
+}
+
+const ConversationItem = forwardRef<
+  HTMLLIElement | null,
+  ConversationItemProps
+>(function ConversationItem(
+  { chat, selected, lite, summary }: ConversationItemProps,
+  ref?
+) {
   const liteProps = lite
     ? {
         flexShrink: 1,
@@ -33,7 +38,12 @@ const ConversationItem = ({
       }
     : {}
   return (
-    <ListItem key={chat.conversation_id} disableGutters disablePadding>
+    <ListItem
+      key={chat.conversation_id}
+      disableGutters
+      disablePadding
+      ref={ref}
+    >
       <ListItemButton
         selected={selected || chat.unread}
         component={Link}
@@ -52,7 +62,7 @@ const ConversationItem = ({
       </ListItemButton>
     </ListItem>
   )
-}
+})
 
 const ChatAvatar = ({
   chat,

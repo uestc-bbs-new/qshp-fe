@@ -1,14 +1,20 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
-import { Box, List, ListItem, Paper, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  List,
+  ListItem,
+  Paper,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import { getChatMessages } from '@/apis/common'
-import {
-  ChatConversation,
-  ChatMessage,
-  PaginationParams,
-} from '@/common/interfaces/response'
+import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
@@ -45,51 +51,57 @@ const Conversation = ({
         ],
       }
     }
-    const active = list[index]
     return {
-      list: [active, ...list.slice(0, index), ...list.slice(index + 1)],
-      active,
+      list,
+      active: list[index],
     }
-  }
-  const initQuery = () => {
-    return { chatId, uid }
   }
   const init = initChatList(initialList || [])
   const [activeConversation, setActiveConversation] = useState(init.active)
   const [chatList, setChatList] = useState(init.list)
-  const [query, setQuery] = useState(initQuery())
-  const [pagination, setPagination] = useState<PaginationParams>()
-  const [isError, setError] = useState(false)
   const [isEnded, setEnded] = useState(false)
-  const fetchNextPage = async () => {
-    const page = pagination?.page || 1
-    try {
-      const result = await getChatMessages({
-        chatId,
-        uid,
-        page,
-        chatList: page == 1,
-      })
-      setPagination({
-        page: page + 1,
-        total: result.total,
-        page_size: result.page_size,
-      })
-      if (result.rows.length > 0) {
-        setData(result.rows.reverse().concat(data))
-      } else {
+  const initQuery = () => ({
+    chatId,
+    uid,
+    page: 1,
+  })
+  const [query, setQuery] = useState(initQuery())
+  const {
+    data: currentData,
+    isError,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ['chat', query],
+    queryFn: () =>
+      getChatMessages({
+        ...query,
+        chatList: query.page == 1,
+      }),
+    gcTime: 0,
+  })
+  useEffect(() => {
+    if (currentData) {
+      console.log(currentData)
+      if (currentData.rows.length > 0) {
+        setData(currentData.rows.reverse().concat(data))
+      }
+      if (
+        (currentData.page - 1) * currentData.page_size +
+          currentData.rows.length >=
+        currentData.total
+      ) {
         setEnded(true)
       }
-    } catch (_) {
-      setError(true)
     }
-  }
+  }, [currentData])
   const [data, setData] = useState<ChatMessage[]>([])
+  const scheduleNextPage = useRef(false)
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: ({ unobserve }) => {
       unobserve()
-      fetchNextPage()
+      setQuery({ ...query, page: query.page + 1 })
     },
   })
   const scrollContainer = createRef<HTMLUListElement>()
@@ -98,7 +110,7 @@ const Conversation = ({
     if (!scrollContainer.current) {
       return
     }
-    if (!pagination) {
+    if (query.page == 1) {
       scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
     } else {
       scrollContainer.current.scrollTop += Math.max(
@@ -109,6 +121,15 @@ const Conversation = ({
     lastScrollHeight.current = scrollContainer.current.scrollHeight
   }, [data])
   useEffect(() => {
+    setData([])
+    lastScrollHeight.current = 0
+    scheduleNextPage.current = false
+    setEnded(false)
+    setActiveConversation(
+      chatList.find(
+        (item) => item.conversation_id == chatId || item.to_uid == uid
+      )
+    )
     setQuery(initQuery())
   }, [chatId, uid])
   return (
@@ -124,16 +145,17 @@ const Conversation = ({
         sx={{ p: 1, overflow: 'auto', width: '100%' }}
         ref={scrollContainer}
       >
-        {!isEnded && (
+        {!isEnded && !(isFetching && query.page == 1) && (
           <ListItem
-            key={`loading-older-${pagination?.page}`}
+            key={`loading-older-${chatId}-${query.page}`}
             ref={observe}
             sx={{ justifyContent: 'center' }}
           >
-            <Typography>正在加载...</Typography>
+            <Skeleton width="100%" height={40} />
+            {isError && <Typography>加载失败</Typography>}
           </ListItem>
         )}
-        {data?.map((item, index) => (
+        {data.map((item, index) => (
           <ListItem
             key={`${index}`}
             sx={{

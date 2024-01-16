@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { List, Pagination, Stack } from '@mui/material'
@@ -22,6 +23,10 @@ const ConversationList = ({
   activeConversation?: ChatConversation
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const activeRef = useRef<HTMLLIElement>(null)
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [activeRef.current])
   return (
     <>
       <List disablePadding>
@@ -31,6 +36,7 @@ const ConversationList = ({
             chat={chat}
             lite={lite}
             selected={chat == activeConversation}
+            ref={chat == activeConversation ? activeRef : undefined}
           />
         ))}
       </List>
