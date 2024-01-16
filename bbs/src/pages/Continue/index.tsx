@@ -7,31 +7,24 @@ import {
   useParams,
 } from 'react-router-dom'
 
-import { PersonAddAlt1 } from '@mui/icons-material'
 import {
   Alert,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Avatar as MuiAvatar,
   Stack,
   Typography,
 } from '@mui/material'
 
 import { idasAuth, idasChooseUser } from '@/apis/auth'
-import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import { kIdasOrigin, pages } from '@/utils/routes'
 
 import { RegisterForm } from './Register'
+import UserList from './UserList'
 import { IdasResultEx } from './common'
 
 const kTicket = 'ticket'
@@ -71,38 +64,13 @@ const Continue = () => {
         {idasResult.users && !forceRegister ? (
           <>
             <Typography>请选择您的账号完成登录：</Typography>
-            <List>
-              {idasResult.users.map((user, index) => (
-                <ListItem key={index}>
-                  <ListItemButton
-                    disabled={pending}
-                    onClick={() => signIn(user.uid)}
-                  >
-                    <ListItemIcon>
-                      <Avatar uid={user.uid} variant="rounded" />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Typography>{user.username}</Typography>
-                    </ListItemText>
-                  </ListItemButton>
-                </ListItem>
-              ))}
-              {!!idasResult.remaining_registers && (
-                <ListItem key="new">
-                  <ListItemButton
-                    disabled={pending}
-                    onClick={() => setRegister(true)}
-                  >
-                    <ListItemIcon>
-                      <MuiAvatar variant="rounded">
-                        <PersonAddAlt1 />
-                      </MuiAvatar>
-                    </ListItemIcon>
-                    <Typography>注册新用户</Typography>
-                  </ListItemButton>
-                </ListItem>
-              )}
-            </List>
+            <UserList
+              idasResult={idasResult}
+              disabled={pending}
+              showRegister={!!idasResult.remaining_registers}
+              onSignIn={(uid: number) => signIn(uid)}
+              onRegister={() => setRegister(true)}
+            />
           </>
         ) : idasResult.remaining_registers ? (
           <>
