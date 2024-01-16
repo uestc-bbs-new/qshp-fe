@@ -208,6 +208,7 @@ const PostEditor = ({
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
           <Editor
+            autoFocus
             minHeight={300}
             initialValue={initialValue?.message}
             setVd={setVd}

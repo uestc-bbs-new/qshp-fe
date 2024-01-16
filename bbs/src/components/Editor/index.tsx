@@ -24,9 +24,16 @@ type props = IOptions & {
   initialValue?: string
   setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
   onKeyDown?: React.KeyboardEventHandler
+  autoFocus?: boolean
 }
 
-const Editor = ({ initialValue, setVd, onKeyDown, ...other }: props) => {
+const Editor = ({
+  initialValue,
+  setVd,
+  onKeyDown,
+  autoFocus,
+  ...other
+}: props) => {
   const { state } = useAppState()
   const vditorRef = createRef<HTMLDivElement>()
   const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
@@ -41,8 +48,11 @@ const Editor = ({ initialValue, setVd, onKeyDown, ...other }: props) => {
     }
     const vd = new Vditor(vditorRef.current, {
       after: () => {
+        if (autoFocus) {
+          vd.focus()
+        }
         if (initialValue) {
-          vd.setValue(initialValue)
+          vd.insertValue(initialValue)
         }
         setVditor(vd)
         setVd(vd)

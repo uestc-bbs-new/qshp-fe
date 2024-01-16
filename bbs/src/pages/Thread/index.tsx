@@ -399,6 +399,7 @@ function Thread() {
         </>
       )}
       <DraggableDialog
+        disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
         open={dialogOpen}
         onClose={closeDialog}
         maxWidth="md"
@@ -430,6 +431,7 @@ function Thread() {
                 fullWidth
                 multiline
                 required
+                autoFocus
                 error={!!commentError}
                 helperText={commentError}
                 inputRef={commentMessage}
