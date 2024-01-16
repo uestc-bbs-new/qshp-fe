@@ -163,21 +163,33 @@ export const getChatList = (params: { page?: number }) => {
   )
 }
 
-export const getChatMessages = ({
-  uid,
-  chatId,
-  chatList,
-  ...params
-}: {
+export type ChatMessagesRequest = {
   uid?: number
   chatId?: number
   chatList?: boolean
   page?: number
-}) => {
+  dateline?: number
+  messageId?: number
+  newer?: boolean
+}
+
+export const getChatMessages = ({
+  uid,
+  chatId,
+  chatList,
+  messageId,
+  newer,
+  ...params
+}: ChatMessagesRequest) => {
   return request.get<ChatMessageList>(
     `${commonUrl}/messages/chat/${uid ? `user/${uid}` : chatId}`,
     {
-      params: { ...params, chat_list: chatList ? 1 : 0 },
+      params: {
+        ...params,
+        chat_list: chatList ? 1 : 0,
+        newer: newer ? 1 : 0,
+        ...(messageId && { message_id: messageId }),
+      },
     }
   )
 }

@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getChatMessages } from '@/apis/common'
+import { ChatMessagesRequest, getChatMessages } from '@/apis/common'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import { useAppState } from '@/states'
@@ -40,10 +40,9 @@ const Conversation = ({
   const initQuery = () => ({
     chatId,
     uid,
-    page: 1,
     chatList: !chatList?.length,
   })
-  const [query, setQuery] = useState(initQuery())
+  const [query, setQuery] = useState<ChatMessagesRequest>(initQuery())
   const {
     data: currentData,
     isError,
@@ -62,22 +61,24 @@ const Conversation = ({
       if (currentData.rows.length > 0) {
         setData(currentData.rows.reverse().concat(data))
       }
-      if (
-        (currentData.page - 1) * currentData.page_size +
-          currentData.rows.length >=
-        currentData.total
-      ) {
+      if (currentData.total <= currentData.page_size) {
         setEnded(true)
       }
     }
   }, [currentData])
   const [data, setData] = useState<ChatMessage[]>([])
-  const scheduleNextPage = useRef(false)
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: ({ unobserve }) => {
       unobserve()
-      setQuery({ ...query, page: query.page + 1 })
+      if (data.length) {
+        setQuery({
+          ...query,
+          newer: false,
+          dateline: data[0].dateline,
+          messageId: data[0].message_id,
+        })
+      }
     },
   })
   const scrollContainer = createRef<HTMLUListElement>()
@@ -99,7 +100,6 @@ const Conversation = ({
   useEffect(() => {
     setData([])
     lastScrollHeight.current = 0
-    scheduleNextPage.current = false
     setEnded(false)
     setQuery(initQuery())
   }, [chatId, uid])
@@ -128,11 +128,14 @@ const Conversation = ({
           {!isEnded && !(isFetching && query.page == 1) && (
             <ListItem
               key={`loading-older-${chatId}-${query.page}`}
-              ref={observe}
+              ref={isFetching ? undefined : observe}
               sx={{ justifyContent: 'center' }}
             >
-              <Skeleton width="100%" height={40} />
-              {isError && <Typography>加载失败</Typography>}
+              {isError ? (
+                <Typography>加载失败</Typography>
+              ) : (
+                <Skeleton width="100%" height={40} />
+              )}
             </ListItem>
           )}
           {data.map((item, index) => (
