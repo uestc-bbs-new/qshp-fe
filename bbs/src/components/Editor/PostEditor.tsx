@@ -20,6 +20,7 @@ import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
+import { handleCtrlEnter } from '@/utils/tools'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -183,12 +184,6 @@ const PostEditor = ({
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.ctrlKey && e.key == 'Enter') {
-      handleSubmit()
-    }
-  }
-
   const handleOptionsChange = () => {
     setAnonymous(!!valueRef.current.is_anonymous)
   }
@@ -216,7 +211,7 @@ const PostEditor = ({
             minHeight={300}
             initialValue={initialValue?.message}
             setVd={setVd}
-            onKeyDown={handleKeyDown}
+            onKeyDown={handleCtrlEnter(handleSubmit)}
           />
           <PostOptions
             forum={forum}

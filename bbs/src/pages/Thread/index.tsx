@@ -43,7 +43,7 @@ import { PostRenderer } from '@/components/RichText'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
-import { searchParamsAssign } from '@/utils/tools'
+import { handleCtrlEnter, searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
 import { PostDetailsByPostIdEx } from './types'
@@ -434,6 +434,7 @@ function Thread() {
                 helperText={commentError}
                 inputRef={commentMessage}
                 onChange={handleCommentChange}
+                onKeyDown={handleCtrlEnter(sendComment)}
               />
               <Stack direction="row" justifyContent="center" my={1}>
                 <Button
