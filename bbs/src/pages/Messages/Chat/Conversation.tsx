@@ -1,5 +1,3 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
-
 import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
@@ -8,6 +6,7 @@ import { Box, List, ListItem, Paper, Stack, Typography } from '@mui/material'
 import { getChatMessages } from '@/apis/common'
 import {
   ChatConversation,
+  ChatMessage,
   PaginationParams,
 } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
@@ -60,29 +59,32 @@ const Conversation = ({
   const [chatList, setChatList] = useState(init.list)
   const [query, setQuery] = useState(initQuery())
   const [pagination, setPagination] = useState<PaginationParams>()
-  const { data, fetchNextPage } = useInfiniteQuery({
-    queryKey: ['chat', query],
-    queryFn: async ({ pageParam }) => {
+  const [isError, setError] = useState(false)
+  const [isEnded, setEnded] = useState(false)
+  const fetchNextPage = async () => {
+    const page = pagination?.page || 1
+    try {
       const result = await getChatMessages({
-        ...query,
-        page: pageParam,
-        chatList: pageParam == 1,
+        chatId,
+        uid,
+        page,
+        chatList: page == 1,
       })
       setPagination({
+        page: page + 1,
         total: result.total,
         page_size: result.page_size,
-        page: result.page,
       })
-      return result.rows.reverse()
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => {
-      if (lastPage.length == 0) {
-        return null
+      if (result.rows.length > 0) {
+        setData(result.rows.reverse().concat(data))
+      } else {
+        setEnded(true)
       }
-      return lastPageParam + 1
-    },
-  })
+    } catch (_) {
+      setError(true)
+    }
+  }
+  const [data, setData] = useState<ChatMessage[]>([])
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: ({ unobserve }) => {
@@ -118,60 +120,56 @@ const Conversation = ({
           activeConversation={activeConversation}
         />
       </Box>
-      <List sx={{ p: 1, overflow: 'auto' }} ref={scrollContainer}>
-        <ListItem
-          key={`loading-${pagination?.page}`}
-          ref={observe}
-          sx={{ justifyContent: 'center' }}
-        >
-          <Typography>正在加载...</Typography>
-        </ListItem>
-        {data?.pages
-          .slice()
-          .reverse()
-          .map((page, i) =>
-            page.map((item, j) => (
-              <ListItem
-                key={`${i}-${j}`}
-                sx={{
-                  justifyContent:
-                    item.author_id == state.user.uid
-                      ? 'flex-end'
-                      : 'flex-start',
-                  alignItems: 'flex-start',
-                }}
+      <List
+        sx={{ p: 1, overflow: 'auto', width: '100%' }}
+        ref={scrollContainer}
+      >
+        {!isEnded && (
+          <ListItem
+            key={`loading-older-${pagination?.page}`}
+            ref={observe}
+            sx={{ justifyContent: 'center' }}
+          >
+            <Typography>正在加载...</Typography>
+          </ListItem>
+        )}
+        {data?.map((item, index) => (
+          <ListItem
+            key={`${index}`}
+            sx={{
+              justifyContent:
+                item.author_id == state.user.uid ? 'flex-end' : 'flex-start',
+              alignItems: 'flex-start',
+            }}
+          >
+            {item.author_id != state.user.uid && (
+              <Avatar variant="rounded" uid={item.author_id} />
+            )}
+            <Stack mx={1} maxWidth="70%">
+              <Typography
+                textAlign={item.author_id == state.user.uid ? 'right' : 'left'}
+                mb={0.5}
               >
-                {item.author_id != state.user.uid && (
-                  <Avatar variant="rounded" uid={item.author_id} />
-                )}
-                <Stack mx={1} maxWidth="70%">
-                  <Typography
-                    textAlign={
-                      item.author_id == state.user.uid ? 'right' : 'left'
-                    }
-                    mb={0.5}
-                  >
-                    {item.author}
-                  </Typography>
-                  <Paper elevation={3} sx={{ p: 1 }}>
-                    <Typography sx={{ lineBreak: 'anywhere' }}>
-                      {item.message}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      textAlign="right"
-                      sx={{ color: '#999' }}
-                    >
-                      {chineseTime(item.dateline * 1000)}
-                    </Typography>
-                  </Paper>
-                </Stack>
-                {item.author_id == state.user.uid && (
-                  <Avatar variant="rounded" uid={item.author_id} />
-                )}
-              </ListItem>
-            ))
-          )}
+                {item.author}
+              </Typography>
+              <Paper elevation={3} sx={{ p: 1 }}>
+                <Typography sx={{ lineBreak: 'anywhere' }}>
+                  {item.message}
+                </Typography>
+                <Typography
+                  variant="subtitle2"
+                  textAlign="right"
+                  sx={{ color: '#999' }}
+                >
+                  {chineseTime(item.dateline * 1000)}
+                </Typography>
+              </Paper>
+            </Stack>
+            {item.author_id == state.user.uid && (
+              <Avatar variant="rounded" uid={item.author_id} />
+            )}
+          </ListItem>
+        ))}
       </List>
     </Stack>
   )
