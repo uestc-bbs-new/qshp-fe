@@ -160,13 +160,13 @@ function Thread() {
         refetch()
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
+        // total + 1 because a new reply was posted just now and info is not yet refreshed.
         const newPage = info?.total
           ? Math.ceil((info?.total + 1) / kPostPageSize)
           : 1
         if (newPage != query.page) {
           navigate(
             `${location.pathname}?${searchParamsAssign(searchParams, {
-              // total + 1 because a new reply was posted just now and info is not yet refreshed.
               page: newPage,
             })}`,
             { preventScrollReset: true }
