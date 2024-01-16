@@ -136,7 +136,10 @@ const Conversation = ({
         scrollContainer.current.scrollHeight - (lastScrollHeight.current || 0)
       )
     } else if (fetchMode.current == 'sent') {
-      scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
+      scrollContainer.current.scrollTo({
+        top: scrollContainer.current.scrollHeight,
+        behavior: 'smooth',
+      })
       fetchMode.current = 'newer'
     }
     lastScrollHeight.current = scrollContainer.current.scrollHeight
