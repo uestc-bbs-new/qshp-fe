@@ -26,6 +26,7 @@ import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { handleCtrlEnter } from '@/utils/tools'
 
 import ConversationList from './ConversationList'
 
@@ -261,6 +262,7 @@ const Conversation = ({
             autoFocus
             rows={4}
             sx={{ flexGrow: 1, flexShrink: 1 }}
+            onKeyDown={handleCtrlEnter(sendMessage)}
             inputRef={messageRef}
           />
           <IconButton
