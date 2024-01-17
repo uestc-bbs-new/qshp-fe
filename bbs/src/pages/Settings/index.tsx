@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import {
   Box,
@@ -49,11 +50,12 @@ const listItems = [
 ]
 
 const Settings = () => {
+  const location = useLocation()
+  const initialIndex = listItems.findIndex((item) =>
+    location.pathname.endsWith(item.link)
+  )
   const [selectedIndex, setSelectedIndex] = useState(
-    listItems.findIndex(
-      (item) =>
-        location.pathname.endsWith(item.link) || location.pathname.endsWith('')
-    )
+    initialIndex !== -1 ? initialIndex : 0
   )
 
   const handleListItemClick = (
