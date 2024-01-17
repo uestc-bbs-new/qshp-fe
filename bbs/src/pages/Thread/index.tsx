@@ -452,6 +452,7 @@ function Thread() {
             <PostEditor
               kind={currentDialog}
               smallAuthor
+              autoFocus
               forum={forumDetails}
               threadId={threadId}
               postId={activePost?.post_id}

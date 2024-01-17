@@ -68,6 +68,7 @@ const PostEditor = ({
   initialValue,
   onSubmitted,
   smallAuthor,
+  autoFocus,
 }: {
   forum?: ForumDetails
   forumLoading?: boolean
@@ -78,6 +79,7 @@ const PostEditor = ({
   initialValue?: PostEditorValue
   onSubmitted?: () => void
   smallAuthor?: boolean
+  autoFocus?: boolean
 }) => {
   kind = kind || 'newthread'
   if (kind == 'reply' && !threadId) {
@@ -208,7 +210,7 @@ const PostEditor = ({
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
           <Editor
-            autoFocus
+            autoFocus={autoFocus}
             minHeight={300}
             initialValue={initialValue?.message}
             setVd={setVd}
