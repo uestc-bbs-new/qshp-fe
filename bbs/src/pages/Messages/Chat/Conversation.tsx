@@ -21,7 +21,7 @@ import {
   ChatMessagesRequest,
   getChatMessages,
   sendChatMessage,
-} from '@/apis/common'
+} from '@/apis/messages'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import { useAppState } from '@/states'

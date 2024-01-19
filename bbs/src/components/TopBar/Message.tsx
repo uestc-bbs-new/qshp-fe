@@ -5,7 +5,7 @@ import React from 'react'
 import { MarkunreadOutlined } from '@mui/icons-material'
 import { Badge, Box, Divider, List, MenuItem } from '@mui/material'
 
-import { getMessagesSummary } from '@/apis/common'
+import { getMessagesSummary } from '@/apis/messages'
 import Tooltip from '@/components/Tooltip'
 import ConversationItem from '@/pages/Messages/Chat/ConversationItem'
 import NotificationItem from '@/pages/Messages/Notifications/NotificationItem'
