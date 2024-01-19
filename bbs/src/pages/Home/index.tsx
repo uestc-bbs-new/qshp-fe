@@ -55,7 +55,7 @@ const Home = () => {
       </Banner>
       <OverviewInfo data={indexData?.global_stat} />
       {!indexData?.top_list && isLoading ? (
-        <Skeleton height={394} />
+        <Skeleton height={480} />
       ) : (
         indexData?.top_list &&
         state.user.uid && <HeaderCards topLists={indexData?.top_list} />
