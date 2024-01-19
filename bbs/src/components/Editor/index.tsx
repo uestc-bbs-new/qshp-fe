@@ -36,26 +36,27 @@ const Editor = ({
 }: props) => {
   const { state } = useAppState()
   const vditorRef = createRef<HTMLDivElement>()
-  const [vditor, setVditor] = useState<Vditor | undefined>(undefined)
+  const vditor = useRef<Vditor>()
+  const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
   const smilyAnchor = useRef<HTMLElement>()
   const [smilyOpen, setSmilyOpen] = useState(false)
   const closeSmily = () => setSmilyOpen(false)
   const [selectedSmilyKind, setSmilyKind] = useState(smilyData[0])
   useEffect(() => {
-    if (!vditorRef.current) {
+    if (!vditorRef.current || vditor.current) {
       return
     }
-    const vd = new Vditor(vditorRef.current, {
+    vditor.current = new Vditor(vditorRef.current, {
       after: () => {
         if (autoFocus) {
-          vd.focus()
+          vditor.current?.focus()
         }
         if (initialValue) {
-          vd.insertValue(initialValue)
+          vditor.current?.insertValue(initialValue)
         }
-        setVditor(vd)
-        setVd(vd)
+        setVd(vditor.current)
+        vditorInitialized.current = true
       },
       beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
         if (currentMode == 'wysiwyg') {
@@ -88,10 +89,10 @@ const Editor = ({
     })
   }, [])
   useEffect(() => {
-    if (vditor) {
-      vditor.setTheme(theme(), state.theme)
+    if (vditorInitialized.current) {
+      vditor.current?.setTheme(theme(), state.theme)
     }
-  }, [state.theme, vditor])
+  }, [state.theme, vditor.current])
   return (
     <>
       <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
@@ -123,7 +124,9 @@ const Editor = ({
               <Grid key={index} item>
                 <IconButton
                   onClick={() => {
-                    vditor?.insertValue(` ![${item.code || item.id}](s) `)
+                    vditor.current?.insertValue(
+                      ` ![${item.code || item.id}](s) `
+                    )
                     closeSmily()
                   }}
                 >
