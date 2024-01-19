@@ -65,7 +65,7 @@ export const getTopLists = async (ids: string | string[]) => {
   }
   const result = await request.get<{
     [id: string]: ThreadBasics[] | undefined
-  }>(`${commonUrl}/view/thread/toplist`, {
+  }>(`${commonUrl}/forum/toplist`, {
     params: { idlist: ids.join(',') },
   })
   for (const [_, v] of Object.entries(result)) {
@@ -114,15 +114,12 @@ export const getThreadList = async (params: {
   type_id?: number
   forum_details?: boolean
 }) => {
-  const result = await request.get<ThreadList>(
-    `${commonUrl}/view/thread/threads`,
-    {
-      params: {
-        ...params,
-        forum_details: params.forum_details ? 1 : 0,
-      },
-    }
-  )
+  const result = await request.get<ThreadList>(`${commonUrl}/thread/list`, {
+    params: {
+      ...params,
+      forum_details: params.forum_details ? 1 : 0,
+    },
+  })
   makeThreadTypesMap(result.forum)
   result.rows.forEach((item) => {
     item.subject = unescapeSubject(item.subject, item.dateline, true)
