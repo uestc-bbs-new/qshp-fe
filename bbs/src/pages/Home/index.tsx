@@ -53,7 +53,7 @@ const Home = () => {
           </Typography>
         </Box>
       </Banner>
-      <OverviewInfo />
+      <OverviewInfo data={indexData?.global_stat} />
       {!indexData?.top_list && isLoading ? (
         <Skeleton height={394} />
       ) : (

@@ -430,3 +430,24 @@ export type ChatMessage = {
 export type ChatMessageList = GenericList<ChatMessage> & {
   chat_list?: ChatConversation[]
 }
+
+export type GlobalStat = {
+  today_posts: number
+  yesterday_posts: number
+  total_posts: number
+  total_users: number
+  new_user?: {
+    uid: number
+    username: string
+  }
+}
+
+export type TopList = {
+  [id: string]: ThreadBasics[] | undefined
+}
+
+export type IndexData = {
+  global_stat?: GlobalStat
+  forum_list?: Forum[]
+  top_list?: TopList
+}

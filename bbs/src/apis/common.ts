@@ -2,10 +2,11 @@ import {
   BBSInfo,
   Forum,
   ForumDetails,
+  IndexData,
   Thread,
-  ThreadBasics,
   ThreadList,
   ThreadTypeMap,
+  TopList,
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
@@ -61,9 +62,7 @@ const normalizeStringArray = (value: string | string[]) => {
   return value
 }
 export const getTopLists = async (ids: string | string[]) => {
-  const result = await request.get<{
-    [id: string]: ThreadBasics[] | undefined
-  }>(`${commonUrl}/forum/toplist`, {
+  const result = await request.get<TopList>(`${commonUrl}/forum/toplist`, {
     params: { idlist: normalizeStringArray(ids).join(',') },
   })
   for (const [_, v] of Object.entries(result)) {
@@ -88,7 +87,7 @@ export const getIndexData = ({
   forumList?: boolean
   topList?: string | string[]
 }) =>
-  request.get(`${commonUrl}/index`, {
+  request.get<IndexData>(`${commonUrl}/index`, {
     params: {
       ...(globalStat && { global_stat: 1 }),
       ...(forumList && { forum_list: 1 }),
