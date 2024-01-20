@@ -7,9 +7,11 @@ export const searchParamsAssign = (value: URLSearchParams, kvList: object) =>
     Object.entries(Object.assign(Object.fromEntries(value.entries()), kvList))
   )
 
-export const handleCtrlEnter =
-  (handler: () => void) => (e: React.KeyboardEvent) => {
-    if (e.ctrlKey && e.key == 'Enter') {
-      handler()
-    }
-  }
+export const handleCtrlEnter = (handler?: () => void) =>
+  handler
+    ? (e: React.KeyboardEvent) => {
+        if (e.ctrlKey && e.key == 'Enter') {
+          handler()
+        }
+      }
+    : undefined

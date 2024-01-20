@@ -205,6 +205,7 @@ const PostEditor = ({
             selectedForum={forum}
             initialValue={initialValue}
             valueRef={valueRef}
+            onSubmit={handleSubmit}
           />
           {replyPost && (replyPost.position > 1 || !replyPost.is_first) && (
             <ReplyQuote post={replyPost} valueRef={valueRef} />
