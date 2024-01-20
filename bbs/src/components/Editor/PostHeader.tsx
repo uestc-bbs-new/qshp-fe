@@ -54,7 +54,8 @@ export const ThreadPostHeader = ({
             onClick={() => setOpenForumSelect(true)}
           />
         )}
-        {(kind == 'newthread' || kind == 'edit') && (
+        {(kind == 'newthread' ||
+          (kind == 'edit' && initialValue?.editingThread)) && (
           <>
             {threadTypes.length > 0 && (
               <FormControl sx={{ minWidth: `12em`, mr: 1 }}>

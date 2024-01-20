@@ -277,12 +277,13 @@ function Thread() {
   ) => {
     return {
       subject: post.subject,
-      message: post?.message,
-      format: post?.format,
+      message: post.message,
+      format: post.format,
       is_anonymous: !!post.is_anonymous,
       ...(threadDetails && {
         type_id: threadDetails.type_id,
       }),
+      editingThread: post.position == 1 && post.is_first == 1,
     }
   }
   return (
