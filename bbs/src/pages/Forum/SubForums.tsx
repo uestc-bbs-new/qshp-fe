@@ -17,6 +17,7 @@ import Card from '@/components/Card'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { chineseTime } from '@/utils/dayjs'
+import { unescapeSubject } from '@/utils/htmlEscape'
 import { pages } from '@/utils/routes'
 
 const SubForums = ({ children }: { children: ForumType[] }) => {
@@ -64,7 +65,11 @@ const SubForums = ({ children }: { children: ForumType[] }) => {
                             color="inherit"
                             to={pages.thread(child.latest_thread.thread_id)}
                           >
-                            {child.latest_thread.subject}
+                            {unescapeSubject(
+                              child.latest_thread.subject,
+                              null,
+                              true
+                            )}
                           </Link>
                           <Stack direction="row">
                             <Typography className="mr-2">

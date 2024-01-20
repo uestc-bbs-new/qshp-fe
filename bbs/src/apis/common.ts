@@ -61,10 +61,10 @@ const normalizeStringArray = (value: string | string[]) => {
   }
   return value
 }
-export const getTopLists = async (ids: string | string[]) => {
-  const result = await request.get<TopList>(`${commonUrl}/forum/toplist`, {
-    params: { idlist: normalizeStringArray(ids).join(',') },
-  })
+const transformTopList = (result?: TopList) => {
+  if (!result) {
+    return result
+  }
   for (const [_, v] of Object.entries(result)) {
     v?.forEach(
       (thread) =>
@@ -77,8 +77,14 @@ export const getTopLists = async (ids: string | string[]) => {
   }
   return result
 }
+export const getTopLists = async (ids: string | string[]) =>
+  transformTopList(
+    await request.get<TopList>(`${commonUrl}/forum/toplist`, {
+      params: { idlist: normalizeStringArray(ids).join(',') },
+    })
+  )
 
-export const getIndexData = ({
+export const getIndexData = async ({
   globalStat,
   forumList,
   topList,
@@ -86,14 +92,17 @@ export const getIndexData = ({
   globalStat?: boolean
   forumList?: boolean
   topList?: string | string[]
-}) =>
-  request.get<IndexData>(`${commonUrl}/index`, {
+}) => {
+  const result = await request.get<IndexData>(`${commonUrl}/index`, {
     params: {
       ...(globalStat && { global_stat: 1 }),
       ...(forumList && { forum_list: 1 }),
       ...(topList && { top_list: normalizeStringArray(topList).join(',') }),
     },
   })
+  transformTopList(result.top_list)
+  return result
+}
 
 export const searchThreads = (params: object) => {
   return request.post<{ resultNum: number; threads: Thread[] }>(

@@ -43,10 +43,10 @@ const entityReplacer = (_: string, ...args: any[]) => {
 
 export const unescapeSubject = (
   subject: string,
-  dateline: number,
+  dateline: number | null,
   thread: boolean
 ) => {
-  if (dateline < phpwindDiscuzFlagDay) {
+  if (dateline != null && dateline < phpwindDiscuzFlagDay) {
     if (thread) {
       subject = subject
         .replace(/&#1601/g, ' ')
