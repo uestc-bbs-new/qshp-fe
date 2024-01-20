@@ -440,7 +440,7 @@ export type TopListKey =
   | 'newreply'
   | 'newthread'
   | 'digest'
-  | 'market'
+  | 'life'
   | 'hotlist'
 
 export type TopListThread = ThreadBasics & { label?: string }

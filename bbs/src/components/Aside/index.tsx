@@ -14,13 +14,27 @@ const Aside = ({
   topList?: TopList
 }) => {
   const kListSize = 10
-  const [value, setValue] = useState<TopListKey>('hotlist')
+  const kTopListAsideLastTab = 'toplist_aside_last_tab'
+  let initialTab: TopListKey = 'hotlist'
+  try {
+    const value = localStorage.getItem(kTopListAsideLastTab)
+    if (value == 'hotlist' || value == 'life') {
+      initialTab = value
+    }
+  } catch (_) {
+    /* Do not crash in case of exception thrown in localStorage */
+  }
+  const [value, setValue] = useState<TopListKey>(initialTab)
 
+  const handleChange = (_, value: TopListKey) => {
+    setValue(value)
+    localStorage.setItem(kTopListAsideLastTab, value)
+  }
   return (
     <Box className="ml-2 w-60">
       <Tabs
         value={value}
-        onChange={(_, value) => setValue(value)}
+        onChange={handleChange}
         sx={{
           height: 2,
           pt: 1,
