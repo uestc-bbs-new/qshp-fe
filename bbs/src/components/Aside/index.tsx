@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import { Box, List, Skeleton, Tab, Tabs } from '@mui/material'
 
@@ -26,7 +26,7 @@ const Aside = ({
   }
   const [value, setValue] = useState<TopListKey>(initialTab)
 
-  const handleChange = (_, value: TopListKey) => {
+  const handleChange = (_: React.SyntheticEvent, value: TopListKey) => {
     setValue(value)
     localStorage.setItem(kTopListAsideLastTab, value)
   }
