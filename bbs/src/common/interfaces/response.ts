@@ -113,12 +113,6 @@ export type ThreadPollOption = {
   voters?: number[]
 }
 
-export type BBSInfo = {
-  todayposts: number
-  yesterdayposts: number
-  threads: Array<Thread>
-}
-
 export type Users = {
   user_id: number
   username: string

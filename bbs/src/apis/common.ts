@@ -1,5 +1,4 @@
 import {
-  BBSInfo,
   Forum,
   ForumDetails,
   IndexData,
@@ -49,10 +48,6 @@ export const getBulletin = (params: object) => {
   return request.get(`${commonUrl}/global/thread/bulletin`, {
     params: params,
   })
-}
-
-export const getBBSInfo = () => {
-  return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
 }
 
 const normalizeStringArray = (value: string | string[]) => {
