@@ -9,7 +9,7 @@ import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import {
   ForumDetails,
   Thread,
-  ThreadBasics,
+  TopListThread,
 } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
 import { chineseTime } from '@/utils/dayjs'
@@ -164,9 +164,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
   )
 }
 
-export const ThreadItemLite = ({ item }: { item: ThreadBasics }) => {
-  const theme = useTheme()
-
+export const ThreadItemLite = ({ item }: { item: TopListThread }) => {
   return (
     <Box px={0.25} py={0.5}>
       <Stack direction="row" alignItems="center">
@@ -183,14 +181,22 @@ export const ThreadItemLite = ({ item }: { item: ThreadBasics }) => {
           className="line-clamp-3"
           ml={1.2}
         >
-          <Typography textAlign="justify">{item.subject}</Typography>
+          {item.label && <Chip text={item.label} />}
+          <Typography
+            textAlign="justify"
+            component="span"
+            sx={{ verticalAlign: 'middle' }}
+          >
+            {item.subject}
+          </Typography>
         </Link>
       </Stack>
       <Stack
         direction="row"
-        justifyContent="flex-end"
+        justifyContent="flex-start"
         alignItems="center"
         className="text-sm"
+        pl={0.5}
       >
         <Link color="#3A71F2">{item.author}</Link>
         <Typography fontSize="inherit" className="pl-1" color="grey">

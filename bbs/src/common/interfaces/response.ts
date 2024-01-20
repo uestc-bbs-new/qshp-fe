@@ -443,8 +443,9 @@ export type TopListKey =
   | 'market'
   | 'hotlist'
 
+export type TopListThread = ThreadBasics & { label?: string }
 export type TopList = {
-  [id in TopListKey]: ThreadBasics[] | undefined
+  [id in TopListKey]: TopListThread[] | undefined
 }
 
 export type IndexData = {

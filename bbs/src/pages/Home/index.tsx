@@ -31,7 +31,7 @@ const Home = () => {
       return getIndexData({
         globalStat: true,
         forumList: true,
-        topList: ['newreply', 'newthread', 'digest', 'hotlist'],
+        topList: ['newreply', 'newthread', 'digest', 'life', 'hotlist'],
       })
     },
   })
