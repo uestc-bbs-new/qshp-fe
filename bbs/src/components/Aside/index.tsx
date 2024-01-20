@@ -1,28 +1,23 @@
-import { useQuery } from '@tanstack/react-query'
-
 import { useState } from 'react'
 
 import { Box, List, Skeleton, Tab, Tabs } from '@mui/material'
 
-import { getBBSInfo } from '@/apis/common'
+import { TopList } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import { ThreadItemLite } from '@/components/ThreadItem'
-import { useActiveRoute } from '@/utils/routes'
 
-const Aside = () => {
+const Aside = ({
+  loading,
+  topList,
+}: {
+  loading?: boolean
+  topList?: TopList
+}) => {
+  const kListSize = 10
   const [id, setId] = useState(1)
-  const { data: hot, isLoading } = useQuery({
-    queryKey: ['hotThread'],
-    queryFn: () => getBBSInfo(),
-  })
-  const activeRoute = useActiveRoute()
 
   const handleChange = (event: React.SyntheticEvent, newId: number) => {
     setId(newId)
-  }
-
-  if (activeRoute && activeRoute.id !== 'index' && activeRoute.id != 'forum') {
-    return null
   }
 
   return (
@@ -44,13 +39,15 @@ const Aside = () => {
       </Tabs>
       <Card tiny>
         <List>
-          {isLoading
+          {loading
             ? [...Array(10)].map((_, index) => (
                 <Skeleton key={index} height={70} />
               ))
-            : hot?.threads?.map((item, index) => (
-                <ThreadItemLite item={item} key={index} className="mb-4" />
-              ))}
+            : topList?.hotlist
+                ?.slice(0, kListSize)
+                ?.map((item, index) => (
+                  <ThreadItemLite item={item} key={index} />
+                ))}
         </List>
       </Card>
     </Box>

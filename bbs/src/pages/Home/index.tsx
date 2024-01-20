@@ -31,7 +31,7 @@ const Home = () => {
       return getIndexData({
         globalStat: true,
         forumList: true,
-        topList: ['newreply', 'newthread', 'digest'],
+        topList: ['newreply', 'newthread', 'digest', 'hotlist'],
       })
     },
   })
@@ -86,7 +86,7 @@ const Home = () => {
             </List>
           )}
         </Box>
-        <Aside />
+        <Aside topList={indexData?.top_list} />
       </Stack>
     </>
   )

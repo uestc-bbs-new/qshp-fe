@@ -442,8 +442,15 @@ export type GlobalStat = {
   }
 }
 
+export type TopListKey =
+  | 'newreply'
+  | 'newthread'
+  | 'digest'
+  | 'market'
+  | 'hotlist'
+
 export type TopList = {
-  [id: string]: ThreadBasics[] | undefined
+  [id in TopListKey]: ThreadBasics[] | undefined
 }
 
 export type IndexData = {
