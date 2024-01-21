@@ -12,6 +12,7 @@ import {
   IconButton,
   ListItemText,
   MenuItem,
+  Skeleton,
   Stack,
   Typography,
   useTheme,
@@ -20,7 +21,7 @@ import {
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import Tooltip from '@/components/Tooltip'
-import { useAppState } from '@/states'
+import { useAppState, useForumList } from '@/states'
 import { pages } from '@/utils/routes'
 
 const canPostThreadInForumOrChildren = (forum: Forum) => {
@@ -73,21 +74,6 @@ export const ForumSelect = ({
   selectedFid?: number
   onCompleted: (forum: number | undefined) => void
 }) => {
-  const { state } = useAppState()
-  const theme = useTheme()
-  const [fid, setFid] = useState(selectedFid)
-  const close = () => {
-    onCompleted(fid)
-  }
-  useEffect(() => {
-    setFid(selectedFid)
-  }, [selectedFid])
-
-  const onChooseForum = (forum: Forum, noSub?: boolean) => {
-    if (!forum.children?.length || noSub) {
-      onCompleted(forum.fid)
-    }
-  }
   return (
     <Dialog open={open}>
       <DialogTitle>
@@ -97,7 +83,7 @@ export const ForumSelect = ({
           alignItems="center"
         >
           <Typography variant="h6">请选择板块：</Typography>
-          <IconButton onClick={close}>
+          <IconButton onClick={() => onCompleted(selectedFid)}>
             <Close />
           </IconButton>
         </Stack>
@@ -112,31 +98,55 @@ export const ForumSelect = ({
         </Typography>
       </DialogTitle>
       <DialogContent>
-        {state.forumListCache?.map((group, index) => (
-          <Box key={index}>
-            <ListItemText>{group.name}</ListItemText>
-            <Divider
-              className="border-b-2 rounded-lg"
-              style={{ borderBottomColor: theme.palette.primary.main }}
-            />
-            <Box pl={4}>
-              <Grid container spacing={0.5} mt={0} ml={0}>
-                {group.children
-                  ?.filter((item) => item.name)
-                  .map((item, index) => (
-                    <ForumButton
-                      key={index}
-                      item={item}
-                      fid={fid}
-                      onChooseForum={onChooseForum}
-                    />
-                  ))}
-              </Grid>
-            </Box>
-          </Box>
-        ))}
+        {open && <ForumList {...{ selectedFid, onCompleted }} />}
       </DialogContent>
     </Dialog>
+  )
+}
+
+const ForumList = ({
+  selectedFid,
+  onCompleted,
+}: {
+  selectedFid?: number
+  onCompleted: (forum: number | undefined) => void
+}) => {
+  const theme = useTheme()
+  const forumList = useForumList()
+  const [fid, setFid] = useState(selectedFid)
+  useEffect(() => {
+    setFid(selectedFid)
+  }, [selectedFid])
+
+  const onChooseForum = (forum: Forum, noSub?: boolean) => {
+    if (!forum.children?.length || noSub) {
+      onCompleted(forum.fid)
+    }
+  }
+  return (
+    forumList?.map((group, index) => (
+      <Box key={index}>
+        <ListItemText>{group.name}</ListItemText>
+        <Divider
+          className="border-b-2 rounded-lg"
+          style={{ borderBottomColor: theme.palette.primary.main }}
+        />
+        <Box pl={4}>
+          <Grid container spacing={0.5} mt={0} ml={0}>
+            {group.children
+              ?.filter((item) => item.name)
+              .map((item, index) => (
+                <ForumButton
+                  key={index}
+                  item={item}
+                  fid={fid}
+                  onChooseForum={onChooseForum}
+                />
+              ))}
+          </Grid>
+        </Box>
+      </Box>
+    )) || [...Array(8)].map((_, index) => <Skeleton key={index} height={80} />)
   )
 }
 

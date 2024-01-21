@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
-
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
@@ -16,10 +14,9 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getForumList } from '@/apis/common'
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
-import { useAppState } from '@/states'
+import { useAppState, useForumList } from '@/states'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
@@ -131,22 +128,8 @@ const Ordinate = ({ data, isForum }: NavData<boolean>) => {
   )
 }
 
-const Sections = ({ forumListCache }: { forumListCache?: Forum[] }) => {
-  const { state } = useAppState()
-  const { data, refetch } = useQuery({
-    queryKey: ['forumList'],
-    queryFn: () => getForumList(),
-    initialData: forumListCache,
-    staleTime: Infinity,
-    enabled: !forumListCache,
-  })
-  const previousUid = useRef(state.user.uid)
-  useEffect(() => {
-    if (previousUid.current != state.user.uid) {
-      refetch()
-      previousUid.current = state.user.uid
-    }
-  }, [state.user.uid])
+const Sections = () => {
+  const forumList = useForumList()
   return (
     <List style={{ color: '#7082a7' }}>
       <Link to={pages.index()} underline="none" color="inherit">
@@ -161,7 +144,7 @@ const Sections = ({ forumListCache }: { forumListCache?: Forum[] }) => {
       </Link>
       <Ordinate data={listServiceItems} isForum={false} />
       <>
-        {!data?.length ? (
+        {!forumList?.length ? (
           <List>
             <ListItem>
               <Skeleton className="w-full" height={32}></Skeleton>
@@ -174,7 +157,7 @@ const Sections = ({ forumListCache }: { forumListCache?: Forum[] }) => {
             </ListItem>
           </List>
         ) : (
-          data.map((item) => (
+          forumList.map((item) => (
             <Ordinate key={item.name} data={item} isForum={true} />
           ))
         )}
@@ -189,7 +172,7 @@ const NavLinks = () => {
   return (
     <Box>
       <Toolbar />
-      <Sections forumListCache={state.forumListCache} />
+      <Sections />
     </Box>
   )
 }

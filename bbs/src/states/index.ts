@@ -1,4 +1,14 @@
-import React, { createContext, useContext, useReducer } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react'
+
+import { getForumList } from '@/apis/common'
 
 import { State, StateAction, stateReducer } from './reducers/stateReducer'
 
@@ -36,6 +46,25 @@ export const useAppState = () =>
     state: State
     dispatch: React.Dispatch<StateAction>
   }>(AppContext)
+
+export const useForumList = () => {
+  const { state } = useAppState()
+  const { data: forumList, refetch } = useQuery({
+    queryKey: ['forumList'],
+    queryFn: () => getForumList(),
+    initialData: state.forumListCache,
+    staleTime: Infinity,
+    enabled: !state.forumListCache,
+  })
+  const previousUid = useRef(state.user.uid)
+  useEffect(() => {
+    if (previousUid.current != state.user.uid) {
+      refetch()
+      previousUid.current = state.user.uid
+    }
+  }, [state.user.uid])
+  return forumList
+}
 
 export default useAppStateContext
 export { guestUser }
