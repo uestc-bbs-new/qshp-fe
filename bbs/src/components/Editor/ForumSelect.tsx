@@ -51,13 +51,6 @@ const ForumLink = ({
   onClick: (fid: number) => void
 }) => {
   const { state } = useAppState()
-  const fidNameMap: { [fid: number]: string } = {}
-  const addToMap = (forum: Forum) => {
-    fidNameMap[forum.fid] = forum.name
-    forum.children?.length && forum.children.forEach(addToMap)
-  }
-  state.forumList.forEach(addToMap)
-
   return (
     <Link
       to={pages.post(fid)}
@@ -66,7 +59,7 @@ const ForumLink = ({
         onClick(fid)
       }}
     >
-      {fidNameMap[fid]}
+      {state.fidNameMap[fid]}
     </Link>
   )
 }
@@ -119,7 +112,7 @@ export const ForumSelect = ({
         </Typography>
       </DialogTitle>
       <DialogContent>
-        {state.forumList.map((group, index) => (
+        {state.forumListCache?.map((group, index) => (
           <Box key={index}>
             <ListItemText>{group.name}</ListItemText>
             <Divider

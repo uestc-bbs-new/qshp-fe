@@ -37,7 +37,7 @@ const Home = () => {
   })
   useEffect(() => {
     if (indexData?.forum_list) {
-      dispatch({ type: 'set forumList', payload: indexData?.forum_list })
+      dispatch({ type: 'set forumListCache', payload: indexData.forum_list })
     }
   }, [indexData])
   useEffect(() => {
@@ -64,7 +64,7 @@ const Home = () => {
 
       <Stack direction="row">
         <Box className="flex-1">
-          {!state || !state.forumList || state.forumList.length === 0 ? (
+          {!indexData?.forum_list?.length ? (
             <>
               <Skeleton variant="rounded" height={40} />
               <Box className="flex-1" display="flex">
@@ -80,7 +80,7 @@ const Home = () => {
             </>
           ) : (
             <List>
-              {state.forumList.map((item) => (
+              {indexData.forum_list.map((item) => (
                 <ForumGroup data={item} key={item.name} />
               ))}
             </List>

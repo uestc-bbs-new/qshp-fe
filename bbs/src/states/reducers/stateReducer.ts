@@ -27,9 +27,12 @@ type LoginDialogState = {
   prompt?: string
 }
 
+type FidNameMap = { [fid: number]: string }
+
 export type State = {
   drawer: boolean
-  forumList: Forum[]
+  forumListCache?: Forum[]
+  fidNameMap: FidNameMap
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
   activeForum?: ForumDetails
@@ -68,8 +71,15 @@ export const stateReducer = (state: State, action: StateAction): State => {
       }
       return state
     }
-    case 'set forumList':
-      return { ...state, forumList: action.payload }
+    case 'set forumListCache': {
+      const fidNameMap: FidNameMap = {}
+      const addToMap = (forum: Forum) => {
+        fidNameMap[forum.fid] = forum.name
+        forum.children?.length && forum.children.forEach(addToMap)
+      }
+      ;(action.payload as Forum[]).forEach(addToMap)
+      return { ...state, forumListCache: action.payload, fidNameMap }
+    }
     case 'set theme':
       return { ...state, theme: action.payload }
     case 'set drawer':

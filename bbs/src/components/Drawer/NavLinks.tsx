@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+import React, { useEffect, useRef, useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
@@ -14,6 +16,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { getForumList } from '@/apis/common'
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
@@ -128,40 +131,55 @@ const Ordinate = ({ data, isForum }: NavData<boolean>) => {
   )
 }
 
-const Sections = ({ data }: { data: Forum[] }) => {
+const Sections = ({ forumListCache }: { forumListCache?: Forum[] }) => {
+  const { state } = useAppState()
+  const { data, refetch } = useQuery({
+    queryKey: ['forumList'],
+    queryFn: () => getForumList(),
+    initialData: forumListCache,
+    staleTime: Infinity,
+    enabled: !forumListCache,
+  })
+  const previousUid = useRef(state.user.uid)
+  useEffect(() => {
+    if (previousUid.current != state.user.uid) {
+      refetch()
+      previousUid.current = state.user.uid
+    }
+  }, [state.user.uid])
   return (
-    <>
-      {!data || data.length === 0 ? (
-        <List>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-        </List>
-      ) : (
-        <List style={{ color: '#7082a7' }}>
-          <Link to={pages.index()} underline="none" color="inherit">
-            <ListItemButton>
-              <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
-              <ListItemText>
-                <Typography color="inherit" className="font-bold">
-                  首页
-                </Typography>
-              </ListItemText>
-            </ListItemButton>
-          </Link>
-          <Ordinate data={listServiceItems} isForum={false} />
-          {data.map((item) => (
+    <List style={{ color: '#7082a7' }}>
+      <Link to={pages.index()} underline="none" color="inherit">
+        <ListItemButton>
+          <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
+          <ListItemText>
+            <Typography color="inherit" className="font-bold">
+              首页
+            </Typography>
+          </ListItemText>
+        </ListItemButton>
+      </Link>
+      <Ordinate data={listServiceItems} isForum={false} />
+      <>
+        {!data?.length ? (
+          <List>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+          </List>
+        ) : (
+          data.map((item) => (
             <Ordinate key={item.name} data={item} isForum={true} />
-          ))}
-        </List>
-      )}
-    </>
+          ))
+        )}
+      </>
+    </List>
   )
 }
 
@@ -171,7 +189,7 @@ const NavLinks = () => {
   return (
     <Box>
       <Toolbar />
-      <Sections data={state.forumList} />
+      <Sections forumListCache={state.forumListCache} />
     </Box>
   )
 }

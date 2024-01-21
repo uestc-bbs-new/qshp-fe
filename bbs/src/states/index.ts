@@ -12,8 +12,8 @@ const guestUser = {
 }
 const initialState: State = {
   drawer: false, //侧边栏是否打开
-  forumList: [],
   user: guestUser,
+  fidNameMap: {},
   forumBreadcumbs: [],
   login: {
     open: false,
