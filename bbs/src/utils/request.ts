@@ -194,15 +194,16 @@ const service = new AxiosWrapper(
   })
 )
 
-const authService = new AxiosWrapper(
-  axios.create({
-    ...commonConfig,
-    headers: {
-      ...commonHeaders,
-      'X-UESTC-BBS': '1',
-    },
-  })
-)
+const authConfig = {
+  ...commonConfig,
+  headers: {
+    ...commonHeaders,
+    'X-UESTC-BBS': '1',
+  },
+}
+
+const authService = new AxiosWrapper(axios.create(authConfig))
+const authServiceWithUser = new AxiosWrapper(axios.create(authConfig))
 
 // Export window.api for easier testing in development
 if (import.meta.env.DEV) {
@@ -215,6 +216,7 @@ if (import.meta.env.DEV) {
 export default service
 export {
   authService,
+  authServiceWithUser,
   apiResultCode,
   kHttpUnauthorized,
   commonUrl,

@@ -4,7 +4,7 @@ import { notifyUserCallbacks } from '@/states/user'
 import { setAuthorizationHeader } from '@/utils/authHeader'
 import {
   apiResultCode,
-  authService,
+  authServiceWithUser,
   commonUrl,
   kHttpUnauthorized,
 } from '@/utils/request'
@@ -22,7 +22,7 @@ const adoptLegacyAuth = (axios: AxiosInstance) => {
 
   if (!attempting) {
     attempting = true
-    pendingPromise = authService
+    pendingPromise = authServiceWithUser
       .post<string>(`${commonUrl}/auth/adoptLegacyAuth`)
       .then((authorization) => {
         setAuthorizationHeader(authorization)
