@@ -30,7 +30,7 @@ import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link, { MenuItemLink } from '@/components/Link'
 import ThreadItem from '@/components/ThreadItem'
-import { useAppState } from '@/states'
+import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
@@ -192,7 +192,7 @@ const ThreadTypeFilter = ({
 }
 
 function Forum() {
-  const { state, dispatch } = useAppState()
+  const { dispatch } = useAppState()
   const navigate = useNavigate()
   const forumId = parseInt(useParams().id || '0')
   const [searchParams] = useSearchParams()
@@ -246,7 +246,8 @@ function Forum() {
       forumChanged = true
     }
     setQuery(initQuery(forumChanged))
-  }, [forumId, searchParams, state.user.uid])
+  }, [forumId, searchParams])
+  useSignInChange(refetch)
 
   const handlePageChange = (_: any, newPage: number) => {
     navigate(

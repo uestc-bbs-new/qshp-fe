@@ -40,7 +40,7 @@ import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
-import { useAppState } from '@/states'
+import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { handleCtrlEnter, searchParamsAssign } from '@/utils/tools'
@@ -61,7 +61,7 @@ const ForumPagination = (props: {
 )
 
 function Thread() {
-  const { state, dispatch } = useAppState()
+  const { dispatch } = useAppState()
   const navigate = useNavigate()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -201,7 +201,8 @@ function Thread() {
       threadChanged = true
     }
     setQuery(initQuery(threadChanged))
-  }, [threadId, searchParams, state.user.uid])
+  }, [threadId, searchParams])
+  useSignInChange(refetch)
 
   const [activePost, setActivePost] = useState<PostFloor>()
 

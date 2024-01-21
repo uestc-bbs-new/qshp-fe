@@ -66,5 +66,12 @@ export const useForumList = () => {
   return forumList
 }
 
+export const useSignInChange = (callback: () => void) => {
+  const { state } = useAppState()
+  useEffect(() => {
+    callback()
+  }, [state.user.uid])
+}
+
 export default useAppStateContext
 export { guestUser }

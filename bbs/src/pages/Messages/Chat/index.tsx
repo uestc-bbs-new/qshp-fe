@@ -6,6 +6,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { Paper, Skeleton } from '@mui/material'
 
 import { getChatList } from '@/apis/messages'
+import { useSignInChange } from '@/states'
 
 import Conversation from './Conversation'
 import ConversationList from './ConversationList'
@@ -31,7 +32,7 @@ const Chat = () => {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const { data: chatList } = useQuery({
+  const { data: chatList, refetch } = useQuery({
     queryKey: ['messages', query],
     queryFn: () => getChatList(query),
     refetchOnMount: true,
@@ -40,6 +41,7 @@ const Chat = () => {
   useEffect(() => {
     setQuery(initQuery())
   }, [searchParams])
+  useSignInChange(refetch)
 
   return (
     <Paper sx={{ flexGrow: 1 }}>
