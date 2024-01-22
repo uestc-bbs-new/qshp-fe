@@ -18,7 +18,7 @@ import {
 
 import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
-import { Theme, useAppState } from '@/states'
+import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
@@ -34,18 +34,11 @@ const MenuContent = () => {
     dispatch({ type: 'set user' })
   }
 
-  const themeChange = () => {
-    if (state.theme === 'light') {
-      dispatch({
-        type: 'set theme',
-        payload: 'dark' as Theme,
-      })
-    } else {
-      dispatch({
-        type: 'set theme',
-        payload: 'light' as Theme,
-      })
-    }
+  const toggleTheme = () => {
+    dispatch({
+      type: 'set theme',
+      payload: state.theme === 'light' ? 'dark' : 'light',
+    })
   }
   return (
     <Box className="py-2">
@@ -68,7 +61,7 @@ const MenuContent = () => {
         淘帖
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem onClick={themeChange}>
+      <MenuItem onClick={toggleTheme}>
         <ListItemIcon>
           {state.theme === 'light' ? (
             <DarkMode fontSize="small" />
@@ -76,7 +69,7 @@ const MenuContent = () => {
             <LightMode fontSize="small" />
           )}
         </ListItemIcon>
-        {state.theme === 'light' ? '暗黑' : 'light'}模式
+        {state.theme === 'light' ? '深色' : '浅色'}模式
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem>
