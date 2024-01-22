@@ -33,7 +33,6 @@ const SideTabs = ({
   homepage?: boolean
 }) => {
   const kListSize = 10
-  const kTopListAsideLastTab = 'toplist_aside_last_tab'
   const { state: routeState } = useLocation()
   let initialTab: TopListKey = homepage ? 'hotlist' : 'newreply'
   let tabs: TopListKey[] = topListSideKeys
