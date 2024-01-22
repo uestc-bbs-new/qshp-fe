@@ -86,7 +86,7 @@ const Home = () => {
             </List>
           )}
         </Box>
-        <Aside topList={indexData?.top_list} />
+        <Aside topList={indexData?.top_list} homepage />
       </Stack>
     </>
   )
