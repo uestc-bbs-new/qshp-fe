@@ -97,42 +97,42 @@ const SideTabs = ({
               onClick={homepage ? undefined : () => setMenuOpenSide('left')}
             />
           ))}
-        {!homepage && (
-          <>
-            <IconButton
-              ref={expandRef}
-              onClick={() => setMenuOpenSide('right')}
-            >
-              <ArrowDropDown />
-            </IconButton>
-            <Menu
-              anchorEl={tabsRef.current}
-              anchorOrigin={{
-                horizontal: menuOpenSide || 'left',
-                vertical: 'bottom',
-              }}
-              transformOrigin={{
-                horizontal: menuOpenSide || 'left',
-                vertical: 'top',
-              }}
-              open={!!menuOpenSide}
-              onClose={closeMenu}
-            >
-              {tabs.map((key) => (
-                <MenuItem
-                  key={key}
-                  selected={key == value}
-                  onClick={() => {
-                    setValue(key)
-                    closeMenu()
-                  }}
-                >
-                  {topListTitleMap[key]}
-                </MenuItem>
-              ))}
-            </Menu>
-          </>
-        )}
+        {!homepage && [
+          <IconButton
+            key="_dropdown"
+            ref={expandRef}
+            onClick={() => setMenuOpenSide('right')}
+          >
+            <ArrowDropDown />
+          </IconButton>,
+          <Menu
+            key="_menu"
+            anchorEl={tabsRef.current}
+            anchorOrigin={{
+              horizontal: menuOpenSide || 'left',
+              vertical: 'bottom',
+            }}
+            transformOrigin={{
+              horizontal: menuOpenSide || 'left',
+              vertical: 'top',
+            }}
+            open={!!menuOpenSide}
+            onClose={closeMenu}
+          >
+            {tabs.map((key) => (
+              <MenuItem
+                key={key}
+                selected={key == value}
+                onClick={() => {
+                  setValue(key)
+                  closeMenu()
+                }}
+              >
+                {topListTitleMap[key]}
+              </MenuItem>
+            ))}
+          </Menu>,
+        ]}
       </Tabs>
       <Card tiny>
         {loading ? (
