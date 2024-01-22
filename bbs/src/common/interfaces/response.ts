@@ -113,12 +113,6 @@ export type ThreadPollOption = {
   voters?: number[]
 }
 
-export type BBSInfo = {
-  todayposts: number
-  yesterdayposts: number
-  threads: Array<Thread>
-}
-
 export type Users = {
   user_id: number
   username: string
@@ -429,4 +423,33 @@ export type ChatMessage = {
 
 export type ChatMessageList = GenericList<ChatMessage> & {
   chat_list?: ChatConversation[]
+}
+
+export type GlobalStat = {
+  today_posts: number
+  yesterday_posts: number
+  total_posts: number
+  total_users: number
+  new_user?: {
+    uid: number
+    username: string
+  }
+}
+
+export type TopListKey =
+  | 'newreply'
+  | 'newthread'
+  | 'digest'
+  | 'life'
+  | 'hotlist'
+
+export type TopListThread = ThreadBasics & { label?: string }
+export type TopList = {
+  [id in TopListKey]: TopListThread[] | undefined
+}
+
+export type IndexData = {
+  global_stat?: GlobalStat
+  forum_list?: Forum[]
+  top_list?: TopList
 }

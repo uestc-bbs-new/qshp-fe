@@ -29,20 +29,17 @@ export const getThreadsInfo = async ({
   thread_details?: boolean
   forum_details?: boolean
 }) => {
-  const result = await request.get<PostDetails>(
-    `${commonUrl}/view/post/details`,
-    {
-      params: {
-        thread_id: thread_id,
-        page: page || 1,
-        author_id: author_id,
-        order_type:
-          order_type == 'reverse' ? 1 : order_type == 'forward' ? 2 : null,
-        thread_details: thread_details ? 1 : 0,
-        forum_details: forum_details ? 1 : 0,
-      },
-    }
-  )
+  const result = await request.get<PostDetails>(`${commonUrl}/post/list`, {
+    params: {
+      thread_id: thread_id,
+      page: page || 1,
+      author_id: author_id,
+      order_type:
+        order_type == 'reverse' ? 1 : order_type == 'forward' ? 2 : null,
+      thread_details: thread_details ? 1 : 0,
+      forum_details: forum_details ? 1 : 0,
+    },
+  })
   makeThreadTypesMap(result.forum)
   if (result.thread?.subject) {
     result.thread.subject = unescapeSubject(

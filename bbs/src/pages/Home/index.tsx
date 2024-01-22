@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 
 import { Box, List, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 
-import { getTopLists } from '@/apis/common'
+import { getIndexData } from '@/apis/common'
 import headerImg from '@/assets/header.jpg'
 import Aside from '@/components/Aside'
 import Banner from '@/components/Banner'
@@ -17,20 +17,29 @@ import { useAppState } from '@/states'
 import { ForumGroup } from './ForumCover'
 
 const Home = () => {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   const location = useLocation()
 
   const theme = useTheme()
   const {
-    data: topLists,
+    data: indexData,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['toplist'],
+    queryKey: ['index'],
     queryFn: () => {
-      return getTopLists(['newreply', 'newthread', 'digest'])
+      return getIndexData({
+        globalStat: true,
+        forumList: true,
+        topList: ['newreply', 'newthread', 'digest', 'life', 'hotlist'],
+      })
     },
   })
+  useEffect(() => {
+    if (indexData?.forum_list) {
+      dispatch({ type: 'set forumList', payload: indexData?.forum_list })
+    }
+  }, [indexData])
   useEffect(() => {
     refetch()
   }, [state.user.uid, location.key])
@@ -44,11 +53,12 @@ const Home = () => {
           </Typography>
         </Box>
       </Banner>
-      <OverviewInfo />
-      {!topLists && isLoading ? (
-        <Skeleton height={394} />
+      <OverviewInfo data={indexData?.global_stat} />
+      {!indexData?.top_list && isLoading ? (
+        <Skeleton height={480} />
       ) : (
-        topLists && state.user.uid && <HeaderCards topLists={topLists} />
+        indexData?.top_list &&
+        state.user.uid && <HeaderCards topLists={indexData?.top_list} />
       )}
       <CampusService />
 
@@ -76,7 +86,7 @@ const Home = () => {
             </List>
           )}
         </Box>
-        <Aside />
+        <Aside topList={indexData?.top_list} />
       </Stack>
     </>
   )

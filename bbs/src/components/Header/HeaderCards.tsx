@@ -6,7 +6,7 @@ import { pages } from '@/utils/routes'
 import Avatar from '../Avatar'
 import Link from '../Link'
 
-const kCount = 5
+const kCount = 8
 
 const headerCard = (title: string, list: ThreadBasics[]) => (
   <Box className="relative overflow-hidden mb-5 p-1" style={{ width: '100%' }}>

@@ -12,6 +12,7 @@ import {
 
 import { ForumDetails } from '@/common/interfaces/response'
 import { pages } from '@/utils/routes'
+import { handleCtrlEnter } from '@/utils/tools'
 
 import { ForumSelect } from './ForumSelect'
 import { PostEditorKind } from './PostEditor'
@@ -22,11 +23,13 @@ export const ThreadPostHeader = ({
   selectedForum,
   initialValue,
   valueRef,
+  onSubmit,
 }: {
   kind: PostEditorKind
   selectedForum?: ForumDetails
   initialValue?: PostEditorValue
   valueRef?: RefObject<PostEditorValue>
+  onSubmit?: () => void
 }) => {
   const navigate = useNavigate()
 
@@ -51,7 +54,8 @@ export const ThreadPostHeader = ({
             onClick={() => setOpenForumSelect(true)}
           />
         )}
-        {(kind == 'newthread' || kind == 'edit') && (
+        {(kind == 'newthread' ||
+          (kind == 'edit' && initialValue?.editingThread)) && (
           <>
             {threadTypes.length > 0 && (
               <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
@@ -91,6 +95,7 @@ export const ThreadPostHeader = ({
               setSubject(subject)
               valueRef?.current && (valueRef.current.subject = subject)
             }}
+            onKeyDown={handleCtrlEnter(onSubmit)}
           />
         )}
       </Stack>

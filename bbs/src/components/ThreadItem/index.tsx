@@ -6,7 +6,11 @@ import {
 } from '@mui/icons-material'
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 
-import { ForumDetails, Thread } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  Thread,
+  TopListThread,
+} from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -160,52 +164,45 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
   )
 }
 
-export const ThreadItemLite = ({
-  item,
-  className,
-}: {
-  item: Thread
-  className?: string
-}) => {
-  const theme = useTheme()
-
+export const ThreadItemLite = ({ item }: { item: TopListThread }) => {
   return (
-    <Box className={className}>
-      <Box
-        className={`rounded-lg p-1 ${className}`}
-        style={{
-          backgroundColor: theme.palette.background.paper,
-        }}
-      >
-        <Stack direction="row" alignItems="center">
-          <Avatar
-            alt={item.author}
-            uid={item.author_id}
-            sx={{ width: 30, height: 30 }}
-            variant="rounded"
-          />
-          <Link
-            to={pages.thread(item.thread_id)}
-            color="inherit"
-            underline="hover"
-            className="line-clamp-3"
-            ml={1.2}
-          >
-            <Typography textAlign="justify">{item.subject}</Typography>
-          </Link>
-        </Stack>
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-          className="text-sm"
+    <Box px={0.25} py={0.5}>
+      <Stack direction="row" alignItems="center">
+        <Avatar
+          alt={item.author}
+          uid={item.author_id}
+          sx={{ width: 30, height: 30 }}
+          variant="rounded"
+        />
+        <Link
+          to={pages.thread(item.thread_id)}
+          color="inherit"
+          underline="hover"
+          className="line-clamp-3"
+          ml={1.2}
         >
-          <Link color="#3A71F2">{item.author}</Link>
-          <Typography fontSize="inherit" className="pl-1" color="grey">
-            {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
+          {item.label && <Chip text={item.label} />}
+          <Typography
+            textAlign="justify"
+            component="span"
+            sx={{ verticalAlign: 'middle' }}
+          >
+            {item.subject}
           </Typography>
-        </Stack>
-      </Box>
+        </Link>
+      </Stack>
+      <Stack
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="center"
+        className="text-sm"
+        pl={0.5}
+      >
+        <Link color="#3A71F2">{item.author}</Link>
+        <Typography fontSize="inherit" className="pl-1" color="grey">
+          {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
+        </Typography>
+      </Stack>
     </Box>
   )
 }

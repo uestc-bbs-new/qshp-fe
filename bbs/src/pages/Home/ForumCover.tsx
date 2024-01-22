@@ -19,6 +19,7 @@ import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { chineseTime } from '@/utils/dayjs'
+import { unescapeSubject } from '@/utils/htmlEscape'
 import { pages } from '@/utils/routes'
 
 import { getForumCover } from './forumCoverMap'
@@ -89,7 +90,11 @@ const ForumCover = ({ data }: ForumData) => {
                   }
                 >
                   <Box className="line-clamp-1">
-                    {data.latest_thread?.subject || '\u00a0'}
+                    {unescapeSubject(
+                      data.latest_thread?.subject || '\u00a0',
+                      null,
+                      true
+                    )}
                   </Box>
                 </Link>
               </Stack>

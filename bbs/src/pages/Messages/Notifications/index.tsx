@@ -14,7 +14,7 @@ import {
   Tabs,
 } from '@mui/material'
 
-import { getNotifications } from '@/apis/common'
+import { getNotifications } from '@/apis/messages'
 import { MessageCounts } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { pages, useActiveRoute } from '@/utils/routes'

@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 
 import { Paper, Skeleton } from '@mui/material'
 
-import { getChatList } from '@/apis/common'
+import { getChatList } from '@/apis/messages'
 
 import Conversation from './Conversation'
 import ConversationList from './ConversationList'

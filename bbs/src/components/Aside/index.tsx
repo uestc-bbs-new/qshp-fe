@@ -1,34 +1,39 @@
-import { useQuery } from '@tanstack/react-query'
-
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import { Box, List, Skeleton, Tab, Tabs } from '@mui/material'
 
-import { getBBSInfo } from '@/apis/common'
+import { TopList, TopListKey } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import { ThreadItemLite } from '@/components/ThreadItem'
-import { useActiveRoute } from '@/utils/routes'
 
-const Aside = () => {
-  const [id, setId] = useState(1)
-  const { data: hot, isLoading } = useQuery({
-    queryKey: ['hotThread'],
-    queryFn: () => getBBSInfo(),
-  })
-  const activeRoute = useActiveRoute()
-
-  const handleChange = (event: React.SyntheticEvent, newId: number) => {
-    setId(newId)
+const Aside = ({
+  loading,
+  topList,
+}: {
+  loading?: boolean
+  topList?: TopList
+}) => {
+  const kListSize = 10
+  const kTopListAsideLastTab = 'toplist_aside_last_tab'
+  let initialTab: TopListKey = 'hotlist'
+  try {
+    const value = localStorage.getItem(kTopListAsideLastTab)
+    if (value == 'hotlist' || value == 'life') {
+      initialTab = value
+    }
+  } catch (_) {
+    /* Do not crash in case of exception thrown in localStorage */
   }
+  const [value, setValue] = useState<TopListKey>(initialTab)
 
-  if (activeRoute && activeRoute.id !== 'index' && activeRoute.id != 'forum') {
-    return null
+  const handleChange = (_: React.SyntheticEvent, value: TopListKey) => {
+    setValue(value)
+    localStorage.setItem(kTopListAsideLastTab, value)
   }
-
   return (
     <Box className="ml-2 w-60">
       <Tabs
-        value={id}
+        value={value}
         onChange={handleChange}
         sx={{
           height: 2,
@@ -39,19 +44,31 @@ const Aside = () => {
           borderColor: 'divider',
         }}
       >
-        <Tab label="生活信息" sx={{ minWidth: 2, p: 1, mt: -1 }} />
-        <Tab label="今日热门" sx={{ minWidth: 2, p: 2.5, mt: -1 }} />
+        <Tab label="生活信息" value="life" sx={{ minWidth: 2, p: 1, mt: -1 }} />
+        <Tab
+          label="今日热门"
+          value="hotlist"
+          sx={{ minWidth: 2, p: 2.5, mt: -1 }}
+        />
       </Tabs>
       <Card tiny>
-        <List>
-          {isLoading
-            ? [...Array(10)].map((_, index) => (
-                <Skeleton key={index} height={70} />
-              ))
-            : hot?.threads?.map((item, index) => (
-                <ThreadItemLite item={item} key={index} className="mb-4" />
+        {loading ? (
+          <>
+            {[...Array(10)].map((_, index) => (
+              <Skeleton key={index} height={70} />
+            ))}
+          </>
+        ) : topList ? (
+          <List key={value}>
+            {topList[value]
+              ?.slice(0, kListSize)
+              ?.map((item, index) => (
+                <ThreadItemLite item={item} key={index} />
               ))}
-        </List>
+          </List>
+        ) : (
+          <></>
+        )}
       </Card>
     </Box>
   )

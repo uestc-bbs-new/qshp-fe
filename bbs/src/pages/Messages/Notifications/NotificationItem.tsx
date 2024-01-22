@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material'
 
-import { readNotification } from '@/apis/common'
+import { readNotification } from '@/apis/messages'
 import { Notification } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'

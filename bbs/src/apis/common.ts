@@ -1,16 +1,11 @@
 import {
-  BBSInfo,
-  ChatConversation,
-  ChatMessageList,
   Forum,
   ForumDetails,
-  MessageList,
-  MessagesSummary,
-  Notification,
+  IndexData,
   Thread,
-  ThreadBasics,
   ThreadList,
   ThreadTypeMap,
+  TopList,
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
@@ -55,19 +50,16 @@ export const getBulletin = (params: object) => {
   })
 }
 
-export const getBBSInfo = () => {
-  return request.get<BBSInfo>(`${commonUrl}/view/forum/bbs-info`)
-}
-
-export const getTopLists = async (ids: string | string[]) => {
-  if (typeof ids === 'string') {
-    ids = [ids]
+const normalizeStringArray = (value: string | string[]) => {
+  if (typeof value === 'string') {
+    return [value]
   }
-  const result = await request.get<{
-    [id: string]: ThreadBasics[] | undefined
-  }>(`${commonUrl}/view/thread/toplist`, {
-    params: { idlist: ids.join(',') },
-  })
+  return value
+}
+const transformTopList = (result?: TopList) => {
+  if (!result) {
+    return result
+  }
   for (const [_, v] of Object.entries(result)) {
     v?.forEach(
       (thread) =>
@@ -78,6 +70,32 @@ export const getTopLists = async (ids: string | string[]) => {
         ))
     )
   }
+  return result
+}
+export const getTopLists = async (ids: string | string[]) =>
+  transformTopList(
+    await request.get<TopList>(`${commonUrl}/forum/toplist`, {
+      params: { idlist: normalizeStringArray(ids).join(',') },
+    })
+  )
+
+export const getIndexData = async ({
+  globalStat,
+  forumList,
+  topList,
+}: {
+  globalStat?: boolean
+  forumList?: boolean
+  topList?: string | string[]
+}) => {
+  const result = await request.get<IndexData>(`${commonUrl}/index`, {
+    params: {
+      ...(globalStat && { global_stat: 1 }),
+      ...(forumList && { forum_list: 1 }),
+      ...(topList && { top_list: normalizeStringArray(topList).join(',') }),
+    },
+  })
+  transformTopList(result.top_list)
   return result
 }
 
@@ -114,15 +132,12 @@ export const getThreadList = async (params: {
   type_id?: number
   forum_details?: boolean
 }) => {
-  const result = await request.get<ThreadList>(
-    `${commonUrl}/view/thread/threads`,
-    {
-      params: {
-        ...params,
-        forum_details: params.forum_details ? 1 : 0,
-      },
-    }
-  )
+  const result = await request.get<ThreadList>(`${commonUrl}/thread/list`, {
+    params: {
+      ...params,
+      forum_details: params.forum_details ? 1 : 0,
+    },
+  })
   makeThreadTypesMap(result.forum)
   result.rows.forEach((item) => {
     item.subject = unescapeSubject(item.subject, item.dateline, true)
@@ -133,70 +148,3 @@ export const getThreadList = async (params: {
 export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
 }
-
-export const getMessagesSummary = () => {
-  return request.get<MessagesSummary>(`${commonUrl}/messages/summary`)
-}
-
-export const getNotifications = (params: { kind?: string; page?: number }) => {
-  return request.get<MessageList<Notification>>(
-    `${commonUrl}/messages/notifications`,
-    {
-      params,
-    }
-  )
-}
-
-export const readNotification = (id: number, kind?: string) =>
-  request.post(`${commonUrl}/messages/notifications/read/${id}`, undefined, {
-    params: {
-      ...(kind && { kind }),
-    },
-  })
-
-export const getChatList = (params: { page?: number }) => {
-  return request.get<MessageList<ChatConversation>>(
-    `${commonUrl}/messages/chat/list`,
-    {
-      params,
-    }
-  )
-}
-
-export type ChatMessagesRequest = {
-  uid?: number
-  chatId?: number
-  chatList?: boolean
-  page?: number
-  dateline?: number
-  messageId?: number
-  newer?: boolean
-}
-
-export const getChatMessages = ({
-  uid,
-  chatId,
-  chatList,
-  messageId,
-  newer,
-  ...params
-}: ChatMessagesRequest) => {
-  return request.get<ChatMessageList>(
-    `${commonUrl}/messages/chat/${uid ? `user/${uid}` : chatId}`,
-    {
-      params: {
-        ...params,
-        chat_list: chatList ? 1 : 0,
-        newer: newer ? 1 : 0,
-        ...(messageId && { message_id: messageId }),
-      },
-    }
-  )
-}
-
-export const sendChatMessage = (params: {
-  usernames?: string[]
-  conversation_id?: number
-  subject?: string
-  message: string
-}) => request.post(`${commonUrl}/messages/chat`, params)

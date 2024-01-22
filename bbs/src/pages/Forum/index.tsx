@@ -238,7 +238,7 @@ function Forum() {
   }, [threadList])
 
   useEffect(() => {
-    setForumDetails(undefined)
+    forumDetails && setForumDetails(undefined)
   }, [forumId])
   useEffect(() => {
     let forumChanged = false
