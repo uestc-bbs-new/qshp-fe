@@ -34,6 +34,7 @@ import {
   PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
+import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import DraggableDialog from '@/components/DraggableDialog'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -288,193 +289,200 @@ function Thread() {
     }
   }
   return (
-    <Box className="flex-1" minWidth="1em">
-      {isError ? (
-        <Error isError={isError} error={error} onRefresh={refetch} />
-      ) : (
-        <>
-          <ForumPagination
-            count={totalPages}
-            page={query.page}
-            onChange={handlePageChange}
-          />
-          {info?.rows
-            ? info?.rows.map((item) => {
-                return (
-                  <Card className="mb-4" key={item.post_id}>
-                    <section
-                      id={`post-${item.post_id}`}
-                      style={scrollAnchorStyle}
-                    >
-                      <Floor
-                        post={item}
-                        postDetails={postDetails[item.post_id]}
-                        threadDetails={threadDetails}
-                        forumDetails={forumDetails}
-                        onReply={handleReply}
-                        onComment={handleComment}
-                        onEdit={handleEdit}
-                        threadControls={
-                          <>
-                            <Link
-                              color="inherit"
-                              className="hover:text-blue-500"
-                              underline="hover"
-                              to={pages.thread(
-                                item.thread_id,
-                                new URLSearchParams({
-                                  ...(query.order_type && {
-                                    ordertype: query.order_type,
-                                  }),
-                                  ...(query.author_id
-                                    ? null
-                                    : { authorid: item.author_id.toString() }),
-                                })
-                              )}
-                              ml={2}
-                            >
-                              {query.author_id ? '查看全部' : '只看该作者'}
-                            </Link>
-                            {item.position == 1 && !!item.is_first && (
+    <Stack direction="row">
+      <Box className="flex-1" minWidth="1em">
+        {isError ? (
+          <Error isError={isError} error={error} onRefresh={refetch} />
+        ) : (
+          <>
+            <ForumPagination
+              count={totalPages}
+              page={query.page}
+              onChange={handlePageChange}
+            />
+            {info?.rows
+              ? info?.rows.map((item) => {
+                  return (
+                    <Card className="mb-4" key={item.post_id}>
+                      <section
+                        id={`post-${item.post_id}`}
+                        style={scrollAnchorStyle}
+                      >
+                        <Floor
+                          post={item}
+                          postDetails={postDetails[item.post_id]}
+                          threadDetails={threadDetails}
+                          forumDetails={forumDetails}
+                          onReply={handleReply}
+                          onComment={handleComment}
+                          onEdit={handleEdit}
+                          threadControls={
+                            <>
                               <Link
                                 color="inherit"
                                 className="hover:text-blue-500"
                                 underline="hover"
-                                ml={2}
                                 to={pages.thread(
                                   item.thread_id,
                                   new URLSearchParams({
-                                    ...(query.author_id && {
-                                      authorid: item.author_id.toString(),
+                                    ...(query.order_type && {
+                                      ordertype: query.order_type,
                                     }),
-                                    ...(currentlyReversed
-                                      ? threadDetails?.reverse_replies && {
-                                          ordertype: 'forward',
-                                        }
-                                      : { ordertype: 'reverse' }),
+                                    ...(query.author_id
+                                      ? null
+                                      : {
+                                          authorid: item.author_id.toString(),
+                                        }),
                                   })
                                 )}
+                                ml={2}
                               >
-                                {currentlyReversed ? '正序浏览' : '倒序浏览'}
+                                {query.author_id ? '查看全部' : '只看该作者'}
                               </Link>
-                            )}
-                          </>
-                        }
-                      >
-                        <Box paddingRight="1.5em">
-                          <PostRenderer post={item} />
-                        </Box>
-                      </Floor>
-                    </section>
-                  </Card>
-                )
-              })
-            : infoLoading && (
-                <List>
-                  {[...Array(4)].map((_, index) => (
-                    <ListItem key={index}>
-                      <Skeleton className="w-full" height={81}></Skeleton>
-                    </ListItem>
-                  ))}
-                </List>
-              )}
+                              {item.position == 1 && !!item.is_first && (
+                                <Link
+                                  color="inherit"
+                                  className="hover:text-blue-500"
+                                  underline="hover"
+                                  ml={2}
+                                  to={pages.thread(
+                                    item.thread_id,
+                                    new URLSearchParams({
+                                      ...(query.author_id && {
+                                        authorid: item.author_id.toString(),
+                                      }),
+                                      ...(currentlyReversed
+                                        ? threadDetails?.reverse_replies && {
+                                            ordertype: 'forward',
+                                          }
+                                        : { ordertype: 'reverse' }),
+                                    })
+                                  )}
+                                >
+                                  {currentlyReversed ? '正序浏览' : '倒序浏览'}
+                                </Link>
+                              )}
+                            </>
+                          }
+                        >
+                          <Box paddingRight="1.5em">
+                            <PostRenderer post={item} />
+                          </Box>
+                        </Floor>
+                      </section>
+                    </Card>
+                  )
+                })
+              : infoLoading && (
+                  <List>
+                    {[...Array(4)].map((_, index) => (
+                      <ListItem key={index}>
+                        <Skeleton className="w-full" height={81}></Skeleton>
+                      </ListItem>
+                    ))}
+                  </List>
+                )}
 
-          <ForumPagination
-            count={totalPages}
-            page={query.page}
-            onChange={handlePageChange}
-          />
-          {forumDetails?.can_post_reply && threadDetails?.can_reply && (
-            <Card className="py-4" sx={scrollAnchorSx} ref={quickReplyRef}>
-              <Stack direction="row">
-                <Box className="flex-1">
-                  <PostEditor
-                    kind="reply"
-                    forum={forumDetails}
-                    threadId={threadId}
-                    onSubmitted={() => onSubmitted('reply')}
-                  />
-                </Box>
-              </Stack>
-            </Card>
-          )}
-        </>
-      )}
-      <DraggableDialog
-        disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
-        open={dialogOpen}
-        onClose={closeDialog}
-        maxWidth="md"
-        fullWidth
-        dialogTitle={
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography>
-              {
-                { comment: '点评', reply: '回复', edit: '编辑' }[
-                  currentDialog || 'comment'
-                ]
-              }
-            </Typography>
-            <IconButton onClick={closeDialog}>
-              <Close />
-            </IconButton>
-          </Stack>
-        }
-        dialogTitleProps={{ sx: { pl: 2.5, pr: 1.5, py: 1 } }}
-      >
-        <Box px={2} pb={currentDialog == 'comment' ? undefined : 1.5}>
-          {currentDialog == 'comment' ? (
-            <>
-              <TextField
-                fullWidth
-                multiline
-                required
-                autoFocus
-                error={!!commentError}
-                helperText={commentError}
-                inputRef={commentMessage}
-                onChange={handleCommentChange}
-                onKeyDown={handleCtrlEnter(sendComment)}
-              />
-              <Stack direction="row" justifyContent="center" my={1}>
-                <Button
-                  variant="contained"
-                  onClick={currentDialog == 'comment' ? sendComment : undefined}
-                  disabled={dialogPending}
-                >
-                  发布
-                </Button>
-              </Stack>
-            </>
-          ) : (
-            <PostEditor
-              kind={currentDialog}
-              smallAuthor
-              autoFocus
-              forum={forumDetails}
-              threadId={threadId}
-              postId={activePost?.post_id}
-              replyPost={currentDialog == 'reply' ? activePost : undefined}
-              initialValue={
-                currentDialog == 'edit' && activePost
-                  ? getEditorInitialValue(
-                      activePost,
-                      activePost.position == 1 && activePost.is_first
-                        ? threadDetails
-                        : undefined
-                    )
-                  : undefined
-              }
-              onSubmitted={() => onSubmitted(currentDialog, true)}
+            <ForumPagination
+              count={totalPages}
+              page={query.page}
+              onChange={handlePageChange}
             />
-          )}
-        </Box>
-      </DraggableDialog>
-    </Box>
+            {forumDetails?.can_post_reply && threadDetails?.can_reply && (
+              <Card className="py-4" sx={scrollAnchorSx} ref={quickReplyRef}>
+                <Stack direction="row">
+                  <Box className="flex-1">
+                    <PostEditor
+                      kind="reply"
+                      forum={forumDetails}
+                      threadId={threadId}
+                      onSubmitted={() => onSubmitted('reply')}
+                    />
+                  </Box>
+                </Stack>
+              </Card>
+            )}
+          </>
+        )}
+        <DraggableDialog
+          disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
+          open={dialogOpen}
+          onClose={closeDialog}
+          maxWidth="md"
+          fullWidth
+          dialogTitle={
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography>
+                {
+                  { comment: '点评', reply: '回复', edit: '编辑' }[
+                    currentDialog || 'comment'
+                  ]
+                }
+              </Typography>
+              <IconButton onClick={closeDialog}>
+                <Close />
+              </IconButton>
+            </Stack>
+          }
+          dialogTitleProps={{ sx: { pl: 2.5, pr: 1.5, py: 1 } }}
+        >
+          <Box px={2} pb={currentDialog == 'comment' ? undefined : 1.5}>
+            {currentDialog == 'comment' ? (
+              <>
+                <TextField
+                  fullWidth
+                  multiline
+                  required
+                  autoFocus
+                  error={!!commentError}
+                  helperText={commentError}
+                  inputRef={commentMessage}
+                  onChange={handleCommentChange}
+                  onKeyDown={handleCtrlEnter(sendComment)}
+                />
+                <Stack direction="row" justifyContent="center" my={1}>
+                  <Button
+                    variant="contained"
+                    onClick={
+                      currentDialog == 'comment' ? sendComment : undefined
+                    }
+                    disabled={dialogPending}
+                  >
+                    发布
+                  </Button>
+                </Stack>
+              </>
+            ) : (
+              <PostEditor
+                kind={currentDialog}
+                smallAuthor
+                autoFocus
+                forum={forumDetails}
+                threadId={threadId}
+                postId={activePost?.post_id}
+                replyPost={currentDialog == 'reply' ? activePost : undefined}
+                initialValue={
+                  currentDialog == 'edit' && activePost
+                    ? getEditorInitialValue(
+                        activePost,
+                        activePost.position == 1 && activePost.is_first
+                          ? threadDetails
+                          : undefined
+                      )
+                    : undefined
+                }
+                onSubmitted={() => onSubmitted(currentDialog, true)}
+              />
+            )}
+          </Box>
+        </DraggableDialog>
+      </Box>
+      <Aside />
+    </Stack>
   )
 }
 export default Thread

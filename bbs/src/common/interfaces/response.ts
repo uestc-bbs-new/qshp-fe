@@ -445,7 +445,7 @@ export type TopListKey =
 
 export type TopListThread = ThreadBasics & { label?: string }
 export type TopList = {
-  [id in TopListKey]: TopListThread[] | undefined
+  [id in TopListKey]?: TopListThread[]
 }
 
 export type IndexData = {

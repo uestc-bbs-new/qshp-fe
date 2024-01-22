@@ -8,8 +8,9 @@ import React, {
   useRef,
 } from 'react'
 
-import { getForumList } from '@/apis/common'
-import { Forum } from '@/common/interfaces/response'
+import { getForumList, getTopLists } from '@/apis/common'
+import { Forum, TopList } from '@/common/interfaces/response'
+import { topListKeys } from '@/utils/constants'
 
 import { State, StateAction, stateReducer } from './reducers/stateReducer'
 
@@ -20,6 +21,7 @@ type FidNameMap = { [fid: number]: string }
 export const globalCache: {
   forumList?: Forum[]
   fidNameMap: FidNameMap
+  topList?: TopList
 } = {
   fidNameMap: {},
 }
@@ -85,6 +87,38 @@ export const useForumList = () => {
     }
   }, [state.user.uid])
   return forumList
+}
+
+export const useTopList = (initialData?: TopList) => {
+  const { state } = useAppState()
+  const { data: topList, refetch } = useQuery({
+    queryKey: ['topList'],
+    queryFn: async () => {
+      let topList: TopList | undefined = {}
+      try {
+        topList = await getTopLists(topListKeys)
+        globalCache.topList = topList
+      } catch (e: any) {
+        if (e && e.type == 'http' && e.status == 401) {
+          topList = {}
+        } else {
+          throw e
+        }
+      }
+      return topList
+    },
+    initialData: initialData || globalCache.topList,
+    staleTime: Infinity,
+    enabled: !globalCache.topList && !initialData,
+  })
+  const previousUid = useRef(state.user.uid)
+  useEffect(() => {
+    if (previousUid.current != state.user.uid) {
+      refetch()
+      previousUid.current = state.user.uid
+    }
+  }, [state.user.uid])
+  return topList
 }
 
 export const useSignInChange = (callback: () => void) => {

@@ -10,3 +10,4 @@ export const topListTitleMap: { [key in TopListKey]: string } = {
 
 export const topListTopKeys: TopListKey[] = ['newreply', 'newthread', 'digest']
 export const topListSideKeys: TopListKey[] = ['life', 'hotlist']
+export const topListKeys = topListTopKeys.concat(topListSideKeys)

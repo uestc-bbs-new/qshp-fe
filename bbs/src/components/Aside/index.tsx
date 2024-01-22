@@ -3,6 +3,7 @@ import React from 'react'
 import { Box } from '@mui/material'
 
 import { TopList } from '@/common/interfaces/response'
+import { useTopList } from '@/states'
 
 import SideTabs from '../TopList/SideTabs'
 
@@ -15,9 +16,10 @@ const Aside = ({
   topList?: TopList
   homepage?: boolean
 }) => {
+  const data = useTopList(topList)
   return (
     <Box className="ml-2 w-60">
-      <SideTabs {...{ loading, topList, homepage }} />
+      <SideTabs {...{ loading, topList: data, homepage }} />
     </Box>
   )
 }

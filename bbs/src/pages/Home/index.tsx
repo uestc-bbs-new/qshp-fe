@@ -12,7 +12,7 @@ import Banner from '@/components/Banner'
 import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
-import { setForumListCache, useAppState } from '@/states'
+import { globalCache, setForumListCache, useAppState } from '@/states'
 
 import { ForumGroup } from './ForumCover'
 
@@ -38,6 +38,9 @@ const Home = () => {
   useEffect(() => {
     if (indexData?.forum_list) {
       setForumListCache(indexData.forum_list)
+    }
+    if (indexData?.top_list) {
+      globalCache.topList = indexData.top_list
     }
   }, [indexData])
   useEffect(() => {

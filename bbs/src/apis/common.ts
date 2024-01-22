@@ -56,10 +56,7 @@ const normalizeStringArray = (value: string | string[]) => {
   }
   return value
 }
-const transformTopList = (result?: TopList) => {
-  if (!result) {
-    return result
-  }
+const transformTopList = (result: TopList) => {
   for (const [_, v] of Object.entries(result)) {
     v?.forEach(
       (thread) =>
@@ -95,7 +92,7 @@ export const getIndexData = async ({
       ...(topList && { top_list: normalizeStringArray(topList).join(',') }),
     },
   })
-  transformTopList(result.top_list)
+  result.top_list && transformTopList(result.top_list)
   return result
 }
 
