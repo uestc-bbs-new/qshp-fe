@@ -76,6 +76,21 @@ export const ForumSelect = ({
 }) => {
   return (
     <Dialog open={open}>
+      {open && <ForumSelectDialogChildren {...{ selectedFid, onCompleted }} />}
+    </Dialog>
+  )
+}
+
+const ForumSelectDialogChildren = ({
+  selectedFid,
+  onCompleted,
+}: {
+  selectedFid?: number
+  onCompleted: (forum: number | undefined) => void
+}) => {
+  const forumList = useForumList()
+  return (
+    <>
       <DialogTitle>
         <Stack
           direction="row"
@@ -87,32 +102,39 @@ export const ForumSelect = ({
             <Close />
           </IconButton>
         </Stack>
-        <Typography variant="body1">
-          灌水帖请在
-          <ForumLink fid={25} onClick={onCompleted} />
-          发表，物品交易请在
-          <ForumLink fid={61} onClick={onCompleted} />
-          发表，对河畔或管理组的意见建议、使用中遇到的问题请在
-          <ForumLink fid={46} onClick={onCompleted} />
-          发表。
-        </Typography>
+        {forumList && (
+          <Typography variant="body1">
+            灌水帖请在
+            <ForumLink fid={25} onClick={onCompleted} />
+            发表，物品交易请在
+            <ForumLink fid={61} onClick={onCompleted} />
+            发表，对河畔或管理组的意见建议、使用中遇到的问题请在
+            <ForumLink fid={46} onClick={onCompleted} />
+            发表。
+          </Typography>
+        )}
       </DialogTitle>
       <DialogContent>
-        {open && <ForumList {...{ selectedFid, onCompleted }} />}
+        {forumList ? (
+          <ForumList {...{ selectedFid, onCompleted, forumList }} />
+        ) : (
+          [...Array(8)].map((_, index) => <Skeleton key={index} height={80} />)
+        )}
       </DialogContent>
-    </Dialog>
+    </>
   )
 }
 
 const ForumList = ({
   selectedFid,
+  forumList,
   onCompleted,
 }: {
   selectedFid?: number
+  forumList: Forum[]
   onCompleted: (forum: number | undefined) => void
 }) => {
   const theme = useTheme()
-  const forumList = useForumList()
   const [fid, setFid] = useState(selectedFid)
   useEffect(() => {
     setFid(selectedFid)
@@ -123,31 +145,29 @@ const ForumList = ({
       onCompleted(forum.fid)
     }
   }
-  return (
-    forumList?.map((group, index) => (
-      <Box key={index}>
-        <ListItemText>{group.name}</ListItemText>
-        <Divider
-          className="border-b-2 rounded-lg"
-          style={{ borderBottomColor: theme.palette.primary.main }}
-        />
-        <Box pl={4}>
-          <Grid container spacing={0.5} mt={0} ml={0}>
-            {group.children
-              ?.filter((item) => item.name)
-              .map((item, index) => (
-                <ForumButton
-                  key={index}
-                  item={item}
-                  fid={fid}
-                  onChooseForum={onChooseForum}
-                />
-              ))}
-          </Grid>
-        </Box>
+  return forumList.map((group, index) => (
+    <Box key={index}>
+      <ListItemText>{group.name}</ListItemText>
+      <Divider
+        className="border-b-2 rounded-lg"
+        style={{ borderBottomColor: theme.palette.primary.main }}
+      />
+      <Box pl={4}>
+        <Grid container spacing={0.5} mt={0} ml={0}>
+          {group.children
+            ?.filter((item) => item.name)
+            .map((item, index) => (
+              <ForumButton
+                key={index}
+                item={item}
+                fid={fid}
+                onChooseForum={onChooseForum}
+              />
+            ))}
+        </Grid>
       </Box>
-    )) || [...Array(8)].map((_, index) => <Skeleton key={index} height={80} />)
-  )
+    </Box>
+  ))
 }
 
 const ForumButton = ({
