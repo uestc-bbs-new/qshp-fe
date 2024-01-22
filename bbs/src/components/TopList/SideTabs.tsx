@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { ArrowDropDown } from '@mui/icons-material'
@@ -51,18 +51,21 @@ const SideTabs = ({
   } else {
     if (routeState?.fromTopList) {
       initialTab = routeState.fromTopList
-      globalCache.topListLastKey = initialTab
     } else if (globalCache.topListLastKey) {
       initialTab = globalCache.topListLastKey
     }
   }
   const [value, setValue] = useState<TopListKey>(initialTab)
+  useEffect(() => {
+    if (homepage) {
+      localStorage.setItem(kTopListAsideLastTab, value)
+    } else {
+      globalCache.topListLastKey = value
+    }
+  }, [value])
 
   const handleChange = (_: React.SyntheticEvent, value: TopListKey) => {
     setValue(value)
-    if (homepage) {
-      localStorage.setItem(kTopListAsideLastTab, value)
-    }
   }
 
   const tabsRef = useRef(null)
@@ -125,7 +128,6 @@ const SideTabs = ({
                   selected={key == value}
                   onClick={() => {
                     setValue(key)
-                    globalCache.topListLastKey = key
                     closeMenu()
                   }}
                 >
