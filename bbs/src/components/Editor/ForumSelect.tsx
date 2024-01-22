@@ -21,7 +21,7 @@ import {
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import Tooltip from '@/components/Tooltip'
-import { useAppState, useForumList } from '@/states'
+import { globalCache, useForumList } from '@/states'
 import { pages } from '@/utils/routes'
 
 const canPostThreadInForumOrChildren = (forum: Forum) => {
@@ -51,7 +51,6 @@ const ForumLink = ({
   fid: number
   onClick: (fid: number) => void
 }) => {
-  const { state } = useAppState()
   return (
     <Link
       to={pages.post(fid)}
@@ -60,7 +59,7 @@ const ForumLink = ({
         onClick(fid)
       }}
     >
-      {state.fidNameMap[fid]}
+      {globalCache.fidNameMap[fid]}
     </Link>
   )
 }

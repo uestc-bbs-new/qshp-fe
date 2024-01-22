@@ -12,12 +12,12 @@ import Banner from '@/components/Banner'
 import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
-import { useAppState } from '@/states'
+import { setForumListCache, useAppState } from '@/states'
 
 import { ForumGroup } from './ForumCover'
 
 const Home = () => {
-  const { state, dispatch } = useAppState()
+  const { state } = useAppState()
   const location = useLocation()
 
   const theme = useTheme()
@@ -37,7 +37,7 @@ const Home = () => {
   })
   useEffect(() => {
     if (indexData?.forum_list) {
-      dispatch({ type: 'set forumListCache', payload: indexData.forum_list })
+      setForumListCache(indexData.forum_list)
     }
   }, [indexData])
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Forum, ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/response'
 
 import { guestUser } from '..'
 
@@ -27,12 +27,8 @@ type LoginDialogState = {
   prompt?: string
 }
 
-type FidNameMap = { [fid: number]: string }
-
 export type State = {
   drawer: boolean
-  forumListCache?: Forum[]
-  fidNameMap: FidNameMap
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
   activeForum?: ForumDetails
@@ -70,15 +66,6 @@ export const stateReducer = (state: State, action: StateAction): State => {
         }
       }
       return state
-    }
-    case 'set forumListCache': {
-      const fidNameMap: FidNameMap = {}
-      const addToMap = (forum: Forum) => {
-        fidNameMap[forum.fid] = forum.name
-        forum.children?.length && forum.children.forEach(addToMap)
-      }
-      ;(action.payload as Forum[]).forEach(addToMap)
-      return { ...state, forumListCache: action.payload, fidNameMap }
     }
     case 'set theme':
       return { ...state, theme: action.payload }

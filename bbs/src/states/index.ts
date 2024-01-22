@@ -9,12 +9,30 @@ import React, {
 } from 'react'
 
 import { getForumList } from '@/apis/common'
+import { Forum } from '@/common/interfaces/response'
 
 import { State, StateAction, stateReducer } from './reducers/stateReducer'
 
 export type Theme = 'light' | 'dark'
 
-// type AppContext = [state: State, dispatch: React.Dispatch<Action>]
+type FidNameMap = { [fid: number]: string }
+
+export const globalCache: {
+  forumList?: Forum[]
+  fidNameMap: FidNameMap
+} = {
+  fidNameMap: {},
+}
+export const setForumListCache = (forumList: Forum[]) => {
+  const fidNameMap: FidNameMap = {}
+  const addToMap = (forum: Forum) => {
+    fidNameMap[forum.fid] = forum.name
+    forum.children?.length && forum.children.forEach(addToMap)
+  }
+  forumList.forEach(addToMap)
+  globalCache.fidNameMap = fidNameMap
+  globalCache.forumList = forumList
+}
 
 const guestUser = {
   uid: 0,
@@ -23,7 +41,6 @@ const guestUser = {
 const initialState: State = {
   drawer: false, //侧边栏是否打开
   user: guestUser,
-  fidNameMap: {},
   forumBreadcumbs: [],
   login: {
     open: false,
@@ -51,10 +68,14 @@ export const useForumList = () => {
   const { state } = useAppState()
   const { data: forumList, refetch } = useQuery({
     queryKey: ['forumList'],
-    queryFn: () => getForumList(),
-    initialData: state.forumListCache,
+    queryFn: async () => {
+      const forumList = await getForumList()
+      setForumListCache(forumList)
+      return forumList
+    },
+    initialData: globalCache.forumList,
     staleTime: Infinity,
-    enabled: !state.forumListCache,
+    enabled: !globalCache.forumList,
   })
   const previousUid = useRef(state.user.uid)
   useEffect(() => {
