@@ -86,7 +86,7 @@ const SideTabs = ({
             {topList[value]
               ?.slice(0, kListSize)
               ?.map((item, index) => (
-                <ThreadItemLite item={item} key={index} />
+                <ThreadItemLite item={item} key={index} fromTopList={value} />
               ))}
           </List>
         ) : (

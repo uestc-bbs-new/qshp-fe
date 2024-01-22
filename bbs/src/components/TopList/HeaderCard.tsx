@@ -1,6 +1,7 @@
 import { Box, Paper, Stack, Typography } from '@mui/material'
 
-import { ThreadBasics } from '@/common/interfaces/response'
+import { ThreadBasics, TopListKey } from '@/common/interfaces/response'
+import { topListTitleMap } from '@/utils/constants'
 import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
@@ -8,7 +9,7 @@ import Link from '../Link'
 
 const kCount = 8
 
-const HeaderCard = (title: string, list: ThreadBasics[]) => (
+const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
   <Box className="relative overflow-hidden mb-5 p-1" style={{ width: '100%' }}>
     <Paper elevation={3}>
       <Box
@@ -18,7 +19,7 @@ const HeaderCard = (title: string, list: ThreadBasics[]) => (
         }}
       >
         <Typography sx={{ fontWeight: 'bold' }} variant="h6">
-          {title}
+          {topListTitleMap[id]}
         </Typography>
       </Box>
       <Stack direction="column">
@@ -38,6 +39,7 @@ const HeaderCard = (title: string, list: ThreadBasics[]) => (
               <Stack direction="column">
                 <Link
                   to={pages.thread(thread.thread_id)}
+                  state={{ fromTopList: id }}
                   color="inherit"
                   underline="hover"
                 >

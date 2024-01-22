@@ -9,6 +9,7 @@ import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import {
   ForumDetails,
   Thread,
+  TopListKey,
   TopListThread,
 } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
@@ -164,7 +165,13 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
   )
 }
 
-export const ThreadItemLite = ({ item }: { item: TopListThread }) => {
+export const ThreadItemLite = ({
+  item,
+  fromTopList,
+}: {
+  item: TopListThread
+  fromTopList?: TopListKey
+}) => {
   return (
     <Box px={0.25} py={0.5}>
       <Stack direction="row" alignItems="center">
@@ -176,6 +183,7 @@ export const ThreadItemLite = ({ item }: { item: TopListThread }) => {
         />
         <Link
           to={pages.thread(item.thread_id)}
+          {...(fromTopList && { state: { fromTopList } })}
           color="inherit"
           underline="hover"
           className="line-clamp-3"
