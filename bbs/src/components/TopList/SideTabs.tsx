@@ -21,6 +21,7 @@ import {
   topListTitleMap,
   topListTopKeys,
 } from '@/utils/constants'
+import { persistedStates } from '@/utils/storage'
 
 const SideTabs = ({
   loading,
@@ -40,13 +41,9 @@ const SideTabs = ({
     tabs = topListTopKeys.concat(tabs)
   }
   if (homepage) {
-    try {
-      const value = localStorage.getItem(kTopListAsideLastTab)
-      if (value && topListSideKeys.includes(value as TopListKey)) {
-        initialTab = value as TopListKey
-      }
-    } catch (_) {
-      /* Do not crash in case of exception thrown in localStorage */
+    const value = persistedStates.topListAsideLastTab
+    if (value && topListSideKeys.includes(value as TopListKey)) {
+      initialTab = value as TopListKey
     }
   } else {
     if (routeState?.fromTopList) {
@@ -58,7 +55,7 @@ const SideTabs = ({
   const [value, setValue] = useState<TopListKey>(initialTab)
   useEffect(() => {
     if (homepage) {
-      localStorage.setItem(kTopListAsideLastTab, value)
+      persistedStates.topListAsideLastTab = value
     } else {
       globalCache.topListLastKey = value
     }

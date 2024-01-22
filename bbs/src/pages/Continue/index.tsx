@@ -20,8 +20,8 @@ import {
 import { idasAuth, idasChooseUser } from '@/apis/auth'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
-import { setAuthorizationHeader } from '@/utils/authHeader'
 import { kIdasOrigin, pages } from '@/utils/routes'
+import { persistedStates } from '@/utils/storage'
 
 import { RegisterForm } from './Register'
 import UserList from './UserList'
@@ -47,7 +47,7 @@ const Continue = () => {
       ephemeral_authorization: idasResult.ephemeral_authorization,
     })
       .then((authorization) => {
-        setAuthorizationHeader(authorization)
+        persistedStates.authorizationHeader = authorization
         navigate(idasResult.continue, {
           replace: true,
         })
@@ -128,7 +128,7 @@ export const ContinueLoader = async ({
       signin: (params.mode || kDefaultMode) == 'signin',
     })
     if (result.authorization) {
-      setAuthorizationHeader(result.authorization)
+      persistedStates.authorizationHeader = result.authorization
       return redirect(path)
     }
     return { ...result, ticket, continue: path }

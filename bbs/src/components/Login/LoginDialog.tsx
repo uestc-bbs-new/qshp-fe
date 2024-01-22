@@ -21,8 +21,8 @@ import {
 
 import { signIn } from '@/apis/auth'
 import { useAppState } from '@/states'
-import { setAuthorizationHeader } from '@/utils/authHeader'
 import { gotoIdas } from '@/utils/routes'
+import { persistedStates } from '@/utils/storage'
 
 import Captcha, {
   CaptchaConfiguration,
@@ -80,7 +80,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         }),
       })
       if (authorization) {
-        setAuthorizationHeader(authorization)
+        persistedStates.authorizationHeader = authorization
         close()
       }
     } catch (e_) {

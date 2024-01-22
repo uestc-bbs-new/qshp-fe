@@ -1,13 +1,13 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
 import { notifyUserCallbacks } from '@/states/user'
-import { setAuthorizationHeader } from '@/utils/authHeader'
 import {
   apiResultCode,
   authServiceWithUser,
   commonUrl,
   kHttpUnauthorized,
 } from '@/utils/request'
+import { persistedStates } from '@/utils/storage'
 
 let adoptLegacyAttempted = false
 
@@ -25,7 +25,7 @@ const adoptLegacyAuth = (axios: AxiosInstance) => {
     pendingPromise = authServiceWithUser
       .post<string>(`${commonUrl}/auth/adoptLegacyAuth`)
       .then((authorization) => {
-        setAuthorizationHeader(authorization)
+        persistedStates.authorizationHeader = authorization
       })
       .finally(() => {
         axios.interceptors.request.eject(

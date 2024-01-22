@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
-import { setAuthorizationHeader } from '@/utils/authHeader'
+import { persistedStates } from '@/utils/storage'
 
 import { IdasResultEx } from './common'
 
@@ -90,15 +90,13 @@ export const RegisterForm = ({
     if (!username || !password || !email) {
       return
     }
-    setAuthorizationHeader(
-      await register({
-        ticket: idasResult.ticket,
-        ephemeral_authorization: idasResult.ephemeral_authorization,
-        username: username.toString(),
-        password: password.toString(),
-        email: email.toString(),
-      })
-    )
+    persistedStates.authorizationHeader = await register({
+      ticket: idasResult.ticket,
+      ephemeral_authorization: idasResult.ephemeral_authorization,
+      username: username.toString(),
+      password: password.toString(),
+      email: email.toString(),
+    })
     navigate(idasResult.continue, { replace: true })
   }
   return (

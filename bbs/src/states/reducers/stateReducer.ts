@@ -1,4 +1,5 @@
 import { ForumDetails } from '@/common/interfaces/response'
+import { persistedStates } from '@/utils/storage'
 
 import { guestUser } from '..'
 
@@ -68,6 +69,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
       return state
     }
     case 'set theme':
+      persistedStates.theme = action.payload
       return { ...state, theme: action.payload }
     case 'set drawer':
       return { ...state, drawer: !state.drawer }
