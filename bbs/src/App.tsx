@@ -12,7 +12,6 @@ import {
   registerUserCallback,
   unregisterUserCallback,
 } from './states/user'
-import { checkCookie } from './utils/cookie'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,10 +24,6 @@ const queryClient = new QueryClient({
 
 function App() {
   const [state, dispatch] = useAppStateContext()
-
-  useEffect(() => {
-    checkCookie()
-  })
 
   useEffect(() => {
     const callback = (details: UserCallbackDetails) => {
