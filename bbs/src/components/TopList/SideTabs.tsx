@@ -1,7 +1,16 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { List, Skeleton, Tab, Tabs } from '@mui/material'
+import { ArrowDropDown } from '@mui/icons-material'
+import {
+  IconButton,
+  List,
+  Menu,
+  MenuItem,
+  Skeleton,
+  Tab,
+  Tabs,
+} from '@mui/material'
 
 import { TopList, TopListKey } from '@/common/interfaces/response'
 import Card from '@/components/Card'
@@ -47,12 +56,19 @@ const SideTabs = ({
 
   const handleChange = (_: React.SyntheticEvent, value: TopListKey) => {
     setValue(value)
-    localStorage.setItem(kTopListAsideLastTab, value)
+    if (homepage) {
+      localStorage.setItem(kTopListAsideLastTab, value)
+    }
   }
 
+  const tabsRef = useRef(null)
+  const expandRef = useRef(null)
+  const [menuOpenSide, setMenuOpenSide] = useState<'left' | 'right' | ''>('')
+  const closeMenu = () => setMenuOpenSide('')
   return (
     <>
       <Tabs
+        ref={tabsRef}
         value={value}
         onChange={handleChange}
         variant={homepage ? undefined : 'scrollable'}
@@ -62,17 +78,58 @@ const SideTabs = ({
           mb: 1,
           borderBottom: 1,
           borderColor: 'divider',
-          'MuiTabScrollButton-root': { width: 24 },
+          ...(!homepage && {
+            '.MuiTabs-flexContainer': { justifyContent: 'space-between' },
+          }),
         }}
       >
-        {tabs.map((key) => (
-          <Tab
-            key={key}
-            label={topListTitleMap[key]}
-            value={key}
-            sx={{ minHeight: 32, ...(!homepage && { minWidth: 0 }) }}
-          />
-        ))}
+        {tabs
+          .filter((key) => (homepage ? true : key == value))
+          .map((key) => (
+            <Tab
+              key={key}
+              label={topListTitleMap[key]}
+              value={key}
+              sx={{ minHeight: 32, ...(!homepage && { minWidth: 0 }) }}
+              onClick={homepage ? undefined : () => setMenuOpenSide('left')}
+            />
+          ))}
+        {!homepage && (
+          <>
+            <IconButton
+              ref={expandRef}
+              onClick={() => setMenuOpenSide('right')}
+            >
+              <ArrowDropDown />
+            </IconButton>
+            <Menu
+              anchorEl={tabsRef.current}
+              anchorOrigin={{
+                horizontal: menuOpenSide || 'left',
+                vertical: 'bottom',
+              }}
+              transformOrigin={{
+                horizontal: menuOpenSide || 'left',
+                vertical: 'top',
+              }}
+              open={!!menuOpenSide}
+              onClose={closeMenu}
+            >
+              {tabs.map((key) => (
+                <MenuItem
+                  key={key}
+                  selected={key == value}
+                  onClick={() => {
+                    setValue(key)
+                    closeMenu()
+                  }}
+                >
+                  {topListTitleMap[key]}
+                </MenuItem>
+              ))}
+            </Menu>
+          </>
+        )}
       </Tabs>
       <Card tiny>
         {loading ? (
