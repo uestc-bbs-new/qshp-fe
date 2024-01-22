@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 
 import { getForumList, getTopLists } from '@/apis/common'
-import { Forum, TopList } from '@/common/interfaces/response'
+import { Forum, TopList, TopListKey } from '@/common/interfaces/response'
 import { topListKeys } from '@/utils/constants'
 
 import { State, StateAction, stateReducer } from './reducers/stateReducer'
@@ -22,6 +22,7 @@ export const globalCache: {
   forumList?: Forum[]
   fidNameMap: FidNameMap
   topList?: TopList
+  topListLastKey?: TopListKey
 } = {
   fidNameMap: {},
 }

@@ -15,6 +15,7 @@ import {
 import { TopList, TopListKey } from '@/common/interfaces/response'
 import Card from '@/components/Card'
 import { ThreadItemLite } from '@/components/ThreadItem'
+import { globalCache } from '@/states'
 import {
   topListSideKeys,
   topListTitleMap,
@@ -50,6 +51,9 @@ const SideTabs = ({
   } else {
     if (routeState?.fromTopList) {
       initialTab = routeState.fromTopList
+      globalCache.topListLastKey = initialTab
+    } else if (globalCache.topListLastKey) {
+      initialTab = globalCache.topListLastKey
     }
   }
   const [value, setValue] = useState<TopListKey>(initialTab)
@@ -121,6 +125,7 @@ const SideTabs = ({
                   selected={key == value}
                   onClick={() => {
                     setValue(key)
+                    globalCache.topListLastKey = key
                     closeMenu()
                   }}
                 >
