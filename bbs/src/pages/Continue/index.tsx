@@ -7,6 +7,7 @@ import {
   useParams,
 } from 'react-router-dom'
 
+import { ArrowBackIos } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -57,33 +58,30 @@ const Continue = () => {
   }
 
   return (
-    <Dialog
-      open
-      fullScreen
-      PaperProps={{
-        sx: { overflow: 'hidden' },
-      }}
-    >
-      <DialogContent>
+    <Dialog open fullScreen>
+      <DialogContent sx={{ p: 0 }}>
         <Stack direction="row" flexGrow={1} flexShrink={1} minHeight={1}>
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
+            position="relative"
+            overflow="hidden"
             sx={{ width: '57%' }}
           >
             <div
               style={{
-                width: `${(2169 / 1920) * 100}vmax`,
-                height: `${(2169 / 1920) * 100}vmax`,
+                width: 2169,
+                height: 2169,
                 position: 'absolute',
-                left: `${(-1084 / 1920) * 100}vw`,
-                bottom: `${(-247 / 1080) * 100}vmin`,
+                right: 0,
+                bottom: 0,
+                transform: `translate(0, ${(247 / 1080) * 100}vh)`,
                 borderRadius: '100%',
                 backgroundColor: '#71ABFF',
               }}
             />
-            <Box flexGrow={1} />
+            <Box flexGrow={1}></Box>
             <Box flexGrow={0} flexShrink={0} style={{ position: 'relative' }}>
               <img src={logo} />
               <div
@@ -117,8 +115,13 @@ const Continue = () => {
           >
             {idasResult.users && !forceRegister ? (
               <Box>
+                <Link to={idasResult.continue} underline="none">
+                  <Stack direction="row" alignItems="center" mb={2}>
+                    <ArrowBackIos /> 返回
+                  </Stack>
+                </Link>
                 <Typography variant="signinTitle">选择账号</Typography>
-                <Typography>
+                <Typography my={2}>
                   您注册了多个账号，请选择您需要登录的账号：
                 </Typography>
                 <UserList
