@@ -1,11 +1,14 @@
-import React, { useRef, useState } from 'react'
+import { css } from '@emotion/react'
+
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
+import { Button, Stack, TextField, Typography, styled } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
 import { persistedStates } from '@/utils/storage'
 
+import Back from './Back'
 import { IdasResultEx } from './common'
 
 const kMinUserNameLength = 3
@@ -13,9 +16,11 @@ const kMaxUserNameLength = 15
 const kMinPasswordLength = 10
 
 export const RegisterForm = ({
+  freshman,
   idasResult,
   onClose,
 }: {
+  freshman?: boolean
   idasResult: IdasResultEx
   onClose: () => void
 }) => {
@@ -100,68 +105,118 @@ export const RegisterForm = ({
     navigate(idasResult.continue, { replace: true })
   }
   return (
-    <form ref={formRef}>
-      <Grid container alignItems="center" rowSpacing={2}>
-        <Grid item xs={4}>
-          <Typography>用户名：</Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <TextField
-            autoFocus
-            fullWidth
-            name="username"
-            helperText={
-              userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
-            }
-            error={!!userNameError}
-            onBlur={validateUserName}
-            required
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <Typography>河畔密码：</Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <TextField
-            type="password"
-            fullWidth
-            name="password"
-            error={!!passwordError || !!passwordError2}
-            helperText={
-              passwordError ||
-              passwordError2 ||
-              '建议设置一个安全的河畔密码并妥善保存，以便今后登录。'
-            }
-            onBlur={() => validatePassword()}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <Typography>确认密码：</Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <TextField
-            type="password"
-            fullWidth
-            name="password2"
-            error={!!passwordError2}
-            onBlur={() => validatePassword(true)}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <Typography>Email：</Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <TextField type="email" fullWidth name="email" />
-        </Grid>
-      </Grid>
-      <Stack direction="row" justifyContent="center" alignItems="center" my={2}>
-        <Button variant="contained" onClick={handleRegister}>
-          立即注册
-        </Button>
-        <Button variant="outlined" sx={{ ml: 2 }} onClick={goFreshmanOrBack}>
-          {idasResult.users ? '返回' : '到处逛逛，稍后注册'}
-        </Button>
-      </Stack>
+    <form ref={formRef} style={{ width: '70%' }}>
+      <Back onClick={onClose} />
+      <Typography variant="signinTitle">注册</Typography>
+      {freshman && (
+        <Typography>欢迎来到清水河畔！请填写信息完成注册：</Typography>
+      )}
+      <table
+        css={css({
+          width: '100%',
+          '& th': {
+            textAlign: 'left',
+            verticalAlign: 'top',
+            paddingTop: '16.5px',
+            width: '6em',
+          },
+        })}
+      >
+        <tr>
+          <th>
+            <Typography>用户名</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              autoFocus
+              name="username"
+              helperText={
+                userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
+              }
+              error={!!userNameError}
+              onBlur={validateUserName}
+              required
+              sx={{ width: '80%' }}
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <Typography>河畔密码</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              type="password"
+              fullWidth
+              name="password"
+              error={!!passwordError || !!passwordError2}
+              helperText={
+                passwordError ||
+                passwordError2 ||
+                '建议设置一个安全的河畔密码并妥善保存，以便今后登录。'
+              }
+              onBlur={() => validatePassword()}
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <Typography>确认密码</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              type="password"
+              fullWidth
+              name="password2"
+              error={!!passwordError2}
+              onBlur={() => validatePassword(true)}
+              sx={{ mb: 1 }}
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <Typography>Email</Typography>
+          </th>
+          <td>
+            <SignUpTextField type="email" fullWidth name="email" />
+          </td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>
+            <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              my={2}
+            >
+              <Button variant="contained" onClick={handleRegister}>
+                立即注册
+              </Button>
+              {!idasResult.users && (
+                <Button
+                  variant="outlined"
+                  sx={{ ml: 2 }}
+                  onClick={goFreshmanOrBack}
+                >
+                  到处逛逛，稍后注册
+                </Button>
+              )}
+            </Stack>
+          </td>
+        </tr>
+      </table>
     </form>
   )
 }
+
+const SignUpTextField = styled(TextField)({
+  '.MuiOutlinedInput-root': {
+    backgroundColor: '#F4F3F3',
+    borderRadius: 8,
+    fieldset: {
+      border: 'none',
+    },
+  },
+})

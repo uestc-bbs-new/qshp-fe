@@ -7,7 +7,6 @@ import {
   useParams,
 } from 'react-router-dom'
 
-import { ArrowBackIos } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -25,6 +24,7 @@ import { kIdasOrigin, pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import logo from '../../assets/logo-signin.png'
+import Back from './Back'
 import { RegisterForm } from './Register'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
@@ -67,7 +67,8 @@ const Continue = () => {
             alignItems="center"
             position="relative"
             overflow="hidden"
-            sx={{ width: '57%' }}
+            width="57%"
+            flexShrink={0}
           >
             <div
               style={{
@@ -115,11 +116,7 @@ const Continue = () => {
           >
             {idasResult.users && !forceRegister ? (
               <Box>
-                <Link to={idasResult.continue} underline="none">
-                  <Stack direction="row" alignItems="center" mb={2}>
-                    <ArrowBackIos /> 返回
-                  </Stack>
-                </Link>
+                <Back to={idasResult.continue} replace />
                 <Typography variant="signinTitle">选择账号</Typography>
                 <Typography my={2}>
                   您注册了多个账号，请选择您需要登录的账号：
@@ -133,17 +130,11 @@ const Continue = () => {
                 />
               </Box>
             ) : idasResult.remaining_registers ? (
-              <>
-                <Typography variant="h6">
-                  {forceRegister
-                    ? '请填写注册信息：'
-                    : '您还未注册过清水河畔账号，清填写信息完成注册：'}
-                </Typography>
-                <RegisterForm
-                  idasResult={idasResult}
-                  onClose={() => setRegister(false)}
-                />
-              </>
+              <RegisterForm
+                freshman={!idasResult.users}
+                idasResult={idasResult}
+                onClose={() => setRegister(false)}
+              />
             ) : (
               <>
                 <Alert severity="error">
