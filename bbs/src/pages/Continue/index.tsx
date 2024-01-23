@@ -9,10 +9,10 @@ import {
 
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
   Stack,
   Typography,
 } from '@mui/material'
@@ -23,6 +23,7 @@ import routes from '@/routes/routes'
 import { kIdasOrigin, pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
+import logo from '../../assets/logo-signin.png'
 import { RegisterForm } from './Register'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
@@ -56,46 +57,108 @@ const Continue = () => {
   }
 
   return (
-    <Dialog open>
-      <DialogTitle>
-        <Typography variant="h4">欢迎来到清水河畔！</Typography>
-      </DialogTitle>
+    <Dialog
+      open
+      fullScreen
+      PaperProps={{
+        sx: { overflow: 'hidden' },
+      }}
+    >
       <DialogContent>
-        {idasResult.users && !forceRegister ? (
-          <>
-            <Typography>请选择您的账号完成登录：</Typography>
-            <UserList
-              idasResult={idasResult}
-              disabled={pending}
-              showRegister={!!idasResult.remaining_registers}
-              onSignIn={(uid: number) => signIn(uid)}
-              onRegister={() => setRegister(true)}
+        <Stack direction="row" flexGrow={1} flexShrink={1} minHeight={1}>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ width: '57%' }}
+          >
+            <div
+              style={{
+                width: `${(2169 / 1920) * 100}vmax`,
+                height: `${(2169 / 1920) * 100}vmax`,
+                position: 'absolute',
+                left: `${(-1084 / 1920) * 100}vw`,
+                bottom: `${(-247 / 1080) * 100}vmin`,
+                borderRadius: '100%',
+                backgroundColor: '#71ABFF',
+              }}
             />
-          </>
-        ) : idasResult.remaining_registers ? (
-          <>
-            <Typography variant="h6">
-              {forceRegister
-                ? '请填写注册信息：'
-                : '您还未注册过清水河畔账号，清填写信息完成注册：'}
-            </Typography>
-            <RegisterForm
-              idasResult={idasResult}
-              onClose={() => setRegister(false)}
-            />
-          </>
-        ) : (
-          <>
-            <Alert severity="error">
-              每个学号最多注册三个用户，您的注册次数已用完，无法注册新用户。
-            </Alert>
-            <Stack alignItems="center" mt={2}>
-              <Button component={Link} to={pages.index()} variant="outlined">
-                返回首页
-              </Button>
-            </Stack>
-          </>
-        )}
+            <Box flexGrow={1} />
+            <Box flexGrow={0} flexShrink={0} style={{ position: 'relative' }}>
+              <img src={logo} />
+              <div
+                style={{
+                  fontSize: '60px',
+                  fontWeight: '900',
+                  margin: '0.5em 0',
+                  color: 'white',
+                }}
+              >
+                清水河畔
+              </div>
+              <div
+                style={{
+                  fontSize: '36px',
+                  fontWeight: '900',
+                  color: 'rgba(255, 255, 255, 0.56)',
+                }}
+              >
+                电子科技大学官方论坛
+              </div>
+            </Box>
+            <Box flexGrow={2} />
+          </Stack>
+          <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            flexGrow={1}
+            flexShrink={1}
+          >
+            {idasResult.users && !forceRegister ? (
+              <Box>
+                <Typography variant="signinTitle">选择账号</Typography>
+                <Typography>
+                  您注册了多个账号，请选择您需要登录的账号：
+                </Typography>
+                <UserList
+                  idasResult={idasResult}
+                  disabled={pending}
+                  showRegister={!!idasResult.remaining_registers}
+                  onSignIn={(uid: number) => signIn(uid)}
+                  onRegister={() => setRegister(true)}
+                />
+              </Box>
+            ) : idasResult.remaining_registers ? (
+              <>
+                <Typography variant="h6">
+                  {forceRegister
+                    ? '请填写注册信息：'
+                    : '您还未注册过清水河畔账号，清填写信息完成注册：'}
+                </Typography>
+                <RegisterForm
+                  idasResult={idasResult}
+                  onClose={() => setRegister(false)}
+                />
+              </>
+            ) : (
+              <>
+                <Alert severity="error">
+                  每个学号最多注册三个用户，您的注册次数已用完，无法注册新用户。
+                </Alert>
+                <Stack alignItems="center" mt={2}>
+                  <Button
+                    component={Link}
+                    to={pages.index()}
+                    variant="outlined"
+                  >
+                    返回首页
+                  </Button>
+                </Stack>
+              </>
+            )}
+          </Stack>
+        </Stack>
       </DialogContent>
     </Dialog>
   )
