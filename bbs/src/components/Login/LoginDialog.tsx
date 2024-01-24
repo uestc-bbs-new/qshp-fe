@@ -51,18 +51,26 @@ const SignInTextField = ({
         my: 1,
         '.MuiInputBase-root': {
           backgroundColor: 'white',
+          borderRadius: '8px',
         },
       }}
       InputLabelProps={{
         sx: {
           pl: '32px',
+          transform: 'translate(16px, 10px)',
           '&.MuiInputLabel-shrink': {
             pl: 0,
-            transitionProperty: 'all',
+            transitionProperty: '',
+            transform: 'translate(14px, -9px) scale(0.75)',
           },
         },
       }}
-      InputProps={{ sx: { '& input': { pl: '48px' } } }}
+      InputProps={{
+        sx: {
+          '& input': { pl: '48px', py: '10px' },
+          '& fieldset': { border: 'none' },
+        },
+      }}
     />
     <Stack
       justifyContent="center"
@@ -176,6 +184,10 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           backgroundColor: 'rgba(243, 245, 247, 0.87)',
         },
       }}
+      sx={{
+        backdropFilter: 'blur(3px)',
+        backgroundColor: 'rgba(189, 189, 189, 0.35)',
+      }}
     >
       <DialogTitle sx={{ p: 1 }}>
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
@@ -184,8 +196,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           </IconButton>
         </Stack>
       </DialogTitle>
-      <DialogContent>
-        <Stack alignItems="center" mb={1}>
+      <DialogContent sx={{ px: 5 }}>
+        <Stack alignItems="center" mb={3} minWidth={352}>
           <img src={logo} css={css({ maxWidth: '100%' })} />
         </Stack>
         {state.login.prompt && (
