@@ -1,9 +1,18 @@
-const defaultMap = (name: string) => (name == 'background' ? '#fff' : undefined)
+import { PaletteMode } from '@mui/material'
+
+const defaultMap = (name: string, theme?: PaletteMode) =>
+  name == 'background' ? '#fff' : undefined
 const colorMap: {
-  [type: string]: string | ((name: string) => string | undefined)
+  [type: string]:
+    | string
+    | ((name: string, theme?: PaletteMode) => string | undefined)
 } = {
-  threadType: (name: string) =>
-    name == 'background' ? 'rgba(77, 145, 245, 0.3)' : '#303133',
+  threadType: (name: string, theme?: PaletteMode) =>
+    name == 'background'
+      ? 'rgba(77, 145, 245, 0.3)'
+      : theme == 'dark'
+        ? 'white'
+        : '#303133',
   threadTypeActive: (name: string) =>
     name == 'background' ? '#FBACA3' : '#303133',
   rateNegative: (name: string) =>
@@ -11,15 +20,15 @@ const colorMap: {
   level: defaultMap,
 }
 
-const chipColor = (name: string, type: string) => {
+const chipColor = (name: string, type: string, theme?: PaletteMode) => {
   const result = colorMap[type]
   if (typeof result == 'function') {
-    return result(name)
+    return result(name, theme)
   }
   if (typeof result == 'string') {
     return result
   }
-  return defaultMap(name)
+  return defaultMap(name, theme)
 }
 
 export default chipColor
