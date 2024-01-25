@@ -9,11 +9,11 @@ import {
   Divider,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/response'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
 import Separated from '@/components/Separated'
 
 type HeadProps = {
@@ -22,10 +22,6 @@ type HeadProps = {
 
 const Head = ({ data }: HeadProps) => {
   const [isHeadOpen, setHeadOpen] = useState(true)
-  const theme = useTheme()
-  const handleClick = () => {
-    setHeadOpen(!isHeadOpen)
-  }
   const moderators = data?.moderators || []
   return (
     <>
@@ -85,10 +81,7 @@ const Head = ({ data }: HeadProps) => {
         </AccordionSummary>
         {!!data?.announcement && (
           <AccordionDetails>
-            <Typography
-              dangerouslySetInnerHTML={{ __html: data?.announcement }}
-            />
-            {/* <ParsePost></ParsePost> */}
+            <UserHtmlRenderer html={data?.announcement} />
           </AccordionDetails>
         )}
       </Accordion>

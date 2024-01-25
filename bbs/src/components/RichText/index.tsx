@@ -20,8 +20,9 @@ import bbcode2html from '@/utils/bbcode/bbcode'
 import './richtext.css'
 
 const kAuthoredColor = 'authoredColor'
+const kColorManipulated = 'colorManipulated'
 
-const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
+export const UserHtmlRenderer = ({ html }: { html: string }) => {
   const { state } = useAppState()
   const contentRef = createRef<HTMLDivElement>()
   const findParentBackgroundColor = (
@@ -40,50 +41,66 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
       ;[].forEach.call(
         contentRef.current.querySelectorAll('font, *[style]'),
         (el: HTMLElement) => {
-          let color = el.dataset[kAuthoredColor]
-          if (color == undefined) {
+          let authoredColor = el.dataset[kAuthoredColor]
+          if (!authoredColor) {
             if (
               (el.tagName.toLowerCase() == 'font' &&
                 el.getAttribute('color')) ||
               el.style.color
             ) {
-              color = getComputedStyle(el).color
+              authoredColor = getComputedStyle(el).color
             }
           }
           const backColor = findParentBackgroundColor(el, contentRef.current)
           if (backColor) {
-            if (color == undefined) {
+            if (!authoredColor) {
               el.style.color = 'rgba(0, 0, 0, 0.87)'
               el.dataset[kAuthoredColor] = ''
             }
             return
           }
-          if (!color) {
+          if (!authoredColor) {
             return
           }
-          const luminance = getLuminance(color)
+          let manipulation = el.dataset[kColorManipulated]
+          if (
+            (manipulation == 'lighten' && state.theme == 'light') ||
+            (manipulation == 'darken' && state.theme == 'dark')
+          ) {
+            el.style.color = authoredColor
+            delete el.dataset[kColorManipulated]
+            return
+          }
+          const luminance = getLuminance(authoredColor)
           const contrast = getContrastRatio(
-            color,
+            authoredColor,
             state.theme == 'light' ? '#ffffff' : '#313742'
           )
           if (contrast > 4) {
             return
           }
-          let newColor = color
+          let newColor = authoredColor
           if (state.theme == 'light' && luminance > 0.75) {
             newColor = darken(
               newColor,
               Math.pow(4, 0.6) * Math.pow(1 - luminance, 0.6)
             )
+            manipulation = 'darken'
           } else if (state.theme == 'dark' && luminance < 0.25) {
             newColor = lighten(
               newColor,
               -Math.pow(4, 0.6) * Math.pow(luminance, 0.6) + 1
             )
+            manipulation = 'lighten'
           }
-          if (newColor != color) {
+          if (newColor != authoredColor) {
             el.style.color = newColor
-            el.dataset[kAuthoredColor] = color
+            if (manipulation) {
+              el.dataset[kColorManipulated] = manipulation
+            }
+            if (el.dataset[kAuthoredColor] == undefined) {
+              el.dataset[kAuthoredColor] = authoredColor
+            }
           }
         }
       )
@@ -94,14 +111,22 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
       dangerouslySetInnerHTML={{
-        __html: bbcode2html(post.message, {
-          allowimgurl: true,
-          bbcodeoff: post.format != 0,
-          parseurloff: post.parseurloff,
-          smileyoff: post.smileyoff,
-        }),
+        __html: html,
       }}
     ></div>
+  )
+}
+
+const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
+  return (
+    <UserHtmlRenderer
+      html={bbcode2html(post.message, {
+        allowimgurl: true,
+        bbcodeoff: post.format != 0,
+        parseurloff: post.parseurloff,
+        smileyoff: post.smileyoff,
+      })}
+    />
   )
 }
 
