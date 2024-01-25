@@ -47,13 +47,13 @@ const SignInTextField = ({
       autoFocus
       fullWidth
       {...other}
-      sx={{
+      sx={(theme) => ({
         my: 1,
         '.MuiInputBase-root': {
-          backgroundColor: 'white',
+          backgroundColor: theme.palette.mode == 'light' ? 'white' : '#999999',
           borderRadius: '8px',
         },
-      }}
+      })}
       InputLabelProps={{
         sx: {
           pl: '32px',
@@ -179,10 +179,13 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       open={open}
       onClose={close}
       PaperProps={{
-        sx: {
+        sx: (theme) => ({
           borderRadius: '8px',
-          backgroundColor: 'rgba(243, 245, 247, 0.87)',
-        },
+          backgroundColor:
+            theme.palette.mode == 'light'
+              ? 'rgba(243, 245, 247, 0.87)'
+              : 'rgba(49, 55, 66, 0.75)',
+        }),
       }}
       sx={{
         backdropFilter: 'blur(3px)',
