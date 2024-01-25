@@ -79,7 +79,6 @@ const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
               fontSize={12}
               fontWeight={600}
               className="mr-5 mt-3"
-              color="#3A71F2"
               underline="hover"
               to={thread.author_id ? `/user/${thread.author_id}` : undefined}
               sx={thread.author_id == 0 ? { cursor: 'pointer' } : null}
