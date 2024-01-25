@@ -13,8 +13,12 @@ const colorMap: {
       : theme == 'dark'
         ? 'white'
         : '#303133',
-  threadTypeActive: (name: string) =>
-    name == 'background' ? '#FBACA3' : '#303133',
+  threadTypeActive: (name: string, theme?: PaletteMode) =>
+    name == 'background'
+      ? 'rgba(251, 172, 163, 0.60)'
+      : theme == 'dark'
+        ? 'white'
+        : '#303133',
   rateNegative: (name: string) =>
     name == 'background' ? '#F56C6C' : '#FFFFFF',
   level: defaultMap,
