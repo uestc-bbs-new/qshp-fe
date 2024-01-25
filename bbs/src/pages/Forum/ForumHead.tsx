@@ -28,9 +28,13 @@ const Head = ({ data }: HeadProps) => {
       <Accordion defaultExpanded disableGutters>
         <AccordionSummary
           expandIcon={<ExpandMore />}
-          sx={{
-            backgroundImage:
-              'linear-gradient(90deg, rgb(210, 226, 253), rgb(255, 255, 255))',
+          sx={(theme) => {
+            const light = theme.palette.mode == 'light'
+            return {
+              backgroundImage: `linear-gradient(90deg, ${
+                light ? 'rgb(210, 226, 253)' : '#083687'
+              }, ${light ? 'rgb(255, 255, 255)' : '#659af6'})`,
+            }
           }}
         >
           <Box>
