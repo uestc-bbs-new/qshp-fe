@@ -2,7 +2,13 @@ import Vditor from 'vditor'
 
 import { createRef, useEffect } from 'react'
 
-import { Typography, darken, getContrastRatio, lighten } from '@mui/material'
+import {
+  Typography,
+  darken,
+  getContrastRatio,
+  getLuminance,
+  lighten,
+} from '@mui/material'
 
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
@@ -23,20 +29,42 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
       ;[].forEach.call(
         contentRef.current.querySelectorAll('font, *[style]'),
         (el: HTMLElement) => {
-          const color = el.dataset[kAuthoredColor] || getComputedStyle(el).color
+          let color = el.dataset[kAuthoredColor]
+          if (!color) {
+            if (
+              (el.tagName.toLowerCase() == 'font' &&
+                el.getAttribute('color')) ||
+              el.style.color
+            ) {
+              color = getComputedStyle(el).color
+            }
+          }
           if (!color) {
             return
           }
+          const luminance = getLuminance(color)
           const contrast = getContrastRatio(
             color,
             state.theme == 'light' ? '#ffffff' : '#313742'
           )
-          const contrastThreshold = state.theme == 'light' ? 1 : 4
-          if (contrast < contrastThreshold) {
-            const newColor =
-              state.theme == 'light' ? darken(color, 0.2) : lighten(color, 0.5)
+          if (contrast > 4) {
+            return
+          }
+          let newColor = color
+          if (state.theme == 'light' && luminance > 0.75) {
+            newColor = darken(
+              newColor,
+              Math.pow(4, 0.6) * Math.pow(1 - luminance, 0.6)
+            )
+          } else if (state.theme == 'dark' && luminance < 0.25) {
+            newColor = lighten(
+              newColor,
+              -Math.pow(4, 0.6) * Math.pow(luminance, 0.6) + 1
+            )
+          }
+          if (newColor != color) {
             el.style.color = newColor
-            el.dataset[kAuthoredColor] = newColor
+            el.dataset[kAuthoredColor] = color
           }
         }
       )
@@ -45,7 +73,7 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
   return (
     <div
       ref={contentRef}
-      className="rich-text-content rich-text-content-legacy"
+      className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
       dangerouslySetInnerHTML={{
         __html: bbcode2html(post.message, {
           allowimgurl: true,
