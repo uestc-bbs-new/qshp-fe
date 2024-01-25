@@ -24,13 +24,24 @@ const kAuthoredColor = 'authoredColor'
 const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
   const { state } = useAppState()
   const contentRef = createRef<HTMLDivElement>()
+  const findParentBackgroundColor = (
+    el: HTMLElement,
+    upTo: HTMLElement | null
+  ) => {
+    let cur: HTMLElement | null = el
+    for (; cur && cur != upTo; cur = cur.parentElement) {
+      if (cur.style.backgroundColor) {
+        return getComputedStyle(cur).backgroundColor
+      }
+    }
+  }
   useEffect(() => {
     if (contentRef.current) {
       ;[].forEach.call(
         contentRef.current.querySelectorAll('font, *[style]'),
         (el: HTMLElement) => {
           let color = el.dataset[kAuthoredColor]
-          if (!color) {
+          if (color == undefined) {
             if (
               (el.tagName.toLowerCase() == 'font' &&
                 el.getAttribute('color')) ||
@@ -38,6 +49,14 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
             ) {
               color = getComputedStyle(el).color
             }
+          }
+          const backColor = findParentBackgroundColor(el, contentRef.current)
+          if (backColor) {
+            if (color == undefined) {
+              el.style.color = 'rgba(0, 0, 0, 0.87)'
+              el.dataset[kAuthoredColor] = ''
+            }
+            return
           }
           if (!color) {
             return
