@@ -211,12 +211,12 @@ export const RegisterForm = ({
   )
 }
 
-const SignUpTextField = styled(TextField)({
+const SignUpTextField = styled(TextField)(({ theme }) => ({
   '.MuiOutlinedInput-root': {
-    backgroundColor: '#F4F3F3',
+    backgroundColor: theme.palette.mode == 'light' ? '#F4F3F3' : '#999999',
     borderRadius: 8,
     fieldset: {
       border: 'none',
     },
   },
-})
+}))
