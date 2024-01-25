@@ -36,13 +36,13 @@ export const persistedStates = {
     setLocalStorage(kAuthorizationKey, value)
   },
   get theme() {
-    const defaultValue: Theme = matchMedia('(prefers-color-scheme: dark)')
-      .matches
-      ? 'dark'
-      : 'light'
-    return getLocalStorage(kTheme, defaultValue) as Theme
+    const setting = getLocalStorage(kTheme, 'auto')
+    if (setting == 'light' || setting == 'dark') {
+      return setting
+    }
+    return 'auto'
   },
-  set theme(value: Theme) {
+  set theme(value: Theme | 'auto') {
     setLocalStorage(kTheme, value)
   },
 }

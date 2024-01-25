@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   DarkMode,
   LightMode,
@@ -22,12 +24,21 @@ import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
+import { persistedStates } from '@/utils/storage'
+import {
+  getSystemTheme,
+  getTextFromThemeSetting,
+  useSystemThemeChange,
+} from '@/utils/theme'
 
 import Avatar from '../Avatar'
 import { MenuItemLink } from '../Link'
 
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
+  const [themeSetting, setThemeSetting] = useState(persistedStates.theme)
+  const [systemTheme, setSystemTheme] = useState(getSystemTheme())
+  useSystemThemeChange((theme) => setSystemTheme(theme))
 
   const logout = async () => {
     await signOut()
@@ -35,10 +46,17 @@ const MenuContent = () => {
   }
 
   const toggleTheme = () => {
-    dispatch({
-      type: 'set theme',
-      payload: state.theme === 'light' ? 'dark' : 'light',
-    })
+    const current = state.theme
+    if (themeSetting == 'auto' || current != systemTheme) {
+      persistedStates.theme = current == 'light' ? 'dark' : 'light'
+      dispatch({
+        type: 'set theme',
+        payload: persistedStates.theme,
+      })
+    } else {
+      persistedStates.theme = 'auto'
+    }
+    setThemeSetting(persistedStates.theme)
   }
   return (
     <Box className="py-2">
@@ -64,12 +82,12 @@ const MenuContent = () => {
       <MenuItem onClick={toggleTheme}>
         <ListItemIcon>
           {state.theme === 'light' ? (
-            <DarkMode fontSize="small" />
-          ) : (
             <LightMode fontSize="small" />
+          ) : (
+            <DarkMode fontSize="small" />
           )}
         </ListItemIcon>
-        {state.theme === 'light' ? '深色' : '浅色'}模式
+        {getTextFromThemeSetting(themeSetting)}
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem>

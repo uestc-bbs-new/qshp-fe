@@ -11,7 +11,7 @@ import React, {
 import { getForumList, getTopLists } from '@/apis/common'
 import { Forum, TopList, TopListKey } from '@/common/interfaces/response'
 import { topListKeys } from '@/utils/constants'
-import { persistedStates } from '@/utils/storage'
+import { getRenderedTheme } from '@/utils/theme'
 
 import { State, StateAction, stateReducer } from './reducers/stateReducer'
 
@@ -49,7 +49,7 @@ const initialState: State = {
   login: {
     open: false,
   },
-  theme: persistedStates.theme,
+  theme: getRenderedTheme(),
 }
 
 export const AppContext = createContext<{

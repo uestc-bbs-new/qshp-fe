@@ -12,6 +12,8 @@ import {
   registerUserCallback,
   unregisterUserCallback,
 } from './states/user'
+import { persistedStates } from './utils/storage'
+import { useSystemThemeChange } from './utils/theme'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +37,12 @@ function App() {
     registerUserCallback(callback)
     return () => unregisterUserCallback(callback)
   }, [])
+
+  useSystemThemeChange((theme) => {
+    if (persistedStates.theme == 'auto') {
+      dispatch({ type: 'set theme', payload: theme })
+    }
+  })
 
   return (
     <QueryClientProvider client={queryClient}>
