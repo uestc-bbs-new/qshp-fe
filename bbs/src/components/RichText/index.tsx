@@ -138,7 +138,9 @@ const MarkdownPostRenderer = ({ message }: { message: string }) => {
       Vditor.preview(el.current, message, getPreviewOptions(state.theme))
   }, [message])
   return (
-    <div className="rich-text-content rich-text-content-markdown">
+    <div
+      className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
+    >
       <Typography color="text.primary" ref={el}></Typography>
     </div>
   )
