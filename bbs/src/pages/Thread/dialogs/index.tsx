@@ -38,6 +38,12 @@ const ActionDialog = ({
       onClose={onClose}
       maxWidth="md"
       fullWidth
+      DraggableProps={{ defaultClassName: 'draggable-with-vditor' }}
+      sx={{
+        '& .draggable-with-vditor:has(.vditor--fullscreen)': {
+          transform: 'none !important',
+        },
+      }}
       dialogTitle={
         <Stack
           direction="row"
