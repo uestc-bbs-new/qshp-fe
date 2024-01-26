@@ -33,7 +33,7 @@ const Edit = () => {
           return forum
         }
       }
-      return undefined
+      return null // TOOD: Fix types (ForumDetails | null).
     },
   })
 
