@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Stack } from '@mui/material'
 
 import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -32,7 +32,7 @@ const EditOrReply = ({
   }
 
   return (
-    <Box px={2} pb={1.5}>
+    <Stack px={2} pb={1.5} flexShrink={1}>
       <PostEditor
         kind={mode}
         smallAuthor
@@ -51,7 +51,7 @@ const EditOrReply = ({
         }
         onSubmitted={() => onSubmitted(mode, true)}
       />
-    </Box>
+    </Stack>
   )
 }
 

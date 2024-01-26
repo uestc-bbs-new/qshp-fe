@@ -40,6 +40,7 @@ const ActionDialog = ({
       fullWidth
       DraggableProps={{ defaultClassName: 'draggable-with-vditor' }}
       sx={{
+        '& > .MuiPaper-root': { maxHeight: '90%' },
         '& .draggable-with-vditor:has(.vditor--fullscreen)': {
           transform: 'none !important',
         },
