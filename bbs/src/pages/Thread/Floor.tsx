@@ -87,12 +87,12 @@ const Floor = ({
 
   // 弹出框
   const {
-    props: { open },
+    props: { open, onClose },
     show,
-  } = useSnackbar(3000)
+  } = useSnackbar()
   return (
     <Box className="">
-      <CenteredSnackbar open={open} autoHideDuration={3000}>
+      <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
         <Alert severity="success">复制成功</Alert>
       </CenteredSnackbar>
       <Stack direction="row">
@@ -147,8 +147,6 @@ const Floor = ({
                   navigator.clipboard.writeText(
                     `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
-                  console.log(666)
-
                   show('')
                 }}
               >
