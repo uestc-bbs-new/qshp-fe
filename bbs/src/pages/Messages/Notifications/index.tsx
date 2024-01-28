@@ -17,6 +17,7 @@ import {
 import { getNotifications } from '@/apis/messages'
 import { MessageCounts } from '@/common/interfaces/response'
 import Link from '@/components/Link'
+import { useSignInChange } from '@/states'
 import { pages, useActiveRoute } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
@@ -56,7 +57,7 @@ const Notifications = () => {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const { data, isLoading, isFetchedAfterMount } = useQuery({
+  const { data, isLoading, isFetchedAfterMount, refetch } = useQuery({
     queryKey: ['messages', query],
     queryFn: () => getNotifications(query),
     refetchOnMount: true,
@@ -77,6 +78,7 @@ const Notifications = () => {
   useEffect(() => {
     setQuery(initQuery())
   }, [groupName, kindName, searchParams])
+  useSignInChange(refetch)
 
   return (
     <Paper sx={{ flexGrow: 1, p: 1 }}>

@@ -10,7 +10,7 @@ import {
   Users,
 } from '@/common/interfaces/response'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { authService, commonUrl } from '@/utils/request'
+import request, { authServiceWithUser, commonUrl } from '@/utils/request'
 
 import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
 import registerAuthHeaderInterceptors from './interceptors/authHeader'
@@ -19,7 +19,7 @@ import registerUserInterceptors from './interceptors/user'
 registerAuthHeaderInterceptors(request)
 registerAuthAdoptLegacyInterceptors(request.axios)
 registerUserInterceptors(request)
-registerUserInterceptors(authService)
+registerUserInterceptors(authServiceWithUser)
 
 export const makeThreadTypesMap = (forum?: ForumDetails) => {
   if (forum && forum.thread_types) {
@@ -56,10 +56,7 @@ const normalizeStringArray = (value: string | string[]) => {
   }
   return value
 }
-const transformTopList = (result?: TopList) => {
-  if (!result) {
-    return result
-  }
+const transformTopList = (result: TopList) => {
   for (const [_, v] of Object.entries(result)) {
     v?.forEach(
       (thread) =>
@@ -95,7 +92,7 @@ export const getIndexData = async ({
       ...(topList && { top_list: normalizeStringArray(topList).join(',') }),
     },
   })
-  transformTopList(result.top_list)
+  result.top_list && transformTopList(result.top_list)
   return result
 }
 

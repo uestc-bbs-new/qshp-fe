@@ -1,33 +1,93 @@
-import React, { useRef, useState } from 'react'
+import { css } from '@emotion/react'
 
-import { Close } from '@mui/icons-material'
+import React, { ReactNode, useRef, useState } from 'react'
+
+import {
+  Close,
+  RadioButtonChecked,
+  RadioButtonUnchecked,
+} from '@mui/icons-material'
 import {
   Alert,
+  Box,
   Button,
   Checkbox,
   Dialog,
   DialogContent,
   DialogTitle,
   FormControlLabel,
-  Grid,
   IconButton,
   Snackbar,
   Stack,
   Tab,
   Tabs,
   TextField,
-  Typography,
+  TextFieldProps,
 } from '@mui/material'
 
 import { signIn } from '@/apis/auth'
+import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
-import { setAuthorizationHeader } from '@/utils/authHeader'
 import { gotoIdas } from '@/utils/routes'
+import { persistedStates } from '@/utils/storage'
 
 import Captcha, {
   CaptchaConfiguration,
   Captcha as CaptchaType,
 } from '../Captcha'
+import Password from '../icons/Password'
+import User from '../icons/User'
+
+const SignInTextField = ({
+  adornmentIcon,
+  ...other
+}: TextFieldProps & { adornmentIcon: ReactNode }) => (
+  <Box position="relative">
+    <TextField
+      autoFocus
+      fullWidth
+      {...other}
+      sx={(theme) => ({
+        my: 1,
+        '.MuiInputBase-root': {
+          backgroundColor: theme.palette.mode == 'light' ? 'white' : '#999999',
+          borderRadius: '8px',
+        },
+      })}
+      InputLabelProps={{
+        sx: {
+          pl: '32px',
+          transform: 'translate(16px, 10px)',
+          '&.MuiInputLabel-shrink': {
+            pl: 0,
+            transitionProperty: '',
+            transform: 'translate(14px, -9px) scale(0.75)',
+          },
+        },
+      }}
+      InputProps={{
+        sx: {
+          '& input': { pl: '48px', py: '10px' },
+          '& fieldset': { border: 'none' },
+        },
+      }}
+    />
+    <Stack
+      justifyContent="center"
+      sx={{
+        position: 'absolute',
+        pl: 2,
+        top: 0,
+        bottom: 0,
+        '& svg': {
+          width: '100%',
+        },
+      }}
+    >
+      {adornmentIcon}
+    </Stack>
+  </Box>
+)
 
 const LoginDialog = ({ open }: { open: boolean }) => {
   const { state, dispatch } = useAppState()
@@ -80,7 +140,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         }),
       })
       if (authorization) {
-        setAuthorizationHeader(authorization)
+        persistedStates.authorizationHeader = authorization
         close()
       }
     } catch (e_) {
@@ -115,20 +175,34 @@ const LoginDialog = ({ open }: { open: boolean }) => {
     setSnackbarOpen(true)
   }
   return (
-    <Dialog open={open} onClose={close}>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography>登录</Typography>
+    <Dialog
+      open={open}
+      onClose={close}
+      PaperProps={{
+        sx: (theme) => ({
+          borderRadius: '8px',
+          backgroundColor:
+            theme.palette.mode == 'light'
+              ? 'rgba(243, 245, 247, 0.87)'
+              : 'rgba(49, 55, 66, 0.75)',
+        }),
+      }}
+      sx={{
+        backdropFilter: 'blur(3px)',
+        backgroundColor: 'rgba(189, 189, 189, 0.35)',
+      }}
+    >
+      <DialogTitle sx={{ p: 1 }}>
+        <Stack direction="row" justifyContent="flex-end" alignItems="center">
           <IconButton onClick={close}>
             <Close />
           </IconButton>
         </Stack>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ px: 5 }}>
+        <Stack alignItems="center" mb={3} minWidth={352}>
+          <img src={logo} css={css({ maxWidth: '100%' })} />
+        </Stack>
         {state.login.prompt && (
           <Alert severity="info">{state.login.prompt}</Alert>
         )}
@@ -137,22 +211,26 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           <Tab label="统一身份认证登录" onClick={gotoIdas} />
         </Tabs>
         <form onSubmit={onSubmit} ref={formRef}>
-          <Grid container alignItems="center" rowSpacing={2}>
-            <Grid item xs={4}>
-              <Typography>用户名：</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField autoFocus fullWidth name="username" />
-            </Grid>
-            <Grid item xs={4}>
-              <Typography>密码：</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField type="password" fullWidth name="password" />
-            </Grid>
-          </Grid>
+          <SignInTextField
+            name="username"
+            label="用户名"
+            adornmentIcon={<User />}
+          />
+          <SignInTextField
+            name="password"
+            type="password"
+            label="密码"
+            adornmentIcon={<Password />}
+          />
           <FormControlLabel
-            control={<Checkbox name="keep_signed_in" value="1" />}
+            control={
+              <Checkbox
+                name="keep_signed_in"
+                value="1"
+                icon={<RadioButtonUnchecked />}
+                checkedIcon={<RadioButtonChecked />}
+              />
+            }
             label="自动登录"
           />
           {captcha && (
@@ -168,7 +246,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
             </>
           )}
           <Stack direction="row" justifyContent="center">
-            <Button type="submit" disabled={signinPending}>
+            <Button type="submit" disabled={signinPending} variant="contained">
               {signinPending ? '请稍候...' : '登录'}
             </Button>
           </Stack>

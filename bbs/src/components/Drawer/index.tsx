@@ -11,13 +11,14 @@ const LeftDrawer = ({ width }: { width: number }) => {
 
   // change drawer variant based on screen size
   const matchesMobile = useMediaQuery('(max-width:640px)')
+  const open = state.drawer
 
   return (
     <>
       <Drawer
         variant={matchesMobile ? 'temporary' : 'persistent'}
         // open={matchesMobile ? !state.drawer : state.drawer}
-        open={state.drawer}
+        open={open}
         ModalProps={{
           // Better open performance on mobile.
           keepMounted: matchesMobile,
@@ -32,7 +33,7 @@ const LeftDrawer = ({ width }: { width: number }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: width },
         }}
       >
-        <NavLinks />
+        {open && <NavLinks />}
       </Drawer>
     </>
   )

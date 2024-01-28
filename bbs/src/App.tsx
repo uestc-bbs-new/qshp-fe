@@ -12,7 +12,8 @@ import {
   registerUserCallback,
   unregisterUserCallback,
 } from './states/user'
-import { checkCookie } from './utils/cookie'
+import { persistedStates } from './utils/storage'
+import { useSystemThemeChange } from './utils/theme'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,10 +28,6 @@ function App() {
   const [state, dispatch] = useAppStateContext()
 
   useEffect(() => {
-    checkCookie()
-  })
-
-  useEffect(() => {
     const callback = (details: UserCallbackDetails) => {
       if (details.requireSignIn) {
         dispatch({ type: 'open login', payload: '请您登录后继续浏览。' })
@@ -40,6 +37,12 @@ function App() {
     registerUserCallback(callback)
     return () => unregisterUserCallback(callback)
   }, [])
+
+  useSystemThemeChange((theme) => {
+    if (persistedStates.theme == 'auto') {
+      dispatch({ type: 'set theme', payload: theme })
+    }
+  })
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -12,12 +12,12 @@ import Banner from '@/components/Banner'
 import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
-import { useAppState } from '@/states'
+import { globalCache, setForumListCache, useAppState } from '@/states'
 
 import { ForumGroup } from './ForumCover'
 
 const Home = () => {
-  const { state, dispatch } = useAppState()
+  const { state } = useAppState()
   const location = useLocation()
 
   const theme = useTheme()
@@ -37,7 +37,10 @@ const Home = () => {
   })
   useEffect(() => {
     if (indexData?.forum_list) {
-      dispatch({ type: 'set forumList', payload: indexData?.forum_list })
+      setForumListCache(indexData.forum_list)
+    }
+    if (indexData?.top_list) {
+      globalCache.topList = indexData.top_list
     }
   }, [indexData])
   useEffect(() => {
@@ -64,7 +67,7 @@ const Home = () => {
 
       <Stack direction="row">
         <Box className="flex-1">
-          {!state || !state.forumList || state.forumList.length === 0 ? (
+          {!indexData?.forum_list?.length ? (
             <>
               <Skeleton variant="rounded" height={40} />
               <Box className="flex-1" display="flex">
@@ -80,13 +83,13 @@ const Home = () => {
             </>
           ) : (
             <List>
-              {state.forumList.map((item) => (
+              {indexData.forum_list.map((item) => (
                 <ForumGroup data={item} key={item.name} />
               ))}
             </List>
           )}
         </Box>
-        <Aside topList={indexData?.top_list} />
+        <Aside topList={indexData?.top_list} homepage />
       </Stack>
     </>
   )

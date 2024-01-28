@@ -1,12 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-
-import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
 import { Box, Fab, Toolbar, useMediaQuery } from '@mui/material'
 
-import { getForumList } from '@/apis/common'
 import Announcement from '@/components/Announcement'
 import Drawer from '@/components/Drawer'
 import Header from '@/components/Header'
@@ -15,29 +11,10 @@ import TopBar from '@/components/TopBar'
 import { useAppState } from '@/states'
 
 const Layout = () => {
-  const { state, dispatch } = useAppState()
+  const { state } = useAppState()
   // 1720 comes from the content width 1280 plus 2 * drawer width 210
   const matches = useMediaQuery('(min-width: 1720px)')
   const drawerWidth = 210
-
-  // read partition
-  const { data, refetch } = useQuery({
-    queryKey: ['formList'],
-    queryFn: () => getForumList(),
-    // catchTime: 60 * 1000,
-    // staleTime: 30 * 1000
-  })
-  useEffect(() => {
-    data &&
-      dispatch({
-        type: 'set forumList',
-        payload: data,
-      })
-  }, [data])
-  // Refresh forum list after signin change.
-  useEffect(() => {
-    refetch()
-  }, [state.user.uid])
 
   return (
     <>

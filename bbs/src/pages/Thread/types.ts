@@ -7,3 +7,5 @@ export interface PostDetailsByPostIdEx {
 export interface PostExtraDetailsEx extends PostExtraDetails {
   commentsRefresh?: number
 }
+
+export type ActionDialogType = 'reply' | 'edit' | 'comment' | undefined

@@ -1,5 +1,9 @@
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import {
+  LinkProps as ReactLinkProps,
+  Link as RouterLink,
+  To,
+} from 'react-router-dom'
 
 import {
   MenuItemProps,
@@ -7,12 +11,11 @@ import {
   LinkProps as MuiLinkProps,
 } from '@mui/material'
 
-export type LinkProps = MuiLinkProps & {
-  to?: string
-  preventScrollReset?: boolean
-  external?: boolean
-  state?: any
-}
+export type LinkProps = MuiLinkProps &
+  Omit<ReactLinkProps, 'to'> & {
+    external?: boolean
+    to?: To
+  }
 
 const Link = ({ to, external, ...other }: LinkProps) => {
   if (!to) {

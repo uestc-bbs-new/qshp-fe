@@ -1,18 +1,31 @@
-import { createTheme } from '@mui/material'
+import { createTheme, lighten } from '@mui/material'
 
-import baseComponent from './base'
+import baseComponent, { baseColors, baseTheme } from './base'
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    background: {
-      default: '#292e39',
-      paper: '#313742',
+const darkTheme = createTheme(
+  {
+    palette: {
+      mode: 'dark',
     },
   },
-  components: {
-    ...baseComponent,
-  },
-})
+  baseTheme,
+  {
+    palette: {
+      background: {
+        default: '#292e39',
+        paper: '#313742',
+      },
+    },
+    components: {
+      ...baseComponent,
+    },
+    typography: {
+      signinTitle: {
+        color: lighten(baseColors.signinTitle, 0.3),
+      },
+    },
+  }
+)
+console.log(darkTheme)
 
 export default darkTheme

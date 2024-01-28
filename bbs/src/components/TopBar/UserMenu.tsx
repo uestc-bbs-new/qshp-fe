@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   DarkMode,
   LightMode,
@@ -18,34 +20,43 @@ import {
 
 import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
-import { Theme, useAppState } from '@/states'
+import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
+import { persistedStates } from '@/utils/storage'
+import {
+  getSystemTheme,
+  getTextFromThemeSetting,
+  useSystemThemeChange,
+} from '@/utils/theme'
 
 import Avatar from '../Avatar'
 import { MenuItemLink } from '../Link'
 
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
+  const [themeSetting, setThemeSetting] = useState(persistedStates.theme)
+  const [systemTheme, setSystemTheme] = useState(getSystemTheme())
+  useSystemThemeChange((theme) => setSystemTheme(theme))
 
   const logout = async () => {
     await signOut()
     dispatch({ type: 'set user' })
   }
 
-  const themeChange = () => {
-    if (state.theme === 'light') {
+  const toggleTheme = () => {
+    const current = state.theme
+    if (themeSetting == 'auto' || current != systemTheme) {
+      persistedStates.theme = current == 'light' ? 'dark' : 'light'
       dispatch({
         type: 'set theme',
-        payload: 'dark' as Theme,
+        payload: persistedStates.theme,
       })
     } else {
-      dispatch({
-        type: 'set theme',
-        payload: 'light' as Theme,
-      })
+      persistedStates.theme = 'auto'
     }
+    setThemeSetting(persistedStates.theme)
   }
   return (
     <Box className="py-2">
@@ -68,15 +79,15 @@ const MenuContent = () => {
         淘帖
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem onClick={themeChange}>
+      <MenuItem onClick={toggleTheme}>
         <ListItemIcon>
           {state.theme === 'light' ? (
-            <DarkMode fontSize="small" />
-          ) : (
             <LightMode fontSize="small" />
+          ) : (
+            <DarkMode fontSize="small" />
           )}
         </ListItemIcon>
-        {state.theme === 'light' ? '暗黑' : 'light'}模式
+        {getTextFromThemeSetting(themeSetting)}
       </MenuItem>
       <Divider variant="middle" flexItem></Divider>
       <MenuItem>

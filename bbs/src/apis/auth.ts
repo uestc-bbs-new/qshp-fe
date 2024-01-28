@@ -1,5 +1,5 @@
 import { IdasAuthResult } from '@/common/interfaces/response'
-import { authService, commonUrl } from '@/utils/request'
+import { authService, authServiceWithUser, commonUrl } from '@/utils/request'
 
 const authUrl = `${commonUrl}/auth`
 
@@ -15,7 +15,7 @@ export const signIn = (params: {
   captcha_value?: string
   captcha_type?: string
 }) => {
-  return authService.post<string>(
+  return authServiceWithUser.post<string>(
     `${authUrl}/signin`,
     {
       username: params.username,
@@ -40,7 +40,7 @@ export const idasAuth = (params: {
   ticket: string
   signin?: boolean
 }) => {
-  return authService.post<IdasAuthResult>(`${authUrl}/idas`, params)
+  return authServiceWithUser.post<IdasAuthResult>(`${authUrl}/idas`, params)
 }
 
 export const idasChooseUser = (
@@ -48,11 +48,11 @@ export const idasChooseUser = (
     user_id: number
   }
 ) => {
-  return authService.post<string>(`${authUrl}/signin/user`, params)
+  return authServiceWithUser.post<string>(`${authUrl}/signin/user`, params)
 }
 
 export const idasFreshman = (params: EphemeralAuthorization) => {
-  return authService.post<string>(`${authUrl}/signin/freshman`, params)
+  return authServiceWithUser.post<string>(`${authUrl}/signin/freshman`, params)
 }
 
 export const checkUserName = (
@@ -71,7 +71,7 @@ export const register = (
     invitation?: string
   }
 ) => {
-  return authService.post<string>(`${authUrl}/register`, params)
+  return authServiceWithUser.post<string>(`${authUrl}/register`, params)
 }
 
 export const signOut = () => {
