@@ -84,9 +84,9 @@ const Floor = ({
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
   return (
-    <Box pt={1.75} pb={1}>
+    <Box className="min-h-40">
       <Stack direction="row">
-        <Box className="w-40 flex justify-center pr-4">
+        <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
           <UserCard item={post}>
             <div>
               <Avatar
@@ -103,7 +103,7 @@ const Floor = ({
 
           {/* <Typography  */}
         </Box>
-        <Box className="flex-1" minWidth="1em">
+        <Box className="flex-1 ml-6 pt-5" minWidth="1em">
           {post.position == 1 && !!post.is_first && (
             <PostSubject
               post={post}
