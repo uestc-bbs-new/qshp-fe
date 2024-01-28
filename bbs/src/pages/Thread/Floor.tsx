@@ -1,12 +1,13 @@
 import React from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Box, Stack, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 
 import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -83,8 +84,17 @@ const Floor = ({
     post.position == 1 && post.is_first
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
+
+  // 弹出框
+  const {
+    props: { open },
+    show,
+  } = useSnackbar(3000)
   return (
     <Box className="">
+      <CenteredSnackbar open={open} autoHideDuration={3000}>
+        <Alert severity="success">复制成功</Alert>
+      </CenteredSnackbar>
       <Stack direction="row">
         <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
           <UserCard item={post}>
@@ -137,6 +147,9 @@ const Floor = ({
                   navigator.clipboard.writeText(
                     `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
+                  console.log(666)
+
+                  show('')
                 }}
               >
                 分享
