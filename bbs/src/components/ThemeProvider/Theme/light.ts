@@ -1,21 +1,28 @@
 import { createTheme } from '@mui/material'
 
-import baseComponent from './base'
+import baseComponent, { baseTheme } from './base'
 
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-    background: {
-      default: '#f8faff',
-      paper: '#fff',
-    },
-    primary: {
-      main: '#2174f1',
+const lightTheme = createTheme(
+  {
+    palette: {
+      mode: 'light',
     },
   },
-  components: {
-    ...baseComponent,
-  },
-})
+  baseTheme,
+  {
+    palette: {
+      background: {
+        default: '#f8faff',
+        paper: '#fff',
+      },
+      primary: {
+        main: '#2174f1',
+      },
+    },
+    components: {
+      ...baseComponent,
+    },
+  }
+)
 
 export default lightTheme

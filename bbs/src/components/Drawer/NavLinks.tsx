@@ -16,7 +16,7 @@ import {
 
 import { Forum } from '@/common/interfaces/response'
 import Link from '@/components/Link'
-import { useAppState } from '@/states'
+import { useAppState, useForumList } from '@/states'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
@@ -128,40 +128,41 @@ const Ordinate = ({ data, isForum }: NavData<boolean>) => {
   )
 }
 
-const Sections = ({ data }: { data: Forum[] }) => {
+const Sections = () => {
+  const forumList = useForumList()
   return (
-    <>
-      {!data || data.length === 0 ? (
-        <List>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-          <ListItem>
-            <Skeleton className="w-full" height={32}></Skeleton>
-          </ListItem>
-        </List>
-      ) : (
-        <List style={{ color: '#7082a7' }}>
-          <Link to={pages.index()} underline="none" color="inherit">
-            <ListItemButton>
-              <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
-              <ListItemText>
-                <Typography color="inherit" className="font-bold">
-                  首页
-                </Typography>
-              </ListItemText>
-            </ListItemButton>
-          </Link>
-          <Ordinate data={listServiceItems} isForum={false} />
-          {data.map((item) => (
+    <List style={{ color: '#7082a7' }}>
+      <Link to={pages.index()} underline="none" color="inherit">
+        <ListItemButton>
+          <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
+          <ListItemText>
+            <Typography color="inherit" className="font-bold">
+              首页
+            </Typography>
+          </ListItemText>
+        </ListItemButton>
+      </Link>
+      <Ordinate data={listServiceItems} isForum={false} />
+      <>
+        {!forumList?.length ? (
+          <List>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+            <ListItem>
+              <Skeleton className="w-full" height={32}></Skeleton>
+            </ListItem>
+          </List>
+        ) : (
+          forumList.map((item) => (
             <Ordinate key={item.name} data={item} isForum={true} />
-          ))}
-        </List>
-      )}
-    </>
+          ))
+        )}
+      </>
+    </List>
   )
 }
 
@@ -171,7 +172,7 @@ const NavLinks = () => {
   return (
     <Box>
       <Toolbar />
-      <Sections data={state.forumList} />
+      <Sections />
     </Box>
   )
 }

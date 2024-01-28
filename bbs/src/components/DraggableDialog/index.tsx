@@ -12,8 +12,12 @@ import {
 
 const handleId = 'draggable-dialog-handle'
 
-const DialogPaper = (props: PaperProps) => (
+const DialogPaper = ({
+  disabled,
+  ...props
+}: PaperProps & { disabled?: boolean }) => (
   <Draggable
+    disabled={disabled}
     handle={`#${handleId}`}
     cancel={`[class*="MuiDialogContent-root"]`}
   >
@@ -31,12 +35,19 @@ const DraggableDialog = ({
   dialogTitle,
   dialogTitleProps,
   children,
+  fullScreen,
   ...props
 }: DialogProps & DraggableDialogProps) => (
-  <Dialog {...props} PaperComponent={DialogPaper} aria-labelledby={handleId}>
+  <Dialog
+    {...props}
+    fullScreen={fullScreen}
+    PaperComponent={DialogPaper}
+    PaperProps={fullScreen ? { disabled: true } : undefined}
+    aria-labelledby={handleId}
+  >
     <DialogTitle
       {...dialogTitleProps}
-      sx={{ ...dialogTitleProps?.sx, cursor: 'move' }}
+      sx={{ ...dialogTitleProps?.sx, ...(!fullScreen && { cursor: 'move' }) }}
       id={handleId}
     >
       {dialogTitle}

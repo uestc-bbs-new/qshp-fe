@@ -1,3 +1,5 @@
+import { ThemeOptions } from '@mui/material'
+
 const rootElement = document.getElementById('root')
 
 const baseComponent = {
@@ -23,6 +25,34 @@ const baseComponent = {
   MuiDialog: {
     defaultProps: {
       container: rootElement,
+    },
+  },
+}
+
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    signinTitle: React.CSSProperties
+  }
+  interface TypographyVariantsOptions {
+    signinTitle?: React.CSSProperties
+  }
+}
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    signinTitle: true
+  }
+}
+
+export const baseColors = {
+  signinTitle: '#0268FD',
+}
+
+export const baseTheme: ThemeOptions = {
+  typography: {
+    signinTitle: {
+      fontSize: 36,
+      fontWeight: 400,
+      color: baseColors.signinTitle,
     },
   },
 }

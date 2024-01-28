@@ -9,11 +9,11 @@ import {
   Divider,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/response'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
 import Separated from '@/components/Separated'
 
 type HeadProps = {
@@ -22,19 +22,19 @@ type HeadProps = {
 
 const Head = ({ data }: HeadProps) => {
   const [isHeadOpen, setHeadOpen] = useState(true)
-  const theme = useTheme()
-  const handleClick = () => {
-    setHeadOpen(!isHeadOpen)
-  }
   const moderators = data?.moderators || []
   return (
     <>
       <Accordion defaultExpanded disableGutters>
         <AccordionSummary
           expandIcon={<ExpandMore />}
-          sx={{
-            backgroundImage:
-              'linear-gradient(90deg, rgb(210, 226, 253), rgb(255, 255, 255))',
+          sx={(theme) => {
+            const light = theme.palette.mode == 'light'
+            return {
+              backgroundImage: `linear-gradient(90deg, ${
+                light ? 'rgb(210, 226, 253)' : '#083687'
+              }, ${light ? 'rgb(255, 255, 255)' : '#659af6'})`,
+            }
           }}
         >
           <Box>
@@ -85,10 +85,7 @@ const Head = ({ data }: HeadProps) => {
         </AccordionSummary>
         {!!data?.announcement && (
           <AccordionDetails>
-            <Typography
-              dangerouslySetInnerHTML={{ __html: data?.announcement }}
-            />
-            {/* <ParsePost></ParsePost> */}
+            <UserHtmlRenderer html={data?.announcement} />
           </AccordionDetails>
         )}
       </Accordion>

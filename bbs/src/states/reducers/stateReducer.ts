@@ -1,4 +1,4 @@
-import { Forum, ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/response'
 
 import { guestUser } from '..'
 
@@ -29,7 +29,6 @@ type LoginDialogState = {
 
 export type State = {
   drawer: boolean
-  forumList: Forum[]
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
   activeForum?: ForumDetails
@@ -68,8 +67,6 @@ export const stateReducer = (state: State, action: StateAction): State => {
       }
       return state
     }
-    case 'set forumList':
-      return { ...state, forumList: action.payload }
     case 'set theme':
       return { ...state, theme: action.payload }
     case 'set drawer':

@@ -26,7 +26,7 @@ const Chip = ({ text, size, type = 'threadType', className }: Props) => {
         py={{ small: 0.15, medium: 0.15, large: 0.5 }[size2]}
         variant="subtitle2"
         fontSize={typographyFontSize}
-        sx={{ color: chipColor('text', type) }}
+        sx={(theme) => ({ color: chipColor('text', type, theme.palette.mode) })}
       >
         {text}
       </Typography>

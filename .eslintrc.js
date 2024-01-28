@@ -39,5 +39,6 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    'react/no-unknown-property': ['error', { ignore: ['css'] }],
   },
 }

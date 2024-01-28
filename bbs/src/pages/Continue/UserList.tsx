@@ -30,7 +30,7 @@ const UserList = ({
 }) => (
   <List>
     {idasResult.users?.map((user, index) => (
-      <ListItem key={index}>
+      <ListItem disableGutters key={index}>
         <ListItemButton disabled={disabled} onClick={() => onSignIn(user.uid)}>
           <ListItemIcon>
             <Avatar uid={user.uid} variant="rounded" />
@@ -42,7 +42,7 @@ const UserList = ({
       </ListItem>
     ))}
     {showRegister && (
-      <ListItem key="new">
+      <ListItem disableGutters key="new">
         <ListItemButton disabled={disabled} onClick={onRegister}>
           <ListItemIcon>
             <MuiAvatar variant="rounded">
