@@ -10,7 +10,7 @@ export const CenteredSnackbar = (props: SnackbarProps) => (
   />
 )
 
-export const useSnackbar = () => {
+export const useSnackbar = (delay?: number) => {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -20,6 +20,12 @@ export const useSnackbar = () => {
     show: (message: string) => {
       setMessage(message)
       setOpen(true)
+      if (delay) {
+        const timer = setTimeout(() => {
+          setOpen(false)
+          // timer = null
+        }, delay)
+      }
     },
   }
 }
