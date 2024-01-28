@@ -84,7 +84,7 @@ const Floor = ({
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
   return (
-    <Box className="min-h-40">
+    <Box className="">
       <Stack direction="row">
         <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
           <UserCard item={post}>
