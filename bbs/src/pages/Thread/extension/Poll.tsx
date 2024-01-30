@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 
 import {
   Alert,
+  Box,
   Button,
   Checkbox,
   FormControlLabel,
@@ -144,7 +145,8 @@ const PollOptionsContainer = ({
 }: {
   poll: ThreadPollDetails
   children: React.ReactNode
-}) => (poll.multiple ? <>{children}</> : <RadioGroup>{children}</RadioGroup>)
+}) =>
+  poll.multiple ? <Box>{children}</Box> : <RadioGroup>{children}</RadioGroup>
 
 const PollOption = ({
   poll,
