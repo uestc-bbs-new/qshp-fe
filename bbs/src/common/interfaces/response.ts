@@ -95,22 +95,33 @@ export type Thread = ThreadBasics & {
 }
 
 export type ThreadPollDetails = {
+  /** 投票选项 */
   options: ThreadPollOption[]
+  /** 当前用户选择的投票选项 ID */
   selected_options: number[]
+  /** 公开投票参与人 */
   show_voters: boolean
+  /** 是否为多选投票 */
   multiple: boolean
+  /** 投票后结果可见 */
   visible: boolean
+  /** 最多选择几项 */
   max_choices: number
+  /** 是否为图片投票（目前暂不支持） */
   is_image: boolean
   /** 投票过期时间。获取帖子信息与编辑投票时，该字段的值为过期时间的时间戳；发表投票
    * 时，应当设置为投票有效期（过期时间戳 - 当前时间戳）。*/
   expiration: number
+  /** 投票参与人数 */
   voter_count: number
 }
 
 export type ThreadPollOption = {
+  /** 投票选项 ID */
   id: number
+  /** 文字 */
   text: string
+  /** 票数 */
   votes?: number
   voters?: number[]
 }
