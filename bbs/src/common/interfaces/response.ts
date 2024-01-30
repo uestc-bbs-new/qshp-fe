@@ -102,6 +102,8 @@ export type ThreadPollDetails = {
   visible: boolean
   max_choices: number
   is_image: boolean
+  /** 投票过期时间。获取帖子信息与编辑投票时，该字段的值为过期时间的时间戳；发表投票
+   * 时，应当设置为投票有效期（过期时间戳 - 当前时间戳）。*/
   expiration: number
   voter_count: number
 }
