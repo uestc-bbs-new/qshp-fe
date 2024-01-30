@@ -27,6 +27,9 @@ const EditOrReply = ({
       ...(threadDetails && {
         type_id: threadDetails.type_id,
       }),
+      ...(threadDetails?.poll && {
+        poll: threadDetails.poll,
+      }),
       editingThread: post.position == 1 && post.is_first == 1,
     }
   }
