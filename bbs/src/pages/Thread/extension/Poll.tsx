@@ -4,7 +4,6 @@ import {
   Alert,
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -199,29 +198,25 @@ const PollOption = ({
       ) : (
         <Typography my={1}>{label}</Typography>
       )}
-      {option.votes == undefined ? (
-        <Divider />
-      ) : (
-        <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center">
+        <div
+          style={{
+            ...barStyle,
+            backgroundColor: '#F5F6F7',
+            width: '500px',
+          }}
+        >
           <div
             style={{
               ...barStyle,
-              backgroundColor: '#F5F6F7',
-              width: '500px',
+              backgroundColor: color,
+              width: `${percentage}%`,
             }}
-          >
-            <div
-              style={{
-                ...barStyle,
-                backgroundColor: color,
-                width: `${percentage}%`,
-              }}
-            ></div>
-          </div>
-          <Typography mx={1}>{percentage.toFixed(1)}%</Typography>
-          <Typography sx={{ color }}>({option.votes})</Typography>
-        </Stack>
-      )}
+          ></div>
+        </div>
+        <Typography mx={1}>{percentage.toFixed(1)}%</Typography>
+        <Typography sx={{ color }}>({option.votes || 0})</Typography>
+      </Stack>
     </>
   )
 }
