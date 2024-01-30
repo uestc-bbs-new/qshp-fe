@@ -123,6 +123,8 @@ export type ThreadPollOption = {
   text: string
   /** 票数 */
   votes?: number
+  /** 显示顺序 */
+  display_order: number
   voters?: number[]
 }
 
