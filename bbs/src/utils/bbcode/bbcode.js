@@ -171,8 +171,8 @@ function parsetable(width, bgcolor, str) {
             ? width
             : '98%'
           : width <= 560
-          ? width
-          : '98%'
+            ? width
+            : '98%'
     } catch (e) {
       width = ''
     }
@@ -276,8 +276,8 @@ function preg_replace(search, replace, str, regswitch) {
       typeof replace == 'string'
         ? replace
         : replace[i]
-        ? replace[i]
-        : replace[0]
+          ? replace[i]
+          : replace[0]
     )
   }
   return str
