@@ -260,6 +260,32 @@ export interface UserInfos {
   prestiges: number
 }
 
+export interface Settings {
+  profile?: SettingsProfile
+  privacy?: SettingsPrivacy
+  security?: SettingsSecurity
+}
+
+export interface SettingsProfile {
+  username: string
+  introduction: string
+  introductionprivacy: number
+  title: string
+  sign: string
+}
+
+export interface SettingsPrivacy {
+  friendslistprivacy: number
+  messageboardprivacy: number
+}
+
+export interface SettingsSecurity {
+  password: string
+  email: string
+  securityquestion: string
+  securityanswer: string
+}
+
 export type ForumCommon = {
   fid: number
   name: string
