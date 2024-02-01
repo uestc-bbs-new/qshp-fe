@@ -91,9 +91,9 @@ const Floor = ({
     show,
   } = useSnackbar()
   return (
-    <Box className="">
+    <Box pb={1}>
       <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
-        <Alert severity="success">复制成功</Alert>
+        <Alert severity="success">链接复制成功</Alert>
       </CenteredSnackbar>
       <Stack direction="row">
         <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
