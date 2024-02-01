@@ -1,12 +1,13 @@
 import React from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Box, Stack, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 
 import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -83,10 +84,19 @@ const Floor = ({
     post.position == 1 && post.is_first
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
+
+  // 弹出框
+  const {
+    props: { open, onClose },
+    show,
+  } = useSnackbar()
   return (
-    <Box pt={1.75} pb={1}>
+    <Box className="">
+      <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
+        <Alert severity="success">复制成功</Alert>
+      </CenteredSnackbar>
       <Stack direction="row">
-        <Box className="w-40 flex justify-center pr-4">
+        <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
           <UserCard item={post}>
             <div>
               <Avatar
@@ -103,7 +113,7 @@ const Floor = ({
 
           {/* <Typography  */}
         </Box>
-        <Box className="flex-1" minWidth="1em">
+        <Box className="flex-1 ml-6 pt-5" minWidth="1em">
           {post.position == 1 && !!post.is_first && (
             <PostSubject
               post={post}
@@ -137,6 +147,7 @@ const Floor = ({
                   navigator.clipboard.writeText(
                     `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
+                  show('')
                 }}
               >
                 分享
