@@ -169,7 +169,7 @@ export interface PostAuthorDetails {
   digests: number
   credits: number
   ext_credits: ExtCreditMap
-  medals: number[]
+  medals?: number[]
   online_time: number
   register_time: number
   last_visit: number

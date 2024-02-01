@@ -1,7 +1,15 @@
 import React from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography, css } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Typography,
+  css,
+} from '@mui/material'
 
 import {
   ForumDetails,
@@ -15,6 +23,7 @@ import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
+import { useMedals } from '@/states/settings'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
@@ -277,6 +286,9 @@ const AuthorDetails = ({
           />
         </Box>
       )}
+      {!!authorDetails.medals?.length && (
+        <Medals medals={authorDetails.medals} />
+      )}
     </>
   ) : (
     <Typography>（该用户已删除）</Typography>
@@ -299,5 +311,24 @@ const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
   ) : (
     <></>
   )
+
+const Medals = ({ medals }: { medals?: number[] }) => {
+  const { medalMap } = useMedals()
+  return medalMap ? (
+    <Stack direction="row" flexWrap="wrap">
+      {medals?.map((id, index) => (
+        <Tooltip key={index} title={medalMap[id]?.name}>
+          <img
+            src={`${siteRoot}/static/image/common/${medalMap[id]?.image_path}`}
+            loading="lazy"
+            css={css({ margin: '0.25em 0.15em' })}
+          />
+        </Tooltip>
+      ))}
+    </Stack>
+  ) : (
+    <Skeleton />
+  )
+}
 
 export default Floor
