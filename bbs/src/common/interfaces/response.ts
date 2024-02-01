@@ -156,38 +156,46 @@ export interface PostDetails {
   rows: PostFloor[]
 }
 
+export type ExtCreditName = '水滴' | '威望' | '奖励券'
+export type ExtCreditMap = { [name in ExtCreditName]?: number }
+export interface PostAuthorDetails {
+  group_id: number
+  group_title: string
+  group_subtitle?: string
+  group_icon?: string
+  level_id: number
+  custom_title?: string
+  posts: number
+  digests: number
+  ext_credits: ExtCreditMap
+  medals: number[]
+  online_time: number
+  register_time: number
+  last_visit: number
+  signature?: string
+  signature_format?: string
+}
+
 export interface PostFloor {
   post_id: number
-  forum_id: number
   thread_id: number
+  forum_id: number
   position: number
   is_first: number
-  subject: string
-  support: number
-  oppose: number
-  message: string
   dateline: number
-  is_anonymous: number
-  usesig: number
+  subject: string
+  message: string
   format: number
-  smileyoff: number
-  parseurloff: number
-  lastedit_id: number
   author: string
   author_id: number
-  user_group: number
-  admin_group: number
-  credits: number
-  droplets: number
-  prestiges: number
-  essences: number
-  medals: number[]
-  friends: number
-  sign: string
-  title: string
-  online_time: number
-  registered_at: number
-  last_login_at: number
+  author_details?: PostAuthorDetails
+  support: number
+  oppose: number
+  is_anonymous: number
+  usesig: number
+  smileyoff: number
+  lastedit_id: number
+
   pinned?: boolean
   blocked?: boolean
   warned?: boolean
