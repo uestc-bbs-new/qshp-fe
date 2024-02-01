@@ -1,9 +1,14 @@
 import React from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography, css } from '@mui/material'
 
-import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  PostAuthorDetails,
+  PostFloor,
+  Thread,
+} from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
@@ -11,6 +16,7 @@ import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
@@ -91,29 +97,36 @@ const Floor = ({
     show,
   } = useSnackbar()
   return (
-    <Box pb={1}>
+    <Box>
       <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
         <Alert severity="success">链接复制成功</Alert>
       </CenteredSnackbar>
       <Stack direction="row">
-        <Box className="w-40 flex justify-center pt-5 bg-[#D5E1FB]">
+        <Stack
+          sx={(theme) => ({
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#D2E2FD' : '#42516d',
+          })}
+          width={192}
+          px={2}
+          py={2}
+        >
           <UserCard item={post}>
-            <div>
+            <Link to={pages.user({ uid: post.author_id })} underline="hover">
               <Avatar
                 className="m-auto"
                 uid={post.is_anonymous ? 0 : post.author_id}
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
               />
-              <div className="text-center text-blue-500">
+              <Typography variant="authorName" mt={0.5} component="p">
                 {post.is_anonymous ? '匿名' : post.author}
-              </div>
-            </div>
+              </Typography>
+            </Link>
           </UserCard>
-
-          {/* <Typography  */}
-        </Box>
-        <Box className="flex-1 ml-6 pt-5" minWidth="1em">
+          <AuthorDetails authorDetails={post.author_details} />
+        </Stack>
+        <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
           {post.position == 1 && !!post.is_first && (
             <PostSubject
               post={post}
@@ -206,6 +219,7 @@ const Floor = ({
               />
             )}
           </PostExtraDetailsContainer>
+          <Box flexGrow={1} />
           <Footer
             forumDetails={forumDetails}
             threadDetails={threadDetails}
@@ -214,10 +228,52 @@ const Floor = ({
             onComment={() => onComment(post)}
             onEdit={() => onEdit(post)}
           />
-        </Box>
+        </Stack>
       </Stack>
     </Box>
   )
 }
+
+const AuthorDetails = ({
+  authorDetails,
+}: {
+  authorDetails?: PostAuthorDetails
+}) =>
+  authorDetails ? (
+    <>
+      {authorDetails.custom_title && (
+        <Typography variant="authorCustomTitle" component="p">
+          {authorDetails.custom_title}
+        </Typography>
+      )}
+      <Stack alignItems="flex-start" mt={0.85}>
+        <Box>
+          <Typography variant="authorGroupTitle">
+            <Typography variant="authorGroupTitlePrompt">级别：</Typography>
+            {authorDetails.group_title}
+          </Typography>
+          {authorDetails.group_subtitle && (
+            <Typography
+              variant="authorGroupSubtitle"
+              textAlign="right"
+              component="p"
+            >
+              ( {authorDetails.group_subtitle} )
+            </Typography>
+          )}
+        </Box>
+      </Stack>
+      {authorDetails.group_icon && (
+        <Box>
+          <img
+            src={`${siteRoot}/${authorDetails.group_icon}`}
+            css={css({ display: 'block', maxWidth: '100%' })}
+          />
+        </Box>
+      )}
+    </>
+  ) : (
+    <Typography>（该用户已删除）</Typography>
+  )
 
 export default Floor

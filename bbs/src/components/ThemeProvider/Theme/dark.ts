@@ -23,6 +23,21 @@ const darkTheme = createTheme(
       signinTitle: {
         color: lighten(baseColors.signinTitle, 0.3),
       },
+      authorCustomTitle: {
+        color: lighten(baseColors.authorCustomTitle, 0.3),
+      },
+      authorGroupTitle: {
+        color: lighten(baseColors.authorGroupTitle, 0.9),
+      },
+      authorGroupTitlePrompt: {
+        color: lighten(baseColors.authorGroupTitlePrompt, 0.2),
+      },
+      authorGroupSubtitle: {
+        color: lighten(baseColors.authorGroupSubtitle, 0.3),
+      },
+      userCardName: {
+        color: '#ffffff',
+      },
     },
   }
 )

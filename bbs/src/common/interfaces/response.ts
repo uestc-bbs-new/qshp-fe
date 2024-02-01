@@ -167,6 +167,7 @@ export interface PostAuthorDetails {
   custom_title?: string
   posts: number
   digests: number
+  credits: number
   ext_credits: ExtCreditMap
   medals: number[]
   online_time: number
