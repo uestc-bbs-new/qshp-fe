@@ -12,6 +12,7 @@ import {
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
 import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import { chineseTime } from '@/utils/dayjs'
@@ -220,6 +221,11 @@ const Floor = ({
             )}
           </PostExtraDetailsContainer>
           <Box flexGrow={1} />
+          {post.usesig &&
+            post.author_details?.signature &&
+            post.message.length > 60 && (
+              <Signature authorDetails={post.author_details} />
+            )}
           <Footer
             forumDetails={forumDetails}
             threadDetails={threadDetails}
@@ -274,6 +280,24 @@ const AuthorDetails = ({
     </>
   ) : (
     <Typography>（该用户已删除）</Typography>
+  )
+
+const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
+  authorDetails.signature && authorDetails.signature_format == 'html' ? (
+    <Stack>
+      <Stack direction="row" alignItems="center" fontSize={12} pt={2} pb={0.25}>
+        <Typography color="#7fcce5" fontSize={10} mr={0.5}>
+          SIGNATURE
+        </Typography>
+        <Box sx={{ borderTop: '1px dashed #cccccc' }} flexGrow={1} />
+        <Box flexGrow={1} />
+      </Stack>
+      <Box maxHeight={120} overflow="hidden">
+        <UserHtmlRenderer html={authorDetails.signature} />
+      </Box>
+    </Stack>
+  ) : (
+    <></>
   )
 
 export default Floor
