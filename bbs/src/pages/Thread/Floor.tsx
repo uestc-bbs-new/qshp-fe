@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
 import {
@@ -122,19 +122,23 @@ const Floor = ({
           py={2}
         >
           <UserCard item={post}>
-            <Link to={pages.user({ uid: post.author_id })} underline="hover">
+            <AuthorLink post={post}>
               <Avatar
                 className="m-auto"
-                uid={post.is_anonymous ? 0 : post.author_id}
+                uid={
+                  post.is_anonymous || !post.author_details ? 0 : post.author_id
+                }
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
               />
               <Typography variant="authorName" mt={0.5} component="p">
                 {post.is_anonymous ? '匿名' : post.author}
               </Typography>
-            </Link>
+            </AuthorLink>
           </UserCard>
-          <AuthorDetails authorDetails={post.author_details} />
+          {!!post.author_id && (
+            <AuthorDetails authorDetails={post.author_details} />
+          )}
         </Stack>
         <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
           {post.position == 1 && !!post.is_first && (
@@ -249,6 +253,21 @@ const Floor = ({
   )
 }
 
+const AuthorLink = ({
+  post,
+  children,
+}: {
+  post: PostFloor
+  children?: ReactNode
+}) =>
+  post.author_id && post.author_details ? (
+    <Link to={pages.user({ uid: post.author_id })} underline="hover">
+      {children}
+    </Link>
+  ) : (
+    <Box>{children}</Box>
+  )
+
 const AuthorDetails = ({
   authorDetails,
 }: {
@@ -291,7 +310,9 @@ const AuthorDetails = ({
       )}
     </>
   ) : (
-    <Typography>（该用户已删除）</Typography>
+    <Typography variant="authorGroupSubtitle" textAlign="center">
+      （该用户已删除）
+    </Typography>
   )
 
 const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
