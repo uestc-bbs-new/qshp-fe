@@ -21,7 +21,7 @@ const darkTheme = createTheme(
     },
     typography: {
       signinTitle: {
-        color: lighten(baseColors.signinTitle, 0.3),
+        color: '#3B8AFF',
       },
       authorCustomTitle: {
         color: lighten(baseColors.authorCustomTitle, 0.3),
