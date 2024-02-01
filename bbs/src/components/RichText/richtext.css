@@ -8,9 +8,18 @@
   color: #3A71F2;
 }
 
+.post-signature a {
+  color: #666666;
+  text-decoration: none;
+}
+
 .rich-text-theme-dark a,
 .rich-text-theme-dark .vditor-reset a {
   color: #90caf9;
+}
+
+.post-signature .rich-text-theme-dark a {
+  color: #dddddd;
 }
 
 .rich-text-content img,

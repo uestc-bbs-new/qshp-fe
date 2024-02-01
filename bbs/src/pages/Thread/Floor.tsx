@@ -221,7 +221,7 @@ const Floor = ({
             )}
           </PostExtraDetailsContainer>
           <Box flexGrow={1} />
-          {post.usesig &&
+          {!!post.usesig &&
             post.author_details?.signature &&
             post.message.length > 60 && (
               <Signature authorDetails={post.author_details} />
@@ -292,7 +292,7 @@ const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
         <Box sx={{ borderTop: '1px dashed #cccccc' }} flexGrow={1} />
         <Box flexGrow={1} />
       </Stack>
-      <Box maxHeight={120} overflow="hidden">
+      <Box maxHeight={120} overflow="hidden" className="post-signature">
         <UserHtmlRenderer html={authorDetails.signature} />
       </Box>
     </Stack>
