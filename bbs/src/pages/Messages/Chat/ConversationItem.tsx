@@ -77,7 +77,7 @@ const ChatAvatar = ({
         <Groups />
       </MuiAvatar>
     ) : (
-      <Avatar variant="rounded" uid={chat.to_uid} />
+      <Avatar uid={chat.to_uid} />
     )
   return !summary && chat.unread ? (
     <Badge color="warning" variant="dot">

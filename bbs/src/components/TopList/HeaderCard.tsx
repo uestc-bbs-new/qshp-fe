@@ -32,12 +32,7 @@ const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
           <Stack key={index} direction="row" sx={{ my: 0.5 }}>
             <Box className="p-1">
               <Box sx={{ mx: 1 }}>
-                <Avatar
-                  alt={thread.author}
-                  uid={thread.author_id}
-                  sx={{ width: 35, height: 35 }}
-                  variant="rounded"
-                />
+                <Avatar alt={thread.author} uid={thread.author_id} size={35} />
               </Box>
             </Box>
             <Box className="flex-1" minWidth="1em" mr={2}>

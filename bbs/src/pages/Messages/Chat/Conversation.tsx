@@ -219,7 +219,7 @@ const Conversation = ({
               }}
             >
               {item.author_id != state.user.uid && (
-                <Avatar variant="rounded" uid={item.author_id} />
+                <Avatar uid={item.author_id} />
               )}
               <Stack mx={1} maxWidth="70%">
                 <Typography
@@ -244,7 +244,7 @@ const Conversation = ({
                 </Paper>
               </Stack>
               {item.author_id == state.user.uid && (
-                <Avatar variant="rounded" uid={item.author_id} />
+                <Avatar uid={item.author_id} />
               )}
             </ListItem>
           ))}

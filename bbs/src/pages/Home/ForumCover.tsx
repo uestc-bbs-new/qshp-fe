@@ -72,8 +72,7 @@ const ForumCover = ({ data }: ForumData) => {
               <Avatar
                 alt={data.latest_thread?.lastpost_author}
                 uid={data.latest_thread?.lastpost_authorid}
-                sx={{ width: 40, height: 40 }}
-                variant="rounded"
+                size={40}
               />
             </Box>
           )}

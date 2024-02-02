@@ -35,11 +35,7 @@ const Profile = () => {
             </Typography>
             <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>头像</Typography>
-              <Avatar
-                uid={0}
-                sx={{ width: 100, height: 100 }}
-                variant="rounded"
-              />
+              <Avatar uid={0} size={100} />
             </Stack>
             <Stack direction="row" alignItems="center">
               <Typography sx={{ width: 100 }}>昵称</Typography>

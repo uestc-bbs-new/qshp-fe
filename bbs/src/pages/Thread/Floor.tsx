@@ -128,8 +128,7 @@ const Floor = ({
                 uid={
                   post.is_anonymous || !post.author_details ? 0 : post.author_id
                 }
-                sx={{ width: 48, height: 48 }}
-                variant="rounded"
+                size={48}
               />
               <Typography variant="authorName" mt={0.5} component="p">
                 {post.is_anonymous ? '匿名' : post.author}

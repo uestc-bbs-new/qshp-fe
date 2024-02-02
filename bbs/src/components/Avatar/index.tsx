@@ -15,20 +15,25 @@ const transform = (size: string | undefined, uid: number) => {
 
 type AvatarProps = MuiProps & {
   uid: number
-  size?: string
+  size?: number
+  imageSize?: string
 }
 // set default avatar due to mui avatar fallbacks
-const Avatar = ({ uid, size, alt, sx, ...other }: AvatarProps) => {
-  const src = uid ? transform(size, uid) : anonymousAvatar
+const Avatar = ({ uid, size, imageSize, alt, sx, ...other }: AvatarProps) => {
+  const src = uid ? transform(imageSize, uid) : anonymousAvatar
+  const commonProps = {
+    alt,
+    sx: { ...(size && { width: size, height: size }), ...sx },
+  }
   return (
     <MuiAvatar
       imgProps={{ loading: 'lazy' }}
-      alt={alt}
       src={src}
-      sx={sx}
+      {...commonProps}
+      variant="rounded"
       {...other}
     >
-      <MuiAvatar alt={alt} src={defaultAvatar} sx={sx} {...other} />
+      <MuiAvatar src={defaultAvatar} {...commonProps} {...other} />
     </MuiAvatar>
   )
 }

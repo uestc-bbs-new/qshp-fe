@@ -45,12 +45,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
       >
         <Stack direction="row">
           <Box sx={{ mr: 2 }}>
-            <Avatar
-              alt={data.author}
-              uid={data.author_id}
-              sx={{ width: 54, height: 54 }}
-              variant="rounded"
-            />
+            <Avatar alt={data.author} uid={data.author_id} size={54} />
           </Box>
           <Box className="flex-1">
             <Stack
@@ -183,12 +178,7 @@ export const ThreadItemLite = ({
   return (
     <Box px={0.25} py={0.5}>
       <Stack direction="row" alignItems="center">
-        <Avatar
-          alt={item.author}
-          uid={item.author_id}
-          sx={{ width: 30, height: 30 }}
-          variant="rounded"
-        />
+        <Avatar alt={item.author} uid={item.author_id} size={30} />
         <Link
           to={pages.thread(item.thread_id)}
           {...(fromTopList && { state: { fromTopList } })}

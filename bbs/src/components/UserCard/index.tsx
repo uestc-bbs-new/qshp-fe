@@ -62,8 +62,7 @@ const Cover = ({
             uid={item.author_id}
             alt="avatar"
             className="mr-4"
-            sx={{ width: 100, height: 100 }}
-            variant="rounded"
+            size={100}
           />
           <Box className="flex-1">
             <Typography variant="userCardName" className="ml-4">
