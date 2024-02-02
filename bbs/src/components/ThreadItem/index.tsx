@@ -22,12 +22,6 @@ import Avatar from '../Avatar'
 import Link from '../Link'
 import Separated from '../Separated'
 
-type PostProps = {
-  data: Thread
-  className?: string
-  forumDetails?: ForumDetails
-}
-
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
     const formattedNum = (num / 1000).toFixed(1) + 'K'
@@ -39,7 +33,19 @@ const formatNumber = (num: number) => {
   return num
 }
 
-const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
+type ThreadItemProps = {
+  data: Thread
+  className?: string
+  forumDetails?: ForumDetails
+  showSummary?: boolean
+}
+
+const ThreadItem = ({
+  data,
+  className,
+  forumDetails,
+  showSummary,
+}: ThreadItemProps) => {
   const theme = useTheme()
 
   return (
@@ -52,7 +58,11 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
       >
         <Stack direction="row">
           <Box sx={{ mr: 2 }}>
-            <Avatar alt={data.author} uid={data.author_id} size={48} />
+            <Avatar
+              alt={data.author}
+              uid={data.author_id}
+              size={showSummary ? 40 : 48}
+            />
           </Box>
           <Box className="flex-1">
             <Stack
@@ -68,33 +78,36 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                       text={forumDetails?.thread_types_map[data.type_id].name}
                     />
                   )}
-                <Stack direction="row" alignItems="center">
-                  <Link
-                    to={pages.thread(data.thread_id)}
-                    color="inherit"
-                    underline="hover"
-                    className="line-clamp-2"
+                <Link
+                  to={pages.thread(data.thread_id)}
+                  color="inherit"
+                  underline="hover"
+                  className="line-clamp-2"
+                >
+                  <Typography
+                    textAlign="justify"
+                    variant="threadItemSubject"
+                    style={{
+                      color: data.highlight_color,
+                      backgroundColor: data.highlight_bgcolor,
+                      fontWeight: data.highlight_bold ? 'bold' : undefined,
+                      fontStyle: data.highlight_italic ? 'italic' : undefined,
+                      textDecoration: data.highlight_underline
+                        ? 'underline'
+                        : undefined,
+                    }}
                   >
-                    <Typography
-                      textAlign="justify"
-                      variant="threadItemSubject"
-                      style={{
-                        color: data.highlight_color,
-                        backgroundColor: data.highlight_bgcolor,
-                        fontWeight: data.highlight_bold ? 'bold' : undefined,
-                        fontStyle: data.highlight_italic ? 'italic' : undefined,
-                        textDecoration: data.highlight_underline
-                          ? 'underline'
-                          : undefined,
-                      }}
-                    >
-                      {data.subject}
-                    </Typography>
-                  </Link>
-                  <ThreadExtraLabels thread={data} />
-                </Stack>
+                    {data.subject}
+                  </Typography>
+                </Link>
+                <ThreadExtraLabels thread={data} />
               </Stack>
-              <Stack direction="row" alignItems="center" className="text-sm">
+              {showSummary && (
+                <Typography variant="threadItemSummary" mb={0.5}>
+                  {data.summary}
+                </Typography>
+              )}
+              <Stack direction="row" alignItems="center">
                 <Typography variant="threadItemAuthor">
                   <Separated
                     separator={
@@ -121,8 +134,8 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
               </Stack>
             </Stack>
           </Box>
-          <Box>
-            <Stack direction="row" justifyContent="flex-end" mb={0.75}>
+          <Stack justifyContent="space-between">
+            <Stack direction="row" justifyContent="flex-end">
               <Typography variant="threadItemStat">
                 <Separated
                   separator={
@@ -163,7 +176,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                 </Separated>
               </Typography>
             </Stack>
-          </Box>
+          </Stack>
         </Stack>
       </Box>
       <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />

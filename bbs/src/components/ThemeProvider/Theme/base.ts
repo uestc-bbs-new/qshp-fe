@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material'
+import { ThemeOptions, lighten } from '@mui/material'
 
 const rootElement = document.getElementById('root')
 
@@ -98,6 +98,7 @@ declare module '@mui/material/styles' {
     threadItemAuthor: React.CSSProperties
     threadItemAuthorLink: React.CSSProperties
     threadItemSubject: React.CSSProperties
+    threadItemSummary: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -111,6 +112,7 @@ declare module '@mui/material/styles' {
     threadItemAuthor?: React.CSSProperties
     threadItemAuthorLink?: React.CSSProperties
     threadItemSubject?: React.CSSProperties
+    threadItemSummary?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -126,6 +128,7 @@ declare module '@mui/material/Typography' {
     threadItemAuthor: true
     threadItemAuthorLink: true
     threadItemSubject: true
+    threadItemSummary: true
   }
 }
 
@@ -195,6 +198,10 @@ export const baseTheme: ThemeOptions = {
       color: '#303133',
       fontWeight: 500,
       fontSize: 16,
+    },
+    threadItemSummary: {
+      color: lighten('#303133', 0.3),
+      fontSize: 14,
     },
   },
 }
