@@ -1,4 +1,4 @@
-import { ThemeOptions, lighten } from '@mui/material'
+import { ThemeOptions } from '@mui/material'
 
 const rootElement = document.getElementById('root')
 
@@ -182,10 +182,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: 15,
       fontWeight: 'bold',
     },
-    threadItemStat: {
-      color: '#606266',
-      fontSize: 14,
-    },
     threadItemAuthor: {
       color: '#A1ADC5',
       fontSize: 14,
@@ -200,7 +196,11 @@ export const baseTheme: ThemeOptions = {
       fontSize: 16,
     },
     threadItemSummary: {
-      color: lighten('#303133', 0.3),
+      color: '#606266',
+      fontSize: 14,
+    },
+    threadItemStat: {
+      color: '#606266',
       fontSize: 14,
     },
   },
