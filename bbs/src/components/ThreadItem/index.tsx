@@ -1,9 +1,4 @@
-import {
-  ModeCommentOutlined,
-  Poll,
-  RemoveRedEyeOutlined,
-  ThumbUpAltOutlined,
-} from '@mui/icons-material'
+import { Poll } from '@mui/icons-material'
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 
 import {
@@ -18,6 +13,7 @@ import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
+import Separated from '../Separated'
 
 type PostProps = {
   data: Thread
@@ -101,66 +97,78 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                 </Link>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
-                <Link color="#3A71F2">{data.author}</Link>
-                {/* <UserCard uid={data.author_id}>
-                  <Link color="inherit">{data.author}</Link>
-                </UserCard> */}
-                <Typography fontSize="inherit" className="pl-1" color="grey">
-                  {`· ${chineseTime(data.dateline * 1000)}`}
+                <Typography variant="threadItemAuthor">
+                  <Separated
+                    separator={
+                      <Typography component="span" mx={0.75}>
+                        ·
+                      </Typography>
+                    }
+                  >
+                    <Link
+                      underline={data.author_id ? 'always' : 'none'}
+                      color={data.author_id ? undefined : 'inherit'}
+                      to={
+                        data.author_id
+                          ? pages.user({ uid: data.author_id })
+                          : undefined
+                      }
+                      variant="threadItemAuthorLink"
+                    >
+                      {data.author}
+                    </Link>
+                    <>{chineseTime(data.dateline * 1000)}</>
+                  </Separated>
                 </Typography>
-              </Stack>
-              <Stack>
-                {/* <Typography variant="subtitle2">{data.subject}</Typography> */}
               </Stack>
             </Stack>
           </Box>
           <Box>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              sx={{ width: 265, height: 35 }}
-            >
-              <Stack
-                direction="row"
-                className="w-1/3 pr-2"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <RemoveRedEyeOutlined />
-                <Typography>{formatNumber(data.views)}</Typography>
-              </Stack>
-              <Stack
-                direction="row"
-                className="w-1/3 pl-3"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <ModeCommentOutlined />
-                <Typography>{formatNumber(data.replies)}</Typography>
-              </Stack>
-              <Stack
-                direction="row"
-                className="w-1/3 pl-5"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <ThumbUpAltOutlined />
-                <Typography>{formatNumber(data.favorite_times)}</Typography>
-              </Stack>
+            <Stack direction="row" justifyContent="flex-end">
+              <Typography variant="threadItemStat">
+                <Separated
+                  separator={
+                    <Typography component="span" mx={0.75}>
+                      ·
+                    </Typography>
+                  }
+                >
+                  <>查看：{formatNumber(data.views)}</>
+                  <>回复：{formatNumber(data.replies)}</>
+                </Separated>
+              </Typography>
             </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <Box>
-                <Typography className="pr-10">
-                  {`最新回复:`}
-                  {data.last_poster}
-                </Typography>
-              </Box>
-              <Typography>{chineseTime(data.last_post * 1000)}</Typography>
+            <Stack direction="row" justifyContent="flex-end">
+              <Typography variant="threadItemAuthor">
+                <Separated
+                  separator={
+                    <Typography component="span" mx={0.75}>
+                      ·
+                    </Typography>
+                  }
+                >
+                  <>
+                    {`最新回复：`}
+                    <Link
+                      color="inherit"
+                      underline={data.last_poster ? 'hover' : 'none'}
+                      to={
+                        data.last_poster
+                          ? pages.user({ username: data.last_poster })
+                          : undefined
+                      }
+                    >
+                      {data.last_poster || '匿名'}
+                    </Link>
+                  </>
+                  <>{chineseTime(data.last_post * 1000)}</>
+                </Separated>
+              </Typography>
             </Stack>
           </Box>
         </Stack>
       </Box>
-      <Divider variant="middle" style={{ backgroundColor: 'grey' }} />
+      <Divider variant="middle" style={{ backgroundColor: '#CAC4D0' }} />
     </Box>
   )
 }

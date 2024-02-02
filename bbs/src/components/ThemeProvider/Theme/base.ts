@@ -38,6 +38,9 @@ declare module '@mui/material/styles' {
     authorGroupTitlePrompt: React.CSSProperties
     authorGroupSubtitle: React.CSSProperties
     userCardName: React.CSSProperties
+    threadItemStat: React.CSSProperties
+    threadItemAuthor: React.CSSProperties
+    threadItemAuthorLink: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -47,6 +50,9 @@ declare module '@mui/material/styles' {
     authorGroupTitlePrompt?: React.CSSProperties
     authorGroupSubtitle?: React.CSSProperties
     userCardName?: React.CSSProperties
+    threadItemStat?: React.CSSProperties
+    threadItemAuthor?: React.CSSProperties
+    threadItemAuthorLink?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -58,6 +64,9 @@ declare module '@mui/material/Typography' {
     authorGroupTitlePrompt: true
     authorGroupSubtitle: true
     userCardName: true
+    threadItemStat: true
+    threadItemAuthor: true
+    threadItemAuthorLink: true
   }
 }
 
@@ -100,6 +109,18 @@ export const baseTheme: ThemeOptions = {
       color: '#000000',
       fontSize: 15,
       fontWeight: 'bold',
+    },
+    threadItemStat: {
+      color: '#606266',
+      fontSize: 14,
+    },
+    threadItemAuthor: {
+      color: '#A1ADC5',
+      fontSize: 14,
+    },
+    threadItemAuthorLink: {
+      color: '#A1ADC5',
+      fontSize: 14,
     },
   },
 }
