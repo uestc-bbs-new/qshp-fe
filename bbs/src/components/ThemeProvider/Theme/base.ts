@@ -41,6 +41,7 @@ declare module '@mui/material/styles' {
     threadItemStat: React.CSSProperties
     threadItemAuthor: React.CSSProperties
     threadItemAuthorLink: React.CSSProperties
+    threadItemSubject: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -53,6 +54,7 @@ declare module '@mui/material/styles' {
     threadItemStat?: React.CSSProperties
     threadItemAuthor?: React.CSSProperties
     threadItemAuthorLink?: React.CSSProperties
+    threadItemSubject?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -67,6 +69,7 @@ declare module '@mui/material/Typography' {
     threadItemStat: true
     threadItemAuthor: true
     threadItemAuthorLink: true
+    threadItemSubject: true
   }
 }
 
@@ -121,6 +124,11 @@ export const baseTheme: ThemeOptions = {
     threadItemAuthorLink: {
       color: '#A1ADC5',
       fontSize: 14,
+    },
+    threadItemSubject: {
+      color: '#303133',
+      fontWeight: 500,
+      fontSize: 16,
     },
   },
 }

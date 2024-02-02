@@ -38,6 +38,12 @@ const darkTheme = createTheme(
       userCardName: {
         color: '#ffffff',
       },
+      threadItemStat: {
+        color: lighten('#606266', 0.7),
+      },
+      threadItemAuthor: {
+        color: '#8B97A4',
+      },
     },
   }
 )

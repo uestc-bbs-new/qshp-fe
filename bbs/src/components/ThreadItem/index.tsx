@@ -38,14 +38,14 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
   return (
     <Box className={`${className} p-0.5`}>
       <Box
-        className={`rounded-lg p-4 ${className} `}
+        className={`p-4 ${className} `}
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
       >
         <Stack direction="row">
           <Box sx={{ mr: 2 }}>
-            <Avatar alt={data.author} uid={data.author_id} size={54} />
+            <Avatar alt={data.author} uid={data.author_id} size={48} />
           </Box>
           <Box className="flex-1">
             <Stack
@@ -53,7 +53,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
               direction="column"
               sx={{ minWidth: 350 }}
             >
-              <Stack direction="row" alignItems="center">
+              <Stack direction="row" alignItems="center" mb={0.5}>
                 {!!data.type_id &&
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
@@ -70,6 +70,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                   <Stack direction="row" alignItems="center">
                     <Typography
                       textAlign="justify"
+                      variant="threadItemSubject"
                       style={{
                         color: data.highlight_color,
                         backgroundColor: data.highlight_bgcolor,
@@ -119,7 +120,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
             </Stack>
           </Box>
           <Box>
-            <Stack direction="row" justifyContent="flex-end">
+            <Stack direction="row" justifyContent="flex-end" mb={0.75}>
               <Typography variant="threadItemStat">
                 <Separated
                   separator={
@@ -163,7 +164,7 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
           </Box>
         </Stack>
       </Box>
-      <Divider variant="middle" style={{ backgroundColor: '#CAC4D0' }} />
+      <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />
     </Box>
   )
 }
