@@ -71,7 +71,7 @@ export type Thread = ThreadBasics & {
   highlight_bold?: boolean
   highlight_italic?: boolean
   highlight_underline?: boolean
-  digest: number
+  digest?: number
   is_rate: number
   special: number
   attachment: number
@@ -91,6 +91,8 @@ export type Thread = ThreadBasics & {
   comments: number
   reverse_replies: boolean
   can_reply: boolean
+  stamp?: number
+  icon?: number
   poll?: ThreadPollDetails
 }
 

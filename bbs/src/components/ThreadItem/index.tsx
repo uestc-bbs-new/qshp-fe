@@ -1,5 +1,12 @@
 import { Poll } from '@mui/icons-material'
-import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Chip as MuiChip,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import {
   ForumDetails,
@@ -61,13 +68,13 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                       text={forumDetails?.thread_types_map[data.type_id].name}
                     />
                   )}
-                <Link
-                  to={pages.thread(data.thread_id)}
-                  color="inherit"
-                  underline="hover"
-                  className="line-clamp-2"
-                >
-                  <Stack direction="row" alignItems="center">
+                <Stack direction="row" alignItems="center">
+                  <Link
+                    to={pages.thread(data.thread_id)}
+                    color="inherit"
+                    underline="hover"
+                    className="line-clamp-2"
+                  >
                     <Typography
                       textAlign="justify"
                       variant="threadItemSubject"
@@ -83,14 +90,9 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                     >
                       {data.subject}
                     </Typography>
-                    {data.special == 1 && (
-                      <Poll
-                        htmlColor="#FA541C"
-                        style={{ width: '0.85em', marginLeft: '0.25em' }}
-                      />
-                    )}
-                  </Stack>
-                </Link>
+                  </Link>
+                  <ThreadExtraLabels thread={data} />
+                </Stack>
               </Stack>
               <Stack direction="row" alignItems="center" className="text-sm">
                 <Typography variant="threadItemAuthor">
@@ -213,5 +215,25 @@ export const ThreadItemLite = ({
     </Box>
   )
 }
+
+const ThreadExtraLabels = ({ thread }: { thread: Thread }) => (
+  <>
+    {thread.special == 1 && (
+      <Poll htmlColor="#FA541C" sx={{ width: '0.85em', mx: '0.25em' }} />
+    )}
+    {!!thread.digest && (
+      <MuiChip label="精华" variant="threadItemDigest" sx={{ mx: 0.5 }} />
+    )}
+    {(thread.stamp == 3 || thread.icon == 12) && (
+      <MuiChip label="优秀" variant="threadItemExcellent" sx={{ mx: 0.5 }} />
+    )}
+    {(thread.stamp == 5 || thread.icon == 14) && (
+      <MuiChip label="推荐" variant="threadItemRecommended" sx={{ mx: 0.5 }} />
+    )}
+    {thread.icon == 20 && (
+      <MuiChip label="新人" variant="threadItemFreshman" sx={{ mx: 0.5 }} />
+    )}
+  </>
+)
 
 export default ThreadItem
