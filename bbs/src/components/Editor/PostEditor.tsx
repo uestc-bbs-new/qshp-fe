@@ -24,6 +24,7 @@ import Link from '../Link'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
+import { VoteSelection } from './VoteSelection'
 import { PostEditorValue } from './types'
 
 export type PostEditorKind = 'newthread' | 'reply' | 'edit'
@@ -228,6 +229,7 @@ const PostEditor = ({
           />
         </Stack>
       </Stack>
+      <VoteSelection className="ml-24"></VoteSelection>
       <Stack
         direction="row"
         alignItems="center"
