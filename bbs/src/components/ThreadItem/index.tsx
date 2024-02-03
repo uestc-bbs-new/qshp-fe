@@ -37,13 +37,18 @@ const formatNumber = (num: number) => {
   return num
 }
 
+type ThreadReplyOrCommentItem = {
+  post_id: number
+  summary: string
+}
+
 type ThreadItemProps = {
   data: ThreadInList
   className?: string
   forum?: ForumBasics
   forumDetails?: ForumDetails
   showSummary?: boolean
-  replies?: string[]
+  replies?: ThreadReplyOrCommentItem[]
   hideThreadAuthor?: boolean
   ignoreThreadHighlight?: boolean
 }
@@ -124,7 +129,10 @@ const ThreadItem = ({
                 </Link>
                 <ThreadExtraLabels thread={data} />
               </Stack>
-              <ThreadReplies replies={replies} />
+              <ThreadRepliesOrComments
+                threadId={data.thread_id}
+                replies={replies}
+              />
               {showSummary && data.summary && (
                 <Typography variant="threadItemSummary" mb={0.5}>
                   {data.summary}
@@ -327,16 +335,29 @@ const ThreadAuthor = ({
   )
 }
 
-const ThreadReplies = ({ replies }: { replies?: string[] }) =>
+const ThreadRepliesOrComments = ({
+  threadId,
+  replies,
+}: {
+  threadId: number
+  replies?: ThreadReplyOrCommentItem[]
+}) =>
   replies?.length ? (
     <Box mb={0.5}>
       <Separated separator={<Divider sx={{ ml: 2.5 }} />}>
-        {replies.map((text, index) => (
+        {replies.map((item, index) => (
           <Stack direction="row" key={index}>
             <ReplySmall style={{ flexShrink: 0 }} />
-            <Typography variant="threadItemSummary" ml={0.5} my={0.25}>
-              {text}
-            </Typography>
+            <Link
+              to={pages.goto(item.post_id)}
+              underline="hover"
+              ml={0.5}
+              my={0.25}
+            >
+              <Typography variant="threadItemSummary">
+                {item.summary}
+              </Typography>
+            </Link>
           </Stack>
         ))}
       </Separated>
