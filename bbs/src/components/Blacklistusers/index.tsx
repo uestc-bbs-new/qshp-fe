@@ -42,9 +42,6 @@ const Blacklistusers = ({ data, className }: BlacklistusersProps) => {
                   <Link color="inherit" underline="none">
                     {data.username}
                   </Link>
-                  {/* <Box className="line-clamp-1">
-                      <Chip text={`lv.${data.user_group}`} />
-                    </Box> */}
                 </Link>
               </Stack>
 
