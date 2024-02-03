@@ -61,7 +61,7 @@ export const ThreadPostHeader = ({
               <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
                 <InputLabel id="post-typeid-label">请选择分类</InputLabel>
                 <Select
-                  value={typeId}
+                  value={typeId ?? ''}
                   label="请选择分类"
                   labelId="post-typeid-label"
                   onChange={(e) => {
