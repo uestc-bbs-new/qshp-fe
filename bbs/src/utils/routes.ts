@@ -34,7 +34,7 @@ const withSearchAndHash = (
   return baseUrl
 }
 
-type SettingsSubPage = 'profile' | 'privacy' | 'password'
+type SettingsSubPage = 'profile' | 'privacy' | 'password' | 'blacklist'
 
 const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`

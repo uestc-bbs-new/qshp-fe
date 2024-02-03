@@ -14,6 +14,7 @@ import Link from '@/components/Link'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
+import Blacklist from './Blacklist'
 import PasswordSecurity from './PasswordSecurity'
 import PrivacyFilter from './PrivacyFilter'
 import Profile from './Profile'
@@ -46,6 +47,12 @@ const listItems = [
     name: '密码安全',
     external: false,
     Component: PasswordSecurity,
+  },
+  {
+    link: pages.settings('blacklist'),
+    name: '黑名单管理',
+    external: false,
+    Component: Blacklist,
   },
 ]
 
