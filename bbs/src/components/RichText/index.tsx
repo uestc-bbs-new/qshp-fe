@@ -123,7 +123,6 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
       html={bbcode2html(post.message, {
         allowimgurl: true,
         bbcodeoff: post.format != 0,
-        parseurloff: post.parseurloff,
         smileyoff: post.smileyoff,
       })}
     />

@@ -95,21 +95,36 @@ export type Thread = ThreadBasics & {
 }
 
 export type ThreadPollDetails = {
+  /** 投票选项 */
   options: ThreadPollOption[]
+  /** 当前用户选择的投票选项 ID */
   selected_options: number[]
+  /** 公开投票参与人 */
   show_voters: boolean
+  /** 是否为多选投票 */
   multiple: boolean
+  /** 投票后结果可见 */
   visible: boolean
+  /** 最多选择几项 */
   max_choices: number
+  /** 是否为图片投票（目前暂不支持） */
   is_image: boolean
+  /** 投票过期时间。获取帖子信息与编辑投票时，该字段的值为过期时间的时间戳；发表投票
+   * 时，应当设置为投票有效期（过期时间戳 - 当前时间戳）。*/
   expiration: number
+  /** 投票参与人数 */
   voter_count: number
 }
 
 export type ThreadPollOption = {
+  /** 投票选项 ID */
   id: number
+  /** 文字 */
   text: string
+  /** 票数 */
   votes?: number
+  /** 显示顺序 */
+  display_order: number
   voters?: number[]
 }
 
@@ -141,38 +156,47 @@ export interface PostDetails {
   rows: PostFloor[]
 }
 
+export type ExtCreditName = '水滴' | '威望' | '奖励券'
+export type ExtCreditMap = { [name in ExtCreditName]?: number }
+export interface PostAuthorDetails {
+  group_id: number
+  group_title: string
+  group_subtitle?: string
+  group_icon?: string
+  level_id: number
+  custom_title?: string
+  posts: number
+  digests: number
+  credits: number
+  ext_credits: ExtCreditMap
+  medals?: number[]
+  online_time: number
+  register_time: number
+  last_visit: number
+  signature?: string
+  signature_format?: string
+}
+
 export interface PostFloor {
   post_id: number
-  forum_id: number
   thread_id: number
+  forum_id: number
   position: number
   is_first: number
-  subject: string
-  support: number
-  oppose: number
-  message: string
   dateline: number
-  is_anonymous: number
-  usesig: number
+  subject: string
+  message: string
   format: number
-  smileyoff: number
-  parseurloff: number
-  lastedit_id: number
   author: string
   author_id: number
-  user_group: number
-  admin_group: number
-  credits: number
-  droplets: number
-  prestiges: number
-  essences: number
-  medals: number[]
-  friends: number
-  sign: string
-  title: string
-  online_time: number
-  registered_at: number
-  last_login_at: number
+  author_details?: PostAuthorDetails
+  support: number
+  oppose: number
+  is_anonymous: number
+  usesig: number
+  smileyoff: number
+  lastedit_id: number
+
   pinned?: boolean
   blocked?: boolean
   warned?: boolean

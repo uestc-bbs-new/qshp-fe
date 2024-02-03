@@ -15,6 +15,8 @@ import {
   DialogContent,
   Stack,
   Typography,
+  css,
+  useTheme,
 } from '@mui/material'
 
 import { idasAuth, idasChooseUser } from '@/apis/auth'
@@ -35,6 +37,7 @@ type Mode = 'signin' | 'register' | 'resetpassword'
 const kDefaultMode = 'signin'
 
 const Continue = () => {
+  const dark = useTheme().palette.mode == 'dark'
   const idasResult = useLoaderData() as IdasResultEx
   const mode = useParams()['mode'] as Mode | undefined
 
@@ -71,7 +74,7 @@ const Continue = () => {
             flexShrink={0}
           >
             <div
-              style={{
+              css={css({
                 width: 2169,
                 height: 2169,
                 position: 'absolute',
@@ -79,28 +82,28 @@ const Continue = () => {
                 bottom: 0,
                 transform: `translate(0, ${(247 / 1080) * 100}vh)`,
                 borderRadius: '100%',
-                backgroundColor: '#71ABFF',
-              }}
+                backgroundColor: dark ? '#154283' : '#71ABFF',
+              })}
             />
             <Box flexGrow={1}></Box>
             <Box flexGrow={0} flexShrink={0} style={{ position: 'relative' }}>
-              <img src={logo} />
+              <img src={logo} style={dark ? { opacity: 0.8 } : undefined} />
               <div
-                style={{
+                css={css({
                   fontSize: '60px',
                   fontWeight: '900',
                   margin: '0.5em 0',
                   color: 'white',
-                }}
+                })}
               >
                 清水河畔
               </div>
               <div
-                style={{
+                css={css({
                   fontSize: '36px',
                   fontWeight: '900',
                   color: 'rgba(255, 255, 255, 0.56)',
-                }}
+                })}
               >
                 电子科技大学官方论坛
               </div>

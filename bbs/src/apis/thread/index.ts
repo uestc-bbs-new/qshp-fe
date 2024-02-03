@@ -3,6 +3,7 @@ import {
   PostDetailsByPostId,
   PostPosition,
   ThreadPollDetails,
+  ThreadPollOption,
   UserInfos,
   UserNameFind,
 } from '@/common/interfaces/response'
@@ -64,8 +65,11 @@ export type PostCommonDetails = {
 export type PostThreadDetails = PostCommonDetails & {
   forum_id: number
   type_id?: number
+  poll?: Omit<
+    ThreadPollDetails,
+    'selected_options' | 'voter_count' | 'options'
+  > & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
 }
-
 export const postThread = (details: PostThreadDetails) => {
   return request.post(`${commonUrl}/thread/new`, {
     ...details,

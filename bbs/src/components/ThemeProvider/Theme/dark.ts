@@ -12,8 +12,8 @@ const darkTheme = createTheme(
   {
     palette: {
       background: {
-        default: '#292e39',
-        paper: '#313742',
+        default: '#141516',
+        paper: '#292B2D',
       },
     },
     components: {
@@ -21,7 +21,22 @@ const darkTheme = createTheme(
     },
     typography: {
       signinTitle: {
-        color: lighten(baseColors.signinTitle, 0.3),
+        color: '#3B8AFF',
+      },
+      authorCustomTitle: {
+        color: lighten(baseColors.authorCustomTitle, 0.3),
+      },
+      authorGroupTitle: {
+        color: lighten(baseColors.authorGroupTitle, 0.9),
+      },
+      authorGroupTitlePrompt: {
+        color: lighten(baseColors.authorGroupTitlePrompt, 0.2),
+      },
+      authorGroupSubtitle: {
+        color: lighten(baseColors.authorGroupSubtitle, 0.3),
+      },
+      userCardName: {
+        color: '#ffffff',
       },
     },
   }

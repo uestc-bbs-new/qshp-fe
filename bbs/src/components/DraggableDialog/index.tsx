@@ -1,5 +1,5 @@
 import React from 'react'
-import Draggable from 'react-draggable'
+import Draggable, { DraggableProps as IDraggableProps } from 'react-draggable'
 
 import {
   Dialog,
@@ -14,12 +14,17 @@ const handleId = 'draggable-dialog-handle'
 
 const DialogPaper = ({
   disabled,
+  DraggableProps,
   ...props
-}: PaperProps & { disabled?: boolean }) => (
+}: PaperProps & {
+  disabled?: boolean
+  DraggableProps?: Partial<IDraggableProps>
+}) => (
   <Draggable
     disabled={disabled}
     handle={`#${handleId}`}
     cancel={`[class*="MuiDialogContent-root"]`}
+    {...DraggableProps}
   >
     <Paper {...props} />
   </Draggable>
@@ -29,6 +34,7 @@ type DraggableDialogProps = {
   dialogTitle: React.ReactNode
   dialogTitleProps?: DialogTitleProps
   children: React.ReactNode
+  DraggableProps?: Partial<IDraggableProps>
 }
 
 const DraggableDialog = ({
@@ -36,13 +42,18 @@ const DraggableDialog = ({
   dialogTitleProps,
   children,
   fullScreen,
+  DraggableProps,
   ...props
 }: DialogProps & DraggableDialogProps) => (
   <Dialog
     {...props}
     fullScreen={fullScreen}
     PaperComponent={DialogPaper}
-    PaperProps={fullScreen ? { disabled: true } : undefined}
+    PaperProps={
+      fullScreen || DraggableProps
+        ? { disabled: !!fullScreen, DraggableProps }
+        : undefined
+    }
     aria-labelledby={handleId}
   >
     <DialogTitle

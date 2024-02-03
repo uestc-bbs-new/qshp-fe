@@ -15,7 +15,7 @@ const Tooltip = ({ children, title, ...other }: TooltipProps) => {
           '& .MuiTooltip-tooltip': {
             backgroundColor: theme.palette.background.paper,
             padding: 0,
-            maxWidth: 400,
+            maxWidth: 480,
             boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px;',
             color: theme.palette.text.primary,
           },
