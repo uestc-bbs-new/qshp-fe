@@ -9,31 +9,31 @@ import {
   TextField,
 } from '@mui/material'
 
+type Props = {
+  isVote: boolean
+  changeIsVote: (status: boolean) => void
+  [key: string]: any
+}
 // todo: props 先放 any，以后再改，入参具体还不确定
-export const VoteSelection = (props: any) => {
-  const [typeState, setTypeState] = useState({
-    isVote: false,
-  })
-
+export const VoteSelection = ({ isVote, changeIsVote, ...props }: Props) => {
   const [options, setOptions] = useState([
     { value: '' },
     { value: '' },
     { value: '' },
   ])
+  // const poll:PostThreadDetails
 
   return (
+    // 感觉选项也应该抽离到父组件
     <Stack {...props}>
       <FormGroup row>
         {/* todo: 后面如果有多个类型可以改成 for in 枚举 typeState 生成复选框 */}
         <FormControlLabel
           control={
             <Switch
-              checked={typeState.isVote}
+              checked={isVote}
               onChange={(e) => {
-                setTypeState({
-                  ...typeState,
-                  [e.target.name]: e.target.checked,
-                })
+                changeIsVote(e.target.checked)
               }}
               name="isVote"
             />
@@ -42,7 +42,7 @@ export const VoteSelection = (props: any) => {
         />
       </FormGroup>
 
-      {typeState.isVote ? (
+      {isVote ? (
         <Stack className="w-9/12 bg-indigo-100 px-6 py-4 flex justify-between flex-row">
           <Box className="flex flex-col">
             <Box>选项：最多可以填写 100 个选项</Box>
