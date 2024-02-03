@@ -37,23 +37,29 @@ export const VoteSelection = ({
     { value: '' },
     { value: '' },
   ])
+
+  const [max_choices, setMaxChoices] = useState(1)
   // const poll:PostThreadDetails
-  // todo: 感觉 fomily 表单的思想性能更好些，但是违背了单项数据流或者写起来比较麻烦
+  // todo: 感觉用 fomily 表单的思想性能更好些，但是违背了单项数据流或者写起来比较麻烦
   useEffect(() => {
     const VoteOptions: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] =
       []
-    // useMemo 可以优化下，但是感觉没必要，投票选项不是特别多
-    options.forEach((item) => {
+    // useMemo 可以优化下，但是感觉没必要，投票选项一般不会特别多
+    options.forEach((item, index) => {
       if (item.value) {
-        VoteOptions.push({ text: item.value })
+        VoteOptions.push({
+          text: item.value,
+
+          display_order: index,
+        })
       }
     })
     // todo: 先写死，晚点改
     updateVotesOption({
       show_voters: false,
-      multiple: false,
-      visible: false,
-      max_choices: 0,
+      multiple: true,
+      visible: true,
+      max_choices,
       is_image: false,
       expiration: 5000000000,
       options: VoteOptions,
@@ -118,6 +124,10 @@ export const VoteSelection = ({
               variant="outlined"
               size="small"
               className="mt-4"
+              type="number"
+              onChange={(e) => {
+                setMaxChoices(Number(e.target.value))
+              }}
             />
             <TextField
               label={`计票天数`}

@@ -168,6 +168,7 @@ const PostEditor = ({
         message,
         format: 2,
         attachments: editor.current?.attachments,
+        poll: typeState.isVote ? pollOptions.current : undefined,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
