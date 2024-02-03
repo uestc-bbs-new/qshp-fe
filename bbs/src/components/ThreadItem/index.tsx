@@ -23,6 +23,7 @@ import Avatar from '../Avatar'
 import Link from '../Link'
 import Separated from '../Separated'
 import ForumSmall from '../icons/ForumSmall'
+import ReplySmall from '../icons/ReplySmall'
 
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
@@ -41,6 +42,7 @@ type ThreadItemProps = {
   forum?: ForumBasics
   forumDetails?: ForumDetails
   showSummary?: boolean
+  replies?: string[]
   hideThreadAuthor?: boolean
   ignoreThreadHighlight?: boolean
 }
@@ -51,6 +53,7 @@ const ThreadItem = ({
   forum,
   forumDetails,
   showSummary,
+  replies,
   hideThreadAuthor,
   ignoreThreadHighlight,
 }: ThreadItemProps) => {
@@ -74,7 +77,7 @@ const ThreadItem = ({
               />
             </Box>
           )}
-          <Box className="flex-1">
+          <Box className="flex-1" mr={1.5}>
             <Stack
               justifyContent="space-between"
               direction="column"
@@ -121,7 +124,8 @@ const ThreadItem = ({
                 </Link>
                 <ThreadExtraLabels thread={data} />
               </Stack>
-              {showSummary && (
+              <ThreadReplies replies={replies} />
+              {showSummary && data.summary && (
                 <Typography variant="threadItemSummary" mb={0.5}>
                   {data.summary}
                 </Typography>
@@ -322,5 +326,23 @@ const ThreadAuthor = ({
     </Stack>
   )
 }
+
+const ThreadReplies = ({ replies }: { replies?: string[] }) =>
+  replies?.length ? (
+    <Box mb={0.5}>
+      <Separated separator={<Divider sx={{ ml: 2.5 }} />}>
+        {replies.map((text, index) => (
+          <Stack direction="row" key={index}>
+            <ReplySmall style={{ flexShrink: 0 }} />
+            <Typography variant="threadItemSummary" ml={0.5} my={0.25}>
+              {text}
+            </Typography>
+          </Stack>
+        ))}
+      </Separated>
+    </Box>
+  ) : (
+    <></>
+  )
 
 export default ThreadItem
