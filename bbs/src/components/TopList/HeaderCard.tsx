@@ -18,8 +18,8 @@ const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
           const light = theme.palette.mode == 'light'
           return {
             background: `linear-gradient(90deg, ${
-              light ? '#E4EEFE' : '#666666'
-            } 40%, ${light ? '#FFFFFF' : '#999999'} 100%)`,
+              light ? '#E4EEFE' : 'rgba(32, 99, 212, 0.6)'
+            } 40%, ${light ? '#FFFFFF' : 'rgba(0, 0, 0, 0)'} 100%)`,
           }
         }}
       >

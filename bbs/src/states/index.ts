@@ -10,6 +10,7 @@ import React, {
 
 import { getForumList, getTopLists } from '@/apis/common'
 import { Forum, TopList, TopListKey } from '@/common/interfaces/response'
+import { Medal, MedalMap } from '@/common/interfaces/system'
 import { topListKeys } from '@/utils/constants'
 import { getRenderedTheme } from '@/utils/theme'
 
@@ -24,6 +25,8 @@ export const globalCache: {
   fidNameMap: FidNameMap
   topList?: TopList
   topListLastKey?: TopListKey
+  medalList?: Medal[]
+  medalMap?: MedalMap
 } = {
   fidNameMap: {},
 }

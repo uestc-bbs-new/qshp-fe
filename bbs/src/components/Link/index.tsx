@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import {
   LinkProps as ReactLinkProps,
   Link as RouterLink,
@@ -17,18 +17,24 @@ export type LinkProps = MuiLinkProps &
     to?: To
   }
 
-const Link = ({ to, external, ...other }: LinkProps) => {
+const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
+  { to, external, ...other },
+  ref
+) {
   if (!to) {
-    return <MuiLink {...other} />
+    return <MuiLink {...other} ref={ref} />
   }
   if (external) {
-    return <MuiLink component="a" href={to} {...other} />
+    return <MuiLink component="a" href={to} {...other} ref={ref} />
   }
-  return <MuiLink component={RouterLink} to={to} {...other} />
-}
+  return <MuiLink component={RouterLink} to={to} {...other} ref={ref} />
+})
 
-export const MenuItemLink = (props: MenuItemProps & LinkProps) => (
-  <Link {...props} />
-)
+export const MenuItemLink = forwardRef<
+  HTMLAnchorElement,
+  MenuItemProps & LinkProps
+>(function MenuItemLink(props, ref) {
+  return <Link {...props} ref={ref} />
+})
 
 export default Link

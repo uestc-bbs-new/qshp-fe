@@ -15,11 +15,14 @@ import request, { authServiceWithUser, commonUrl } from '@/utils/request'
 import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
 import registerAuthHeaderInterceptors from './interceptors/authHeader'
 import registerUserInterceptors from './interceptors/user'
+import registerSystemInterceptors from './interceptors/user'
 
 registerAuthHeaderInterceptors(request)
 registerAuthAdoptLegacyInterceptors(request.axios)
 registerUserInterceptors(request)
 registerUserInterceptors(authServiceWithUser)
+registerSystemInterceptors(request)
+registerSystemInterceptors(authServiceWithUser)
 
 export const makeThreadTypesMap = (forum?: ForumDetails) => {
   if (forum && forum.thread_types) {

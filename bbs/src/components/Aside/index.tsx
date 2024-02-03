@@ -16,7 +16,7 @@ const Aside = ({
   topList?: TopList
   homepage?: boolean
 }) => {
-  const data = useTopList(topList)
+  const data = homepage ? topList : useTopList(topList)
   return (
     <Box className="ml-2 w-60">
       <SideTabs {...{ loading, topList: data, homepage }} />

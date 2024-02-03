@@ -1,15 +1,32 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Box, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Typography,
+  css,
+} from '@mui/material'
 
-import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  PostAuthorDetails,
+  PostFloor,
+  Thread,
+} from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
+import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
+import { useMedals } from '@/states/settings'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
@@ -83,27 +100,47 @@ const Floor = ({
     post.position == 1 && post.is_first
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
+
+  // 弹出框
+  const {
+    props: { open, onClose },
+    show,
+  } = useSnackbar()
   return (
-    <Box pt={1.75} pb={1}>
+    <Box>
+      <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
+        <Alert severity="success">链接复制成功</Alert>
+      </CenteredSnackbar>
       <Stack direction="row">
-        <Box className="w-40 flex justify-center pr-4">
+        <Stack
+          sx={(theme) => ({
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#D2E2FD' : '#42516d',
+          })}
+          width={192}
+          px={2}
+          py={2}
+        >
           <UserCard item={post}>
-            <div>
+            <AuthorLink post={post}>
               <Avatar
                 className="m-auto"
-                uid={post.is_anonymous ? 0 : post.author_id}
+                uid={
+                  post.is_anonymous || !post.author_details ? 0 : post.author_id
+                }
                 sx={{ width: 48, height: 48 }}
                 variant="rounded"
               />
-              <div className="text-center text-blue-500">
+              <Typography variant="authorName" mt={0.5} component="p">
                 {post.is_anonymous ? '匿名' : post.author}
-              </div>
-            </div>
+              </Typography>
+            </AuthorLink>
           </UserCard>
-
-          {/* <Typography  */}
-        </Box>
-        <Box className="flex-1" minWidth="1em">
+          {!!post.author_id && (
+            <AuthorDetails authorDetails={post.author_details} />
+          )}
+        </Stack>
+        <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
           {post.position == 1 && !!post.is_first && (
             <PostSubject
               post={post}
@@ -137,6 +174,7 @@ const Floor = ({
                   navigator.clipboard.writeText(
                     `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
                   )
+                  show('')
                 }}
               >
                 分享
@@ -195,6 +233,12 @@ const Floor = ({
               />
             )}
           </PostExtraDetailsContainer>
+          <Box flexGrow={1} />
+          {!!post.usesig &&
+            post.author_details?.signature &&
+            post.message.length > 60 && (
+              <Signature authorDetails={post.author_details} />
+            )}
           <Footer
             forumDetails={forumDetails}
             threadDetails={threadDetails}
@@ -203,9 +247,108 @@ const Floor = ({
             onComment={() => onComment(post)}
             onEdit={() => onEdit(post)}
           />
-        </Box>
+        </Stack>
       </Stack>
     </Box>
+  )
+}
+
+const AuthorLink = ({
+  post,
+  children,
+}: {
+  post: PostFloor
+  children?: ReactNode
+}) =>
+  post.author_id && post.author_details ? (
+    <Link to={pages.user({ uid: post.author_id })} underline="hover">
+      {children}
+    </Link>
+  ) : (
+    <Box>{children}</Box>
+  )
+
+const AuthorDetails = ({
+  authorDetails,
+}: {
+  authorDetails?: PostAuthorDetails
+}) =>
+  authorDetails ? (
+    <>
+      {authorDetails.custom_title && (
+        <Typography variant="authorCustomTitle" component="p">
+          {authorDetails.custom_title}
+        </Typography>
+      )}
+      <Stack alignItems="flex-start" mt={0.85}>
+        <Box>
+          <Typography variant="authorGroupTitle">
+            <Typography variant="authorGroupTitlePrompt">级别：</Typography>
+            {authorDetails.group_title}
+          </Typography>
+          {authorDetails.group_subtitle && (
+            <Typography
+              variant="authorGroupSubtitle"
+              textAlign="right"
+              component="p"
+            >
+              ( {authorDetails.group_subtitle} )
+            </Typography>
+          )}
+        </Box>
+      </Stack>
+      {authorDetails.group_icon && (
+        <Box>
+          <img
+            src={`${siteRoot}/${authorDetails.group_icon}`}
+            css={css({ display: 'block', maxWidth: '100%' })}
+          />
+        </Box>
+      )}
+      {!!authorDetails.medals?.length && (
+        <Medals medals={authorDetails.medals} />
+      )}
+    </>
+  ) : (
+    <Typography variant="authorGroupSubtitle" textAlign="center">
+      （该用户已删除）
+    </Typography>
+  )
+
+const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
+  authorDetails.signature && authorDetails.signature_format == 'html' ? (
+    <Stack>
+      <Stack direction="row" alignItems="center" fontSize={12} pt={2} pb={0.25}>
+        <Typography color="#7fcce5" fontSize={10} mr={0.5}>
+          SIGNATURE
+        </Typography>
+        <Box sx={{ borderTop: '1px dashed #cccccc' }} flexGrow={1} />
+        <Box flexGrow={1} />
+      </Stack>
+      <Box maxHeight={120} overflow="hidden" className="post-signature">
+        <UserHtmlRenderer html={authorDetails.signature} />
+      </Box>
+    </Stack>
+  ) : (
+    <></>
+  )
+
+const Medals = ({ medals }: { medals?: number[] }) => {
+  const { medalMap } = useMedals()
+  return medalMap ? (
+    <Stack direction="row" flexWrap="wrap">
+      {medals?.map((id, index) => (
+        <Tooltip key={index} title={medalMap[id]?.name}>
+          <img
+            src={`${siteRoot}/static/image/common/${medalMap[id]?.image_path}`}
+            loading="lazy"
+            css={css({ margin: '0.25em 0.15em' })}
+          />
+        </Tooltip>
+      ))}
+    </Stack>
+  ) : (
+    <Skeleton />
   )
 }
 

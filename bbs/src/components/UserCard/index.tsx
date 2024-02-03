@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import coverDark from '@/assets/cover-dark.jpg'
 import coverLight from '@/assets/cover-light.jpg'
-import { PostFloor } from '@/common/interfaces/response'
+import { PostAuthorDetails, PostFloor } from '@/common/interfaces/response'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
@@ -13,30 +20,35 @@ import Avatar from '../Avatar'
 
 type ItemProps = {
   title: string
-  count: number | string
+  text: number | string
 }
-const GridItem = ({ title, count }: ItemProps) => {
+const GridItem = ({ title, text }: ItemProps) => {
   const theme = useTheme()
 
   return (
-    <Grid item xs={3}>
+    <Stack flexGrow={1}>
       <Box className="p-4 text-center">
         <Typography fontSize="inherit" color={theme.palette.text.secondary}>
           {title}
         </Typography>
         <Typography fontSize="inherit" color={theme.palette.text.primary}>
-          {count}
+          {text}
         </Typography>
       </Box>
-    </Grid>
+    </Stack>
   )
 }
 
-const Cover = ({ item }: { item: PostFloor }) => {
+const Cover = ({
+  item,
+  authorDetails,
+}: {
+  item: PostFloor
+  authorDetails: PostAuthorDetails
+}) => {
   const { state } = useAppState()
-  const [data, set_data] = useState({})
   return (
-    <Box style={{ width: '400px' }} className="text-sm text-white">
+    <Box className="text-sm text-white">
       <Box
         className="p-4 bg-cover bg-center"
         style={{
@@ -54,37 +66,41 @@ const Cover = ({ item }: { item: PostFloor }) => {
             variant="rounded"
           />
           <Box className="flex-1">
-            <Typography color={'black'}>{item.author}</Typography>
-            {/* <Chip className="mb-2" text="test" /> */}
-            <Box className="rounded-lg p-4 bg-opacity-40 bg-black">
+            <Typography variant="userCardName" className="ml-4">
+              {item.author}
+            </Typography>
+            <Box className="rounded-lg px-4 py-1.5 bg-opacity-40 bg-black">
               <Typography fontSize="inherit">
-                注册：{chineseTime(item.registered_at * 1000)}
+                注册时间：{chineseTime(authorDetails.register_time * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时长： {item.online_time} 小时
+                最后访问: {chineseTime(authorDetails.last_visit * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                上次登录: {chineseTime(item.last_login_at * 1000)}
+                在线时间: {authorDetails.online_time} 小时
               </Typography>
             </Box>
           </Box>
         </Stack>
       </Box>
       <Divider variant="middle" />
-      <Grid container>
-        <GridItem title="水滴" count={`${item.droplets} 滴`} />
-        <GridItem title="用户组" count={item.user_group} />
-        {/* <GridItem
-          title=""
-          count={}
-        /> */}
-        {/* <GridItem title="水滴" count={1} />
-        <GridItem title="水滴" count={1} /> */}
-      </Grid>
+      <Stack direction="row">
+        <GridItem title="精华" text={authorDetails.digests} />
+        <GridItem title="帖子" text={authorDetails.posts} />
+        <GridItem title="积分" text={authorDetails.credits} />
+        <GridItem
+          title="威望"
+          text={`${authorDetails.ext_credits['威望'] || 0} 点`}
+        />
+        <GridItem
+          title="水滴"
+          text={`${authorDetails.ext_credits['水滴'] || 0} 滴`}
+        />
+      </Stack>
       <Divider variant="middle" />
-      {/* <Box className="p-4">
+      <Box className="p-4">
         <Button variant="outlined">私信</Button>
-      </Box> */}
+      </Box>
     </Box>
   )
 }
@@ -95,10 +111,12 @@ type CardProps = {
 }
 
 const UserCard = ({ item, children }: CardProps) => {
-  return (
-    <>
-      <Tooltip title={<Cover item={item} />}>{children}</Tooltip>
-    </>
+  return item.author_details ? (
+    <Tooltip title={<Cover item={item} authorDetails={item.author_details} />}>
+      {children}
+    </Tooltip>
+  ) : (
+    <>{children}</>
   )
 }
 

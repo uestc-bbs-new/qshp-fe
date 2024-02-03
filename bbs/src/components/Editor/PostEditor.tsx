@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 
 import {
   Alert,
-  Box,
   Button,
   Skeleton,
   Snackbar,
@@ -198,9 +197,9 @@ const PostEditor = ({
       ) : (
         <PostNotice forum={forum} position={kind} />
       )}
-      <Stack direction="row">
+      <Stack direction="row" flexShrink={1} minHeight="1em">
         {!smallAuthor && <Author anonymous={anonymous} />}
-        <Box flexGrow={1}>
+        <Stack flexGrow={1}>
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}
@@ -224,7 +223,7 @@ const PostEditor = ({
             valueRef={valueRef}
             onChanged={handleOptionsChange}
           />
-        </Box>
+        </Stack>
       </Stack>
       <VoteSelection className="ml-24"></VoteSelection>
       <Stack
