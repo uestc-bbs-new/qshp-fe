@@ -169,6 +169,7 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        poll: typeState.isVote ? pollOptions.current : undefined,
       })
         .then((result) => {
           vd?.setValue('')
