@@ -13,7 +13,12 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { ForumDetails, PostFloor } from '@/common/interfaces/response'
+import {
+  ForumDetails,
+  PostFloor,
+  ThreadPollDetails,
+  ThreadPollOption,
+} from '@/common/interfaces/response'
 import Editor from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
@@ -105,6 +110,12 @@ const PostEditor = ({
   const [typeState, setTypeState] = useState({
     isVote: false,
   })
+  // 投票选项
+  const pollOptions = useRef<
+    Omit<ThreadPollDetails, 'selected_options' | 'voter_count' | 'options'> & {
+      options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[]
+    }
+  >()
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -236,6 +247,9 @@ const PostEditor = ({
           isVote={typeState.isVote}
           changeIsVote={(e) => {
             setTypeState({ ...typeState, isVote: e })
+          }}
+          updateVotesOption={(poll) => {
+            pollOptions.current = poll
           }}
         ></VoteSelection>
       ) : (
