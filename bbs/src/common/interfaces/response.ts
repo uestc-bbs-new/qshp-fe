@@ -286,9 +286,12 @@ export interface UserInfos {
   prestiges: number
 }
 
-export type ForumCommon = {
+export type ForumBasics = {
   fid: number
   name: string
+}
+
+export type ForumCommon = ForumBasics & {
   can_post_thread?: boolean
   can_post_reply?: boolean
 }

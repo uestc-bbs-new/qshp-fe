@@ -50,6 +50,9 @@ const darkTheme = createTheme(
       threadItemStat: {
         color: lighten('#606266', 0.7),
       },
+      threadItemForum: {
+        color: 'rgba(144, 202, 249, 0.7)',
+      },
     },
   }
 )

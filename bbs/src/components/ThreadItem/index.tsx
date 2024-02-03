@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 
 import {
+  ForumBasics,
   ForumDetails,
   Thread,
   TopListKey,
@@ -21,6 +22,7 @@ import { pages } from '@/utils/routes'
 import Avatar from '../Avatar'
 import Link from '../Link'
 import Separated from '../Separated'
+import ForumSmall from '../icons/ForumSmall'
 
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
@@ -36,15 +38,21 @@ const formatNumber = (num: number) => {
 type ThreadItemProps = {
   data: Thread
   className?: string
+  forum?: ForumBasics
   forumDetails?: ForumDetails
   showSummary?: boolean
+  hideThreadAuthor?: boolean
+  ignoreThreadHighlight?: boolean
 }
 
 const ThreadItem = ({
   data,
   className,
+  forum,
   forumDetails,
   showSummary,
+  hideThreadAuthor,
+  ignoreThreadHighlight,
 }: ThreadItemProps) => {
   const theme = useTheme()
 
@@ -57,13 +65,15 @@ const ThreadItem = ({
         }}
       >
         <Stack direction="row">
-          <Box sx={{ mr: 2 }}>
-            <Avatar
-              alt={data.author}
-              uid={data.author_id}
-              size={showSummary ? 40 : 48}
-            />
-          </Box>
+          {!hideThreadAuthor && (
+            <Box sx={{ mr: 2 }}>
+              <Avatar
+                alt={data.author}
+                uid={data.author_id}
+                size={showSummary ? 40 : 48}
+              />
+            </Box>
+          )}
           <Box className="flex-1">
             <Stack
               justifyContent="space-between"
@@ -87,15 +97,24 @@ const ThreadItem = ({
                   <Typography
                     textAlign="justify"
                     variant="threadItemSubject"
-                    style={{
-                      color: data.highlight_color,
-                      backgroundColor: data.highlight_bgcolor,
-                      fontWeight: data.highlight_bold ? 'bold' : undefined,
-                      fontStyle: data.highlight_italic ? 'italic' : undefined,
-                      textDecoration: data.highlight_underline
-                        ? 'underline'
-                        : undefined,
-                    }}
+                    color={ignoreThreadHighlight ? 'primary' : undefined}
+                    style={
+                      ignoreThreadHighlight
+                        ? undefined
+                        : {
+                            color: data.highlight_color,
+                            backgroundColor: data.highlight_bgcolor,
+                            fontWeight: data.highlight_bold
+                              ? 'bold'
+                              : undefined,
+                            fontStyle: data.highlight_italic
+                              ? 'italic'
+                              : undefined,
+                            textDecoration: data.highlight_underline
+                              ? 'underline'
+                              : undefined,
+                          }
+                    }
                   >
                     {data.subject}
                   </Typography>
@@ -107,8 +126,49 @@ const ThreadItem = ({
                   {data.summary}
                 </Typography>
               )}
-              <Stack direction="row" alignItems="center">
-                <Typography variant="threadItemAuthor">
+              <ThreadAuthor thread={data} hideThreadAuthor={hideThreadAuthor} />
+            </Stack>
+          </Box>
+          <Stack justifyContent="space-between">
+            <Stack direction="row" alignItems="center">
+              {forum && (
+                <>
+                  <Box flexGrow={1} />
+                  <Link
+                    to={pages.forum(forum.fid)}
+                    underline="hover"
+                    color=""
+                    variant="threadItemForum"
+                    sx={{
+                      '&:hover': {
+                        color: '#2175F3',
+                        'svg path.fill': {
+                          fill: '#2175F3',
+                        },
+                        'svg path.stroke': {
+                          stroke: '#2175F3',
+                        },
+                      },
+                    }}
+                  >
+                    <Stack direction="row" alignItems="center">
+                      <ForumSmall
+                        color={theme.typography.threadItemForum.color}
+                      />
+                      <Typography ml={0.5} mr={2}>
+                        {forum.name}
+                      </Typography>
+                    </Stack>
+                  </Link>
+                </>
+              )}
+              <Stack
+                direction="row"
+                justifyContent="flex-end"
+                flexGrow={1}
+                minWidth={forum ? '14em' : undefined}
+              >
+                <Typography variant="threadItemStat">
                   <Separated
                     separator={
                       <Typography component="span" mx={0.75}>
@@ -116,38 +176,11 @@ const ThreadItem = ({
                       </Typography>
                     }
                   >
-                    <Link
-                      underline={data.author_id ? 'always' : 'none'}
-                      color={data.author_id ? undefined : 'inherit'}
-                      to={
-                        data.author_id
-                          ? pages.user({ uid: data.author_id })
-                          : undefined
-                      }
-                      variant="threadItemAuthorLink"
-                    >
-                      {data.author}
-                    </Link>
-                    <>{chineseTime(data.dateline * 1000)}</>
+                    <>查看：{formatNumber(data.views)}</>
+                    <>回复：{formatNumber(data.replies)}</>
                   </Separated>
                 </Typography>
               </Stack>
-            </Stack>
-          </Box>
-          <Stack justifyContent="space-between">
-            <Stack direction="row" justifyContent="flex-end">
-              <Typography variant="threadItemStat">
-                <Separated
-                  separator={
-                    <Typography component="span" mx={0.75}>
-                      ·
-                    </Typography>
-                  }
-                >
-                  <>查看：{formatNumber(data.views)}</>
-                  <>回复：{formatNumber(data.replies)}</>
-                </Separated>
-              </Typography>
             </Stack>
             <Stack direction="row" justifyContent="flex-end">
               <Typography variant="threadItemAuthor">
@@ -248,5 +281,46 @@ const ThreadExtraLabels = ({ thread }: { thread: Thread }) => (
     )}
   </>
 )
+
+const ThreadAuthor = ({
+  thread,
+  hideThreadAuthor,
+}: {
+  thread: Thread
+  hideThreadAuthor?: boolean
+}) => {
+  const time = <>{chineseTime(thread.dateline * 1000)}</>
+  return (
+    <Stack direction="row" alignItems="center">
+      <Typography variant="threadItemAuthor">
+        {hideThreadAuthor ? (
+          time
+        ) : (
+          <Separated
+            separator={
+              <Typography component="span" mx={0.75}>
+                ·
+              </Typography>
+            }
+          >
+            <Link
+              underline={thread.author_id ? 'always' : 'none'}
+              color={thread.author_id ? undefined : 'inherit'}
+              to={
+                thread.author_id
+                  ? pages.user({ uid: thread.author_id })
+                  : undefined
+              }
+              variant="threadItemAuthorLink"
+            >
+              {thread.author}
+            </Link>
+            {time}
+          </Separated>
+        )}
+      </Typography>
+    </Stack>
+  )
+}
 
 export default ThreadItem
