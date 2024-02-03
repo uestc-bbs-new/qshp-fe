@@ -229,7 +229,11 @@ const PostEditor = ({
           />
         </Stack>
       </Stack>
-      <VoteSelection className="ml-24"></VoteSelection>
+      {kind === 'newthread' ? (
+        <VoteSelection className="ml-24"></VoteSelection>
+      ) : (
+        <></>
+      )}
       <Stack
         direction="row"
         alignItems="center"
