@@ -12,6 +12,7 @@ import {
   ForumBasics,
   ForumDetails,
   Thread,
+  ThreadInList,
   TopListKey,
   TopListThread,
 } from '@/common/interfaces/response'
@@ -37,7 +38,7 @@ const formatNumber = (num: number) => {
 }
 
 type ThreadItemProps = {
-  data: Thread
+  data: ThreadInList
   className?: string
   forum?: ForumBasics
   forumDetails?: ForumDetails
@@ -50,7 +51,6 @@ type ThreadItemProps = {
 const ThreadItem = ({
   data,
   className,
-  forum,
   forumDetails,
   showSummary,
   replies,
@@ -68,7 +68,7 @@ const ThreadItem = ({
         }}
       >
         <Stack direction="row">
-          {!hideThreadAuthor && (
+          {!hideThreadAuthor && data.author_id !== undefined && (
             <Box sx={{ mr: 2 }}>
               <Avatar
                 alt={data.author}
@@ -135,11 +135,11 @@ const ThreadItem = ({
           </Box>
           <Stack justifyContent="space-between">
             <Stack direction="row" alignItems="center">
-              {forum && (
+              {data.forum_name && (
                 <>
                   <Box flexGrow={1} />
                   <Link
-                    to={pages.forum(forum.fid)}
+                    to={pages.forum(data.forum_id)}
                     underline="hover"
                     color=""
                     variant="threadItemForum"
@@ -160,7 +160,7 @@ const ThreadItem = ({
                         color={theme.typography.threadItemForum.color}
                       />
                       <Typography ml={0.5} mr={2}>
-                        {forum.name}
+                        {data.forum_name}
                       </Typography>
                     </Stack>
                   </Link>
@@ -170,7 +170,7 @@ const ThreadItem = ({
                 direction="row"
                 justifyContent="flex-end"
                 flexGrow={1}
-                minWidth={forum ? '14em' : undefined}
+                minWidth={data.forum_name ? '14em' : undefined}
               >
                 <Typography variant="threadItemStat">
                   <Separated
@@ -266,7 +266,7 @@ export const ThreadItemLite = ({
   )
 }
 
-const ThreadExtraLabels = ({ thread }: { thread: Thread }) => (
+const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
   <>
     {thread.special == 1 && (
       <Poll htmlColor="#FA541C" sx={{ width: '0.85em', mx: '0.25em' }} />
@@ -290,7 +290,7 @@ const ThreadAuthor = ({
   thread,
   hideThreadAuthor,
 }: {
-  thread: Thread
+  thread: Partial<Thread> & Required<Pick<Thread, 'dateline'>>
   hideThreadAuthor?: boolean
 }) => {
   const time = <>{chineseTime(thread.dateline * 1000)}</>

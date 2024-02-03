@@ -55,17 +55,23 @@ export type ThreadBasics = {
   subject: string
   dateline: number
   last_post: number
-  summary: string
+  summary?: string
   views: number
   replies: number
 }
 
-export type Thread = ThreadBasics & {
-  post_id: number
+export type ThreadInList = Omit<ThreadBasics, 'author' | 'author_id'> &
+  Partial<Pick<ThreadBasics, 'author' | 'author_id'>> &
+  Partial<ThreadExtended> & {
+    last_poster: string
+    forum_name?: string
+  }
+
+type ThreadExtended = {
   type_id: number
-  sort_id: number
+  sort_id?: number
   last_poster: string
-  dis_playorder: number
+  display_order: number
   highlight_color?: string
   highlight_bgcolor?: string
   highlight_bold?: boolean
@@ -95,6 +101,7 @@ export type Thread = ThreadBasics & {
   icon?: number
   poll?: ThreadPollDetails
 }
+export type Thread = ThreadBasics & ThreadExtended
 
 export type ThreadPollDetails = {
   /** 投票选项 */
