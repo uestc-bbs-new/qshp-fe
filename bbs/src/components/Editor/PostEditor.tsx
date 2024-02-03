@@ -99,6 +99,11 @@ const PostEditor = ({
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
 
+  // 帖子类型状态
+  const [typeState, setTypeState] = useState({
+    isVote: false,
+  })
+
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
       showError('请选择合适的版块。')
@@ -230,7 +235,13 @@ const PostEditor = ({
         </Stack>
       </Stack>
       {kind === 'newthread' ? (
-        <VoteSelection className="ml-24"></VoteSelection>
+        <VoteSelection
+          className="ml-24"
+          isVote={typeState.isVote}
+          changeIsVote={(e) => {
+            setTypeState({ ...typeState, isVote: e })
+          }}
+        ></VoteSelection>
       ) : (
         <></>
       )}
