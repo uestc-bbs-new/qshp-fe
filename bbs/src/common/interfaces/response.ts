@@ -167,12 +167,14 @@ export interface PostDetails {
 
 export type ExtCreditName = '水滴' | '威望' | '奖励券'
 export type ExtCreditMap = { [name in ExtCreditName]?: number }
-export interface PostAuthorDetails {
+export type UserGroupDetails = {
   group_id: number
   group_title: string
   group_subtitle?: string
   group_icon?: string
   level_id: number
+}
+export interface PostAuthorDetails extends UserGroupDetails {
   custom_title?: string
   posts: number
   digests: number
