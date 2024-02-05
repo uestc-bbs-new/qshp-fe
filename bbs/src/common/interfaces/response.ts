@@ -112,7 +112,7 @@ export type ThreadPollDetails = {
   show_voters: boolean
   /** 是否为多选投票 */
   multiple: boolean
-  /** 投票后结果可见 */
+  /** 未投票时能否查看投票结果 */
   visible: boolean
   /** 最多选择几项 */
   max_choices: number
