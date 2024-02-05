@@ -127,13 +127,15 @@ export type ThreadPollDetails = {
 }
 
 export type ThreadPollOption = {
-  /** 投票选项 ID */
+  /** 投票选项 ID。发表投票时不设置该属性。编辑投票时按原值传递；需要新增选项时，新
+   * 选项不设置该属性。 */
   id: number
   /** 文字 */
   text: string
   /** 票数 */
   votes?: number
-  /** 显示顺序 */
+  /** 选项的显示顺序。发表投票时不设置该属性。编辑投票时，如果不改变投票顺序，按原值传递;
+   * 需要改变选项顺序时设置为显示顺序，取值范围 1~127。*/
   display_order: number
   voters?: number[]
 }
