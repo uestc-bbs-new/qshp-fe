@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material'
+import { SxProps, ThemeOptions } from '@mui/material'
 
 const rootElement = document.getElementById('root')
 
@@ -145,6 +145,20 @@ declare module '@mui/material/Chip' {
   }
 }
 
+declare module '@mui/material/styles' {
+  interface Theme {
+    commonSx: {
+      headerCardGradient: SxProps
+    }
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    commonSx?: {
+      headerCardGradient?: SxProps
+    }
+  }
+}
+
 export const baseColors = {
   signinTitle: '#0268FD',
   authorCustomTitle: '#999999',
@@ -209,6 +223,12 @@ export const baseTheme: ThemeOptions = {
     threadItemForum: {
       color: 'rgba(33, 117, 243, 0.6)',
       fontSize: 14,
+    },
+  },
+
+  commonSx: {
+    headerCardGradient: {
+      background: `linear-gradient(90deg, #E4EEFE, #FFFFFF 100%)`,
     },
   },
 }

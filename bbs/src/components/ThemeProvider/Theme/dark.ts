@@ -54,6 +54,11 @@ const darkTheme = createTheme(
         color: 'rgba(144, 202, 249, 0.7)',
       },
     },
+    commonSx: {
+      headerCardGradient: {
+        background: `linear-gradient(90deg, rgba(32, 99, 212, 0.6), rgba(0, 0, 0, 0) 100%)`,
+      },
+    },
   }
 )
 console.log(darkTheme)

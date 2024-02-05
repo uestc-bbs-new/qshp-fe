@@ -14,14 +14,7 @@ const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
     <Paper elevation={3}>
       <Box
         className="pt-3 px-8 pb-2"
-        sx={(theme) => {
-          const light = theme.palette.mode == 'light'
-          return {
-            background: `linear-gradient(90deg, ${
-              light ? '#E4EEFE' : 'rgba(32, 99, 212, 0.6)'
-            } 40%, ${light ? '#FFFFFF' : 'rgba(0, 0, 0, 0)'} 100%)`,
-          }
-        }}
+        sx={(theme) => ({ ...theme.commonSx.headerCardGradient })}
       >
         <Typography sx={{ fontWeight: 'bold' }} variant="h6">
           {topListTitleMap[id]}
