@@ -5,6 +5,7 @@ import {
   UserGroupDetails,
 } from './response'
 
+/** 用户发表过的回复 */
 export type UserReply = Omit<ThreadBasics, 'summary'> & {
   post_id: number
   last_poster: string
@@ -14,8 +15,10 @@ export type UserReply = Omit<ThreadBasics, 'summary'> & {
   summary: string
 }
 
+/** 用户发表过的点评 */
 export type UserPostComment = UserReply
 
+/** 用户概况 */
 export type UserSummary = UserGroupDetails & {
   uid: number
   username: string
@@ -41,6 +44,7 @@ export type UserSummary = UserGroupDetails & {
   blocked: boolean
 }
 
+/** 用户空间的最近访客 */
 export type Visitor = {
   uid: number
   username: string
@@ -56,3 +60,12 @@ export type CommonUserQueryRpsoense = {
 }
 
 export type UserCommonList<T> = CommonUserQueryRpsoense & GenericList<T>
+
+/** 用户空间中的留言 */
+export type UserComment = {
+  comment_id: number
+  author_id: number
+  author: string
+  dateline: number
+  message: string
+}

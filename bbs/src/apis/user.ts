@@ -1,5 +1,6 @@
 import { ThreadInList } from '@/common/interfaces/response'
 import {
+  UserComment,
   UserCommonList,
   UserPostComment,
   UserReply,
@@ -21,14 +22,16 @@ type CommonQueryParams = User & {
   admin?: boolean
 }
 
+const userApiBase = `${commonUrl}/user`
+
 const getApiBase = (user: User) => {
   if (user.uid) {
-    return `${commonUrl}/user/${user.uid}`
+    return `${userApiBase}/${user.uid}`
   }
   if (user.username) {
-    return `${commonUrl}/user/name/${user.uid}`
+    return `${userApiBase}/name/${user.uid}`
   }
-  return `${commonUrl}/user/me`
+  return `${userApiBase}/me`
 }
 
 const getCommonQueryParams = (common: CommonQueryParams) => ({
@@ -58,3 +61,15 @@ export const getUserPostComments = (common: CommonQueryParams, page?: number) =>
       params: { page: page || 1 },
     }
   )
+
+export const getUserComments = (common: CommonQueryParams, page?: number) =>
+  request.get<UserCommonList<UserComment>>(`${getApiBase(common)}/comments`, {
+    ...getCommonQueryParams(common),
+    params: { page: page || 1 },
+  })
+export const addComment = (params: { uid: number; message: string }) =>
+  request.post(`${userApiBase}/comment`, params)
+export const editComment = (comment_id: number, params: { message: string }) =>
+  request.patch(`${userApiBase}/comment/${comment_id}`, params)
+export const deleteComment = (comment_id: number) =>
+  request.delete(`${userApiBase}/comment/${comment_id}`)

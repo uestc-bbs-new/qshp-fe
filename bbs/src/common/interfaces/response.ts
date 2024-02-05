@@ -170,11 +170,17 @@ export interface PostDetails {
 
 export type ExtCreditName = '水滴' | '威望' | '奖励券'
 export type ExtCreditMap = { [name in ExtCreditName]?: number }
+/** 用户组相关信息 */
 export type UserGroupDetails = {
+  /** 用户组 ID */
   group_id: number
+  /** 用户组名称 */
   group_title: string
+  /** 用户组副标题 */
   group_subtitle?: string
+  /** 用户组标识图片 */
   group_icon?: string
+  /** 用户等级 ID */
   level_id: number
 }
 export interface PostAuthorDetails extends UserGroupDetails {
