@@ -29,7 +29,7 @@ export type UserSummary = UserGroupDetails & {
   /** 水滴、威望 */
   ext_credits: ExtCreditMap
   /** 勋章 */
-  medals: number[]
+  medals?: number[]
   /** 好友数 */
   friends: number
   /** 主题数 */
@@ -38,10 +38,14 @@ export type UserSummary = UserGroupDetails & {
   replies: number
   /** 精华数 */
   digests: number
+  /** 留言已隐藏 */
+  comments_hidden?: boolean
+  /** 好友列表已隐藏 */
+  friends_hidden?: boolean
   /** 好友状态：'requested' 已发送请求，等待通过；'friend' 好友；undefined 非好友 */
   friend_status?: 'requested' | 'friend'
   /** 是否在黑名单中 */
-  blocked: boolean
+  blocked?: boolean
 }
 
 /** 用户空间的最近访客 */
@@ -68,4 +72,9 @@ export type UserComment = {
   author: string
   dateline: number
   message: string
+}
+
+export type UserCommentsList = UserCommonList<UserComment> & {
+  /** 用户隐藏了留言 */
+  hidden?: boolean
 }
