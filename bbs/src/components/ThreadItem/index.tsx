@@ -37,7 +37,7 @@ const formatNumber = (num: number) => {
   return num
 }
 
-type ThreadReplyOrCommentItem = {
+export type ThreadReplyOrCommentItem = {
   post_id: number
   summary: string
 }

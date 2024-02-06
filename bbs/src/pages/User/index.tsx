@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 // import { useQuery } from 'react-query'
 import {
@@ -124,12 +124,6 @@ const UserCard = ({ data }: UserCardProps) => {
   )
 }
 
-type SortProps = {
-  sortType: number
-  tapTypeChange: any
-  children: React.ReactElement
-}
-
 const tabs = [
   { id: 'profile', title: '个人资料' },
   { id: 'threads', title: '帖子' },
@@ -150,23 +144,30 @@ const mapSubPageToTabId = (subPage?: string) => {
 
 function User() {
   const params = useParams()
+  const [searchParams] = useSearchParams()
   const user = {
     ...(params.uid && parseInt(params.uid)
       ? { uid: parseInt(params.uid) }
       : undefined),
     ...(params.username && { username: params.username }),
+    ...(searchParams.get('additional') == 'removevlog' && {
+      removeVisitLog: true,
+    }),
+    ...(searchParams.get('a') && {
+      admin: true,
+    }),
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
 
   return (
     <Box>
-      <Stack direction="row" justifyContent={'space-between'}>
-        <Box sx={{ width: 1010 }}>
+      <Stack direction="row">
+        <Box mr={4} flexGrow={1} flexShrink={1} minWidth="1em">
           <UserCard></UserCard>
           <Tabs value={activeTab}>
             {tabs.map((tab) => (
               <Tab
-                to={pages.user(user, tab.id)}
+                to={pages.user({ ...user, subPage: tab.id })}
                 component={Link}
                 key={tab.id}
                 label={tab.title}
@@ -177,7 +178,7 @@ function User() {
           <Card>
             <>
               {activeTab == 'profile' && <Information />}
-              {activeTab == 'threads' && <UserThreads />}
+              {activeTab == 'threads' && <UserThreads commonQuery={user} />}
               {activeTab == 'friends' && <Friends />}
               {activeTab == 'favorites' && <Favorite />}
               {activeTab == 'comments' && <MessageBoard />}

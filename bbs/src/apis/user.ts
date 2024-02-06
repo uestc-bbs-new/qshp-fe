@@ -13,7 +13,7 @@ type User = {
   username?: string
 }
 
-type CommonQueryParams = User & {
+export type CommonQueryParams = User & {
   /** 是否获取用户概况（用户空间顶部显示的内容） */
   getUserSummary?: boolean
   /** 是否最近访客（用户空间右侧显示的内容） */

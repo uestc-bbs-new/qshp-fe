@@ -11,7 +11,7 @@ const Side = () => {
     { id: 4, name: 'user3', time: '2小时前' },
   ]
   return (
-    <Box sx={{ width: 215 }}>
+    <Box sx={{ width: 215 }} flexGrow={0} flexShrink={0}>
       <Stack direction="row" justifyContent="space-between" sx={{ p: 1.5 }}>
         <Stack direction="row">
           <AssessmentIcon />

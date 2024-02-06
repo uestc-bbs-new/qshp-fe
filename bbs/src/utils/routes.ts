@@ -36,6 +36,14 @@ const withSearchAndHash = (
 
 type SettingsSubPage = 'profile' | 'privacy' | 'password'
 
+export type UserPageParams = {
+  uid?: number
+  username?: string
+  subPage?: string
+  removeVisitLog?: boolean
+  admin?: boolean
+}
+
 const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const kIdasContinueBase = `${kIdasOrigin}/continue`
@@ -70,14 +78,22 @@ export const pages = {
   settings: (subPage?: SettingsSubPage) =>
     `/settings${subPage ? `/${subPage}` : ''}`,
 
-  user: (params?: { uid?: number; username?: string }, subPage?: string) =>
-    `/user/${
-      params?.username
-        ? `name/${params.username}`
-        : params?.uid
-          ? params.uid
-          : 'me'
-    }${subPage ? `/${subPage}` : ''}`,
+  user: (params?: UserPageParams) =>
+    withSearchAndHash(
+      `/user/${
+        params?.username
+          ? `name/${params.username}`
+          : params?.uid
+            ? params.uid
+            : 'me'
+      }${params?.subPage ? `/${params.subPage}` : ''}`,
+      params?.removeVisitLog || params?.admin
+        ? new URLSearchParams({
+            ...(params?.removeVisitLog && { additional: 'removevlog' }),
+            ...(params?.admin && { a: '1' }),
+          })
+        : undefined
+    ),
 }
 
 export { useActiveRoute, kIdasOrigin }
