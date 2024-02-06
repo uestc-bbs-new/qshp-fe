@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useParams } from 'react-router-dom'
 
 // import { useQuery } from 'react-query'
 import {
@@ -14,6 +15,8 @@ import {
 
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
+import Link from '@/components/Link'
+import { pages } from '@/utils/routes'
 
 import Favorite from './Favorite'
 import Friends from './Friends'
@@ -127,70 +130,59 @@ type SortProps = {
   children: React.ReactElement
 }
 
-const Sort = ({ sortType, tapTypeChange, children }: SortProps) => {
-  return (
-    <>
-      <Box sx={{ width: '100%' }}>
-        <Tabs value={sortType} onChange={tapTypeChange}>
-          <Tab label="个人资料" />
-          <Tab label="帖子" />
-          <Tab label="好友" />
-          <Tab label="收藏" />
-          <Tab label="留言板" />
-        </Tabs>
-      </Box>
-      {children}
-    </>
-  )
-}
+const tabs = [
+  { id: 'profile', title: '个人资料' },
+  { id: 'threads', title: '帖子' },
+  { id: 'friends', title: '好友' },
+  { id: 'favorites', title: '收藏' },
+  { id: 'comments', title: '留言板' },
+]
 
-interface TabPanelProps {
-  children: React.ReactElement
-  index: number
-  sortType: number
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, sortType, index } = props
-  return (
-    <div role="tabpanel">{sortType === index && <Box>{children}</Box>}</div>
-  )
+const mapSubPageToTabId = (subPage?: string) => {
+  if (!subPage) {
+    return tabs[0].id
+  }
+  if (['threads', 'replies', 'postcomments'].includes(subPage)) {
+    return 'threads'
+  }
+  return subPage
 }
 
 function User() {
-  const [sortType, setTypeValue] = useState(0)
-
-  const tapTypeChange = (event: any, value: number) => {
-    setTypeValue(value)
-    console.log(value)
+  const params = useParams()
+  const user = {
+    ...(params.uid && parseInt(params.uid)
+      ? { uid: parseInt(params.uid) }
+      : undefined),
+    ...(params.username && { username: params.username }),
   }
+  const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
 
   return (
     <Box>
       <Stack direction="row" justifyContent={'space-between'}>
         <Box sx={{ width: 1010 }}>
           <UserCard></UserCard>
-          <Sort sortType={sortType} tapTypeChange={tapTypeChange}>
-            <Card>
-              <Box>
-                <TabPanel sortType={sortType} index={0}>
-                  <Information></Information>
-                </TabPanel>
-                <TabPanel sortType={sortType} index={1}>
-                  <UserThreads></UserThreads>
-                </TabPanel>
-                <TabPanel sortType={sortType} index={2}>
-                  <Friends></Friends>
-                </TabPanel>
-                <TabPanel sortType={sortType} index={3}>
-                  <Favorite></Favorite>
-                </TabPanel>
-                <TabPanel sortType={sortType} index={4}>
-                  <MessageBoard></MessageBoard>
-                </TabPanel>
-              </Box>
-            </Card>
-          </Sort>
+          <Tabs value={activeTab}>
+            {tabs.map((tab) => (
+              <Tab
+                to={pages.user(user, tab.id)}
+                component={Link}
+                key={tab.id}
+                label={tab.title}
+                value={tab.id}
+              />
+            ))}
+          </Tabs>
+          <Card>
+            <>
+              {activeTab == 'profile' && <Information />}
+              {activeTab == 'threads' && <UserThreads />}
+              {activeTab == 'friends' && <Friends />}
+              {activeTab == 'favorites' && <Favorite />}
+              {activeTab == 'comments' && <MessageBoard />}
+            </>
+          </Card>
         </Box>
         <Side></Side>
       </Stack>

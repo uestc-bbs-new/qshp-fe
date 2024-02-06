@@ -70,14 +70,14 @@ export const pages = {
   settings: (subPage?: SettingsSubPage) =>
     `/settings${subPage ? `/${subPage}` : ''}`,
 
-  user: (params?: { uid?: number; username?: string }) =>
+  user: (params?: { uid?: number; username?: string }, subPage?: string) =>
     `/user/${
       params?.username
         ? `name/${params.username}`
         : params?.uid
           ? params.uid
           : 'me'
-    }`,
+    }${subPage ? `/${subPage}` : ''}`,
 }
 
 export { useActiveRoute, kIdasOrigin }

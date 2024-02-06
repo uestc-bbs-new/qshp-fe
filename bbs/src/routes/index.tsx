@@ -80,7 +80,12 @@ routes.current = [
         loader: ContinueLoader,
         element: <Continue />,
       },
-      { path: '/user/me', id: 'user', element: <User /> },
+      { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
+      {
+        path: '/user/name/:username/:subPage?',
+        id: 'userByName',
+        element: <User />,
+      },
     ],
   },
 ]
