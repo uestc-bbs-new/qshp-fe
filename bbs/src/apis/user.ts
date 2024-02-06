@@ -44,14 +44,12 @@ const getCommonQueryParams = (common: CommonQueryParams) => ({
 
 export const getUserThreads = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<ThreadInList>>(`${getApiBase(common)}/threads`, {
-    ...getCommonQueryParams(common),
-    params: { page: page || 1 },
+    params: { ...getCommonQueryParams(common), page: page || 1 },
   })
 
 export const getUserReplies = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<UserReply>>(`${getApiBase(common)}/replies`, {
-    ...getCommonQueryParams(common),
-    params: { page: page || 1 },
+    params: { ...getCommonQueryParams(common), page: page || 1 },
   })
 
 export const getUserPostComments = (common: CommonQueryParams, page?: number) =>
@@ -65,8 +63,7 @@ export const getUserPostComments = (common: CommonQueryParams, page?: number) =>
 
 export const getUserComments = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<UserComment>>(`${getApiBase(common)}/comments`, {
-    ...getCommonQueryParams(common),
-    params: { page: page || 1 },
+    params: { ...getCommonQueryParams(common), page: page || 1 },
   })
 export const addComment = (params: { uid: number; message: string }) =>
   request.post(`${userApiBase}/comment`, params)
@@ -77,8 +74,7 @@ export const deleteComment = (comment_id: number) =>
 
 export const getUserFriends = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<UserFriend>>(`${getApiBase(common)}/friends`, {
-    ...getCommonQueryParams(common),
-    params: { page: page || 1 },
+    params: { ...getCommonQueryParams(common), page: page || 1 },
   })
 export const addFriend = (params: { uid: number; message: string }) =>
   request.put(`${userApiBase}/friend`, params)
