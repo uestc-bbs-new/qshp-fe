@@ -75,11 +75,13 @@ const ThreadItem = ({
         <Stack direction="row">
           {!hideThreadAuthor && data.author_id !== undefined && (
             <Box sx={{ mr: 2 }}>
-              <Avatar
-                alt={data.author}
-                uid={data.author_id}
-                size={showSummary ? 40 : 48}
-              />
+              <Link to={data.author_id ? `/user/${data.author_id}` : undefined}>
+                <Avatar
+                  alt={data.author}
+                  uid={data.author_id}
+                  size={showSummary ? 40 : 48}
+                />
+              </Link>
             </Box>
           )}
           <Box className="flex-1" mr={1.5}>
@@ -239,7 +241,9 @@ export const ThreadItemLite = ({
   return (
     <Box px={0.25} py={0.5}>
       <Stack direction="row" alignItems="center">
-        <Avatar alt={item.author} uid={item.author_id} size={30} />
+        <Link to={item.author_id ? `/user/${item.author_id}` : undefined}>
+          <Avatar alt={item.author} uid={item.author_id} size={30} />
+        </Link>
         <Link
           to={pages.thread(item.thread_id)}
           {...(fromTopList && { state: { fromTopList } })}
@@ -265,7 +269,11 @@ export const ThreadItemLite = ({
         className="text-sm"
         pl={0.5}
       >
-        <Link>{item.author}</Link>
+        <Link
+          to={item.author_id ? pages.user({ uid: item.author_id }) : undefined}
+        >
+          {item.author}
+        </Link>
         <Typography fontSize="inherit" className="pl-1" color="grey">
           {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
         </Typography>

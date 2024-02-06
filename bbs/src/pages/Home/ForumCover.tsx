@@ -69,11 +69,22 @@ const ForumCover = ({ data }: ForumData) => {
               className="mr-4"
               visibility={data.latest_thread?.thread_id ? 'visible' : 'hidden'}
             >
-              <Avatar
-                alt={data.latest_thread?.lastpost_author}
-                uid={data.latest_thread?.lastpost_authorid}
-                size={40}
-              />
+              <Link
+                to={
+                  data.latest_thread?.lastpost_authorid
+                    ? pages.user({
+                        uid: data.latest_thread.lastpost_authorid,
+                      })
+                    : undefined
+                }
+                color="inherit"
+              >
+                <Avatar
+                  alt={data.latest_thread?.lastpost_author}
+                  uid={data.latest_thread?.lastpost_authorid}
+                  size={40}
+                />
+              </Link>
             </Box>
           )}
           {data.latest_thread && (
@@ -106,7 +117,16 @@ const ForumCover = ({ data }: ForumData) => {
                 {!!data.latest_thread?.thread_id && (
                   <>
                     <Typography className="mx-1">·</Typography>
-                    <Link color="inherit">
+                    <Link
+                      to={
+                        data.latest_thread?.lastpost_authorid
+                          ? pages.user({
+                              uid: data.latest_thread.lastpost_authorid,
+                            })
+                          : undefined
+                      }
+                      color="inherit"
+                    >
                       {data.latest_thread?.lastpost_author}
                     </Link>
                   </>
