@@ -21,9 +21,7 @@ const NotificationItem = ({
   summary?: boolean
 }) => {
   const navigate = useNavigate()
-  const avatar = (
-    <Avatar uid={item.author_id} variant="rounded" sx={{ mr: 1 }} />
-  )
+  const avatar = <Avatar uid={item.author_id} sx={{ mr: 1 }} />
   const body = (
     <Stack direction="row">
       {summary ? (

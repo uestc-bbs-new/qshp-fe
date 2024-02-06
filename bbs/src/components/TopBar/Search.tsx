@@ -130,7 +130,7 @@ const SearchBar = () => {
             {option.thread && (
               <>
                 <ListItemIcon>
-                  <Avatar uid={option.thread.author_id} variant="rounded" />
+                  <Avatar uid={option.thread.author_id} />
                 </ListItemIcon>
                 <ListItemText>
                   <Typography>{option.thread.subject}</Typography>

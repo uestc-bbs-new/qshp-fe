@@ -55,23 +55,29 @@ export type ThreadBasics = {
   subject: string
   dateline: number
   last_post: number
-  summary: string
+  summary?: string
   views: number
   replies: number
 }
 
-export type Thread = ThreadBasics & {
-  post_id: number
+export type ThreadInList = Omit<ThreadBasics, 'author' | 'author_id'> &
+  Partial<Pick<ThreadBasics, 'author' | 'author_id'>> &
+  Partial<ThreadExtended> & {
+    last_poster: string
+    forum_name?: string
+  }
+
+type ThreadExtended = {
   type_id: number
-  sort_id: number
+  sort_id?: number
   last_poster: string
-  dis_playorder: number
+  display_order: number
   highlight_color?: string
   highlight_bgcolor?: string
   highlight_bold?: boolean
   highlight_italic?: boolean
   highlight_underline?: boolean
-  digest: number
+  digest?: number
   is_rate: number
   special: number
   attachment: number
@@ -91,8 +97,11 @@ export type Thread = ThreadBasics & {
   comments: number
   reverse_replies: boolean
   can_reply: boolean
+  stamp?: number
+  icon?: number
   poll?: ThreadPollDetails
 }
+export type Thread = ThreadBasics & ThreadExtended
 
 export type ThreadPollDetails = {
   /** 投票选项 */
@@ -103,27 +112,30 @@ export type ThreadPollDetails = {
   show_voters: boolean
   /** 是否为多选投票 */
   multiple: boolean
-  /** 投票后结果可见 */
+  /** 未投票时能否查看投票结果 */
   visible: boolean
   /** 最多选择几项 */
   max_choices: number
   /** 是否为图片投票（目前暂不支持） */
   is_image: boolean
   /** 投票过期时间。获取帖子信息与编辑投票时，该字段的值为过期时间的时间戳；发表投票
-   * 时，应当设置为投票有效期（过期时间戳 - 当前时间戳）。*/
+   * 时，应当设置为投票有效时长（以秒为单位表示的有效期，最短 1 天，最长一年）。发表
+   * 投票时 0 表示不过期；编辑帖子时，传入负值可关闭投票。*/
   expiration: number
   /** 投票参与人数 */
   voter_count: number
 }
 
 export type ThreadPollOption = {
-  /** 投票选项 ID */
+  /** 投票选项 ID。发表投票时不设置该属性。编辑投票时按原值传递；需要新增选项时，新
+   * 选项不设置该属性。 */
   id: number
   /** 文字 */
   text: string
   /** 票数 */
   votes?: number
-  /** 显示顺序 */
+  /** 选项的显示顺序。发表投票时不设置该属性。编辑投票时，如果不改变投票顺序，按原值传递;
+   * 需要改变选项顺序时设置为显示顺序，取值范围 1~127。*/
   display_order: number
   voters?: number[]
 }
@@ -158,12 +170,20 @@ export interface PostDetails {
 
 export type ExtCreditName = '水滴' | '威望' | '奖励券'
 export type ExtCreditMap = { [name in ExtCreditName]?: number }
-export interface PostAuthorDetails {
+/** 用户组相关信息 */
+export type UserGroupDetails = {
+  /** 用户组 ID */
   group_id: number
+  /** 用户组名称 */
   group_title: string
+  /** 用户组副标题 */
   group_subtitle?: string
+  /** 用户组标识图片 */
   group_icon?: string
+  /** 用户等级 ID */
   level_id: number
+}
+export interface PostAuthorDetails extends UserGroupDetails {
   custom_title?: string
   posts: number
   digests: number
@@ -284,9 +304,12 @@ export interface UserInfos {
   prestiges: number
 }
 
-export type ForumCommon = {
+export type ForumBasics = {
   fid: number
   name: string
+}
+
+export type ForumCommon = ForumBasics & {
   can_post_thread?: boolean
   can_post_reply?: boolean
 }

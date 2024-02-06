@@ -119,12 +119,7 @@ const UserMenu = ({ user }: { user: UserState }) => {
     <>
       <Tooltip title={<MenuContent />}>
         <Stack direction="row" alignItems="center">
-          <Avatar
-            className="mx-3"
-            uid={user.uid}
-            sx={{ width: 32, height: 32 }}
-            variant="rounded"
-          />
+          <Avatar className="mx-3" uid={user.uid} size={32} />
           <Typography>{user.username}</Typography>
         </Stack>
       </Tooltip>

@@ -43,8 +43,8 @@ const Author = ({
     <Stack direction={small ? 'row' : 'column'} alignItems="center" mr={2}>
       <Avatar
         uid={anonymous ? 0 : state.user.uid}
-        sx={{ width: size, height: size, mr: small ? 1 : undefined }}
-        variant="rounded"
+        size={size}
+        sx={{ mr: small ? 1 : undefined }}
       />
       <Typography mt={small ? undefined : 1} textAlign="center">
         {anonymous ? (

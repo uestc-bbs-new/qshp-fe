@@ -155,12 +155,10 @@ const RateTable = ({
                 <Stack direction="row" alignItems="center">
                   <Avatar
                     sx={{
-                      width: 28,
-                      height: 28,
                       display: 'inline-block',
                       verticalAlign: 'middle',
                     }}
-                    variant="rounded"
+                    size={28}
                     uid={rate.user_id}
                   />
                   <Typography ml={1} fontWeight="bold">
