@@ -1,15 +1,13 @@
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import { Box, Divider, Grid, Paper, Stack, Typography } from '@mui/material'
 
+import { Visitor } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
+import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
-const Side = () => {
-  const users = [
-    { id: 1, name: 'user1', time: '2小时前' },
-    { id: 2, name: 'user2', time: '2小时前' },
-    { id: 3, name: 'user3', time: '2小时前' },
-    { id: 4, name: 'user3', time: '2小时前' },
-  ]
+const Side = ({ visitors }: { visitors?: Visitor[] }) => {
   return (
     <Box sx={{ width: 215 }} flexGrow={0} flexShrink={0}>
       <Stack direction="row" justifyContent="space-between" sx={{ p: 1.5 }}>
@@ -24,20 +22,25 @@ const Side = () => {
       <Divider sx={{ bgcolor: 'rgb(27, 83, 205)' }} />
       <Paper sx={{ mt: 1, p: 2 }}>
         <Grid container spacing={2}>
-          {users.map((user) => (
-            <Grid item xs={4} key={user.id}>
-              <Box sx={{ textAlign: 'center' }}>
+          {visitors?.map((user) => (
+            <Grid item xs={4} key={user.uid}>
+              <Stack
+                component={Link}
+                to={pages.user({ uid: user.uid })}
+                underline="none"
+                alignItems="center"
+              >
                 <Avatar
-                  alt="0"
-                  uid={0}
-                  sx={{ width: 40, height: 40 }}
+                  alt={user.username}
+                  uid={user.uid}
+                  size={40}
                   variant="rounded"
                 />
-                <Typography fontSize={12}>{user.name}</Typography>
+                <Typography fontSize={12}>{user.username}</Typography>
                 <Typography fontSize={12} color="rgb(161, 173, 197)">
-                  {user.time}
+                  {chineseTime(user.dateline * 1000, { short: true })}
                 </Typography>
-              </Box>
+              </Stack>
             </Grid>
           ))}
         </Grid>
