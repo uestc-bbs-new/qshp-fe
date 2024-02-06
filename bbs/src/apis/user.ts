@@ -30,7 +30,7 @@ const getApiBase = (user: User) => {
     return `${userApiBase}/${user.uid}`
   }
   if (user.username) {
-    return `${userApiBase}/name/${user.uid}`
+    return `${userApiBase}/name/${user.username}`
   }
   return `${userApiBase}/me`
 }

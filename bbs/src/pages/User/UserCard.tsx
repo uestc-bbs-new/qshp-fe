@@ -2,18 +2,26 @@ import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material'
 
 import { UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
+import Medals from '@/components/Medals'
 import UserGroupIcon from '@/components/UserGroupIcon'
 import { useAppState } from '@/states'
+import { pages } from '@/utils/routes'
+
+const UserStatEntry = ({
+  title,
+  value,
+}: {
+  title: string
+  value: string | number | undefined
+}) => (
+  <Stack alignItems="center">
+    <Typography>{title}</Typography>
+    <Typography>{value}</Typography>
+  </Stack>
+)
 
 const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
-  const basicIfo = [
-    { id: 1, info: '积分' },
-    { id: 2, info: '威望' },
-    { id: 3, info: '水滴' },
-    { id: 4, info: '好友' },
-    { id: 5, info: '主题' },
-    { id: 6, info: '回复' },
-  ]
   const { state } = useAppState()
   return (
     <Paper>
@@ -66,6 +74,8 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
                     marginTop: 8,
                     borderRadius: 8,
                   }}
+                  component={Link}
+                  to={pages.user()}
                   variant="contained"
                 >
                   访问我的空间
@@ -74,33 +84,61 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
             </Stack>
             <Box sx={{ width: 680, height: 62, margin: '5px' }}>
               <Stack direction="row" justifyContent="space-between">
-                {basicIfo.map((item, index) => {
-                  return (
-                    <Stack alignItems="center" key={item.id}>
-                      <Typography>{item.info}</Typography>
-                      <Typography></Typography>
-                    </Stack>
-                  )
-                })}
+                <UserStatEntry title="积分" value={userSummary?.credits} />
+                <UserStatEntry
+                  title="威望"
+                  value={
+                    userSummary?.ext_credits && userSummary.ext_credits['威望']
+                  }
+                />
+                <UserStatEntry
+                  title="水滴"
+                  value={
+                    userSummary?.ext_credits && userSummary.ext_credits['水滴']
+                  }
+                />
+                <UserStatEntry title="好友" value={userSummary?.friends} />
+                <UserStatEntry title="主题" value={userSummary?.threads} />
+                <UserStatEntry title="回复" value={userSummary?.replies} />
               </Stack>
             </Box>
             <Divider />
-            <Box sx={{ width: 726, marginTop: 2 }}>
-              <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
-                <Button
-                  style={{
-                    color: 'black',
-                    backgroundColor: 'rgb(255, 255, 255)',
-                    height: 32,
-                    borderRadius: 8,
-                  }}
-                  variant="contained"
-                >
-                  加为好友
-                </Button>
-                <Button variant="contained">开始私信</Button>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: 726, marginTop: 2 }}
+            >
+              <Stack direction="row">
+                {!!userSummary?.medals?.length && (
+                  <Medals medals={userSummary.medals} />
+                )}
               </Stack>
-            </Box>
+              <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+                {userSummary && state.user.uid != userSummary.uid && (
+                  <Button
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'rgb(255, 255, 255)',
+                      height: 32,
+                      borderRadius: 8,
+                    }}
+                    variant="contained"
+                    disabled={
+                      userSummary?.blocked || !!userSummary?.friend_status
+                    }
+                  >
+                    {userSummary.friend_status == 'friend'
+                      ? '已成为好友'
+                      : userSummary.friend_status == 'requested'
+                        ? '已发送好友请求'
+                        : '加为好友'}
+                  </Button>
+                )}
+                {userSummary && state.user.uid != userSummary.uid && (
+                  <Button variant="contained">开始私信</Button>
+                )}
+              </Stack>
+            </Stack>
           </Box>
         </Stack>
       </Box>
