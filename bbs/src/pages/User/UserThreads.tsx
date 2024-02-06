@@ -57,7 +57,7 @@ function useCommonQuery<T>(
   const [query, setQuery] = useState(initQuery())
   useEffect(() => {
     setQuery(initQuery())
-  }, [searchParams])
+  }, [searchParams, commonQuery])
   return useQuery({
     queryKey: [queryKey, query],
     queryFn: () => queryFn(query),
@@ -73,7 +73,7 @@ const Threads = ({
   subPage: string
   onLoad?: (data: OnLoadData) => void
 }) => {
-  const { data } = useCommonQuery(
+  const { data, isLoading } = useCommonQuery(
     commonQuery,
     subPage,
     'userThreads',
@@ -85,6 +85,13 @@ const Threads = ({
   )
   return (
     <>
+      {isLoading && (
+        <>
+          {[...Array(4)].map((_, index) => (
+            <Skeleton className="w-full" height={81} key={index}></Skeleton>
+          ))}
+        </>
+      )}
       {data?.rows.map((item) => (
         <ThreadItem
           key={item.thread_id}
@@ -135,7 +142,7 @@ const Replies = ({
   subPage: string
   onLoad?: (data: OnLoadData) => void
 }) => {
-  const { data } = useCommonQuery(
+  const { data, isLoading } = useCommonQuery(
     commonQuery,
     subPage,
     'userReplies',
@@ -149,6 +156,13 @@ const Replies = ({
   )
   return (
     <>
+      {isLoading && (
+        <>
+          {[...Array(4)].map((_, index) => (
+            <Skeleton className="w-full" height={81} key={index}></Skeleton>
+          ))}
+        </>
+      )}
       {data?.coalescedReplies?.map((item) => (
         <ThreadItem
           key={item.thread_id}
@@ -239,7 +253,13 @@ const tabs = [
   { id: 'postcomments', title: '点评', component: PostComments },
 ]
 
-const UserThreads = ({ commonQuery }: { commonQuery: CommonQueryParams }) => {
+const UserThreads = ({
+  commonQuery,
+  onLoad,
+}: {
+  commonQuery: CommonQueryParams
+  onLoad?: (data: CommonUserQueryRpsoense) => void
+}) => {
   const subPage = useParams().subPage
   const [pagination, setPagination] = useState<PaginationParams>()
   const Component = (tabs.find((item) => item.id == subPage) || tabs[0])
@@ -275,6 +295,7 @@ const UserThreads = ({ commonQuery }: { commonQuery: CommonQueryParams }) => {
               page_size: data.page_size,
               total: data.total,
             })
+            onLoad && onLoad(data)
           }}
         />
       </ThreadList>

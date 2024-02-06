@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 // import { useQuery } from 'react-query'
@@ -13,9 +13,12 @@ import {
   Typography,
 } from '@mui/material'
 
+import { CommonUserQueryRpsoense, UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import Card from '@/components/Card'
 import Link from '@/components/Link'
+import UserGroupIcon from '@/components/UserGroupIcon'
+import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
 import Favorite from './Favorite'
@@ -25,11 +28,7 @@ import MessageBoard from './MessageBoard'
 import Side from './Side'
 import UserThreads from './UserThreads'
 
-type UserCardProps = {
-  data?: null
-}
-
-const UserCard = ({ data }: UserCardProps) => {
+const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
   const basicIfo = [
     { id: 1, info: '积分' },
     { id: 2, info: '威望' },
@@ -38,6 +37,7 @@ const UserCard = ({ data }: UserCardProps) => {
     { id: 5, info: '主题' },
     { id: 6, info: '回复' },
   ]
+  const { state } = useAppState()
   return (
     <Paper>
       <Box
@@ -48,12 +48,14 @@ const UserCard = ({ data }: UserCardProps) => {
       >
         <Stack direction="row">
           <Box sx={{ margin: 18 + 'px' }}>
-            <Avatar
-              alt="0"
-              uid={0}
-              sx={{ width: 218, height: 218 }}
-              variant="rounded"
-            />
+            {userSummary && (
+              <Avatar
+                alt="0"
+                uid={userSummary?.uid}
+                sx={{ width: 218, height: 218 }}
+                variant="rounded"
+              />
+            )}
           </Box>
           <Box>
             <Stack
@@ -63,7 +65,7 @@ const UserCard = ({ data }: UserCardProps) => {
             >
               <Box sx={{ height: 70, margin: '6px' }}>
                 <Typography fontSize={24} fontWeight="bold">
-                  用户名
+                  {userSummary?.username}
                 </Typography>
                 <Stack
                   direction="row"
@@ -71,22 +73,27 @@ const UserCard = ({ data }: UserCardProps) => {
                   spacing={2}
                   alignItems="center"
                 >
-                  <Typography>等级</Typography>
-                  <Typography>图标</Typography>
+                  <Typography>{userSummary?.group_title}</Typography>
+                  {userSummary?.group_subtitle && (
+                    <Typography> ({userSummary.group_subtitle})</Typography>
+                  )}
+                  <UserGroupIcon user={userSummary} />
                 </Stack>
               </Box>
-              <Button
-                style={{
-                  color: 'black',
-                  backgroundColor: 'rgb(255, 255, 255)',
-                  height: 32,
-                  marginTop: 8,
-                  borderRadius: 8,
-                }}
-                variant="contained"
-              >
-                访问我的空间
-              </Button>
+              {userSummary && userSummary.uid != state.user.uid && (
+                <Button
+                  style={{
+                    color: 'black',
+                    backgroundColor: 'rgb(255, 255, 255)',
+                    height: 32,
+                    marginTop: 8,
+                    borderRadius: 8,
+                  }}
+                  variant="contained"
+                >
+                  访问我的空间
+                </Button>
+              )}
             </Stack>
             <Box sx={{ width: 680, height: 62, margin: '5px' }}>
               <Stack direction="row" justifyContent="space-between">
@@ -145,6 +152,8 @@ const mapSubPageToTabId = (subPage?: string) => {
 function User() {
   const params = useParams()
   const [searchParams] = useSearchParams()
+  const [commonUserData, setCommonUserData] =
+    useState<CommonUserQueryRpsoense>()
   const user = {
     ...(params.uid && parseInt(params.uid)
       ? { uid: parseInt(params.uid) }
@@ -156,14 +165,18 @@ function User() {
     ...(searchParams.get('a') && {
       admin: true,
     }),
+    getUserSummary: !commonUserData,
+    getRecentVisitors: !commonUserData,
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
+  const onLoad = (data: CommonUserQueryRpsoense) =>
+    setCommonUserData({ ...commonUserData, ...data })
 
   return (
     <Box>
       <Stack direction="row">
         <Box mr={4} flexGrow={1} flexShrink={1} minWidth="1em">
-          <UserCard></UserCard>
+          <UserCard userSummary={commonUserData?.user_summary} />
           <Tabs value={activeTab}>
             {tabs.map((tab) => (
               <Tab
@@ -178,7 +191,9 @@ function User() {
           <Card>
             <>
               {activeTab == 'profile' && <Information />}
-              {activeTab == 'threads' && <UserThreads commonQuery={user} />}
+              {activeTab == 'threads' && (
+                <UserThreads commonQuery={user} onLoad={onLoad} />
+              )}
               {activeTab == 'friends' && <Friends />}
               {activeTab == 'favorites' && <Favorite />}
               {activeTab == 'comments' && <MessageBoard />}

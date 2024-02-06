@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography, css } from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 
 import {
   ForumDetails,
@@ -16,9 +16,9 @@ import Medals from '@/components/Medals'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
+import UserGroupIcon from '@/components/UserGroupIcon'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
-import siteRoot from '@/utils/siteRoot'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
@@ -288,14 +288,7 @@ const AuthorDetails = ({
           )}
         </Box>
       </Stack>
-      {authorDetails.group_icon && (
-        <Box>
-          <img
-            src={`${siteRoot}/${authorDetails.group_icon}`}
-            css={css({ display: 'block', maxWidth: '100%' })}
-          />
-        </Box>
-      )}
+      <UserGroupIcon user={authorDetails} />
       {!!authorDetails.medals?.length && (
         <Medals medals={authorDetails.medals} />
       )}
