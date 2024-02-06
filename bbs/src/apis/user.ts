@@ -2,6 +2,7 @@ import { ThreadInList } from '@/common/interfaces/response'
 import {
   UserComment,
   UserCommonList,
+  UserFriend,
   UserPostComment,
   UserReply,
 } from '@/common/interfaces/user'
@@ -73,3 +74,15 @@ export const editComment = (comment_id: number, params: { message: string }) =>
   request.patch(`${userApiBase}/comment/${comment_id}`, params)
 export const deleteComment = (comment_id: number) =>
   request.delete(`${userApiBase}/comment/${comment_id}`)
+
+export const getUserFriends = (common: CommonQueryParams, page?: number) =>
+  request.get<UserCommonList<UserFriend>>(`${getApiBase(common)}/friends`, {
+    ...getCommonQueryParams(common),
+    params: { page: page || 1 },
+  })
+export const addFriend = (params: { uid: number; message: string }) =>
+  request.put(`${userApiBase}/friend`, params)
+export const editFriend = (uid: number, params: { note: string }) =>
+  request.patch(`${userApiBase}/friend/${uid}`, params)
+export const deleteFriend = (uid: number) =>
+  request.delete(`${userApiBase}/friend/${uid}`)

@@ -18,18 +18,13 @@ export type UserReply = Omit<ThreadBasics, 'summary'> & {
 /** 用户发表过的点评 */
 export type UserPostComment = UserReply
 
-/** 用户概况 */
-export type UserSummary = UserGroupDetails & {
+export type CommonUserSummary = UserGroupDetails & {
   uid: number
   username: string
-  /** 用户是否已删除 */
-  deleted?: boolean
   /** 积分 */
   credits: number
   /** 水滴、威望 */
   ext_credits: ExtCreditMap
-  /** 勋章 */
-  medals?: number[]
   /** 好友数 */
   friends: number
   /** 主题数 */
@@ -38,6 +33,14 @@ export type UserSummary = UserGroupDetails & {
   replies: number
   /** 精华数 */
   digests: number
+}
+
+/** 用户概况 */
+export type UserSummary = CommonUserSummary & {
+  /** 用户是否已删除 */
+  deleted?: boolean
+  /** 勋章 */
+  medals?: number[]
   /** 留言已隐藏 */
   comments_hidden?: boolean
   /** 好友列表已隐藏 */
@@ -76,5 +79,20 @@ export type UserComment = {
 
 export type UserCommentsList = UserCommonList<UserComment> & {
   /** 用户隐藏了留言 */
+  hidden?: boolean
+}
+
+export type UserFriend = CommonUserSummary & {
+  /** 备注，只有本人才可见 */
+  note?: string
+  /** 最新发表的主题帖，只有访问自己的个人空间时才返回 */
+  latest_thread?: {
+    tid: number
+    subject: string
+  }
+}
+
+export type UserFriendsList = UserCommonList<UserFriend> & {
+  /** 用户隐藏了好友列表 */
   hidden?: boolean
 }
