@@ -60,7 +60,7 @@ const MenuContent = () => {
   }
   return (
     <Box className="py-2">
-      <MenuItem>
+      <MenuItem component={MenuItemLink} to={pages.user()}>
         <ListItemIcon>
           <Person fontSize="small" />
         </ListItemIcon>
