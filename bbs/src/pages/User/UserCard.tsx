@@ -35,9 +35,10 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
           <Box sx={{ margin: 18 + 'px' }}>
             {userSummary && (
               <Avatar
-                alt="0"
+                alt={userSummary?.username}
                 uid={userSummary?.uid}
-                sx={{ width: 218, height: 218 }}
+                size={218}
+                imageSize="large"
                 variant="rounded"
               />
             )}
@@ -106,14 +107,20 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
             <Stack
               direction="row"
               justifyContent="space-between"
+              alignItems="center"
               sx={{ width: 726, marginTop: 2 }}
             >
-              <Stack direction="row">
+              <Stack direction="row" alignItems="center">
                 {!!userSummary?.medals?.length && (
                   <Medals medals={userSummary.medals} />
                 )}
               </Stack>
-              <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+              <Stack
+                direction="row"
+                justifyContent="flex-end"
+                alignItems="center"
+                spacing={1.5}
+              >
                 {userSummary && state.user.uid != userSummary.uid && (
                   <Button
                     style={{
