@@ -12,6 +12,7 @@ import Notifications from '@/pages/Messages/Notifications'
 import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
+import User from '@/pages/User'
 
 import routes from './routes'
 
@@ -79,6 +80,7 @@ routes.current = [
         loader: ContinueLoader,
         element: <Continue />,
       },
+      { path: '/user/me', id: 'user', element: <User /> },
     ],
   },
 ]
