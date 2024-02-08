@@ -23,6 +23,7 @@ const UserStatEntry = ({
 
 const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
   const { state } = useAppState()
+  userSummary && (userSummary.friend_note = 'test')
   return (
     <Paper>
       <Box
@@ -50,9 +51,14 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               justifyContent="space-between"
             >
               <Box sx={{ height: 70, margin: '6px' }}>
-                <Typography fontSize={24} fontWeight="bold">
-                  {userSummary?.username}
-                </Typography>
+                <Stack direction="row" alignItems="baseline">
+                  <Typography fontSize={24} fontWeight="bold">
+                    {userSummary?.username}
+                  </Typography>
+                  {userSummary?.friend_note && (
+                    <Typography ml={1}>({userSummary.friend_note})</Typography>
+                  )}
+                </Stack>
                 <Stack
                   direction="row"
                   className="pr-2"

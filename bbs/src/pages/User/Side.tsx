@@ -7,17 +7,20 @@ import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
-const Side = ({ visitors }: { visitors?: Visitor[] }) => {
+const Side = ({
+  visitors,
+  visits,
+}: {
+  visitors?: Visitor[]
+  visits?: number
+}) => {
   return (
     <Box sx={{ width: 215 }} flexGrow={0} flexShrink={0}>
-      <Stack direction="row" justifyContent="space-between" sx={{ p: 1.5 }}>
-        <Stack direction="row">
-          <AssessmentIcon />
-          <Typography fontWeight={600} className="ml-1">
-            最近访问
-          </Typography>
-        </Stack>
-        <Typography color="rgba(96, 98, 102, 0.8)">已有45人来过</Typography>
+      <Stack direction="row" alignItems="center" sx={{ p: 1.5 }}>
+        <AssessmentIcon />
+        <Typography fontWeight={600} className="ml-1">
+          最近访问
+        </Typography>
       </Stack>
       <Divider sx={{ bgcolor: 'rgb(27, 83, 205)' }} />
       <Paper sx={{ mt: 1, p: 2 }}>
@@ -44,6 +47,11 @@ const Side = ({ visitors }: { visitors?: Visitor[] }) => {
             </Grid>
           ))}
         </Grid>
+        {visits && (
+          <Typography mt={1} color="rgba(96, 98, 102, 0.8)">
+            已有 {visits} 人次来访
+          </Typography>
+        )}
       </Paper>
     </Box>
   )

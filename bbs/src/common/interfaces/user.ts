@@ -41,12 +41,16 @@ export type UserSummary = CommonUserSummary & {
   deleted?: boolean
   /** 勋章 */
   medals?: number[]
+  /** 用户空间访问人次 */
+  views: number
   /** 留言已隐藏 */
   comments_hidden?: boolean
   /** 好友列表已隐藏 */
   friends_hidden?: boolean
   /** 好友状态：'requested' 已发送请求，等待通过；'friend' 好友；undefined 非好友 */
   friend_status?: 'requested' | 'friend'
+  /** 好友备注 */
+  friend_note?: string
   /** 是否在黑名单中 */
   blocked?: boolean
 }

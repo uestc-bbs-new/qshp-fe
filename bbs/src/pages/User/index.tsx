@@ -85,7 +85,10 @@ function User() {
             </>
           </Card>
         </Box>
-        <Side visitors={commonUserData?.recent_visitors} />
+        <Side
+          visitors={commonUserData?.recent_visitors}
+          visits={commonUserData?.user_summary?.views}
+        />
       </Stack>
     </Box>
   )
