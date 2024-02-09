@@ -73,10 +73,10 @@ const Cover = ({
                 注册时间：{chineseTime(authorDetails.register_time * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                最后访问: {chineseTime(authorDetails.last_visit * 1000)}
+                最后访问：{chineseTime(authorDetails.last_visit * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时间: {authorDetails.online_time} 小时
+                在线时间：{authorDetails.online_time} 小时
               </Typography>
             </Box>
           </Box>
