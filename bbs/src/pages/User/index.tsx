@@ -79,15 +79,27 @@ function User() {
             key={commonUserData?.user_summary?.uid}
           />
           <Tabs value={activeTab}>
-            {tabs.map((tab) => (
-              <Tab
-                to={pages.user({ ...user, subPage: tab.id })}
-                component={Link}
-                key={tab.id}
-                label={tab.title}
-                value={tab.id}
-              />
-            ))}
+            {tabs
+              .filter(
+                (tab) =>
+                  !(
+                    commonUserData?.user_summary?.friends_hidden &&
+                    tab.id == 'friends'
+                  ) &&
+                  !(
+                    commonUserData?.user_summary?.comments_hidden &&
+                    tab.id == 'comments'
+                  )
+              )
+              .map((tab) => (
+                <Tab
+                  to={pages.user({ ...user, subPage: tab.id })}
+                  component={Link}
+                  key={tab.id}
+                  label={tab.title}
+                  value={tab.id}
+                />
+              ))}
           </Tabs>
           <Card>
             <>
