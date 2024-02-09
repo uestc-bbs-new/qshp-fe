@@ -6,6 +6,7 @@ import { Box, Stack, Tab, Tabs } from '@mui/material'
 import { CommonUserQueryRpsoense } from '@/common/interfaces/user'
 import Card from '@/components/Card'
 import Link from '@/components/Link'
+import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
 import Favorite from './Favorite'
@@ -37,6 +38,7 @@ const mapSubPageToTabId = (subPage?: string) => {
 function User() {
   const params = useParams()
   const [searchParams] = useSearchParams()
+  const { state } = useAppState()
   const [commonUserData, setCommonUserData] =
     useState<CommonUserQueryRpsoense>()
   const user = {
@@ -51,9 +53,16 @@ function User() {
       admin: true,
     }),
   }
+  const userChanged =
+    (user.username &&
+      user.username != commonUserData?.user_summary?.username) ||
+    (user.uid && user.uid != commonUserData?.user_summary?.uid) ||
+    (!user.username &&
+      !user.uid &&
+      state.user.uid != commonUserData?.user_summary?.uid)
   const queryOptions = {
-    getUserSummary: !commonUserData?.user_summary,
-    getRecentVisitors: !commonUserData?.recent_visitors,
+    getUserSummary: !commonUserData?.user_summary || userChanged,
+    getRecentVisitors: !commonUserData?.recent_visitors || userChanged,
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
   const onLoad = (data: CommonUserQueryRpsoense) => {
@@ -65,7 +74,10 @@ function User() {
     <Box>
       <Stack direction="row">
         <Box mr={4} flexGrow={1} flexShrink={1} minWidth="1em">
-          <UserCard userSummary={commonUserData?.user_summary} />
+          <UserCard
+            userSummary={commonUserData?.user_summary}
+            key={commonUserData?.user_summary?.uid}
+          />
           <Tabs value={activeTab}>
             {tabs.map((tab) => (
               <Tab
@@ -101,6 +113,7 @@ function User() {
           </Card>
         </Box>
         <Side
+          key={commonUserData?.user_summary?.uid}
           visitors={commonUserData?.recent_visitors}
           visits={commonUserData?.user_summary?.views}
         />
