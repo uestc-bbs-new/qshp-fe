@@ -49,14 +49,12 @@ function useCommonQuery<T>(
   }) => Promise<T>
 ) {
   const [searchParams] = useSearchParams()
-  const initQuery = () => {
-    return {
-      common: { ...userQuery, ...queryOptions },
-      subPage,
-      page: parseInt(searchParams.get('page') || '1') || 1,
-      fid: parseInt(searchParams.get('page') || '') || undefined,
-    }
-  }
+  const initQuery = () => ({
+    common: { ...userQuery, ...queryOptions },
+    subPage,
+    page: parseInt(searchParams.get('page') || '1') || 1,
+    fid: parseInt(searchParams.get('page') || '') || undefined,
+  })
   const [query, setQuery] = useState(initQuery())
   useEffect(() => {
     setQuery(initQuery())

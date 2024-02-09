@@ -53,13 +53,15 @@ function User() {
       admin: true,
     }),
   }
+  const self =
+    user.uid == state.user.uid ||
+    user.username == state.user.username ||
+    (!user.uid && !user.username)
   const userChanged =
     (user.username &&
       user.username != commonUserData?.user_summary?.username) ||
     (user.uid && user.uid != commonUserData?.user_summary?.uid) ||
-    (!user.username &&
-      !user.uid &&
-      state.user.uid != commonUserData?.user_summary?.uid)
+    (self && state.user.uid != commonUserData?.user_summary?.uid)
   const queryOptions = {
     getUserSummary: !commonUserData?.user_summary || userChanged,
     getRecentVisitors: !commonUserData?.recent_visitors || userChanged,
@@ -118,7 +120,14 @@ function User() {
                   onLoad={onLoad}
                 />
               )}
-              {activeTab == 'friends' && <Friends />}
+              {activeTab == 'friends' && (
+                <Friends
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                  self={self}
+                />
+              )}
               {activeTab == 'favorites' && <Favorite />}
               {activeTab == 'comments' && <MessageBoard />}
             </>

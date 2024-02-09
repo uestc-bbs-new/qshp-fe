@@ -1,3 +1,5 @@
+import { User } from '@/apis/user'
+
 import {
   ExtCreditMap,
   GenericList,
@@ -18,22 +20,21 @@ export type UserReply = Omit<ThreadBasics, 'summary'> & {
 /** 用户发表过的点评 */
 export type UserPostComment = UserReply
 
-export type CommonUserSummary = UserGroupDetails & {
-  uid: number
-  username: string
-  /** 积分 */
-  credits: number
-  /** 水滴、威望 */
-  ext_credits: ExtCreditMap
-  /** 好友数 */
-  friends: number
-  /** 主题数 */
-  threads: number
-  /** 回复数 */
-  replies: number
-  /** 精华数 */
-  digests: number
-}
+export type CommonUserSummary = Required<User> &
+  UserGroupDetails & {
+    /** 积分 */
+    credits: number
+    /** 水滴、威望 */
+    ext_credits: ExtCreditMap
+    /** 好友数 */
+    friends: number
+    /** 主题数 */
+    threads: number
+    /** 回复数 */
+    replies: number
+    /** 精华数 */
+    digests: number
+  }
 
 /** 用户概况 */
 export type UserSummary = CommonUserSummary & {

@@ -13,3 +13,7 @@ export type SubPageCommonProps = {
   queryOptions: AdditionalQueryOptions
   onLoad?: (data: CommonUserQueryRpsoense) => void
 }
+
+export type FriendUser = Required<User> & {
+  note?: string
+}
