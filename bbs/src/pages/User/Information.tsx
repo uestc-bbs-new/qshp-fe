@@ -1,25 +1,82 @@
-import EditNoteIcon from '@mui/icons-material/EditNote'
-import { Box, Divider, Grid, Stack, Typography } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
 
-function Information() {
-  const info = [
-    {
-      title: '基本信息',
-      content: 'UID：xxx',
+import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+
+import EditNoteIcon from '@mui/icons-material/EditNote'
+import { Box, Divider, Grid, Skeleton, Stack, Typography } from '@mui/material'
+
+import { getUserProfile } from '@/apis/user'
+import { UserSummary } from '@/common/interfaces/user'
+import { UserHtmlRenderer } from '@/components/RichText'
+import { chineseTime } from '@/utils/dayjs'
+
+import { SubPageCommonProps } from './types'
+
+const Section = ({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) => (
+  <>
+    <Box m={1.5}>
+      <Typography variant="userProfileHeading" mb={0.5} paragraph>
+        {title}
+      </Typography>
+      {children}
+    </Box>
+    <Divider />
+  </>
+)
+
+type FieldValueProps = {
+  title: string
+  text?: React.ReactNode
+  children?: React.ReactNode
+}
+
+const FieldValue = ({ title, text, children }: FieldValueProps) => (
+  <Stack direction="row">
+    <Typography variant="userProfileField">{title}：</Typography>
+    {text && <Typography variant="userProfileText">{text}</Typography>}
+    {children}
+  </Stack>
+)
+
+const FieldValueGrid = (props: FieldValueProps) => (
+  <Grid item xs={6}>
+    <FieldValue {...props} />
+  </Grid>
+)
+
+const Information = ({
+  userQuery,
+  queryOptions,
+  userSummary,
+  onLoad,
+}: SubPageCommonProps & { userSummary?: UserSummary }) => {
+  const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
+  const [query, setQuery] = useState(initQuery())
+  const { data } = useQuery({
+    queryKey: ['userProfile', query],
+    queryFn: async () => {
+      const data = await getUserProfile(query.common)
+      onLoad && onLoad(data)
+      return data
     },
-    {
-      title: '自我介绍',
-      content: '现在还没有自我介绍',
-    },
-    {
-      title: '自定义头衔',
-      content: '锄禾日当午，长河落日圆，谁是当午谁是圆',
-    },
-    {
-      title: '个人签名',
-      content: '互联网没有记忆，但是我有显示器事件尚未回复',
-    },
-  ]
+  })
+  const [searchParams] = useSearchParams()
+  useEffect(() => {
+    setQuery(initQuery())
+  }, [
+    searchParams,
+    userQuery.uid,
+    userQuery.username,
+    userQuery.removeVisitLog,
+    userQuery.admin,
+  ])
   const activity = [
     {
       title: '最后访问',
@@ -51,32 +108,69 @@ function Information() {
         <EditNoteIcon />
       </Stack>
       <Divider />
-      {info.map((list, index) => (
-        <Box key={index} sx={{ margin: 1.5 }}>
-          <Typography fontSize={16} fontWeight={500}>
-            {list.title}
-          </Typography>
-          <Typography className="m-1 " color={'rgb(95, 97, 102)'}>
-            {list.content}
-          </Typography>
-          <Divider />
-        </Box>
-      ))}
-      <Box sx={{ margin: 1.5 }}>
-        <Typography fontSize={16} fontWeight={500}>
-          活跃情况
-        </Typography>
-        <Grid container spacing={1.5} sx={{ width: 500 }}>
-          {activity.map((data, index) => (
-            <Grid item xs={6} key={index}>
-              <Stack direction="row" spacing={2} className="m-1 ">
-                <Typography>{data.title}:</Typography>
-                <Typography color="rgb(95, 97, 102)">{data.time}</Typography>
-              </Stack>
+      {data ? (
+        <>
+          <Section title="基本信息">
+            <Grid container>
+              <FieldValueGrid title="UID" text={userSummary?.uid} />
+              {data.email && <FieldValueGrid title="Email" text={data.email} />}
             </Grid>
-          ))}
-        </Grid>
-      </Box>
+          </Section>
+          {data.introduction && (
+            <Section title="自我介绍">
+              <Typography variant="userProfileText" whiteSpace="pre-wrap">
+                {data.introduction}
+              </Typography>
+            </Section>
+          )}
+          {data.custom_title && (
+            <Section title="自定义头衔">
+              <Typography variant="userProfileText">
+                {data.custom_title}
+              </Typography>
+            </Section>
+          )}
+          {data.signature && (
+            <Section title="个人签名">
+              {data.signature_format == 'html' && (
+                <UserHtmlRenderer html={data.signature} />
+              )}
+            </Section>
+          )}
+          <Section title="活跃概况">
+            <Grid container spacing={1}>
+              <FieldValueGrid
+                title="在线时间"
+                text={`${data.online_time} 小时`}
+              />
+              <FieldValueGrid
+                title="注册时间"
+                text={chineseTime(data.register_time * 1000)}
+              />
+              {data.register_ip && (
+                <FieldValueGrid title="注册 IP" text={data.register_ip} />
+              )}
+              <FieldValueGrid
+                title="最后访问"
+                text={chineseTime(data.last_visit * 1000)}
+              />
+              <FieldValueGrid
+                title="上次活动"
+                text={chineseTime(data.last_activity * 1000)}
+              />
+              {data.last_ip && (
+                <FieldValueGrid title="上次访问 IP" text={data.last_ip} />
+              )}
+              <FieldValueGrid
+                title="上次发表"
+                text={chineseTime(data.last_post * 1000)}
+              />
+            </Grid>
+          </Section>
+        </>
+      ) : (
+        <Skeleton />
+      )}
     </Box>
   )
 }

@@ -52,12 +52,14 @@ function User() {
     }),
   }
   const queryOptions = {
-    getUserSummary: !commonUserData,
-    getRecentVisitors: !commonUserData,
+    getUserSummary: !commonUserData?.user_summary,
+    getRecentVisitors: !commonUserData?.recent_visitors,
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
-  const onLoad = (data: CommonUserQueryRpsoense) =>
-    setCommonUserData({ ...commonUserData, ...data })
+  const onLoad = (data: CommonUserQueryRpsoense) => {
+    ;(data.user_summary || data.user_summary) &&
+      setCommonUserData({ ...commonUserData, ...data })
+  }
 
   return (
     <Box>
@@ -77,7 +79,14 @@ function User() {
           </Tabs>
           <Card>
             <>
-              {activeTab == 'profile' && <Information />}
+              {activeTab == 'profile' && (
+                <Information
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                  userSummary={commonUserData?.user_summary}
+                />
+              )}
               {activeTab == 'threads' && (
                 <UserThreads
                   userQuery={user}

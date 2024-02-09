@@ -100,3 +100,19 @@ export type UserFriendsList = UserCommonList<UserFriend> & {
   /** 用户隐藏了好友列表 */
   hidden?: boolean
 }
+
+export type UserProfile = {
+  email?: string
+  register_ip?: string
+  last_ip?: string
+  register_time: number
+  online_time: number
+  last_visit: number
+  last_activity: number
+  last_post: number
+
+  introduction?: string
+  custom_title: string
+  signature: string
+  signature_format: string
+}

@@ -32,7 +32,7 @@ import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
 import { pages } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
-import { AdditionalQueryOptions, UserQuery } from './types'
+import { AdditionalQueryOptions, SubPageCommonProps, UserQuery } from './types'
 
 type OnLoadData = CommonUserQueryRpsoense & PaginationParams
 
@@ -275,11 +275,7 @@ const UserThreads = ({
   userQuery,
   queryOptions,
   onLoad,
-}: {
-  userQuery: UserQuery
-  queryOptions: AdditionalQueryOptions
-  onLoad?: (data: CommonUserQueryRpsoense) => void
-}) => {
+}: SubPageCommonProps) => {
   const subPage = useParams().subPage
   const [pagination, setPagination] = useState<PaginationParams>()
   const Component = (tabs.find((item) => item.id == subPage) || tabs[0])

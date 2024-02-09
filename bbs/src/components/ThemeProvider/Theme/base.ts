@@ -100,6 +100,9 @@ declare module '@mui/material/styles' {
     threadItemSubject: React.CSSProperties
     threadItemSummary: React.CSSProperties
     threadItemForum: React.CSSProperties
+    userProfileHeading: React.CSSProperties
+    userProfileField: React.CSSProperties
+    userProfileText: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -115,6 +118,9 @@ declare module '@mui/material/styles' {
     threadItemSubject?: React.CSSProperties
     threadItemSummary?: React.CSSProperties
     threadItemForum?: React.CSSProperties
+    userProfileHeading?: React.CSSProperties
+    userProfileField?: React.CSSProperties
+    userProfileText?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -132,6 +138,9 @@ declare module '@mui/material/Typography' {
     threadItemSubject: true
     threadItemSummary: true
     threadItemForum: true
+    userProfileHeading: true
+    userProfileField: true
+    userProfileText: true
   }
 }
 
@@ -223,6 +232,19 @@ export const baseTheme: ThemeOptions = {
     threadItemForum: {
       color: 'rgba(33, 117, 243, 0.6)',
       fontSize: 14,
+    },
+    userProfileHeading: {
+      fontSize: 16,
+      fontWeight: 500,
+      color: '#303133',
+    },
+    userProfileField: {
+      fontSize: 14,
+      color: '#303133',
+    },
+    userProfileText: {
+      fontSize: 14,
+      color: '#5F6166',
     },
   },
 

@@ -1,9 +1,11 @@
 import { ThreadInList } from '@/common/interfaces/response'
 import {
+  CommonUserQueryRpsoense,
   UserComment,
   UserCommonList,
   UserFriend,
   UserPostComment,
+  UserProfile,
   UserReply,
 } from '@/common/interfaces/user'
 import request, { commonUrl } from '@/utils/request'
@@ -41,6 +43,12 @@ const getCommonQueryParams = (common: CommonQueryParams) => ({
   ...(common.removeVisitLog && { additional: 'removevlog' }),
   ...(common.admin && { a: '1' }),
 })
+
+export const getUserProfile = (common: CommonQueryParams) =>
+  request.get<CommonUserQueryRpsoense & UserProfile>(
+    `${getApiBase(common)}/profile`,
+    { params: { ...getCommonQueryParams(common) } }
+  )
 
 export const getUserThreads = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<ThreadInList>>(`${getApiBase(common)}/threads`, {
