@@ -50,6 +50,8 @@ function User() {
     ...(searchParams.get('a') && {
       admin: true,
     }),
+  }
+  const queryOptions = {
     getUserSummary: !commonUserData,
     getRecentVisitors: !commonUserData,
   }
@@ -77,7 +79,11 @@ function User() {
             <>
               {activeTab == 'profile' && <Information />}
               {activeTab == 'threads' && (
-                <UserThreads commonQuery={user} onLoad={onLoad} />
+                <UserThreads
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                />
               )}
               {activeTab == 'friends' && <Friends />}
               {activeTab == 'favorites' && <Favorite />}

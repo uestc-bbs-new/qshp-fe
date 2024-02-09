@@ -32,10 +32,13 @@ import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
 import { pages } from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
+import { AdditionalQueryOptions, UserQuery } from './types'
+
 type OnLoadData = CommonUserQueryRpsoense & PaginationParams
 
 function useCommonQuery<T>(
-  commonQuery: CommonQueryParams,
+  userQuery: UserQuery,
+  queryOptions: AdditionalQueryOptions,
   subPage: string,
   queryKey: string,
   queryFn: (params: {
@@ -48,7 +51,7 @@ function useCommonQuery<T>(
   const [searchParams] = useSearchParams()
   const initQuery = () => {
     return {
-      common: commonQuery,
+      common: { ...userQuery, ...queryOptions },
       subPage,
       page: parseInt(searchParams.get('page') || '1') || 1,
       fid: parseInt(searchParams.get('page') || '') || undefined,
@@ -57,7 +60,13 @@ function useCommonQuery<T>(
   const [query, setQuery] = useState(initQuery())
   useEffect(() => {
     setQuery(initQuery())
-  }, [searchParams, commonQuery])
+  }, [
+    searchParams,
+    userQuery.uid,
+    userQuery.username,
+    userQuery.removeVisitLog,
+    userQuery.admin,
+  ])
   return useQuery({
     queryKey: [queryKey, query],
     queryFn: () => queryFn(query),
@@ -65,16 +74,19 @@ function useCommonQuery<T>(
 }
 
 const Threads = ({
-  commonQuery,
+  userQuery,
+  queryOptions,
   subPage,
   onLoad,
 }: {
-  commonQuery: CommonQueryParams
+  userQuery: UserQuery
+  queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: OnLoadData) => void
 }) => {
   const { data, isLoading } = useCommonQuery(
-    commonQuery,
+    userQuery,
+    queryOptions,
     subPage,
     'userThreads',
     async (query) => {
@@ -134,16 +146,19 @@ function coalesceRepliesOrComments(
 }
 
 const Replies = ({
-  commonQuery,
+  userQuery,
+  queryOptions,
   subPage,
   onLoad,
 }: {
-  commonQuery: CommonQueryParams
+  userQuery: UserQuery
+  queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: OnLoadData) => void
 }) => {
   const { data, isLoading } = useCommonQuery(
-    commonQuery,
+    userQuery,
+    queryOptions,
     subPage,
     'userReplies',
     async (query) => {
@@ -177,16 +192,19 @@ const Replies = ({
 }
 
 const PostComments = ({
-  commonQuery,
+  userQuery,
+  queryOptions,
   subPage,
   onLoad,
 }: {
-  commonQuery: CommonQueryParams
+  userQuery: UserQuery
+  queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: OnLoadData) => void
 }) => {
   const { data, isLoading } = useCommonQuery(
-    commonQuery,
+    userQuery,
+    queryOptions,
     subPage,
     'userReplies',
     async (query) => {
@@ -254,10 +272,12 @@ const tabs = [
 ]
 
 const UserThreads = ({
-  commonQuery,
+  userQuery,
+  queryOptions,
   onLoad,
 }: {
-  commonQuery: CommonQueryParams
+  userQuery: UserQuery
+  queryOptions: AdditionalQueryOptions
   onLoad?: (data: CommonUserQueryRpsoense) => void
 }) => {
   const subPage = useParams().subPage
@@ -271,10 +291,10 @@ const UserThreads = ({
         {tabs.map((tab) => (
           <Tab
             to={pages.user({
-              uid: commonQuery.uid,
-              username: commonQuery.username,
-              removeVisitLog: commonQuery.removeVisitLog,
-              admin: commonQuery.admin,
+              uid: userQuery.uid,
+              username: userQuery.username,
+              removeVisitLog: userQuery.removeVisitLog,
+              admin: userQuery.admin,
               subPage: tab.id,
             })}
             component={Link}
@@ -287,7 +307,8 @@ const UserThreads = ({
       <Divider />
       <ThreadList pagination={pagination}>
         <Component
-          commonQuery={commonQuery}
+          userQuery={userQuery}
+          queryOptions={queryOptions}
           subPage={subPage || tabs[0].id}
           onLoad={(data) => {
             setPagination({

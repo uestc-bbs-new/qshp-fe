@@ -8,7 +8,7 @@ import {
 } from '@/common/interfaces/user'
 import request, { commonUrl } from '@/utils/request'
 
-type User = {
+export type User = {
   uid?: number
   username?: string
 }
