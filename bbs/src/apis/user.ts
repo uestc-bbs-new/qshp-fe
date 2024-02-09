@@ -8,6 +8,7 @@ import {
   UserProfile,
   UserReply,
 } from '@/common/interfaces/user'
+import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { commonUrl } from '@/utils/request'
 
 export type User = {
@@ -50,25 +51,56 @@ export const getUserProfile = (common: CommonQueryParams) =>
     { params: { ...getCommonQueryParams(common) } }
   )
 
-export const getUserThreads = (common: CommonQueryParams, page?: number) =>
-  request.get<UserCommonList<ThreadInList>>(`${getApiBase(common)}/threads`, {
-    params: { ...getCommonQueryParams(common), page: page || 1 },
-  })
+export const getUserThreads = async (
+  common: CommonQueryParams,
+  page?: number
+) => {
+  const result = await request.get<UserCommonList<ThreadInList>>(
+    `${getApiBase(common)}/threads`,
+    {
+      params: { ...getCommonQueryParams(common), page: page || 1 },
+    }
+  )
+  result.rows.forEach(
+    (thread) =>
+      (thread.subject = unescapeSubject(thread.subject, thread.dateline, true))
+  )
+  return result
+}
 
-export const getUserReplies = (common: CommonQueryParams, page?: number) =>
-  request.get<UserCommonList<UserReply>>(`${getApiBase(common)}/replies`, {
-    params: { ...getCommonQueryParams(common), page: page || 1 },
-  })
-
-export const getUserPostComments = (common: CommonQueryParams, page?: number) =>
-  request.get<UserCommonList<UserPostComment>>(
+export const getUserReplies = async (
+  common: CommonQueryParams,
+  page?: number
+) => {
+  const result = await request.get<UserCommonList<UserReply>>(
+    `${getApiBase(common)}/replies`,
+    {
+      params: { ...getCommonQueryParams(common), page: page || 1 },
+    }
+  )
+  result.rows.forEach(
+    (thread) =>
+      (thread.subject = unescapeSubject(thread.subject, thread.dateline, true))
+  )
+  return result
+}
+export const getUserPostComments = async (
+  common: CommonQueryParams,
+  page?: number
+) => {
+  const result = await request.get<UserCommonList<UserPostComment>>(
     `${getApiBase(common)}/postcomments`,
     {
       ...getCommonQueryParams(common),
       params: { page: page || 1 },
     }
   )
-
+  result.rows.forEach(
+    (thread) =>
+      (thread.subject = unescapeSubject(thread.subject, thread.dateline, true))
+  )
+  return result
+}
 export const getUserComments = (common: CommonQueryParams, page?: number) =>
   request.get<UserCommonList<UserComment>>(`${getApiBase(common)}/comments`, {
     params: { ...getCommonQueryParams(common), page: page || 1 },
