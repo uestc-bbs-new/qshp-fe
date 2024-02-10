@@ -33,39 +33,11 @@ import { searchParamsAssign } from '@/utils/tools'
 
 import { AdditionalQueryOptions, SubPageCommonProps, UserQuery } from './types'
 
-function useCommonQuery<T>(
-  userQuery: UserQuery,
-  queryOptions: AdditionalQueryOptions,
-  subPage: string,
-  queryKeyPrefix: string[],
-  queryFn: (params: {
-    common: CommonQueryParams
-    subPage: string
-    page: number
-    fid?: number
-  }) => Promise<T>
-) {
-  const [searchParams] = useSearchParams()
-  const initQuery = () => ({
-    common: { ...userQuery, ...queryOptions },
-    subPage,
-    page: parseInt(searchParams.get('page') || '1') || 1,
-    fid: parseInt(searchParams.get('page') || '') || undefined,
-  })
-  const [query, setQuery] = useState(initQuery())
-  useEffect(() => {
-    setQuery(initQuery())
-  }, [
-    searchParams,
-    userQuery.uid,
-    userQuery.username,
-    userQuery.removeVisitLog,
-    userQuery.admin,
-  ])
-  return useQuery({
-    queryKey: [...queryKeyPrefix, query],
-    queryFn: () => queryFn(query),
-  })
+type CoalescedReply = UserReply & {
+  replyItems: ThreadReplyOrCommentItem[]
+}
+type CoalescedList<T> = UserCommonList<T> & {
+  coalescedReplies?: CoalescedReply[]
 }
 
 const Threads = ({ data }: { data: UserCommonList<ThreadInList> }) =>
@@ -78,35 +50,6 @@ const Threads = ({ data }: { data: UserCommonList<ThreadInList> }) =>
       ignoreThreadHighlight
     />
   ))
-
-type CoalescedReply = UserReply & {
-  replyItems: ThreadReplyOrCommentItem[]
-}
-type CoalescedList<T> = UserCommonList<T> & {
-  coalescedReplies?: CoalescedReply[]
-}
-
-function coalesceRepliesOrComments(
-  apiData: UserCommonList<UserReply | UserPostComment>
-) {
-  const data: CoalescedList<UserReply | UserPostComment> = apiData
-  const coalescedReplies: CoalescedReply[] = []
-  const tidItemMap: {
-    [thread_id: number]: CoalescedReply
-  } = {}
-  data.rows?.forEach((item) => {
-    const replyItem = { post_id: item.post_id, summary: item.summary }
-    if (tidItemMap[item.thread_id]) {
-      tidItemMap[item.thread_id].replyItems.push(replyItem)
-    } else {
-      const newItem = { ...item, replyItems: [replyItem] }
-      tidItemMap[item.thread_id] = newItem
-      coalescedReplies.push(newItem)
-    }
-  })
-  data.coalescedReplies = coalescedReplies
-  return data
-}
 
 const Replies = ({ data }: { data: CoalescedList<UserReply> }) =>
   data?.coalescedReplies?.map((item) => (
@@ -150,12 +93,25 @@ function ThreadList<T extends PaginationParams>({
   const Component = tab.component
   const [searchParams, setSearchParams] = useSearchParams()
   const [pagination, setPagination] = useState<PaginationParams>()
-  const { data, isLoading } = useCommonQuery(
-    userQuery,
-    queryOptions,
+  const initQuery = () => ({
+    common: { ...userQuery, ...queryOptions },
     subPage,
-    ['user', tab.id],
-    async (query) => {
+    page: parseInt(searchParams.get('page') || '1') || 1,
+    fid: parseInt(searchParams.get('page') || '') || undefined,
+  })
+  const [query, setQuery] = useState(initQuery())
+  useEffect(() => {
+    setQuery(initQuery())
+  }, [
+    searchParams,
+    userQuery.uid,
+    userQuery.username,
+    userQuery.removeVisitLog,
+    userQuery.admin,
+  ])
+  const { data, isLoading } = useQuery({
+    queryKey: ['user', tab.id, query],
+    queryFn: async () => {
       const data = await tab.fetcher(query.common, query.page)
       setPagination({
         page: data.page,
@@ -164,8 +120,8 @@ function ThreadList<T extends PaginationParams>({
       })
       onLoad && onLoad(data)
       return data
-    }
-  )
+    },
+  })
   return (
     <>
       <List>
@@ -193,6 +149,28 @@ function ThreadList<T extends PaginationParams>({
       )}
     </>
   )
+}
+
+function coalesceRepliesOrComments(
+  apiData: UserCommonList<UserReply | UserPostComment>
+) {
+  const data: CoalescedList<UserReply | UserPostComment> = apiData
+  const coalescedReplies: CoalescedReply[] = []
+  const tidItemMap: {
+    [thread_id: number]: CoalescedReply
+  } = {}
+  data.rows?.forEach((item) => {
+    const replyItem = { post_id: item.post_id, summary: item.summary }
+    if (tidItemMap[item.thread_id]) {
+      tidItemMap[item.thread_id].replyItems.push(replyItem)
+    } else {
+      const newItem = { ...item, replyItems: [replyItem] }
+      tidItemMap[item.thread_id] = newItem
+      coalescedReplies.push(newItem)
+    }
+  })
+  data.coalescedReplies = coalescedReplies
+  return data
 }
 
 const tabs = [
