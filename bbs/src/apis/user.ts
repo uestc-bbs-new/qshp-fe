@@ -112,10 +112,27 @@ export const editComment = (comment_id: number, params: { message: string }) =>
 export const deleteComment = (comment_id: number) =>
   request.delete(`${userApiBase}/comment/${comment_id}`)
 
-export const getUserFriends = (common: CommonQueryParams, page?: number) =>
-  request.get<UserCommonList<UserFriend>>(`${getApiBase(common)}/friends`, {
-    params: { ...getCommonQueryParams(common), page: page || 1 },
-  })
+export const getUserFriends = async (
+  common: CommonQueryParams,
+  page?: number
+) => {
+  const result = await request.get<UserCommonList<UserFriend>>(
+    `${getApiBase(common)}/friends`,
+    {
+      params: { ...getCommonQueryParams(common), page: page || 1 },
+    }
+  )
+  result.rows.forEach(
+    (friend) =>
+      friend.latest_thread &&
+      (friend.latest_thread.subject = unescapeSubject(
+        friend.latest_thread.subject,
+        friend.latest_thread.dateline,
+        true
+      ))
+  )
+  return result
+}
 export const addFriend = (params: { uid: number; message: string }) =>
   request.put(`${userApiBase}/friend`, params)
 export const editFriend = (uid: number, params: { note: string }) =>

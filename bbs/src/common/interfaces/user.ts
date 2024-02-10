@@ -95,6 +95,7 @@ export type UserFriend = CommonUserSummary & {
   latest_thread?: {
     tid: number
     subject: string
+    dateline: number
   }
 }
 
