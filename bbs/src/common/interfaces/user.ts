@@ -156,6 +156,8 @@ export type Collection = {
   }
   last_visit: number
   keyword: string
+
+  is_owner: boolean
 }
 
 export type UserFavoritesList = FieldOptional<
