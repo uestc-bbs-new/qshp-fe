@@ -29,10 +29,16 @@ export const Medal = ({ medal }: { medal?: MedalItem }) =>
     <></>
   )
 
-const Medals = ({ medals }: { medals?: number[] }) => {
+const Medals = ({
+  medals,
+  nowrap,
+}: {
+  medals?: number[]
+  nowrap?: boolean
+}) => {
   const { medalMap } = useMedals()
   return medalMap ? (
-    <Stack direction="row" flexWrap="wrap">
+    <Stack direction="row" flexWrap={nowrap ? 'nowrap' : 'wrap'}>
       {medals?.map((id, index) => <Medal key={index} medal={medalMap[id]} />)}
     </Stack>
   ) : (
