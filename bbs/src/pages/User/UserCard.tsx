@@ -48,9 +48,12 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
         direction="row"
         pt={2}
         pb={1}
-        sx={{
-          background: 'linear-gradient(rgb(210, 226, 253), rgb(210, 226, 253))',
-        }}
+        sx={(theme) => ({
+          backgroundColor:
+            theme.palette.mode == 'light'
+              ? 'rgb(210, 226, 253)'
+              : 'rgb(12, 78, 174)',
+        })}
       >
         <Box width={avatarSize} m={avatarM} flexShrink={0} />
         <Box sx={{ height: 70, margin: '6px' }} flexGrow={1}>

@@ -72,13 +72,7 @@ function Friends({
               sx={{ p: 1.5 }}
             >
               <Stack direction="row" alignItems="center" spacing={2}>
-                <Typography
-                  fontSize={16}
-                  fontWeight="600"
-                  color="rgb(95, 97, 102)"
-                >
-                  查找好友
-                </Typography>
+                <Typography variant="userAction">查找好友</Typography>
                 <TextField
                   size="small"
                   placeholder="输入用户名"

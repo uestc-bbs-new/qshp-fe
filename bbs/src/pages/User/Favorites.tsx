@@ -101,13 +101,15 @@ function Favorites({
             </AccordionDetails>
           </Accordion>
 
-          <Divider />
+          {self && !!data?.total && <Divider />}
         </>
       )}
       {!self && data && !collections?.length && <EmptyList text="暂无收藏" />}
       {!data &&
         [...Array(10)].map((_, index) => <Skeleton key={index} height={85} />)}
-      {self && data && !data.total && <EmptyList text="暂无收藏" />}
+      {self && data && !data.total && !collections?.length && (
+        <EmptyList text="暂无收藏" />
+      )}
       {self && !!data?.total && data.rows && (
         <>
           <Typography variant="userProfileHeading" component="p" mt={2}>

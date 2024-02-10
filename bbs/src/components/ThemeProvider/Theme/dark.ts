@@ -53,6 +53,24 @@ const darkTheme = createTheme(
       threadItemForum: {
         color: 'rgba(144, 202, 249, 0.7)',
       },
+      userProfileHeading: {
+        color: lighten('#303133', 0.6),
+      },
+      userProfileField: {
+        color: lighten('#303133', 0.6),
+      },
+      userProfileText: {
+        color: lighten('#5F6166', 0.7),
+      },
+      userProfileSummary: {
+        color: lighten('#5F6166', 0.7),
+      },
+      userItemSummary: {
+        color: lighten('#5F6166', 0.7),
+      },
+      userAction: {
+        color: lighten('#5F6166', 0.7),
+      },
     },
     commonSx: {
       headerCardGradient: {
@@ -61,6 +79,5 @@ const darkTheme = createTheme(
     },
   }
 )
-console.log(darkTheme)
 
 export default darkTheme
