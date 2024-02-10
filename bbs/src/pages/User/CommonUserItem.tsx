@@ -5,7 +5,6 @@ import { Box, ListItemButton, Menu, Stack, Typography } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
-import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
 import { FriendUser } from './types'
@@ -19,11 +18,6 @@ const CommonUserItem = ({
   children?: React.ReactNode
   menuItems?: React.ReactNode
 }) => {
-  const { dispatch } = useAppState()
-  const handleClick = () => {
-    dispatch({ type: 'set post', payload: '0' })
-  }
-
   const [closeEl, setMenuEl] = useState<null | HTMLElement>(null)
   const [isOpen, setOpen] = useState(false)
   const handleOpenClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -53,7 +47,6 @@ const CommonUserItem = ({
                 color="rgb(33, 117, 243)"
                 underline="hover"
                 className={'line-clamp-3'}
-                onClick={handleClick}
               >
                 <Typography fontSize={16} fontWeight={500}>
                   {user.username}
