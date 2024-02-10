@@ -91,6 +91,10 @@ function User() {
                   !(
                     commonUserData?.user_summary?.comments_hidden &&
                     tab.id == 'comments'
+                  ) &&
+                  !(
+                    commonUserData?.user_summary?.favorites_unavailable &&
+                    tab.id == 'favorites'
                   )
               )
               .map((tab) => (

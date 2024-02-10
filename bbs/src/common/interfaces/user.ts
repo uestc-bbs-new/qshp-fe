@@ -46,6 +46,7 @@ export type UserSummary = CommonUserSummary & {
   medals?: number[]
   /** 用户空间访问人次 */
   views: number
+  favorites_unavailable?: boolean
   /** 留言已隐藏 */
   comments_hidden?: boolean
   /** 好友列表已隐藏 */
