@@ -119,14 +119,16 @@ function Friends({
                   user={friend}
                   key={friend.uid}
                   menuItems={
-                    <>
-                      <MenuItem>
-                        <ListItemText>修改备注</ListItemText>
-                      </MenuItem>
-                      <MenuItem>
-                        <ListItemText>删除</ListItemText>
-                      </MenuItem>
-                    </>
+                    self && (
+                      <>
+                        <MenuItem>
+                          <ListItemText>修改备注</ListItemText>
+                        </MenuItem>
+                        <MenuItem>
+                          <ListItemText>删除</ListItemText>
+                        </MenuItem>
+                      </>
+                    )
                   }
                 >
                   <Typography variant="userItemSummary">
