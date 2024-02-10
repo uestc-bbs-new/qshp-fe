@@ -80,6 +80,7 @@ export type UserComment = {
   author: string
   dateline: number
   message: string
+  friend_note?: string
 }
 
 export type UserCommentsList = UserCommonList<UserComment> & {

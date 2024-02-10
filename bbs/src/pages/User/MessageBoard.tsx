@@ -61,7 +61,7 @@ function MessageBoard({
   const { state } = useAppState()
 
   return (
-    <Box>
+    <Box pb={1}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ p: 2 }}>
         <Typography fontSize={16} fontWeight="600" color="rgb(95, 97, 102)">
           留言板
@@ -81,7 +81,11 @@ function MessageBoard({
           <Separated separator={<Divider />}>
             {data.rows.map((comment) => (
               <CommonUserItem
-                user={{ uid: comment.author_id, username: comment.author }}
+                user={{
+                  uid: comment.author_id,
+                  username: comment.author,
+                  note: comment.friend_note,
+                }}
                 key={comment.comment_id}
                 menuItems={
                   (self || comment.author_id == state.user.uid) && (
