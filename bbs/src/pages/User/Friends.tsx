@@ -17,6 +17,8 @@ import {
 } from '@mui/material'
 
 import { getUserFriends } from '@/apis/user'
+import { UserSummary } from '@/common/interfaces/user'
+import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { pages } from '@/utils/routes'
@@ -30,8 +32,10 @@ function Friends({
   queryOptions,
   onLoad,
   self,
+  userSummary,
 }: SubPageCommonProps & {
   self: boolean
+  userSummary?: UserSummary
 }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const initQuery = () => ({
@@ -92,7 +96,22 @@ function Friends({
             <Divider />
           </>
         )}
-        {data ? (
+        {!data &&
+          [...Array(10)].map((_, index) => (
+            <Skeleton key={index} height={85} />
+          ))}
+        {data && !data.total && (
+          <EmptyList
+            text={
+              self
+                ? '您还未添加过好友'
+                : userSummary?.friends_hidden
+                  ? '该用户隐藏了好友列表'
+                  : '暂无好友'
+            }
+          />
+        )}
+        {data && !!data.total && (
           <>
             <Separated separator={<Divider />}>
               {data.rows.map((friend) => (
@@ -147,7 +166,7 @@ function Friends({
                 </CommonUserItem>
               ))}
             </Separated>
-            {data?.total && data.total > data.page_size && (
+            {!!data?.total && data.total > data.page_size && (
               <Stack direction="row" justifyContent="center" my={1.5}>
                 <Pagination
                   boundaryCount={3}
@@ -161,8 +180,6 @@ function Friends({
               </Stack>
             )}
           </>
-        ) : (
-          <Skeleton />
         )}
       </Box>
     </>

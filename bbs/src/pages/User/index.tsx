@@ -127,6 +127,7 @@ function User() {
                   queryOptions={queryOptions}
                   onLoad={onLoad}
                   self={self}
+                  userSummary={commonUserData?.user_summary}
                 />
               )}
               {activeTab == 'favorites' && <Favorite />}

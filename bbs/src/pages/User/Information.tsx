@@ -158,7 +158,7 @@ const Information = ({
           </Section>
         </>
       ) : (
-        <Skeleton />
+        [...Array(5)].map((_, index) => <Skeleton key={index} height={73} />)
       )}
     </Box>
   )

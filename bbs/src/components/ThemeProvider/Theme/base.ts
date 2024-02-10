@@ -105,6 +105,7 @@ declare module '@mui/material/styles' {
     userProfileText: React.CSSProperties
     userItemSummary: React.CSSProperties
     userItemDetails: React.CSSProperties
+    emptyListText: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -125,6 +126,7 @@ declare module '@mui/material/styles' {
     userProfileText?: React.CSSProperties
     userItemSummary?: React.CSSProperties
     userItemDetails?: React.CSSProperties
+    emptyListText?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -147,6 +149,7 @@ declare module '@mui/material/Typography' {
     userProfileText: true
     userItemSummary: true
     userItemDetails: true
+    emptyListText: true
   }
 }
 
@@ -260,6 +263,10 @@ export const baseTheme: ThemeOptions = {
       fontSize: 12,
       fontWeight: 500,
       color: '#A1ADC5',
+    },
+    emptyListText: {
+      fontSize: 14,
+      color: '#B5AEAE',
     },
   },
 

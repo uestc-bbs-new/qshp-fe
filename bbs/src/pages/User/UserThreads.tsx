@@ -26,6 +26,7 @@ import {
   UserPostComment,
   UserReply,
 } from '@/common/interfaces/user'
+import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
 import { pages } from '@/utils/routes'
@@ -38,6 +39,13 @@ type CoalescedReply = UserReply & {
 }
 type CoalescedList<T> = UserCommonList<T> & {
   coalescedReplies?: CoalescedReply[]
+}
+
+type TabProps<T extends PaginationParams> = {
+  id: string
+  title: string
+  component: React.ElementType
+  fetcher: (common: CommonQueryParams, page?: number) => Promise<T>
 }
 
 const Threads = ({ data }: { data: UserCommonList<ThreadInList> }) =>
@@ -84,11 +92,7 @@ function ThreadList<T extends PaginationParams>({
   queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: T) => void
-  tab: {
-    id: string
-    fetcher: (common: CommonQueryParams, page?: number) => Promise<T>
-    component: React.ElementType
-  }
+  tab: TabProps<T>
 }) {
   const Component = tab.component
   const [searchParams, setSearchParams] = useSearchParams()
@@ -124,16 +128,19 @@ function ThreadList<T extends PaginationParams>({
   })
   return (
     <>
-      <List>
-        {isLoading && (
-          <>
-            {[...Array(4)].map((_, index) => (
-              <Skeleton className="w-full" height={102} key={index}></Skeleton>
-            ))}
-          </>
-        )}
-        {!!data?.total && <Component data={data} />}
-      </List>
+      {isLoading && (
+        <>
+          {[...Array(4)].map((_, index) => (
+            <Skeleton className="w-full" height={102} key={index}></Skeleton>
+          ))}
+        </>
+      )}
+      {data && !!data.total && (
+        <List>
+          <Component data={data} />
+        </List>
+      )}
+      {data && !data.total && <EmptyList text={`暂无${tab.title}`} />}
       {pagination && pagination.total > pagination.page_size && (
         <Stack direction="row" justifyContent="center" my={1.5}>
           <Pagination
