@@ -4,6 +4,7 @@ import { UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import Medals from '@/components/Medals'
+import DigestAuthor from '@/components/Medals/DigestAuthor'
 import UserGroupIcon from '@/components/UserGroupIcon'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
@@ -132,6 +133,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               overflow="hidden"
               position="relative"
             >
+              {!!userSummary?.digests && <DigestAuthor sx={{ mr: 1 }} />}
               {!!userSummary?.medals?.length && (
                 <Medals medals={userSummary.medals} nowrap />
               )}

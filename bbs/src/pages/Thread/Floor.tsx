@@ -13,6 +13,7 @@ import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
 import Medals from '@/components/Medals'
+import DigestAuthor from '@/components/Medals/DigestAuthor'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
@@ -289,6 +290,11 @@ const AuthorDetails = ({
         </Box>
       </Stack>
       <UserGroupIcon user={authorDetails} />
+      {!!authorDetails.digests && (
+        <Stack alignItems="flex-start" mb={1}>
+          <DigestAuthor />
+        </Stack>
+      )}
       {!!authorDetails.medals?.length && (
         <Medals medals={authorDetails.medals} />
       )}
