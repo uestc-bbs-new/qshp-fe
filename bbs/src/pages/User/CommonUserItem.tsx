@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
-import {
-  Box,
-  ListItemButton,
-  Menu,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import { Box, ListItemButton, Menu, Stack, Typography } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
@@ -16,15 +9,6 @@ import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
 import { FriendUser } from './types'
-
-const basicIfo = [
-  { id: 1, info: '积分' },
-  { id: 2, info: '威望' },
-  { id: 3, info: '水滴' },
-  { id: 4, info: '奖励券' },
-  { id: 5, info: '好友' },
-  { id: 6, info: '主题' },
-]
 
 const CommonUserItem = ({
   user,
@@ -35,8 +19,6 @@ const CommonUserItem = ({
   children?: React.ReactNode
   menuItems?: React.ReactNode
 }) => {
-  const theme = useTheme()
-
   const { dispatch } = useAppState()
   const handleClick = () => {
     dispatch({ type: 'set post', payload: '0' })
