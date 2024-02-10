@@ -92,8 +92,10 @@ export const getUserPostComments = async (
   const result = await request.get<UserCommonList<UserPostComment>>(
     `${getApiBase(common)}/postcomments`,
     {
-      ...getCommonQueryParams(common),
-      params: { page: page || 1 },
+      params: {
+        ...getCommonQueryParams(common),
+        page: page || 1,
+      },
     }
   )
   result.rows.forEach(
