@@ -80,7 +80,7 @@ function User() {
             userSummary={commonUserData?.user_summary}
             key={commonUserData?.user_summary?.uid}
           />
-          <Tabs value={activeTab}>
+          <Tabs value={activeTab} sx={{ my: 1.5 }}>
             {tabs
               .filter(
                 (tab) =>
@@ -111,6 +111,7 @@ function User() {
                   queryOptions={queryOptions}
                   onLoad={onLoad}
                   userSummary={commonUserData?.user_summary}
+                  self={self}
                 />
               )}
               {activeTab == 'threads' && (

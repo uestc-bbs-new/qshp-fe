@@ -8,8 +8,10 @@ import { Box, Divider, Grid, Skeleton, Stack, Typography } from '@mui/material'
 
 import { getUserProfile } from '@/apis/user'
 import { UserSummary } from '@/common/interfaces/user'
+import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 import { SubPageCommonProps } from './types'
 
@@ -56,7 +58,8 @@ const Information = ({
   queryOptions,
   userSummary,
   onLoad,
-}: SubPageCommonProps & { userSummary?: UserSummary }) => {
+  self,
+}: SubPageCommonProps & { userSummary?: UserSummary; self: boolean }) => {
   const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
   const [query, setQuery] = useState(initQuery())
   const { data } = useQuery({
@@ -77,37 +80,23 @@ const Information = ({
     userQuery.removeVisitLog,
     userQuery.admin,
   ])
-  const activity = [
-    {
-      title: '最后访问',
-      time: '2023-11-3 17：04',
-    },
-    {
-      title: '注册时间',
-      time: '2023-11-3 17：04',
-    },
-    {
-      title: '上次发表时间',
-      time: '2023-11-3 17：04',
-    },
-    {
-      title: '上次活动时间',
-      time: '2023-11-3 17：04',
-    },
-  ]
   return (
-    <Box className="flex-1">
-      <Stack
-        direction="row"
-        justifyContent={'flex-end'}
-        style={{ color: 'rgb(33, 117, 243)' }}
-      >
-        <Typography fontSize={12} align="right" className="m-1">
-          编辑
-        </Typography>
-        <EditNoteIcon />
-      </Stack>
-      <Divider />
+    <Box pt={1}>
+      {self && (
+        <>
+          <Stack alignItems="flex-end" pb={1}>
+            <Link to={pages.settings('profile')}>
+              <Stack direction="row" alignItems="center">
+                <Typography fontSize={12} align="right" className="m-1">
+                  编辑
+                </Typography>
+                <EditNoteIcon />
+              </Stack>
+            </Link>
+          </Stack>
+          <Divider />
+        </>
+      )}
       {data ? (
         <>
           <Section title="基本信息">
