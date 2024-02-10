@@ -1,9 +1,11 @@
 import { User } from '@/apis/user'
+import { FieldOptional } from '@/utils/types'
 
 import {
   ExtCreditMap,
   GenericList,
   ThreadBasics,
+  ThreadInList,
   UserGroupDetails,
 } from './response'
 
@@ -118,4 +120,47 @@ export type UserProfile = {
   custom_title: string
   signature: string
   signature_format: string
+}
+
+export type FavoriteTargetType = 'tid' | 'fid' | 'gid' | 'albumid' | 'blogid'
+
+export type UserFavorite = {
+  favorite_id: number
+  target_id: number
+  target_type: FavoriteTargetType
+  space_uid?: number
+  title: string
+  description?: string
+  dateline: number
+  thread_details?: ThreadInList
+}
+
+export type Collection = {
+  collection_id: number
+  uid: number
+  username: string
+  name: string
+  dateline: number
+  follows: number
+  threads: number
+  comments: number
+  description: string
+  last_update: number
+  average_rate: number
+  rates: number
+  latest_thread: {
+    thread_id: number
+    subject: string
+    dateline: number
+    lastpost_author: string
+  }
+  last_visit: number
+  keyword: string
+}
+
+export type UserFavoritesList = FieldOptional<
+  UserCommonList<UserFavorite>,
+  'rows'
+> & {
+  collections?: Collection[]
 }

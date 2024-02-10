@@ -3,6 +3,7 @@ import {
   CommonUserQueryRpsoense,
   UserComment,
   UserCommonList,
+  UserFavoritesList,
   UserFriend,
   UserPostComment,
   UserProfile,
@@ -139,3 +140,38 @@ export const editFriend = (uid: number, params: { note: string }) =>
   request.patch(`${userApiBase}/friend/${uid}`, params)
 export const deleteFriend = (uid: number) =>
   request.delete(`${userApiBase}/friend/${uid}`)
+
+export const getUserFavorites = async (
+  common: CommonQueryParams,
+  page?: number,
+  getCollections?: boolean
+) => {
+  const result = await request.get<UserFavoritesList>(
+    `${getApiBase(common)}/favorites`,
+    {
+      params: {
+        ...getCommonQueryParams(common),
+        page: page || 1,
+        collections: getCollections ? 1 : 0,
+      },
+    }
+  )
+  result.collections?.forEach(
+    (collection) =>
+      (collection.latest_thread.subject = unescapeSubject(
+        collection.latest_thread.subject,
+        collection.latest_thread.dateline,
+        true
+      ))
+  )
+  result.rows?.forEach(
+    (favorite) =>
+      favorite.thread_details &&
+      (favorite.thread_details.subject = unescapeSubject(
+        favorite.thread_details.subject,
+        favorite.thread_details.dateline,
+        true
+      ))
+  )
+  return result
+}
