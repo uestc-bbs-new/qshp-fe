@@ -3,7 +3,7 @@ import { Box, Divider } from '@mui/material'
 import { Thread } from '@/common/interfaces/response'
 import PostFriend from '@/components/PostFriend'
 
-function Favorite() {
+function Favorites() {
   const test = {} as Thread
 
   return (
@@ -14,4 +14,4 @@ function Favorite() {
     </Box>
   )
 }
-export default Favorite
+export default Favorites

@@ -9,7 +9,7 @@ import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
 
-import Favorite from './Favorite'
+import Favorites from './Favorites'
 import Friends from './Friends'
 import Information from './Information'
 import MessageBoard from './MessageBoard'
@@ -130,7 +130,7 @@ function User() {
                   userSummary={commonUserData?.user_summary}
                 />
               )}
-              {activeTab == 'favorites' && <Favorite />}
+              {activeTab == 'favorites' && <Favorites />}
               {activeTab == 'comments' && (
                 <MessageBoard
                   userQuery={user}
