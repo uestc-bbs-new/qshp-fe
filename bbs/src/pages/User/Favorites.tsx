@@ -140,7 +140,11 @@ function Favorites({
 const CollectionItem = ({ item }: { item: Collection }) => (
   <Box p={0.5}>
     <Stack direction="row" sx={{ mt: 1 }}>
-      <Link to={legacyPages.collection(item.collection_id)} sx={{ mr: 1.2 }}>
+      <Link
+        external
+        to={legacyPages.collection(item.collection_id)}
+        sx={{ mr: 1.2 }}
+      >
         {item.is_owner ? (
           <Stack
             justifyContent="center"
@@ -165,6 +169,7 @@ const CollectionItem = ({ item }: { item: Collection }) => (
         >
           <Stack direction="row">
             <Link
+              external
               to={legacyPages.collection(item.collection_id)}
               color="rgb(33, 117, 243)"
               underline="hover"
