@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Params, useLocation, useMatches } from 'react-router-dom'
 
-const useActiveRoute = () => {
+import siteRoot from './siteRoot'
+
+export const useActiveRoute = () => {
   const location = useLocation()
   const matches = useMatches()
   const [activeRoute, setActiveRoute] = useState<{
@@ -44,7 +46,7 @@ export type UserPageParams = {
   admin?: boolean
 }
 
-const kIdasOrigin = `https://bbs.uestc.edu.cn`
+export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const kIdasContinueBase = `${kIdasOrigin}/continue`
 export const gotoIdas = () => {
@@ -96,4 +98,7 @@ export const pages = {
     ),
 }
 
-export { useActiveRoute, kIdasOrigin }
+export const legacyPages = {
+  collection: (collection_id: number) =>
+    `${siteRoot}/forum.php?mod=collection&action=view&ctid=${collection_id}`,
+}

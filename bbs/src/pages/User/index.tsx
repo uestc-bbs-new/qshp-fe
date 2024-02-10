@@ -130,7 +130,14 @@ function User() {
                   userSummary={commonUserData?.user_summary}
                 />
               )}
-              {activeTab == 'favorites' && <Favorites />}
+              {activeTab == 'favorites' && (
+                <Favorites
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                  self={self}
+                />
+              )}
               {activeTab == 'comments' && (
                 <MessageBoard
                   userQuery={user}
