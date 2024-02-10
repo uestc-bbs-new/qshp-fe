@@ -20,9 +20,8 @@ import {
   getUserReplies,
   getUserThreads,
 } from '@/apis/user'
-import { PaginationParams } from '@/common/interfaces/response'
+import { PaginationParams, ThreadInList } from '@/common/interfaces/response'
 import {
-  CommonUserQueryRpsoense,
   UserCommonList,
   UserPostComment,
   UserReply,
@@ -34,13 +33,11 @@ import { searchParamsAssign } from '@/utils/tools'
 
 import { AdditionalQueryOptions, SubPageCommonProps, UserQuery } from './types'
 
-type OnLoadData = CommonUserQueryRpsoense & PaginationParams
-
 function useCommonQuery<T>(
   userQuery: UserQuery,
   queryOptions: AdditionalQueryOptions,
   subPage: string,
-  queryKey: string,
+  queryKeyPrefix: string[],
   queryFn: (params: {
     common: CommonQueryParams
     subPage: string
@@ -66,65 +63,33 @@ function useCommonQuery<T>(
     userQuery.admin,
   ])
   return useQuery({
-    queryKey: [queryKey, query],
+    queryKey: [...queryKeyPrefix, query],
     queryFn: () => queryFn(query),
   })
 }
 
-const Threads = ({
-  userQuery,
-  queryOptions,
-  subPage,
-  onLoad,
-}: {
-  userQuery: UserQuery
-  queryOptions: AdditionalQueryOptions
-  subPage: string
-  onLoad?: (data: OnLoadData) => void
-}) => {
-  const { data, isLoading } = useCommonQuery(
-    userQuery,
-    queryOptions,
-    subPage,
-    'userThreads',
-    async (query) => {
-      const data = await getUserThreads(query.common, query.page)
-      onLoad && onLoad(data)
-      return data
-    }
-  )
-  return (
-    <>
-      {isLoading && (
-        <>
-          {[...Array(4)].map((_, index) => (
-            <Skeleton className="w-full" height={81} key={index}></Skeleton>
-          ))}
-        </>
-      )}
-      {data?.rows.map((item) => (
-        <ThreadItem
-          key={item.thread_id}
-          data={item}
-          showSummary
-          hideThreadAuthor
-          ignoreThreadHighlight
-        />
-      ))}
-    </>
-  )
-}
+const Threads = ({ data }: { data: UserCommonList<ThreadInList> }) =>
+  data?.rows.map((item) => (
+    <ThreadItem
+      key={item.thread_id}
+      data={item}
+      showSummary
+      hideThreadAuthor
+      ignoreThreadHighlight
+    />
+  ))
 
 type CoalescedReply = UserReply & {
   replyItems: ThreadReplyOrCommentItem[]
+}
+type CoalescedList<T> = UserCommonList<T> & {
+  coalescedReplies?: CoalescedReply[]
 }
 
 function coalesceRepliesOrComments(
   apiData: UserCommonList<UserReply | UserPostComment>
 ) {
-  const data: UserCommonList<UserReply | UserPostComment> & {
-    coalescedReplies?: CoalescedReply[]
-  } = apiData
+  const data: CoalescedList<UserReply | UserPostComment> = apiData
   const coalescedReplies: CoalescedReply[] = []
   const tidItemMap: {
     [thread_id: number]: CoalescedReply
@@ -143,109 +108,76 @@ function coalesceRepliesOrComments(
   return data
 }
 
-const Replies = ({
+const Replies = ({ data }: { data: CoalescedList<UserReply> }) =>
+  data?.coalescedReplies?.map((item) => (
+    <ThreadItem
+      key={item.thread_id}
+      data={item}
+      hideThreadAuthor
+      ignoreThreadHighlight
+      replies={item.replyItems}
+    />
+  ))
+
+const PostComments = ({ data }: { data: CoalescedList<UserPostComment> }) =>
+  data?.coalescedReplies?.map((item) => (
+    <ThreadItem
+      key={item.thread_id}
+      data={item}
+      hideThreadAuthor
+      ignoreThreadHighlight
+      replies={item.replyItems}
+    />
+  ))
+
+function ThreadList<T extends PaginationParams>({
   userQuery,
   queryOptions,
   subPage,
   onLoad,
+  tab,
 }: {
   userQuery: UserQuery
   queryOptions: AdditionalQueryOptions
   subPage: string
-  onLoad?: (data: OnLoadData) => void
-}) => {
-  const { data, isLoading } = useCommonQuery(
-    userQuery,
-    queryOptions,
-    subPage,
-    'userReplies',
-    async (query) => {
-      const data = coalesceRepliesOrComments(
-        await getUserReplies(query.common, query.page)
-      )
-      onLoad && onLoad(data)
-      return data
-    }
-  )
-  return (
-    <>
-      {isLoading && (
-        <>
-          {[...Array(4)].map((_, index) => (
-            <Skeleton className="w-full" height={81} key={index}></Skeleton>
-          ))}
-        </>
-      )}
-      {data?.coalescedReplies?.map((item) => (
-        <ThreadItem
-          key={item.thread_id}
-          data={item}
-          hideThreadAuthor
-          ignoreThreadHighlight
-          replies={item.replyItems}
-        />
-      ))}
-    </>
-  )
-}
-
-const PostComments = ({
-  userQuery,
-  queryOptions,
-  subPage,
-  onLoad,
-}: {
-  userQuery: UserQuery
-  queryOptions: AdditionalQueryOptions
-  subPage: string
-  onLoad?: (data: OnLoadData) => void
-}) => {
-  const { data, isLoading } = useCommonQuery(
-    userQuery,
-    queryOptions,
-    subPage,
-    'userReplies',
-    async (query) => {
-      const data = coalesceRepliesOrComments(
-        await getUserPostComments(query.common, query.page)
-      )
-      onLoad && onLoad(data)
-      return data
-    }
-  )
-  return (
-    <>
-      {isLoading && (
-        <>
-          {[...Array(4)].map((_, index) => (
-            <Skeleton className="w-full" height={81} key={index}></Skeleton>
-          ))}
-        </>
-      )}
-      {data?.coalescedReplies?.map((item) => (
-        <ThreadItem
-          key={item.thread_id}
-          data={item}
-          hideThreadAuthor
-          ignoreThreadHighlight
-          replies={item.replyItems}
-        />
-      ))}
-    </>
-  )
-}
-
-const ThreadList = ({
-  children,
-  pagination,
-}: {
-  children: React.ReactNode
-  pagination?: PaginationParams
-}) => {
+  onLoad?: (data: T) => void
+  tab: {
+    id: string
+    fetcher: (common: CommonQueryParams, page?: number) => Promise<T>
+    component: React.ElementType
+  }
+}) {
+  const Component = tab.component
   const [searchParams, setSearchParams] = useSearchParams()
+  const [pagination, setPagination] = useState<PaginationParams>()
+  const { data, isLoading } = useCommonQuery(
+    userQuery,
+    queryOptions,
+    subPage,
+    ['user', tab.id],
+    async (query) => {
+      const data = await tab.fetcher(query.common, query.page)
+      setPagination({
+        page: data.page,
+        page_size: data.page_size,
+        total: data.total,
+      })
+      onLoad && onLoad(data)
+      return data
+    }
+  )
   return (
     <>
-      <List>{children}</List>
+      <List>
+        {isLoading && (
+          <>
+            {[...Array(4)].map((_, index) => (
+              <Skeleton className="w-full" height={102} key={index}></Skeleton>
+            ))}
+          </>
+        )}
+        {!!data?.total && <Component data={data} />}
+      </List>
       {pagination && pagination.total > pagination.page_size && (
         <Stack direction="row" justifyContent="center" my={1.5}>
           <Pagination
@@ -264,9 +196,25 @@ const ThreadList = ({
 }
 
 const tabs = [
-  { id: 'threads', title: '主题', component: Threads },
-  { id: 'replies', title: '回复', component: Replies },
-  { id: 'postcomments', title: '点评', component: PostComments },
+  { id: 'threads', title: '主题', component: Threads, fetcher: getUserThreads },
+  {
+    id: 'replies',
+    title: '回复',
+    component: Replies,
+    fetcher: (common: CommonQueryParams, page?: number) =>
+      getUserReplies(common, page).then((data) =>
+        coalesceRepliesOrComments(data)
+      ),
+  },
+  {
+    id: 'postcomments',
+    title: '点评',
+    component: PostComments,
+    fetcher: (common: CommonQueryParams, page?: number) =>
+      getUserPostComments(common, page).then((data) =>
+        coalesceRepliesOrComments(data)
+      ),
+  },
 ]
 
 const UserThreads = ({
@@ -275,10 +223,7 @@ const UserThreads = ({
   onLoad,
 }: SubPageCommonProps) => {
   const subPage = useParams().subPage
-  const [pagination, setPagination] = useState<PaginationParams>()
-  const Component = (tabs.find((item) => item.id == subPage) || tabs[0])
-    .component
-
+  const activeTab = tabs.find((item) => item.id == subPage) || tabs[0]
   return (
     <Box pb={1}>
       <Tabs value={subPage}>
@@ -299,21 +244,14 @@ const UserThreads = ({
         ))}
       </Tabs>
       <Divider />
-      <ThreadList pagination={pagination}>
-        <Component
-          userQuery={userQuery}
-          queryOptions={queryOptions}
-          subPage={subPage || tabs[0].id}
-          onLoad={(data) => {
-            setPagination({
-              page: data.page,
-              page_size: data.page_size,
-              total: data.total,
-            })
-            onLoad && onLoad(data)
-          }}
-        />
-      </ThreadList>
+      <ThreadList
+        key={activeTab.id}
+        tab={activeTab}
+        userQuery={userQuery}
+        queryOptions={queryOptions}
+        subPage={activeTab.id}
+        onLoad={(data) => onLoad && onLoad(data)}
+      />
     </Box>
   )
 }
