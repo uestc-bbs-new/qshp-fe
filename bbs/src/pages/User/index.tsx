@@ -131,7 +131,14 @@ function User() {
                 />
               )}
               {activeTab == 'favorites' && <Favorite />}
-              {activeTab == 'comments' && <MessageBoard />}
+              {activeTab == 'comments' && (
+                <MessageBoard
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                  self={self}
+                />
+              )}
             </>
           </Card>
         </Box>
