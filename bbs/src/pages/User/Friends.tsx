@@ -53,7 +53,7 @@ function Friends({
     userQuery.admin,
   ])
   const { data } = useQuery({
-    queryKey: ['userFriends', query],
+    queryKey: ['user', 'friends', query],
     queryFn: async () => {
       const data = await getUserFriends(query.common, query.page)
       onLoad && onLoad(data)

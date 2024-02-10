@@ -63,7 +63,7 @@ const Information = ({
   const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
   const [query, setQuery] = useState(initQuery())
   const { data } = useQuery({
-    queryKey: ['userProfile', query],
+    queryKey: ['user', 'profile', query],
     queryFn: async () => {
       const data = await getUserProfile(query.common)
       onLoad && onLoad(data)
