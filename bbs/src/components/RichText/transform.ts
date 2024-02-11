@@ -6,7 +6,12 @@ import { searchParamsExtract } from '@/utils/tools'
 
 const transformLegacyLinks = (url: string) => {
   if (url.startsWith(`${siteRoot}/`)) {
-    const parsed = new URL(url)
+    let parsed: URL
+    try {
+      parsed = new URL(url, location.origin)
+    } catch (_) {
+      return url
+    }
     if (parsed.pathname == '/forum.php') {
       switch (parsed.searchParams.get('mod')) {
         case 'viewthread':
