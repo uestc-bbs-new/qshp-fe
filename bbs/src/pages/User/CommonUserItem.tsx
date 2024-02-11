@@ -18,15 +18,13 @@ const CommonUserItem = ({
   children?: React.ReactNode
   menuItems?: React.ReactNode[]
 }) => {
-  const [closeEl, setMenuEl] = useState<null | HTMLElement>(null)
-  const [isOpen, setOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = !!anchorEl
   const handleOpenClick = (e: React.MouseEvent<HTMLElement>) => {
-    setOpen(!isOpen)
-    setMenuEl(e.currentTarget as HTMLElement)
+    setAnchorEl(e.currentTarget as HTMLElement)
   }
   const handleClose = () => {
-    setMenuEl(null)
-    setOpen(!isOpen)
+    setAnchorEl(null)
   }
 
   return (
@@ -68,14 +66,14 @@ const CommonUserItem = ({
         {menuItems && (
           <Box>
             <ListItemButton
-              aria-expanded={isOpen ? 'true' : undefined}
+              aria-expanded={open ? 'true' : undefined}
               onClick={handleOpenClick}
               style={{ color: 'rgb(33, 117, 243)' }}
             >
               <Typography fontSize={12}>管理</Typography>
-              {isOpen ? <ExpandLess /> : <ExpandMore />}
+              {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Menu open={isOpen} onClose={handleClose} anchorEl={closeEl}>
+            <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
               {menuItems}
             </Menu>
           </Box>
