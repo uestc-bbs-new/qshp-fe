@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 
 import { getUserFriends } from '@/apis/user'
-import { UserSummary } from '@/common/interfaces/user'
+import { UserFriend, UserSummary } from '@/common/interfaces/user'
 import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
@@ -131,58 +131,8 @@ function Friends({
         {data && !!data.total && (
           <>
             <Separated separator={<Divider />}>
-              {data.rows.map((friend) => (
-                <CommonUserItem
-                  user={friend}
-                  key={friend.uid}
-                  menuItems={
-                    self
-                      ? [
-                          <MenuItem key="edit">
-                            <ListItemText>修改备注</ListItemText>
-                          </MenuItem>,
-                          <MenuItem key="delete">
-                            <ListItemText>删除</ListItemText>
-                          </MenuItem>,
-                        ]
-                      : undefined
-                  }
-                >
-                  <Typography variant="userItemSummary">
-                    <Stack direction="row" alignItems="center">
-                      {friend.group_title}
-                      {friend.group_subtitle && (
-                        <Typography variant="userItemDetails" ml={0.25}>
-                          ({friend.group_subtitle})
-                        </Typography>
-                      )}
-                      {friend.latest_thread && (
-                        <>
-                          <Typography mx={0.75}>·</Typography>
-                          <Link
-                            to={pages.thread(friend.latest_thread.tid)}
-                            underline="hover"
-                            mt={0.25}
-                          >
-                            {friend.latest_thread?.subject}
-                          </Link>
-                        </>
-                      )}
-                    </Stack>
-                  </Typography>
-                  <Typography variant="userItemDetails" mt={0.5}>
-                    <Stack direction="row" spacing={0.75}>
-                      <Separated separator={<span>·</span>}>
-                        <span>积分：{friend.credits}</span>
-                        <span>威望：{friend.ext_credits['威望'] || 0}</span>
-                        <span>水滴：{friend.ext_credits['水滴'] || 0}</span>
-                        <span>好友：{friend.friends}</span>
-                        <span>主题：{friend.threads}</span>
-                        <span>回复：{friend.replies}</span>
-                      </Separated>
-                    </Stack>
-                  </Typography>
-                </CommonUserItem>
+              {data.rows.map((item) => (
+                <FriendItem key={item.uid} item={item} self={self} />
               ))}
             </Separated>
             {!!data?.total && data.total > data.page_size && (
@@ -204,4 +154,58 @@ function Friends({
     </>
   )
 }
+
+const FriendItem = ({ item, self }: { item: UserFriend; self: boolean }) => (
+  <CommonUserItem
+    user={item}
+    menuItems={
+      self
+        ? [
+            <MenuItem key="edit">
+              <ListItemText>修改备注</ListItemText>
+            </MenuItem>,
+            <MenuItem key="delete">
+              <ListItemText>删除</ListItemText>
+            </MenuItem>,
+          ]
+        : undefined
+    }
+  >
+    <Typography variant="userItemSummary">
+      <Stack direction="row" alignItems="center">
+        {item.group_title}
+        {item.group_subtitle && (
+          <Typography variant="userItemDetails" ml={0.25}>
+            ({item.group_subtitle})
+          </Typography>
+        )}
+        {item.latest_thread && (
+          <>
+            <Typography mx={0.75}>·</Typography>
+            <Link
+              to={pages.thread(item.latest_thread.tid)}
+              underline="hover"
+              mt={0.25}
+            >
+              {item.latest_thread?.subject}
+            </Link>
+          </>
+        )}
+      </Stack>
+    </Typography>
+    <Typography variant="userItemDetails" mt={0.5}>
+      <Stack direction="row" spacing={0.75}>
+        <Separated separator={<span>·</span>}>
+          <span>积分：{item.credits}</span>
+          <span>威望：{item.ext_credits['威望'] || 0}</span>
+          <span>水滴：{item.ext_credits['水滴'] || 0}</span>
+          <span>好友：{item.friends}</span>
+          <span>主题：{item.threads}</span>
+          <span>回复：{item.replies}</span>
+        </Separated>
+      </Stack>
+    </Typography>
+  </CommonUserItem>
+)
+
 export default Friends
