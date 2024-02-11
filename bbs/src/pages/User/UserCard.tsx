@@ -24,7 +24,7 @@ const UserStatEntry = ({
 
 const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
   const { state } = useAppState()
-  const avatarSize = 218
+  const avatarSize = 200
   const avatarM = 2
   return (
     <Paper
@@ -33,21 +33,29 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
         minHeight: `calc(${avatarSize}px + ${theme.spacing(avatarM * 2)})`,
       })}
     >
-      <Box m={avatarM} position="absolute" left={0} top={0}>
+      <Box
+        m={avatarM}
+        position="absolute"
+        left={0}
+        top={0}
+        sx={{ backgroundColor: '#eee' }}
+      >
         {userSummary && (
           <Avatar
             alt={userSummary?.username}
             uid={userSummary?.uid}
-            size={218}
+            size={avatarSize}
             imageSize="large"
             variant="rounded"
+            sx={{
+              boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.25)',
+            }}
           />
         )}
       </Box>
       <Stack
         direction="row"
-        pt={2}
-        pb={1}
+        py={1}
         sx={(theme) => ({
           backgroundColor:
             theme.palette.mode == 'light'
@@ -99,7 +107,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
       <Stack direction="row">
         <Box width={avatarSize} m={avatarM} flexShrink={0} />
         <Stack flexGrow={1} flexShrink={1} minWidth="1em">
-          <Box py={2}>
+          <Box py={1.5}>
             <Stack direction="row" justifyContent="space-around">
               <UserStatEntry title="积分" value={userSummary?.credits} />
               <UserStatEntry
@@ -125,7 +133,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
             justifyContent="space-between"
             alignItems="center"
             pr={2}
-            mt={2}
+            py={1.5}
           >
             <Stack
               direction="row"
