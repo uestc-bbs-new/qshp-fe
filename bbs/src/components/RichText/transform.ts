@@ -9,15 +9,56 @@ const transformLegacyLinks = (url: string) => {
     const parsed = new URL(url)
     if (parsed.pathname == '/forum.php') {
       switch (parsed.searchParams.get('mod')) {
-        case 'viewthread': {
-          const tid = parseInt(parsed.searchParams.get('tid') || '')
-          if (tid) {
-            return pages.thread(
-              tid,
-              searchParamsExtract(parsed.searchParams, ['page'])
-            )
+        case 'viewthread':
+          {
+            const tid = parseInt(parsed.searchParams.get('tid') || '')
+            if (tid) {
+              return pages.thread(
+                tid,
+                searchParamsExtract(parsed.searchParams, ['page'])
+              )
+            }
           }
-        }
+          break
+        case 'redirect':
+          {
+            const tid = parseInt(parsed.searchParams.get('ptid') || '')
+            const pid = parseInt(parsed.searchParams.get('pid') || '')
+            if (pid) {
+              return pages.goto(pid)
+            }
+            if (tid) {
+              return pages.thread(tid)
+            }
+          }
+          break
+        case 'forumdisplay':
+          {
+            const fid = parseInt(parsed.searchParams.get('fid') || '')
+            let page = parseInt(parsed.searchParams.get('page') || '') || 1
+            if (fid) {
+              const q = new URLSearchParams()
+              if (page > 1) {
+                page = (page - 1) * 6 + 1
+                q.set('page', page.toString())
+              }
+              return pages.forum(fid, q)
+            }
+          }
+          break
+      }
+    }
+    if (parsed.pathname == '/home.php') {
+      switch (parsed.searchParams.get('mod')) {
+        case 'space':
+          {
+            const uid = parseInt(parsed.searchParams.get('uid') || '')
+            const username = parsed.searchParams.get('username') || undefined
+            if (uid || username) {
+              return pages.user({ uid, username })
+            }
+          }
+          break
       }
     }
   }
