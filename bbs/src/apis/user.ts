@@ -117,12 +117,17 @@ export const deleteComment = (comment_id: number) =>
 
 export const getUserFriends = async (
   common: CommonQueryParams,
-  page?: number
+  page?: number,
+  query?: string | null
 ) => {
   const result = await request.get<UserCommonList<UserFriend>>(
     `${getApiBase(common)}/friends`,
     {
-      params: { ...getCommonQueryParams(common), page: page || 1 },
+      params: {
+        ...getCommonQueryParams(common),
+        page: page || 1,
+        ...(query && { query }),
+      },
     }
   )
   result.rows.forEach(

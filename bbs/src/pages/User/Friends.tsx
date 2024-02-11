@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import {
@@ -27,6 +27,8 @@ import { searchParamsAssign } from '@/utils/tools'
 import CommonUserItem from './CommonUserItem'
 import { SubPageCommonProps } from './types'
 
+const kQuery = 'query'
+
 function Friends({
   userQuery,
   queryOptions,
@@ -41,6 +43,7 @@ function Friends({
   const initQuery = () => ({
     common: { ...userQuery, ...queryOptions },
     page: parseInt(searchParams.get('page') || '1') || 1,
+    ...(searchParams.get(kQuery) && { query: searchParams.get(kQuery) }),
   })
   const [query, setQuery] = useState(initQuery())
   useEffect(() => {
@@ -55,11 +58,23 @@ function Friends({
   const { data } = useQuery({
     queryKey: ['user', 'friends', query],
     queryFn: async () => {
-      const data = await getUserFriends(query.common, query.page)
+      const data = await getUserFriends(query.common, query.page, query.query)
       onLoad && onLoad(data)
       return data
     },
   })
+
+  const queryRef = useRef<HTMLInputElement>()
+  const handleSearch = () => {
+    const value = queryRef.current?.value.trim()
+    if (value && !query.query) {
+      setSearchParams(
+        searchParamsAssign(searchParams, { query: value }, 'page')
+      )
+    } else if (!value && query.query) {
+      setSearchParams(searchParamsAssign(searchParams, {}, [kQuery, 'page']))
+    }
+  }
 
   return (
     <>
@@ -75,10 +90,16 @@ function Friends({
                 <Typography variant="userAction">查找好友</Typography>
                 <TextField
                   size="small"
-                  placeholder="输入用户名"
+                  placeholder="用户名或备注"
+                  defaultValue={query.query}
                   sx={{ width: 600 }}
+                  inputRef={queryRef}
+                  inputProps={{ type: 'search' }}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
+                    e.key == 'Enter' && handleSearch()
+                  }
                 />
-                <Button variant="contained" sx={{ whiteSpace: 'nowrap' }}>
+                <Button variant="contained" onClick={handleSearch}>
                   搜索
                 </Button>
               </Stack>
@@ -98,7 +119,9 @@ function Friends({
           <EmptyList
             text={
               self
-                ? '您还未添加过好友'
+                ? query.query
+                  ? '未找到相关好友'
+                  : '您还未添加过好友'
                 : userSummary?.friends_hidden
                   ? '该用户隐藏了好友列表'
                   : '暂无好友'
