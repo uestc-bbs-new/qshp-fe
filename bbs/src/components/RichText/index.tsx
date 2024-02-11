@@ -25,7 +25,13 @@ import { transformUserHtml } from './transform'
 const kAuthoredColor = 'authoredColor'
 const kColorManipulated = 'colorManipulated'
 
-export const UserHtmlRenderer = ({ html }: { html: string }) => {
+export const UserHtmlRenderer = ({
+  html,
+  style,
+}: {
+  html: string
+  style?: React.CSSProperties
+}) => {
   const { state } = useAppState()
   const contentRef = createRef<HTMLDivElement>()
   const findParentBackgroundColor = (
@@ -116,6 +122,7 @@ export const UserHtmlRenderer = ({ html }: { html: string }) => {
     <div
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
+      style={style}
       dangerouslySetInnerHTML={{
         __html: processedHtml,
       }}

@@ -2,6 +2,7 @@ import { Typography } from '@mui/material'
 
 import { Notification } from '@/common/interfaces/response'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
 import { pages } from '@/utils/routes'
 
 const NotificationRenderer = ({
@@ -24,12 +25,7 @@ const NotificationRenderer = ({
       </Typography>
     )
   }
-  return (
-    <div
-      dangerouslySetInnerHTML={{ __html: item.html_message }}
-      style={fontWeightStyle}
-    />
-  )
+  return <UserHtmlRenderer html={item.html_message} style={fontWeightStyle} />
 }
 
 export const getNotificationTarget = (item: Notification) => {
