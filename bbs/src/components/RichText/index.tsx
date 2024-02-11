@@ -1,6 +1,7 @@
 import Vditor from 'vditor'
 
-import { createRef, useEffect, useMemo } from 'react'
+import React, { createRef, useEffect, useMemo } from 'react'
+import { matchRoutes, useNavigate } from 'react-router-dom'
 
 import {
   Typography,
@@ -12,6 +13,7 @@ import {
 
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
+import routes from '@/routes/routes'
 import { useAppState } from '@/states'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -109,12 +111,34 @@ export const UserHtmlRenderer = ({ html }: { html: string }) => {
   }, [state.theme])
 
   const processedHtml = useMemo(() => transformUserHtml(html), [html])
+  const navigate = useNavigate()
   return (
     <div
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
       dangerouslySetInnerHTML={{
         __html: processedHtml,
+      }}
+      onClickCapture={(e: React.MouseEvent<HTMLDivElement>) => {
+        let a: HTMLElement | null | EventTarget = e.target
+        while (
+          a &&
+          a != contentRef.current &&
+          !(a instanceof HTMLAnchorElement) &&
+          a instanceof Node
+        ) {
+          a = a.parentElement
+        }
+        if (a && a instanceof HTMLAnchorElement && a.href) {
+          const url = new URL(a.href)
+          if (
+            url.host == location.host &&
+            matchRoutes(routes.current, url.pathname)
+          ) {
+            navigate(url.pathname + url.search + url.hash)
+            e.preventDefault()
+          }
+        }
       }}
     ></div>
   )
