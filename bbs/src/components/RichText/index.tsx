@@ -137,6 +137,10 @@ export const UserHtmlRenderer = ({ html }: { html: string }) => {
           ) {
             navigate(url.pathname + url.search + url.hash)
             e.preventDefault()
+          } else if (url.host == 'wiki.stuhome.net') {
+            // TODO(fangjue): Show some prompt and provide a link to
+            // https://bbs.uestc.edu.cn/forum.php?mod=viewthread&tid=1328284.
+            e.preventDefault()
           }
         }
       }}
