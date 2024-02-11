@@ -3,10 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { Close } from '@mui/icons-material'
 import {
   Box,
   Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
+  IconButton,
   ListItemText,
   MenuItem,
   Pagination,
@@ -16,8 +21,9 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getUserFriends } from '@/apis/user'
+import { editFriend, getUserFriends } from '@/apis/user'
 import { UserFriend, UserSummary } from '@/common/interfaces/user'
+import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
@@ -55,7 +61,7 @@ function Friends({
     userQuery.removeVisitLog,
     userQuery.admin,
   ])
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ['user', 'friends', query],
     queryFn: async () => {
       const data = await getUserFriends(query.common, query.page, query.query)
@@ -74,6 +80,13 @@ function Friends({
     } else if (!value && query.query) {
       setSearchParams(searchParamsAssign(searchParams, {}, [kQuery, 'page']))
     }
+  }
+
+  const [friendNoteOpen, setFriendNoteOpen] = useState(false)
+  const [activeFriend, setActiveFriend] = useState<UserFriend>()
+  const editFriendNote = (item: UserFriend) => {
+    setActiveFriend(item)
+    setFriendNoteOpen(true)
   }
 
   return (
@@ -132,7 +145,12 @@ function Friends({
           <>
             <Separated separator={<Divider />}>
               {data.rows.map((item) => (
-                <FriendItem key={item.uid} item={item} self={self} />
+                <FriendItem
+                  key={item.uid}
+                  item={item}
+                  self={self}
+                  onEditFriendNote={editFriendNote}
+                />
               ))}
             </Separated>
             {!!data?.total && data.total > data.page_size && (
@@ -151,17 +169,35 @@ function Friends({
           </>
         )}
       </Box>
+      <FriendNoteDialog
+        open={friendNoteOpen}
+        item={activeFriend}
+        onClose={(newNote?: string) => {
+          setFriendNoteOpen(false)
+          if (newNote !== undefined && newNote != activeFriend?.note) {
+            refetch()
+          }
+        }}
+      />
     </>
   )
 }
 
-const FriendItem = ({ item, self }: { item: UserFriend; self: boolean }) => (
+const FriendItem = ({
+  item,
+  self,
+  onEditFriendNote,
+}: {
+  item: UserFriend
+  self: boolean
+  onEditFriendNote: (item: UserFriend) => void
+}) => (
   <CommonUserItem
     user={item}
     menuItems={
       self
         ? [
-            <MenuItem key="edit">
+            <MenuItem key="edit" onClick={() => onEditFriendNote(item)}>
               <ListItemText>修改备注</ListItemText>
             </MenuItem>,
             <MenuItem key="delete">
@@ -207,5 +243,72 @@ const FriendItem = ({ item, self }: { item: UserFriend; self: boolean }) => (
     </Typography>
   </CommonUserItem>
 )
+
+const FriendNoteDialog = ({
+  open,
+  item,
+  onClose,
+}: {
+  open: boolean
+  item?: UserFriend
+  onClose?: (newNote?: string) => void
+}) => {
+  const [pending, setPending] = useState(false)
+  const inputRef = useRef<HTMLInputElement>()
+  const updateNote = () => {
+    if (item && inputRef.current) {
+      setPending(true)
+      const newNote = inputRef.current.value.trim()
+      editFriend(item.uid, { note: newNote })
+        .then(() => onClose && onClose(newNote))
+        .catch(() => setPending(false))
+    }
+  }
+  useEffect(() => {
+    if (!open) {
+      setPending(false)
+    }
+  }, [open])
+  return (
+    <Dialog
+      open={open}
+      onClose={() => onClose && onClose()}
+      disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
+    >
+      <DialogTitle>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography>设置好友备注</Typography>
+          <IconButton onClick={() => onClose && onClose()}>
+            <Close />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      {item && (
+        <DialogContent>
+          <Stack direction="row" alignItems="center">
+            <Avatar uid={item.uid} size={36} />
+            <Typography ml={1}>{item.username}</Typography>
+          </Stack>
+          <Stack alignItems="center">
+            <TextField
+              label="好友备注"
+              sx={{ my: 2 }}
+              defaultValue={item.note}
+              inputRef={inputRef}
+              autoFocus
+            />
+            <Button disabled={pending} onClick={updateNote}>
+              {pending ? '请稍候...' : '保存'}
+            </Button>
+          </Stack>
+        </DialogContent>
+      )}
+    </Dialog>
+  )
+}
 
 export default Friends
