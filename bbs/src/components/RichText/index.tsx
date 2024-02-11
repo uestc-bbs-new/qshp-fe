@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 
-import { createRef, useEffect } from 'react'
+import { createRef, useEffect, useMemo } from 'react'
 
 import {
   Typography,
@@ -18,6 +18,7 @@ import { useAppState } from '@/states'
 import bbcode2html from '@/utils/bbcode/bbcode'
 
 import './richtext.css'
+import { transformUserHtml } from './transform'
 
 const kAuthoredColor = 'authoredColor'
 const kColorManipulated = 'colorManipulated'
@@ -106,12 +107,14 @@ export const UserHtmlRenderer = ({ html }: { html: string }) => {
       )
     }
   }, [state.theme])
+
+  const processedHtml = useMemo(() => transformUserHtml(html), [html])
   return (
     <div
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
       dangerouslySetInnerHTML={{
-        __html: html,
+        __html: processedHtml,
       }}
     ></div>
   )
