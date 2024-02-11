@@ -90,11 +90,16 @@ function Favorites({
           >
             <AccordionSummary
               expandIcon={<ExpandMore />}
-              sx={{ minHeight: 0, '& .MuiAccordionSummary-content': { my: 0 } }}
+              sx={{
+                minHeight: 0,
+                px: 0,
+                mb: 1,
+                '& .MuiAccordionSummary-content': { my: 0 },
+              }}
             >
               <Typography variant="userProfileHeading">淘专辑</Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ paddingY: 0 }}>
+            <AccordionDetails sx={{ pt: 0, pb: 2, px: 1.75 }}>
               {collections.map((item) => (
                 <CollectionItem item={item} key={item.collection_id} />
               ))}
@@ -143,7 +148,7 @@ const CollectionItem = ({ item }: { item: Collection }) => (
       <Link
         external
         to={legacyPages.collection(item.collection_id)}
-        sx={{ mr: 1.2 }}
+        sx={{ mr: 2 }}
       >
         {item.is_owner ? (
           <Stack
