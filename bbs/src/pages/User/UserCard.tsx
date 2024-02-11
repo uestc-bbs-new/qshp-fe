@@ -168,16 +168,20 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
                     userSummary?.blocked || !!userSummary?.friend_status
                   }
                 >
-                  {userSummary.friend_status == 'friend'
-                    ? '已成为好友'
-                    : userSummary.friend_status == 'requested'
-                      ? '已发送好友请求'
-                      : '加为好友'}
+                  {userSummary.blocked
+                    ? '已屏蔽'
+                    : userSummary.friend_status == 'friend'
+                      ? '已成为好友'
+                      : userSummary.friend_status == 'requested'
+                        ? '已发送好友请求'
+                        : '加为好友'}
                 </Button>
               )}
-              {userSummary && state.user.uid != userSummary.uid && (
-                <Button variant="contained">开始私信</Button>
-              )}
+              {userSummary &&
+                !userSummary.blocked &&
+                state.user.uid != userSummary.uid && (
+                  <Button variant="contained">开始私信</Button>
+                )}
             </Stack>
           </Stack>
         </Stack>
