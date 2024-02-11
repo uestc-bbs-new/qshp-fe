@@ -1,13 +1,26 @@
 import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
-import { Box, ListItemButton, Menu, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  ListItemButton,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { pages } from '@/utils/routes'
 
 import { FriendUser } from './types'
+
+type MenuItemDefinition = {
+  title: string
+  onClick?: () => void
+}
 
 const CommonUserItem = ({
   user,
@@ -16,7 +29,7 @@ const CommonUserItem = ({
 }: {
   user: FriendUser
   children?: React.ReactNode
-  menuItems?: React.ReactNode[]
+  menuItems?: MenuItemDefinition[]
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl
@@ -74,7 +87,17 @@ const CommonUserItem = ({
               {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
-              {menuItems}
+              {menuItems.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={() => {
+                    item.onClick && item.onClick()
+                    setAnchorEl(null)
+                  }}
+                >
+                  <ListItemText>{item.title}</ListItemText>
+                </MenuItem>
+              ))}
             </Menu>
           </Box>
         )}

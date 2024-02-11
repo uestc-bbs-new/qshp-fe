@@ -12,8 +12,6 @@ import {
   DialogTitle,
   Divider,
   IconButton,
-  ListItemText,
-  MenuItem,
   Pagination,
   Skeleton,
   Stack,
@@ -197,12 +195,8 @@ const FriendItem = ({
     menuItems={
       self
         ? [
-            <MenuItem key="edit" onClick={() => onEditFriendNote(item)}>
-              <ListItemText>修改备注</ListItemText>
-            </MenuItem>,
-            <MenuItem key="delete">
-              <ListItemText>删除</ListItemText>
-            </MenuItem>,
+            { title: '修改备注', onClick: () => onEditFriendNote(item) },
+            { title: '删除' },
           ]
         : undefined
     }

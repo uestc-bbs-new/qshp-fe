@@ -7,8 +7,6 @@ import {
   Box,
   Button,
   Divider,
-  ListItemText,
-  MenuItem,
   Pagination,
   Skeleton,
   Stack,
@@ -90,21 +88,15 @@ function MessageBoard({
                     ? [
                         ...((self &&
                           comment.author_id != state.user.uid && [
-                            <MenuItem key="reply">
-                              <ListItemText>回复</ListItemText>
-                            </MenuItem>,
+                            { title: '回复' },
                           ]) ||
                           []),
                         ...((comment.author_id == state.user.uid && [
-                          <MenuItem key="edit">
-                            <ListItemText>编辑</ListItemText>
-                          </MenuItem>,
+                          { title: '编辑' },
                         ]) ||
                           []),
                         ...(((self || comment.author_id == state.user.uid) && [
-                          <MenuItem key="delete">
-                            <ListItemText>删除</ListItemText>
-                          </MenuItem>,
+                          { title: '删除' },
                         ]) ||
                           []),
                       ]
