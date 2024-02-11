@@ -48,6 +48,15 @@ const transformLegacyLinks = (url: string) => {
           break
       }
     }
+    if (parsed.pathname == '/read.php') {
+      const tid = parseInt(parsed.searchParams.get('tid') || '')
+      if (tid) {
+        return pages.thread(
+          tid,
+          searchParamsExtract(parsed.searchParams, ['page'])
+        )
+      }
+    }
     if (parsed.pathname == '/home.php') {
       switch (parsed.searchParams.get('mod')) {
         case 'space':
