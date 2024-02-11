@@ -86,25 +86,29 @@ function MessageBoard({
                 }}
                 key={comment.comment_id}
                 menuItems={
-                  (self || comment.author_id == state.user.uid) && (
-                    <>
-                      {self && comment.author_id != state.user.uid && (
-                        <MenuItem>
-                          <ListItemText>回复</ListItemText>
-                        </MenuItem>
-                      )}
-                      {comment.author_id == state.user.uid && (
-                        <MenuItem>
-                          <ListItemText>编辑</ListItemText>
-                        </MenuItem>
-                      )}
-                      {(self || comment.author_id == state.user.uid) && (
-                        <MenuItem>
-                          <ListItemText>删除</ListItemText>
-                        </MenuItem>
-                      )}
-                    </>
-                  )
+                  self || comment.author_id == state.user.uid
+                    ? [
+                        ...((self &&
+                          comment.author_id != state.user.uid && [
+                            <MenuItem key="reply">
+                              <ListItemText>回复</ListItemText>
+                            </MenuItem>,
+                          ]) ||
+                          []),
+                        ...((comment.author_id == state.user.uid && [
+                          <MenuItem key="edit">
+                            <ListItemText>编辑</ListItemText>
+                          </MenuItem>,
+                        ]) ||
+                          []),
+                        ...(((self || comment.author_id == state.user.uid) && [
+                          <MenuItem key="delete">
+                            <ListItemText>删除</ListItemText>
+                          </MenuItem>,
+                        ]) ||
+                          []),
+                      ]
+                    : undefined
                 }
               >
                 <Typography variant="userItemSummary">

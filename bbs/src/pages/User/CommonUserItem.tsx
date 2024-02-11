@@ -16,7 +16,7 @@ const CommonUserItem = ({
 }: {
   user: FriendUser
   children?: React.ReactNode
-  menuItems?: React.ReactNode
+  menuItems?: React.ReactNode[]
 }) => {
   const [closeEl, setMenuEl] = useState<null | HTMLElement>(null)
   const [isOpen, setOpen] = useState(false)

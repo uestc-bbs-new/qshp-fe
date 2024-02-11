@@ -113,16 +113,16 @@ function Friends({
                   user={friend}
                   key={friend.uid}
                   menuItems={
-                    self && (
-                      <>
-                        <MenuItem>
-                          <ListItemText>修改备注</ListItemText>
-                        </MenuItem>
-                        <MenuItem>
-                          <ListItemText>删除</ListItemText>
-                        </MenuItem>
-                      </>
-                    )
+                    self
+                      ? [
+                          <MenuItem key="edit">
+                            <ListItemText>修改备注</ListItemText>
+                          </MenuItem>,
+                          <MenuItem key="delete">
+                            <ListItemText>删除</ListItemText>
+                          </MenuItem>,
+                        ]
+                      : undefined
                   }
                 >
                   <Typography variant="userItemSummary">
