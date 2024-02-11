@@ -27,6 +27,10 @@ export type CommonQueryParams = User & {
   admin?: boolean
 }
 
+export type UserThreadsFilter = {
+  fid?: number
+}
+
 const userApiBase = `${commonUrl}/user`
 
 const getApiBase = (user: User) => {
@@ -54,12 +58,13 @@ export const getUserProfile = (common: CommonQueryParams) =>
 
 export const getUserThreads = async (
   common: CommonQueryParams,
-  page?: number
+  page?: number,
+  extra?: UserThreadsFilter
 ) => {
   const result = await request.get<UserCommonList<ThreadInList>>(
     `${getApiBase(common)}/threads`,
     {
-      params: { ...getCommonQueryParams(common), page: page || 1 },
+      params: { ...getCommonQueryParams(common), page: page || 1, ...extra },
     }
   )
   result.rows.forEach(
@@ -71,12 +76,13 @@ export const getUserThreads = async (
 
 export const getUserReplies = async (
   common: CommonQueryParams,
-  page?: number
+  page?: number,
+  extra?: UserThreadsFilter
 ) => {
   const result = await request.get<UserCommonList<UserReply>>(
     `${getApiBase(common)}/replies`,
     {
-      params: { ...getCommonQueryParams(common), page: page || 1 },
+      params: { ...getCommonQueryParams(common), page: page || 1, ...extra },
     }
   )
   result.rows.forEach(
@@ -87,7 +93,8 @@ export const getUserReplies = async (
 }
 export const getUserPostComments = async (
   common: CommonQueryParams,
-  page?: number
+  page?: number,
+  extra?: UserThreadsFilter
 ) => {
   const result = await request.get<UserCommonList<UserPostComment>>(
     `${getApiBase(common)}/postcomments`,
@@ -95,6 +102,7 @@ export const getUserPostComments = async (
       params: {
         ...getCommonQueryParams(common),
         page: page || 1,
+        ...extra,
       },
     }
   )

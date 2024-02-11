@@ -16,6 +16,7 @@ import {
 
 import {
   CommonQueryParams,
+  UserThreadsFilter,
   getUserPostComments,
   getUserReplies,
   getUserThreads,
@@ -45,7 +46,11 @@ type TabProps<T extends PaginationParams> = {
   id: string
   title: string
   component: React.ElementType
-  fetcher: (common: CommonQueryParams, page?: number) => Promise<T>
+  fetcher: (
+    common: CommonQueryParams,
+    page?: number,
+    extra?: UserThreadsFilter
+  ) => Promise<T>
 }
 
 const Threads = ({ data }: { data: UserCommonList<ThreadInList> }) =>
@@ -101,7 +106,7 @@ function ThreadList<T extends PaginationParams>({
     common: { ...userQuery, ...queryOptions },
     subPage,
     page: parseInt(searchParams.get('page') || '1') || 1,
-    fid: parseInt(searchParams.get('page') || '') || undefined,
+    fid: parseInt(searchParams.get('fid') || '') || undefined,
   })
   const [query, setQuery] = useState(initQuery())
   useEffect(() => {
@@ -116,7 +121,15 @@ function ThreadList<T extends PaginationParams>({
   const { data, isLoading } = useQuery({
     queryKey: ['user', tab.id, query],
     queryFn: async () => {
-      const data = await tab.fetcher(query.common, query.page)
+      const data = await tab.fetcher(
+        query.common,
+        query.page,
+        query.fid
+          ? {
+              fid: query.fid,
+            }
+          : undefined
+      )
       setPagination({
         page: data.page,
         page_size: data.page_size,
@@ -186,8 +199,12 @@ const tabs = [
     id: 'replies',
     title: '回复',
     component: Replies,
-    fetcher: (common: CommonQueryParams, page?: number) =>
-      getUserReplies(common, page).then((data) =>
+    fetcher: (
+      common: CommonQueryParams,
+      page?: number,
+      extra?: UserThreadsFilter
+    ) =>
+      getUserReplies(common, page, extra).then((data) =>
         coalesceRepliesOrComments(data)
       ),
   },
@@ -195,8 +212,12 @@ const tabs = [
     id: 'postcomments',
     title: '点评',
     component: PostComments,
-    fetcher: (common: CommonQueryParams, page?: number) =>
-      getUserPostComments(common, page).then((data) =>
+    fetcher: (
+      common: CommonQueryParams,
+      page?: number,
+      extra?: UserThreadsFilter
+    ) =>
+      getUserPostComments(common, page, extra).then((data) =>
         coalesceRepliesOrComments(data)
       ),
   },
