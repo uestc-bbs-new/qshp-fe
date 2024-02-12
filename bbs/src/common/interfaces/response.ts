@@ -155,7 +155,7 @@ export type UserInfo = {
 
 export type ThreadList = {
   total: number
-  rows: Array<Thread>
+  rows?: Array<Thread>
   forum?: ForumDetails
 }
 

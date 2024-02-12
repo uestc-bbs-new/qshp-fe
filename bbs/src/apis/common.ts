@@ -161,7 +161,7 @@ export const getThreadList = async (params: {
     },
   })
   makeThreadTypesMap(result.forum)
-  result.rows.forEach((item) => {
+  result.rows?.forEach((item) => {
     item.subject = unescapeSubject(item.subject, item.dateline, true)
   })
   return result
