@@ -33,3 +33,12 @@ export const handleCtrlEnter = (handler?: () => void) =>
         }
       }
     : undefined
+
+export const handleEnter = (handler?: () => void) =>
+  handler
+    ? (e: React.KeyboardEvent) => {
+        if (e.key == 'Enter') {
+          handler()
+        }
+      }
+    : undefined

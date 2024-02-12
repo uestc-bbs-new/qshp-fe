@@ -27,7 +27,7 @@ import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { pages } from '@/utils/routes'
 import { scrollAnchorCss } from '@/utils/scrollAnchor'
-import { searchParamsAssign } from '@/utils/tools'
+import { handleEnter, searchParamsAssign } from '@/utils/tools'
 
 import CommonUserItem from './CommonUserItem'
 import { SubPageCommonProps } from './types'
@@ -318,6 +318,7 @@ const FriendNoteDialog = ({
               inputRef={inputRef}
               autoFocus
               fullWidth
+              onKeyDown={handleEnter(updateNote)}
             />
             <Button disabled={pending} onClick={updateNote} variant="contained">
               {pending ? '请稍候...' : '保存'}
