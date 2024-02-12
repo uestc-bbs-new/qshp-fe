@@ -281,13 +281,24 @@ const FriendNoteDialog = ({
       onClose={() => onClose && onClose()}
       disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
     >
-      <DialogTitle>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography>设置好友备注</Typography>
+      <DialogTitle
+        sx={{
+          borderBottom: '1px solid #E5E5E5',
+          pt: 2.25,
+          pb: 1.5,
+          pl: 2.5,
+          pr: 1.5,
+          mb: 2,
+        }}
+      >
+        <Stack direction="row" alignItems="center">
+          <Stack direction="row" alignItems="center" flexGrow={1}>
+            <Box
+              mr={1.25}
+              sx={{ width: 6, height: 29, backgroundColor: '#2175F3' }}
+            />
+            <Typography variant="dialogTitle">设置好友备注</Typography>
+          </Stack>
           <IconButton onClick={() => onClose && onClose()}>
             <Close />
           </IconButton>
@@ -295,19 +306,20 @@ const FriendNoteDialog = ({
       </DialogTitle>
       {item && (
         <DialogContent>
-          <Stack direction="row" alignItems="center">
-            <Avatar uid={item.uid} size={36} />
+          <Stack direction="row" alignItems="center" minWidth={320} mt={1}>
+            <Avatar uid={item.uid} size={40} />
             <Typography ml={1}>{item.username}</Typography>
           </Stack>
           <Stack alignItems="center">
             <TextField
               label="好友备注"
-              sx={{ my: 2 }}
+              sx={{ my: 3 }}
               defaultValue={item.note}
               inputRef={inputRef}
               autoFocus
+              fullWidth
             />
-            <Button disabled={pending} onClick={updateNote}>
+            <Button disabled={pending} onClick={updateNote} variant="contained">
               {pending ? '请稍候...' : '保存'}
             </Button>
           </Stack>
