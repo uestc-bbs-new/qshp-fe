@@ -72,7 +72,7 @@ function Friends({
   const queryRef = useRef<HTMLInputElement>()
   const handleSearch = () => {
     const value = queryRef.current?.value.trim()
-    if (value && !query.query) {
+    if (value && query.query != value) {
       setSearchParams(
         searchParamsAssign(searchParams, { query: value }, 'page')
       )
@@ -120,9 +120,7 @@ function Friends({
                   sx={{ width: 600 }}
                   inputRef={queryRef}
                   inputProps={{ type: 'search' }}
-                  onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                    e.key == 'Enter' && handleSearch()
-                  }
+                  onKeyDown={handleEnter(handleSearch)}
                 />
                 <Button variant="contained" onClick={handleSearch}>
                   搜索
