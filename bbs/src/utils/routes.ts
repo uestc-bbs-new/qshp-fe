@@ -98,6 +98,21 @@ export const pages = {
           })
         : undefined
     ),
+
+  searchThreads: (params?: {
+    keyword?: string
+    author?: string
+    digest?: boolean
+  }) =>
+    withSearchAndHash(
+      `/search`,
+      new URLSearchParams({
+        ...(params?.keyword && { q: params.keyword }),
+        ...(params?.author && { author: params.author }),
+        ...(params?.digest && { digest: '1' }),
+        type: 'post',
+      })
+    ),
 }
 
 export const legacyPages = {

@@ -66,13 +66,7 @@ const SearchBar = () => {
 
   const handleSubmit = () => {
     if (value.trim()) {
-      navigate({
-        pathname: '/search',
-        search: createSearchParams({
-          type: 'post',
-          name: value,
-        }).toString(),
-      })
+      navigate(pages.searchThreads({ keyword: value }))
     }
   }
 

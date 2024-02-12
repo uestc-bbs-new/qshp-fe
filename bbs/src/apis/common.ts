@@ -1,9 +1,11 @@
 import {
   Forum,
   ForumDetails,
+  GenericList,
   IndexData,
   SearchSummaryResponse,
   Thread,
+  ThreadInList,
   ThreadList,
   ThreadTypeMap,
   TopList,
@@ -121,16 +123,25 @@ export const searchSummary = async (query: string) => {
   return result
 }
 
-export const searchThreads = (params: object) => {
-  return request.post<{ resultNum: number; threads: Thread[] }>(
-    `${commonUrl}/global/search/thread`,
-    params,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  )
+export const searchThreads = ({
+  keyword,
+  author,
+  digest,
+  page,
+}: {
+  keyword?: string | null
+  author?: string | null
+  digest?: boolean
+  page?: number
+}) => {
+  return request.get<GenericList<ThreadInList>>(`${commonUrl}/search/threads`, {
+    params: {
+      ...(keyword && { q: keyword }),
+      ...(author && { author }),
+      ...(digest && { digest: 1 }),
+      ...(page && { page }),
+    },
+  })
 }
 
 export const searchUsers = (params: object) => {

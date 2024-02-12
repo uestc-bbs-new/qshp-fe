@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState } from 'react'
 
 import ResultForPost from './ResultForPost'
 import ResultForUsers from './ResultForUsers'
@@ -12,23 +11,9 @@ const Search = () => {
   const [page, setPage] = useState(params.get('page') || 1)
   const pageSize = 18
 
-  const location = useLocation()
-  useEffect(() => {
-    setName(decodeURI(location.search.split('=')[2]))
-    setType(location.search.split('=')[1].split('&')[0])
-    // setPage(location.search.split('=')[3])
-  }, [location])
-
+  console.log(type)
   if (type == 'post') {
-    return (
-      <ResultForPost
-        name={name}
-        page={page}
-        pageSize={pageSize}
-        setPage={setPage}
-        setName={setName}
-      />
-    )
+    return <ResultForPost />
   } else {
     return (
       <ResultForUsers
