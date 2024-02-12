@@ -1,7 +1,7 @@
 import Vditor from 'vditor'
 
 import React, { createRef, useEffect, useMemo } from 'react'
-import { matchRoutes, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Typography,
@@ -13,12 +13,12 @@ import {
 
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
-import routes from '@/routes/routes'
 import { useAppState } from '@/states'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
 
+import { onClickHandler } from './eventHandlers'
 import './richtext.css'
 import { transformUserHtml } from './transform'
 
@@ -126,31 +126,7 @@ export const UserHtmlRenderer = ({
       dangerouslySetInnerHTML={{
         __html: processedHtml,
       }}
-      onClickCapture={(e: React.MouseEvent<HTMLDivElement>) => {
-        let a: HTMLElement | null | EventTarget = e.target
-        while (
-          a &&
-          a != contentRef.current &&
-          !(a instanceof HTMLAnchorElement) &&
-          a instanceof Node
-        ) {
-          a = a.parentElement
-        }
-        if (a && a instanceof HTMLAnchorElement && a.href) {
-          const url = new URL(a.href)
-          if (
-            url.host == location.host &&
-            matchRoutes(routes.current, url.pathname)
-          ) {
-            navigate(url.pathname + url.search + url.hash)
-            e.preventDefault()
-          } else if (url.host == 'wiki.stuhome.net') {
-            // TODO(fangjue): Show some prompt and provide a link to
-            // https://bbs.uestc.edu.cn/forum.php?mod=viewthread&tid=1328284.
-            e.preventDefault()
-          }
-        }
-      }}
+      onClickCapture={(e) => onClickHandler(e, navigate)}
     ></div>
   )
 }
@@ -174,9 +150,11 @@ const MarkdownPostRenderer = ({ message }: { message: string }) => {
     el.current &&
       Vditor.preview(el.current, message, getPreviewOptions(state.theme))
   }, [message])
+  const navigate = useNavigate()
   return (
     <div
       className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
+      onClickCapture={(e) => onClickHandler(e, navigate)}
     >
       <Typography color="text.primary" ref={el}></Typography>
     </div>
