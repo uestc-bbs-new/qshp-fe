@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { createRef, useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import {
   Box,
@@ -20,6 +20,7 @@ import { UserHtmlRenderer } from '@/components/RichText'
 import Separated from '@/components/Separated'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { scrollAnchorCss } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import CommonUserItem from './CommonUserItem'
@@ -58,8 +59,21 @@ function MessageBoard({
   ])
   const { state } = useAppState()
 
+  const navigate = useNavigate()
+  const topRef = createRef<HTMLDivElement>()
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        page,
+      })}`,
+      { preventScrollReset: true }
+    )
+    topRef.current?.scrollIntoView()
+  }
+
   return (
     <Box pb={1}>
+      <div ref={topRef} css={scrollAnchorCss} />
       <Stack direction="row" alignItems="center" spacing={2} sx={{ p: 2 }}>
         <Typography variant="userAction">留言板</Typography>
         <TextField size="small" placeholder="请输入留言" sx={{ width: 624 }} />
@@ -70,7 +84,7 @@ function MessageBoard({
 
       <Divider style={{ backgroundColor: '#eae8ed' }} />
       {!data &&
-        [...Array(10)].map((_, index) => <Skeleton key={index} height={85} />)}
+        [...Array(15)].map((_, index) => <Skeleton key={index} height={85} />)}
       {data && !data.total && <EmptyList text="暂无留言" />}
       {!!data?.total && (
         <>
@@ -119,9 +133,7 @@ function MessageBoard({
                 siblingCount={1}
                 page={data.page}
                 count={Math.ceil(data.total / (data.page_size || 1))}
-                onChange={(_: React.ChangeEvent<unknown>, page: number) =>
-                  setSearchParams(searchParamsAssign(searchParams, { page }))
-                }
+                onChange={handlePageChange}
               />
             </Stack>
           )}

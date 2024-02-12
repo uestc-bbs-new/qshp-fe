@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { createRef, useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { CollectionsBookmark, ExpandMore } from '@mui/icons-material'
 import {
@@ -24,6 +24,7 @@ import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import ThreadItem from '@/components/ThreadItem'
 import { legacyPages, pages } from '@/utils/routes'
+import { scrollAnchorCss } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import { SubPageCommonProps } from './types'
@@ -78,6 +79,18 @@ function Favorites({
     },
   })
 
+  const navigate = useNavigate()
+  const topRef = createRef<HTMLDivElement>()
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        page,
+      })}`,
+      { preventScrollReset: true }
+    )
+    topRef.current?.scrollIntoView()
+  }
+
   return (
     <Box p={1}>
       {!!collections?.length && (
@@ -109,9 +122,10 @@ function Favorites({
           {self && !!data?.total && <Divider />}
         </>
       )}
+      <div ref={topRef} css={scrollAnchorCss} />
       {!self && data && !collections?.length && <EmptyList text="暂无收藏" />}
       {!data &&
-        [...Array(10)].map((_, index) => <Skeleton key={index} height={85} />)}
+        [...Array(15)].map((_, index) => <Skeleton key={index} height={85} />)}
       {self && data && !data.total && !collections?.length && (
         <EmptyList text="暂无收藏" />
       )}
@@ -130,9 +144,7 @@ function Favorites({
                 siblingCount={1}
                 page={data.page}
                 count={Math.ceil(data.total / (data.page_size || 1))}
-                onChange={(_: React.ChangeEvent<unknown>, page: number) =>
-                  setSearchParams(searchParamsAssign(searchParams, { page }))
-                }
+                onChange={handlePageChange}
               />
             </Stack>
           )}
