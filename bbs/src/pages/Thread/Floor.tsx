@@ -129,7 +129,10 @@ const Floor = ({
             </AuthorLink>
           </UserCard>
           {!!post.author_id && (
-            <AuthorDetails authorDetails={post.author_details} />
+            <AuthorDetails
+              author={post.author}
+              authorDetails={post.author_details}
+            />
           )}
         </Stack>
         <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
@@ -261,8 +264,10 @@ const AuthorLink = ({
   )
 
 const AuthorDetails = ({
+  author,
   authorDetails,
 }: {
+  author: string
   authorDetails?: PostAuthorDetails
 }) =>
   authorDetails ? (
@@ -292,7 +297,7 @@ const AuthorDetails = ({
       <UserGroupIcon user={authorDetails} />
       {!!authorDetails.digests && (
         <Stack alignItems="flex-start" mb={1}>
-          <DigestAuthor />
+          <DigestAuthor username={author} />
         </Stack>
       )}
       {!!authorDetails.medals?.length && (

@@ -144,7 +144,9 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               overflow="hidden"
               position="relative"
             >
-              {!!userSummary?.digests && <DigestAuthor sx={{ mr: 1 }} />}
+              {!!userSummary?.digests && (
+                <DigestAuthor username={userSummary.username} sx={{ mr: 1 }} />
+              )}
               {!!userSummary?.medals?.length && (
                 <Medals medals={userSummary.medals} nowrap />
               )}
