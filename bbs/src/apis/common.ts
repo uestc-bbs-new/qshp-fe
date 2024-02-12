@@ -2,6 +2,7 @@ import {
   Forum,
   ForumDetails,
   IndexData,
+  SearchSummaryResponse,
   Thread,
   ThreadList,
   ThreadTypeMap,
@@ -96,6 +97,27 @@ export const getIndexData = async ({
     },
   })
   result.top_list && transformTopList(result.top_list)
+  return result
+}
+
+export const searchSummary = async (query: string) => {
+  const result = await request.get<SearchSummaryResponse>(
+    `${commonUrl}/search/summary`,
+    {
+      params: { q: query },
+    }
+  )
+  result.threads?.forEach(
+    (item) =>
+      (item.subject = unescapeSubject(item.subject, item.dateline, true))
+  )
+  if (result.tid_match) {
+    result.tid_match.subject = unescapeSubject(
+      result.tid_match.subject,
+      result.tid_match.dateline,
+      true
+    )
+  }
   return result
 }
 
