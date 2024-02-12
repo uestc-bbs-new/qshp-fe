@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import React, { createRef, useEffect, useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import {
   Box,
@@ -31,6 +31,7 @@ import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
 import { pages } from '@/utils/routes'
+import { scrollAnchorStyle } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import { AdditionalQueryOptions, SubPageCommonProps, UserQuery } from './types'
@@ -91,16 +92,18 @@ function ThreadList<T extends PaginationParams>({
   queryOptions,
   subPage,
   onLoad,
+  onPageChange,
   tab,
 }: {
   userQuery: UserQuery
   queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: T) => void
+  onPageChange?: () => void
   tab: TabProps<T>
 }) {
   const Component = tab.component
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [pagination, setPagination] = useState<PaginationParams>()
   const initQuery = () => ({
     common: { ...userQuery, ...queryOptions },
@@ -139,11 +142,21 @@ function ThreadList<T extends PaginationParams>({
       return data
     },
   })
+  const navigate = useNavigate()
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        page,
+      })}`,
+      { preventScrollReset: true }
+    )
+    onPageChange && onPageChange()
+  }
   return (
     <>
       {isLoading && (
         <>
-          {[...Array(4)].map((_, index) => (
+          {[...Array(10)].map((_, index) => (
             <Skeleton className="w-full" height={102} key={index}></Skeleton>
           ))}
         </>
@@ -161,9 +174,7 @@ function ThreadList<T extends PaginationParams>({
             siblingCount={1}
             page={pagination.page}
             count={Math.ceil(pagination.total / (pagination.page_size || 1))}
-            onChange={(_: React.ChangeEvent<unknown>, page: number) =>
-              setSearchParams(searchParamsAssign(searchParams, { page }))
-            }
+            onChange={handlePageChange}
           />
         </Stack>
       )}
@@ -230,8 +241,10 @@ const UserThreads = ({
 }: SubPageCommonProps) => {
   const subPage = useParams().subPage
   const activeTab = tabs.find((item) => item.id == subPage) || tabs[0]
+  const topRef = createRef<HTMLDivElement>()
   return (
     <Box pb={1}>
+      <div ref={topRef} style={scrollAnchorStyle} />
       <Tabs value={subPage}>
         {tabs.map((tab) => (
           <Tab
@@ -257,6 +270,7 @@ const UserThreads = ({
         queryOptions={queryOptions}
         subPage={activeTab.id}
         onLoad={(data) => onLoad && onLoad(data)}
+        onPageChange={() => topRef.current?.scrollIntoView()}
       />
     </Box>
   )
