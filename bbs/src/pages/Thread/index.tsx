@@ -24,7 +24,7 @@ import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
 import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
-import { scrollAnchorStyle, scrollAnchorSx } from '@/utils/scrollAnchor'
+import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
@@ -244,7 +244,7 @@ function Thread() {
                     <Card className="mb-4 pl-0" key={item.post_id}>
                       <section
                         id={`post-${item.post_id}`}
-                        style={scrollAnchorStyle}
+                        css={scrollAnchorCss}
                       >
                         <Floor
                           post={item}

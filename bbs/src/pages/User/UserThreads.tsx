@@ -31,7 +31,7 @@ import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
 import { pages } from '@/utils/routes'
-import { scrollAnchorStyle } from '@/utils/scrollAnchor'
+import { scrollAnchorCss } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import { AdditionalQueryOptions, SubPageCommonProps, UserQuery } from './types'
@@ -244,7 +244,7 @@ const UserThreads = ({
   const topRef = createRef<HTMLDivElement>()
   return (
     <Box pb={1}>
-      <div ref={topRef} style={scrollAnchorStyle} />
+      <div ref={topRef} css={scrollAnchorCss} />
       <Tabs value={subPage}>
         {tabs.map((tab) => (
           <Tab
