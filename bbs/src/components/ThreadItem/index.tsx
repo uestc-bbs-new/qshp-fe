@@ -44,7 +44,6 @@ export type ThreadReplyOrCommentItem = {
 
 type ThreadItemProps = {
   data: ThreadInList
-  className?: string
   forum?: ForumBasics
   forumDetails?: ForumDetails
   showSummary?: boolean
@@ -55,7 +54,6 @@ type ThreadItemProps = {
 
 const ThreadItem = ({
   data,
-  className,
   forumDetails,
   showSummary,
   replies,
@@ -65,9 +63,9 @@ const ThreadItem = ({
   const theme = useTheme()
 
   return (
-    <Box className={`${className} p-0.5`}>
+    <Box className="p-0.5">
       <Box
-        className={`p-4 ${className} `}
+        className="p-4"
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
