@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import React, { createRef, useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Close } from '@mui/icons-material'
 import {
@@ -26,6 +26,7 @@ import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
 import { pages } from '@/utils/routes'
+import { scrollAnchorCss } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import CommonUserItem from './CommonUserItem'
@@ -87,9 +88,22 @@ function Friends({
     setFriendNoteOpen(true)
   }
 
+  const navigate = useNavigate()
+  const topRef = createRef<HTMLDivElement>()
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
+    navigate(
+      `${location.pathname}?${searchParamsAssign(searchParams, {
+        page,
+      })}`,
+      { preventScrollReset: true }
+    )
+    topRef.current?.scrollIntoView()
+  }
+
   return (
     <>
       <Box pb={1}>
+        <div ref={topRef} css={scrollAnchorCss} />
         {self && (
           <>
             <Stack
@@ -123,7 +137,7 @@ function Friends({
           </>
         )}
         {!data &&
-          [...Array(10)].map((_, index) => (
+          [...Array(15)].map((_, index) => (
             <Skeleton key={index} height={85} />
           ))}
         {data && !data.total && (
@@ -158,9 +172,7 @@ function Friends({
                   siblingCount={1}
                   page={data.page}
                   count={Math.ceil(data.total / (data.page_size || 1))}
-                  onChange={(_: React.ChangeEvent<unknown>, page: number) =>
-                    setSearchParams(searchParamsAssign(searchParams, { page }))
-                  }
+                  onChange={handlePageChange}
                 />
               </Stack>
             )}
