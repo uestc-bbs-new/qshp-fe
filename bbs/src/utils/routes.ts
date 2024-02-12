@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Params, useLocation, useMatches } from 'react-router-dom'
 
+import { ContinueMode } from '@/common/types/idas'
+
 import siteRoot from './siteRoot'
 
 export const useActiveRoute = () => {
@@ -49,10 +51,10 @@ export type UserPageParams = {
 export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const kIdasContinueBase = `${kIdasOrigin}/continue`
-export const gotoIdas = () => {
+export const gotoIdas = (options?: { mode?: ContinueMode }) => {
   location.href = `${idasUrlBase}?service=${encodeURIComponent(
     withSearchAndHash(
-      kIdasContinueBase,
+      `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
       new URLSearchParams({
         path: `${location.pathname}${location.search}`,
       })

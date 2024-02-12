@@ -64,13 +64,20 @@ const LoginComponent = () => {
     >
       <Button
         variant="contained"
-        onClick={(_) =>
+        onClick={() =>
           dispatch({ type: 'open dialog', payload: { kind: 'login' } })
         }
       >
         登录
       </Button>
-      <Button variant="contained">注册</Button>
+      <Button
+        variant="contained"
+        onClick={() =>
+          dispatch({ type: 'open dialog', payload: { kind: 'register' } })
+        }
+      >
+        注册
+      </Button>
     </Stack>
   )
 }

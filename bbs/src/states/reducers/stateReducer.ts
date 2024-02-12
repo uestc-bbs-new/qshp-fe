@@ -105,7 +105,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
         ...state,
         globalDialog: action.payload,
       }
-    case 'close login':
+    case 'close dialog':
       return {
         ...state,
         globalDialog: undefined,
