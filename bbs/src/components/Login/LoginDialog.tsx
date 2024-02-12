@@ -203,8 +203,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         <Stack alignItems="center" mb={3} minWidth={352}>
           <img src={logo} css={css({ maxWidth: '100%' })} />
         </Stack>
-        {state.login.prompt && (
-          <Alert severity="info">{state.login.prompt}</Alert>
+        {state.globalDialog?.prompt && (
+          <Alert severity="info">{state.globalDialog.prompt}</Alert>
         )}
         <Tabs value={0} sx={{ my: 1.5 }}>
           <Tab label="用户名密码登录" />

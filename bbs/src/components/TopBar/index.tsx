@@ -64,7 +64,9 @@ const LoginComponent = () => {
     >
       <Button
         variant="contained"
-        onClick={(_) => dispatch({ type: 'open login' })}
+        onClick={(_) =>
+          dispatch({ type: 'open dialog', payload: { kind: 'login' } })
+        }
       >
         登录
       </Button>

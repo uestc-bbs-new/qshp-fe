@@ -30,7 +30,10 @@ function App() {
   useEffect(() => {
     const callback = (details: UserCallbackDetails) => {
       if (details.requireSignIn) {
-        dispatch({ type: 'open login', payload: '请您登录后继续浏览。' })
+        dispatch({
+          type: 'open dialog',
+          payload: { kind: 'login', prompt: '请您登录后继续浏览。' },
+        })
       }
       dispatch({ type: 'set user', payload: details.user })
     }
@@ -50,7 +53,7 @@ function App() {
         <ThemeProvider theme={state.theme}>
           <>
             <RouterProvider router={router} />
-            <LoginDialog open={state.login.open} />
+            <LoginDialog open={state.globalDialog?.kind == 'login'} />
           </>
         </ThemeProvider>
       </AppContext.Provider>
