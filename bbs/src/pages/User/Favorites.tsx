@@ -159,6 +159,7 @@ const CollectionItem = ({ item }: { item: Collection }) => (
     <Stack direction="row" sx={{ mt: 1 }}>
       <Link
         external
+        target="_blank"
         to={legacyPages.collection(item.collection_id)}
         sx={{ mr: 2 }}
       >
@@ -187,6 +188,7 @@ const CollectionItem = ({ item }: { item: Collection }) => (
           <Stack direction="row">
             <Link
               external
+              target="_blank"
               to={legacyPages.collection(item.collection_id)}
               color="rgb(33, 117, 243)"
               underline="hover"
