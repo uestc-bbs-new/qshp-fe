@@ -49,9 +49,6 @@ const initialState: State = {
   drawer: false, //侧边栏是否打开
   user: guestUser,
   forumBreadcumbs: [],
-  login: {
-    open: false,
-  },
   theme: getRenderedTheme(),
 }
 
