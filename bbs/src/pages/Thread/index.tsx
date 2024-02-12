@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   useLocation,
   useNavigate,
@@ -201,7 +201,6 @@ function Thread() {
 
   const [activePost, setActivePost] = useState<PostFloor>()
 
-  const quickReplyRef = useRef<HTMLElement>()
   const handleReply = (post: PostFloor) => {
     setActivePost(post)
     setCurrentDialog('reply')
@@ -328,7 +327,7 @@ function Thread() {
               onChange={handlePageChange}
             />
             {forumDetails?.can_post_reply && threadDetails?.can_reply && (
-              <Card className="py-4" sx={scrollAnchorSx} ref={quickReplyRef}>
+              <Card className="py-4" sx={scrollAnchorSx}>
                 <Stack direction="row">
                   <Box className="flex-1">
                     <PostEditor
