@@ -1,3 +1,4 @@
+import { html } from '@/utils/html'
 import siteRoot from '@/utils/siteRoot'
 
 import { unifiedSmilyMap } from './smilyData'
@@ -10,34 +11,6 @@ type RenderState = {
 
 const kForumAttachBasePath = siteRoot + '/data/attachment/forum/'
 export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
-function replace(
-  str: string,
-  patterns: RegExp[],
-  replacements: string | string[]
-): string {
-  patterns.forEach((pattern, i) => {
-    const replacement =
-      typeof replacements === 'string' ? replacements : replacements[i]
-    str = str.replace(pattern, replacement)
-  })
-  return str
-}
-// Implemented according to https://www.php.net/manual/en/function.htmlspecialchars.php, without ENT_QUOTES.
-function htmlspecialchars(str: string): string {
-  return replace(
-    str,
-    [/&/g, /"/g, /</g, />/g],
-    ['&amp;', '&quot;', '&lt;', '&gt;']
-  )
-}
-
-function html(strings: TemplateStringsArray, ...texts: string[]): string {
-  return strings
-    .map((chunk, i) =>
-      i < texts.length ? chunk + htmlspecialchars(texts[i]) : chunk
-    )
-    .join('')
-}
 
 const renderImage = (src: string, alt: string) => {
   if (src == 's' && unifiedSmilyMap[parseInt(alt || '')]) {
