@@ -1,5 +1,7 @@
 // TODO: How to take the @ user information to request?
 import { getAtList } from '@/apis/thread'
+import { middleLink } from '@/utils/avatarLink'
+import { html } from '@/utils/html'
 
 import { customRenderers } from '../RichText/renderer'
 import { common, commonEmojiPath } from '../RichText/vditorConfig'
@@ -36,7 +38,13 @@ const options = ({
           ]
           return list.map((item) => {
             return {
-              html: item.username,
+              html: html`<div class="editor-at-list-item">
+                <img
+                  src="${middleLink(item.uid)}"
+                  class="editor-at-list-avatar"
+                />
+                <span class="editor-at-list-username">${item.username}</span>
+              </div>`,
               value: `[@${item.username.trim()}](at:${item.uid})`,
             }
           })
