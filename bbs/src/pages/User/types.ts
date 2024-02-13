@@ -1,7 +1,8 @@
-import { CommonQueryParams, User } from '@/apis/user'
+import { CommonQueryParams } from '@/apis/user'
+import { User } from '@/common/interfaces/base'
 import { CommonUserQueryRpsoense } from '@/common/interfaces/user'
 
-export type UserQuery = User &
+export type UserQuery = Partial<User> &
   Pick<CommonQueryParams, 'removeVisitLog' | 'admin'>
 export type AdditionalQueryOptions = Pick<
   CommonQueryParams,
@@ -14,6 +15,6 @@ export type SubPageCommonProps = {
   onLoad?: (data: CommonUserQueryRpsoense) => void
 }
 
-export type FriendUser = Required<User> & {
+export type FriendUser = User & {
   note?: string
 }
