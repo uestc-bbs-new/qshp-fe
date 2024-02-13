@@ -1,8 +1,7 @@
+import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
-  AtListResponse,
   PostDetails,
   PostDetailsByPostId,
-  PostPosition,
   ThreadPollDetails,
   ThreadPollOption,
 } from '@/common/interfaces/response'

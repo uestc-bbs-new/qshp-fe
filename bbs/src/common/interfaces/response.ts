@@ -1,5 +1,3 @@
-import { User } from './base'
-
 type ForumLastestThread = {
   thread_id: number
   subject: string
@@ -265,15 +263,6 @@ export interface PostExtraDetails {
 
 export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
-}
-
-export type AtListMatch = User & {
-  status?: 'friend' | 'blocked' | 'throttled' | 'not_friend'
-}
-
-export type AtListResponse = {
-  exact_match?: AtListMatch
-  rows?: AtListMatch[]
 }
 
 export type ForumBasics = {
