@@ -57,6 +57,15 @@ const renderImage = (src: string, alt: string) => {
   return html`<img src="${src}" alt="${alt || ''}" />`
 }
 const renderLink = (href: string, text: string) => {
+  const atMatch = href.match(/^at:(\d+)/)
+  if (atMatch) {
+    return html`<a
+      class="post_at_user"
+      href="/user/${atMatch[1]}"
+      data-x-original-href="${href}"
+      >${text}</a
+    >`
+  }
   return html`<a href="${href}">${text}</a>`
 }
 

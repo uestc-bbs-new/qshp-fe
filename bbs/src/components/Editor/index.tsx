@@ -68,6 +68,12 @@ const Editor = ({
               img.alt = img.getAttribute('data-x-original-alt') || ''
             }
           )
+          ;[].forEach.call(
+            clone.querySelectorAll('a.post_at_user'),
+            (a: HTMLAnchorElement) => {
+              a.href = a.getAttribute('data-x-original-href') || ''
+            }
+          )
           return clone.innerHTML
         }
         return undefined

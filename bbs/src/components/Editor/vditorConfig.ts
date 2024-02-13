@@ -33,7 +33,7 @@ const options = ({
           return data?.rows.map((item) => {
             return {
               html: item.username,
-              value: `@${item.username}`,
+              value: `[@${item.username.trim()}](at:${item.user_id})`,
             }
           })
         },
