@@ -1,3 +1,5 @@
+import { User } from './base'
+
 type ForumLastestThread = {
   thread_id: number
   subject: string
@@ -265,43 +267,13 @@ export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
 }
 
-export interface PostPosition {
-  thread_id: number
-  position: number
+export type AtListMatch = User & {
+  status?: 'friend' | 'blocked' | 'throttled' | 'not_friend'
 }
 
-export interface UserInfos {
-  views: number
-  emailstatus: boolean
-  videophotostatus: boolean
-  title: string
-  sign: string
-  bio: string
-  friends: number
-  threads: number
-  albums: number
-  sharings: number
-  doings: number
-  posts: number
-  gender: boolean
-  birthday: string
-  education: string
-  birthprovince: string
-  birthcity: string
-  resideprovince: string
-  residecity: string
-  medals: string
-  admin_group: number
-  user_group: number
-  online_time: number
-  registered_at: number
-  last_login_at: number
-  lastactivity: number
-  lastpost: number
-  zone: number
-  credits: number
-  droplets: number
-  prestiges: number
+export type AtListResponse = {
+  exact_match?: AtListMatch
+  rows?: AtListMatch[]
 }
 
 export type ForumBasics = {
@@ -364,16 +336,6 @@ export type ThreadType = {
 }
 
 export type ThreadTypeMap = { [type_id: number]: ThreadType }
-
-export interface UserName {
-  user_id: number
-  username: string
-}
-
-export interface UserNameFind {
-  total: number
-  rows: UserName[]
-}
 
 export type IdasAuthResult = {
   authorization?: string

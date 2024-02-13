@@ -1,5 +1,5 @@
 // TODO: How to take the @ user information to request?
-import { getUsername } from '@/apis/thread'
+import { getAtList } from '@/apis/thread'
 
 import { customRenderers } from '../RichText/renderer'
 import { common, commonEmojiPath } from '../RichText/vditorConfig'
@@ -29,11 +29,15 @@ const options = ({
       {
         key: '@',
         hint: async (key: string) => {
-          const data = await getUsername(key)
-          return data?.rows.map((item) => {
+          const result = await getAtList(key)
+          const list = [
+            ...(result.exact_match ? [result.exact_match] : []),
+            ...(result.rows || []),
+          ]
+          return list.map((item) => {
             return {
               html: item.username,
-              value: `[@${item.username.trim()}](at:${item.user_id})`,
+              value: `[@${item.username.trim()}](at:${item.uid})`,
             }
           })
         },

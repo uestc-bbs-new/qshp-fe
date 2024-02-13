@@ -1,11 +1,10 @@
 import {
+  AtListResponse,
   PostDetails,
   PostDetailsByPostId,
   PostPosition,
   ThreadPollDetails,
   ThreadPollOption,
-  UserInfos,
-  UserNameFind,
 } from '@/common/interfaces/response'
 import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { commonUrl } from '@/utils/request'
@@ -161,14 +160,8 @@ export const postComment = (
   })
 }
 
-/** 获取用户信息 */
-export const getUserInfo = (uid: number) => {
-  return request.get<UserInfos>(`${commonUrl}/view/profile/` + uid)
-}
-
-/** 模糊查询用户名 */
-export const getUsername = (key: string) => {
-  return request.get<UserNameFind>(
-    `${commonUrl}/global/search/at?username=${key}&page=${1}&pagesize=${20}`
-  )
+export const getAtList = (query: string, thread_id?: number) => {
+  return request.get<AtListResponse>(`${commonUrl}/post/atlist`, {
+    params: { q: query, ...(thread_id && { thread_id }) },
+  })
 }
