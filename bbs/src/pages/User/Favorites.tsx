@@ -36,7 +36,7 @@ function Favorites({
   onLoad,
   self,
 }: SubPageCommonProps & { self: boolean }) {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [collections, setCollections] = useState<Collection[]>()
   const userInfo = useRef<Partial<User>>()
   const initQuery = () => ({
@@ -52,7 +52,6 @@ function Favorites({
   useEffect(() => {
     setQuery(initQuery())
     userInfo.current = {
-      ...userInfo.current,
       ...(userQuery.uid && { uid: userQuery.uid }),
       ...(userQuery.username && { username: userQuery.username }),
     }
