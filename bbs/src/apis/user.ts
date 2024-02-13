@@ -1,3 +1,4 @@
+import { User } from '@/common/interfaces/base'
 import { ThreadInList } from '@/common/interfaces/response'
 import {
   CommonUserQueryRpsoense,
@@ -12,12 +13,7 @@ import {
 import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { commonUrl } from '@/utils/request'
 
-export type User = {
-  uid?: number
-  username?: string
-}
-
-export type CommonQueryParams = User & {
+export type CommonQueryParams = Partial<User> & {
   /** 是否获取用户概况（用户空间顶部显示的内容） */
   getUserSummary?: boolean
   /** 是否最近访客（用户空间右侧显示的内容） */
@@ -33,7 +29,7 @@ export type UserThreadsFilter = {
 
 const userApiBase = `${commonUrl}/user`
 
-const getApiBase = (user: User) => {
+const getApiBase = (user: Partial<User>) => {
   if (user.uid) {
     return `${userApiBase}/${user.uid}`
   }

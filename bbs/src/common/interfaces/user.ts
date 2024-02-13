@@ -1,6 +1,6 @@
-import { User } from '@/apis/user'
 import { FieldOptional } from '@/utils/types'
 
+import { User } from './base'
 import {
   ExtCreditMap,
   GenericList,
@@ -22,7 +22,7 @@ export type UserReply = Omit<ThreadBasics, 'summary'> & {
 /** 用户发表过的点评 */
 export type UserPostComment = UserReply
 
-export type CommonUserSummary = Required<User> &
+export type CommonUserSummary = User &
   UserGroupDetails & {
     /** 积分 */
     credits: number

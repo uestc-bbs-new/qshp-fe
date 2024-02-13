@@ -16,7 +16,8 @@ import {
   Typography,
 } from '@mui/material'
 
-import { User, getUserFavorites } from '@/apis/user'
+import { getUserFavorites } from '@/apis/user'
+import { User } from '@/common/interfaces/base'
 import { Collection, UserFavorite } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'
@@ -37,7 +38,7 @@ function Favorites({
 }: SubPageCommonProps & { self: boolean }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [collections, setCollections] = useState<Collection[]>()
-  const userInfo = useRef<User>()
+  const userInfo = useRef<Partial<User>>()
   const initQuery = () => ({
     common: { ...userQuery, ...queryOptions },
     page: parseInt(searchParams.get('page') || '1') || 1,
