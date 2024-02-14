@@ -48,14 +48,11 @@ export const VoteSelection = ({
     is_image: false, // todo: 暂不支持
     expiration: 0,
   })
-  console.log('vote render')
 
-  // const poll:PostThreadDetails
-  // todo: 感觉用 fomily 表单的思想去传递 options 性能更好些，但是违背了单项数据流或者写起来比较麻烦（目前写法待定）
   useEffect(() => {
     const VoteOptions: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] =
       []
-    // useMemo 可以优化下，但是感觉没必要，投票选项一般不会特别多
+    // useMemo 可以优化下
     options.forEach((item, index) => {
       if (item.value) {
         VoteOptions.push({
@@ -64,7 +61,6 @@ export const VoteSelection = ({
         })
       }
     })
-    // todo: 先写死，晚点改
     updateVotesOption({
       ...configurations,
       options: VoteOptions,
@@ -72,10 +68,10 @@ export const VoteSelection = ({
   }, [options])
 
   return (
-    // 感觉选项也应该抽离到父组件
+    // 如果是多种发帖类型，选项也应该抽离到父组件
     <Stack {...props}>
       <FormGroup row>
-        {/* todo: 后面如果有多个类型可以改成 for in 枚举 typeState 生成复选框 */}
+        {/* 后面如果有多个类型可以改成 for in 枚举 typeState 生成复选框 */}
         <FormControlLabel
           control={
             <Switch
@@ -198,7 +194,6 @@ export const VoteSelection = ({
             ) : (
               <></>
             )}
-            {/* todo: 这里是去填一个时间？还是去使用日期选择器选中一个指定的日期时间 */}
             <TextField
               label={`计票天数`}
               variant="outlined"
