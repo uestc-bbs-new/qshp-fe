@@ -60,7 +60,6 @@ export const VoteSelection = ({
       if (item.value) {
         VoteOptions.push({
           text: item.value,
-
           display_order: index,
         })
       }
@@ -154,7 +153,7 @@ export const VoteSelection = ({
                     name="visible"
                   />
                 }
-                label="投票后结果可见"
+                label="未投票时结果可见"
               />
               <FormControlLabel
                 control={
@@ -181,13 +180,18 @@ export const VoteSelection = ({
                 className="mt-4"
                 type="number"
                 onChange={(e) => {
-                  if (Number(e.target.value) > 1) {
+                  if (
+                    Number(e.target.value) > 1 &&
+                    Number(e.target.value) < options.length
+                  ) {
                     setConfiguration({
                       ...configurations,
                       max_choices: Number(e.target.value),
                     })
                   } else {
-                    console.log('选择数不能低于 2， 否则帖子无法正常新增')
+                    console.log(
+                      '选择数不能低于 2，且不能大于选项数，否则帖子无法正常新增'
+                    )
                   }
                 }}
               />
