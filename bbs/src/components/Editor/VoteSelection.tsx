@@ -205,6 +205,12 @@ export const VoteSelection = ({
               type="number"
               size="small"
               className="mt-4"
+              onChange={(e) => {
+                setConfiguration({
+                  ...configurations,
+                  expiration: Number(e.target.value),
+                })
+              }}
             />
           </Box>
         </Stack>
