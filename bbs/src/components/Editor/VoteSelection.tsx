@@ -163,6 +163,7 @@ export const VoteSelection = ({
                     onChange={(e) => {
                       setConfiguration({
                         ...configurations,
+                        max_choices: e.target.checked ? 2 : 1,
                         multiple: e.target.checked,
                       })
                     }}
@@ -180,10 +181,14 @@ export const VoteSelection = ({
                 className="mt-4"
                 type="number"
                 onChange={(e) => {
-                  setConfiguration({
-                    ...configurations,
-                    max_choices: Number(e.target.value),
-                  })
+                  if (Number(e.target.value) > 1) {
+                    setConfiguration({
+                      ...configurations,
+                      max_choices: Number(e.target.value),
+                    })
+                  } else {
+                    console.log('选择数不能低于 2， 否则帖子无法正常新增')
+                  }
                 }}
               />
             ) : (
