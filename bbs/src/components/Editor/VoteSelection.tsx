@@ -38,9 +38,20 @@ export const VoteSelection = ({
     { value: '' },
   ])
 
-  const [max_choices, setMaxChoices] = useState(1)
+  const [configurations, setConfiguration] = useState<
+    Omit<ThreadPollDetails, 'selected_options' | 'voter_count' | 'options'>
+  >({
+    show_voters: false,
+    multiple: true,
+    visible: true,
+    max_choices: 1,
+    is_image: false, // todo: 暂不支持
+    expiration: 0,
+  })
+  console.log('vote render')
+
   // const poll:PostThreadDetails
-  // todo: 感觉用 fomily 表单的思想性能更好些，但是违背了单项数据流或者写起来比较麻烦
+  // todo: 感觉用 fomily 表单的思想去传递 options 性能更好些，但是违背了单项数据流或者写起来比较麻烦（目前写法待定）
   useEffect(() => {
     const VoteOptions: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] =
       []
@@ -56,12 +67,7 @@ export const VoteSelection = ({
     })
     // todo: 先写死，晚点改
     updateVotesOption({
-      show_voters: false,
-      multiple: true,
-      visible: true,
-      max_choices,
-      is_image: false,
-      expiration: 5000000000,
+      ...configurations,
       options: VoteOptions,
     })
   }, [options])
@@ -118,20 +124,76 @@ export const VoteSelection = ({
               +
             </Box>
           </Box>
-          <Box>
-            <TextField
-              label={`最多选择数`}
-              variant="outlined"
-              size="small"
-              className="mt-4"
-              type="number"
-              onChange={(e) => {
-                setMaxChoices(Number(e.target.value))
-              }}
-            />
+          <Box className="flex-col">
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={configurations.show_voters}
+                    onChange={(e) => {
+                      setConfiguration({
+                        ...configurations,
+                        show_voters: e.target.checked,
+                      })
+                    }}
+                    name="show_voters"
+                  />
+                }
+                label="公开投票参与人"
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={configurations.visible}
+                    onChange={(e) => {
+                      setConfiguration({
+                        ...configurations,
+                        visible: e.target.checked,
+                      })
+                    }}
+                    name="visible"
+                  />
+                }
+                label="投票后结果可见"
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={configurations.multiple}
+                    onChange={(e) => {
+                      setConfiguration({
+                        ...configurations,
+                        multiple: e.target.checked,
+                      })
+                    }}
+                    name="multiple"
+                  />
+                }
+                label="多选投票"
+              />
+            </FormGroup>
+            {configurations.multiple ? (
+              <TextField
+                label={`最多选择数`}
+                variant="outlined"
+                size="small"
+                className="mt-4"
+                type="number"
+                onChange={(e) => {
+                  setConfiguration({
+                    ...configurations,
+                    max_choices: Number(e.target.value),
+                  })
+                }}
+              />
+            ) : (
+              <></>
+            )}
+            {/* todo: 这里是去填一个时间？还是去使用日期选择器选中一个指定的日期时间 */}
             <TextField
               label={`计票天数`}
               variant="outlined"
+              type="number"
               size="small"
               className="mt-4"
             />
