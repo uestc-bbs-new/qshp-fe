@@ -62,8 +62,7 @@ const Cover = ({
             uid={item.author_id}
             alt="avatar"
             className="mr-4"
-            sx={{ width: 100, height: 100 }}
-            variant="rounded"
+            size={100}
           />
           <Box className="flex-1">
             <Typography variant="userCardName" className="ml-4">
@@ -74,10 +73,10 @@ const Cover = ({
                 注册时间：{chineseTime(authorDetails.register_time * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                最后访问: {chineseTime(authorDetails.last_visit * 1000)}
+                最后访问：{chineseTime(authorDetails.last_visit * 1000)}
               </Typography>
               <Typography fontSize="inherit" className="mt-2">
-                在线时间: {authorDetails.online_time} 小时
+                在线时间：{authorDetails.online_time} 小时
               </Typography>
             </Box>
           </Box>

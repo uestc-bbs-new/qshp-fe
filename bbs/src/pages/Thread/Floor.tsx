@@ -1,15 +1,7 @@
 import React, { ReactNode } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import {
-  Alert,
-  Box,
-  Skeleton,
-  Stack,
-  Tooltip,
-  Typography,
-  css,
-} from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 
 import {
   ForumDetails,
@@ -20,13 +12,14 @@ import {
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import Medals from '@/components/Medals'
+import DigestAuthor from '@/components/Medals/DigestAuthor'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
-import { useMedals } from '@/states/settings'
+import UserGroupIcon from '@/components/UserGroupIcon'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
-import siteRoot from '@/utils/siteRoot'
 
 import Footer from './Footer'
 import PostComments from './PostComments'
@@ -128,8 +121,7 @@ const Floor = ({
                 uid={
                   post.is_anonymous || !post.author_details ? 0 : post.author_id
                 }
-                sx={{ width: 48, height: 48 }}
-                variant="rounded"
+                size={48}
               />
               <Typography variant="authorName" mt={0.5} component="p">
                 {post.is_anonymous ? '匿名' : post.author}
@@ -137,7 +129,10 @@ const Floor = ({
             </AuthorLink>
           </UserCard>
           {!!post.author_id && (
-            <AuthorDetails authorDetails={post.author_details} />
+            <AuthorDetails
+              author={post.author}
+              authorDetails={post.author_details}
+            />
           )}
         </Stack>
         <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
@@ -269,8 +264,10 @@ const AuthorLink = ({
   )
 
 const AuthorDetails = ({
+  author,
   authorDetails,
 }: {
+  author: string
   authorDetails?: PostAuthorDetails
 }) =>
   authorDetails ? (
@@ -297,13 +294,11 @@ const AuthorDetails = ({
           )}
         </Box>
       </Stack>
-      {authorDetails.group_icon && (
-        <Box>
-          <img
-            src={`${siteRoot}/${authorDetails.group_icon}`}
-            css={css({ display: 'block', maxWidth: '100%' })}
-          />
-        </Box>
+      <UserGroupIcon user={authorDetails} />
+      {!!authorDetails.digests && (
+        <Stack alignItems="flex-start" mb={1}>
+          <DigestAuthor username={author} />
+        </Stack>
       )}
       {!!authorDetails.medals?.length && (
         <Medals medals={authorDetails.medals} />
@@ -332,24 +327,5 @@ const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
   ) : (
     <></>
   )
-
-const Medals = ({ medals }: { medals?: number[] }) => {
-  const { medalMap } = useMedals()
-  return medalMap ? (
-    <Stack direction="row" flexWrap="wrap">
-      {medals?.map((id, index) => (
-        <Tooltip key={index} title={medalMap[id]?.name}>
-          <img
-            src={`${siteRoot}/static/image/common/${medalMap[id]?.image_path}`}
-            loading="lazy"
-            css={css({ margin: '0.25em 0.15em' })}
-          />
-        </Tooltip>
-      ))}
-    </Stack>
-  ) : (
-    <Skeleton />
-  )
-}
 
 export default Floor

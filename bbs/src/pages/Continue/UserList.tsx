@@ -33,7 +33,7 @@ const UserList = ({
       <ListItem disableGutters key={index}>
         <ListItemButton disabled={disabled} onClick={() => onSignIn(user.uid)}>
           <ListItemIcon>
-            <Avatar uid={user.uid} variant="rounded" />
+            <Avatar uid={user.uid} />
           </ListItemIcon>
           <ListItemText>
             <Typography>{user.username}</Typography>

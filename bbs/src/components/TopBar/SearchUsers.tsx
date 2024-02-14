@@ -58,12 +58,7 @@ const SearchResultUser = ({ status, data, show, setshow }: resultUserProps) => {
           <Box key={item.user_id}>
             <MenuItem onClick={(e) => handleSubmit(item)}>
               <Stack direction="row">
-                <Avatar
-                  className="mr-3"
-                  uid={item.user_id}
-                  sx={{ width: 32, height: 32 }}
-                  variant="rounded"
-                />
+                <Avatar className="mr-3" uid={item.user_id} size={32} />
                 <Typography color="text.secondary">{item.username}</Typography>
               </Stack>
             </MenuItem>

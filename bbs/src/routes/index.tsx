@@ -12,6 +12,7 @@ import Notifications from '@/pages/Messages/Notifications'
 import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
+import User from '@/pages/User'
 
 import routes from './routes'
 
@@ -78,6 +79,12 @@ routes.current = [
         id: 'continue',
         loader: ContinueLoader,
         element: <Continue />,
+      },
+      { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
+      {
+        path: '/user/name/:username/:subPage?',
+        id: 'userByName',
+        element: <User />,
       },
     ],
   },

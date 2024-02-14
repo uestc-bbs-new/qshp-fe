@@ -14,6 +14,7 @@ import {
   Checkbox,
   Dialog,
   DialogContent,
+  DialogProps,
   DialogTitle,
   FormControlLabel,
   IconButton,
@@ -95,7 +96,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   const [captcha, setCaptcha] = useState<CaptchaConfiguration>()
   const captchaRef = useRef<CaptchaType>()
   const [signinPending, setSigninPending] = useState(false)
-  const close = () => dispatch({ type: 'close login' })
+  const close = () => dispatch({ type: 'close dialog' })
   type FormData = {
     username: string
     password: string
@@ -175,83 +176,55 @@ const LoginDialog = ({ open }: { open: boolean }) => {
     setSnackbarOpen(true)
   }
   return (
-    <Dialog
-      open={open}
-      onClose={close}
-      PaperProps={{
-        sx: (theme) => ({
-          borderRadius: '8px',
-          backgroundColor:
-            theme.palette.mode == 'light'
-              ? 'rgba(243, 245, 247, 0.87)'
-              : 'rgba(49, 55, 66, 0.75)',
-        }),
-      }}
-      sx={{
-        backdropFilter: 'blur(3px)',
-        backgroundColor: 'rgba(189, 189, 189, 0.35)',
-      }}
-    >
-      <DialogTitle sx={{ p: 1 }}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
-          <IconButton onClick={close}>
-            <Close />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-      <DialogContent sx={{ px: 5 }}>
-        <Stack alignItems="center" mb={3} minWidth={352}>
-          <img src={logo} css={css({ maxWidth: '100%' })} />
-        </Stack>
-        {state.login.prompt && (
-          <Alert severity="info">{state.login.prompt}</Alert>
-        )}
-        <Tabs value={0} sx={{ my: 1.5 }}>
-          <Tab label="用户名密码登录" />
-          <Tab label="统一身份认证登录" onClick={gotoIdas} />
-        </Tabs>
-        <form onSubmit={onSubmit} ref={formRef}>
-          <SignInTextField
-            name="username"
-            label="用户名"
-            adornmentIcon={<User />}
-          />
-          <SignInTextField
-            name="password"
-            type="password"
-            label="密码"
-            adornmentIcon={<Password />}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="keep_signed_in"
-                value="1"
-                icon={<RadioButtonUnchecked />}
-                checkedIcon={<RadioButtonChecked />}
+    <TransparentBackdropBlurDialog open={open} onClose={close}>
+      {state.globalDialog?.prompt && (
+        <Alert severity="info">{state.globalDialog.prompt}</Alert>
+      )}
+      <Tabs value={0} sx={{ my: 1.5 }}>
+        <Tab label="用户名密码登录" />
+        <Tab label="统一身份认证登录" onClick={() => gotoIdas()} />
+      </Tabs>
+      <form onSubmit={onSubmit} ref={formRef}>
+        <SignInTextField
+          name="username"
+          label="用户名"
+          adornmentIcon={<User />}
+        />
+        <SignInTextField
+          name="password"
+          type="password"
+          label="密码"
+          adornmentIcon={<Password />}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="keep_signed_in"
+              value="1"
+              icon={<RadioButtonUnchecked />}
+              checkedIcon={<RadioButtonChecked />}
+            />
+          }
+          label="自动登录"
+        />
+        {captcha && (
+          <>
+            <Alert severity="info">请完成验证后登录：</Alert>
+            <Stack alignItems="center" my={1}>
+              <Captcha
+                captcha={captcha}
+                onVerified={onCaptchaVerified}
+                ref={captchaRef}
               />
-            }
-            label="自动登录"
-          />
-          {captcha && (
-            <>
-              <Alert severity="info">请完成验证后登录：</Alert>
-              <Stack alignItems="center" my={1}>
-                <Captcha
-                  captcha={captcha}
-                  onVerified={onCaptchaVerified}
-                  ref={captchaRef}
-                />
-              </Stack>
-            </>
-          )}
-          <Stack direction="row" justifyContent="center">
-            <Button type="submit" disabled={signinPending} variant="contained">
-              {signinPending ? '请稍候...' : '登录'}
-            </Button>
-          </Stack>
-        </form>
-      </DialogContent>
+            </Stack>
+          </>
+        )}
+        <Stack direction="row" justifyContent="center">
+          <Button type="submit" disabled={signinPending} variant="contained">
+            {signinPending ? '请稍候...' : '登录'}
+          </Button>
+        </Stack>
+      </form>
       <Snackbar
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
@@ -260,8 +233,50 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       >
         <Alert severity="error">{snackbarMessage}</Alert>
       </Snackbar>
-    </Dialog>
+    </TransparentBackdropBlurDialog>
   )
 }
+
+export const TransparentBackdropBlurDialog = ({
+  children,
+  onClose,
+  ...props
+}: DialogProps & { children: React.ReactNode }) => (
+  <Dialog
+    onClose={onClose}
+    {...props}
+    PaperProps={{
+      ...props.PaperProps,
+      sx: (theme) => ({
+        borderRadius: '8px',
+        backgroundColor:
+          theme.palette.mode == 'light'
+            ? 'rgba(243, 245, 247, 0.87)'
+            : 'rgba(49, 55, 66, 0.75)',
+      }),
+    }}
+    sx={{
+      backdropFilter: 'blur(3px)',
+      backgroundColor: 'rgba(189, 189, 189, 0.35)',
+      ...props.sx,
+    }}
+  >
+    {onClose && (
+      <DialogTitle sx={{ p: 1 }}>
+        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+          <IconButton onClick={(e) => onClose && onClose(e, 'escapeKeyDown')}>
+            <Close />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+    )}
+    <DialogContent sx={{ px: 5 }}>
+      <Stack alignItems="center" mb={3} minWidth={352}>
+        <img src={logo} css={css({ maxWidth: '100%' })} />
+      </Stack>
+      {children}
+    </DialogContent>
+  </Dialog>
+)
 
 export default LoginDialog

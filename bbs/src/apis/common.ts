@@ -1,8 +1,11 @@
 import {
   Forum,
   ForumDetails,
+  GenericList,
   IndexData,
+  SearchSummaryResponse,
   Thread,
+  ThreadInList,
   ThreadList,
   ThreadTypeMap,
   TopList,
@@ -99,16 +102,46 @@ export const getIndexData = async ({
   return result
 }
 
-export const searchThreads = (params: object) => {
-  return request.post<{ resultNum: number; threads: Thread[] }>(
-    `${commonUrl}/global/search/thread`,
-    params,
+export const searchSummary = async (query: string) => {
+  const result = await request.get<SearchSummaryResponse>(
+    `${commonUrl}/search/summary`,
     {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      params: { q: query },
     }
   )
+  result.threads?.forEach(
+    (item) =>
+      (item.subject = unescapeSubject(item.subject, item.dateline, true))
+  )
+  if (result.tid_match) {
+    result.tid_match.subject = unescapeSubject(
+      result.tid_match.subject,
+      result.tid_match.dateline,
+      true
+    )
+  }
+  return result
+}
+
+export const searchThreads = ({
+  keyword,
+  author,
+  digest,
+  page,
+}: {
+  keyword?: string | null
+  author?: string | null
+  digest?: boolean
+  page?: number
+}) => {
+  return request.get<GenericList<ThreadInList>>(`${commonUrl}/search/threads`, {
+    params: {
+      ...(keyword && { q: keyword }),
+      ...(author && { author }),
+      ...(digest && { digest: 1 }),
+      ...(page && { page }),
+    },
+  })
 }
 
 export const searchUsers = (params: object) => {
@@ -139,7 +172,7 @@ export const getThreadList = async (params: {
     },
   })
   makeThreadTypesMap(result.forum)
-  result.rows.forEach((item) => {
+  result.rows?.forEach((item) => {
     item.subject = unescapeSubject(item.subject, item.dateline, true)
   })
   return result

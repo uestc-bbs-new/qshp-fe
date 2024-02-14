@@ -1,14 +1,18 @@
+import { Poll } from '@mui/icons-material'
 import {
-  ModeCommentOutlined,
-  Poll,
-  RemoveRedEyeOutlined,
-  ThumbUpAltOutlined,
-} from '@mui/icons-material'
-import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
+  Box,
+  Divider,
+  Chip as MuiChip,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import {
+  ForumBasics,
   ForumDetails,
   Thread,
+  ThreadInList,
   TopListKey,
   TopListThread,
 } from '@/common/interfaces/response'
@@ -18,12 +22,9 @@ import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
-
-type PostProps = {
-  data: Thread
-  className?: string
-  forumDetails?: ForumDetails
-}
+import Separated from '../Separated'
+import ForumSmall from '../icons/ForumSmall'
+import ReplySmall from '../icons/ReplySmall'
 
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
@@ -36,33 +37,58 @@ const formatNumber = (num: number) => {
   return num
 }
 
-const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
+export type ThreadReplyOrCommentItem = {
+  post_id: number
+  summary: string
+}
+
+type ThreadItemProps = {
+  data: ThreadInList
+  forum?: ForumBasics
+  forumDetails?: ForumDetails
+  showSummary?: boolean
+  replies?: ThreadReplyOrCommentItem[]
+  hideThreadAuthor?: boolean
+  ignoreThreadHighlight?: boolean
+}
+
+const ThreadItem = ({
+  data,
+  forumDetails,
+  showSummary,
+  replies,
+  hideThreadAuthor,
+  ignoreThreadHighlight,
+}: ThreadItemProps) => {
   const theme = useTheme()
 
   return (
-    <Box className={`${className} p-0.5`}>
+    <Box className="p-0.5">
       <Box
-        className={`rounded-lg p-4 ${className} `}
+        className="p-4"
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
       >
         <Stack direction="row">
-          <Box sx={{ mr: 2 }}>
-            <Avatar
-              alt={data.author}
-              uid={data.author_id}
-              sx={{ width: 54, height: 54 }}
-              variant="rounded"
-            />
-          </Box>
-          <Box className="flex-1">
+          {!hideThreadAuthor && data.author_id !== undefined && (
+            <Box sx={{ mr: 2 }}>
+              <Link to={data.author_id ? `/user/${data.author_id}` : undefined}>
+                <Avatar
+                  alt={data.author}
+                  uid={data.author_id}
+                  size={showSummary ? 40 : 48}
+                />
+              </Link>
+            </Box>
+          )}
+          <Box className="flex-1" mr={1.5}>
             <Stack
               justifyContent="space-between"
               direction="column"
               sx={{ minWidth: 350 }}
             >
-              <Stack direction="row" alignItems="center">
+              <Stack direction="row" alignItems="center" mb={0.5}>
                 {!!data.type_id &&
                   forumDetails?.thread_types_map &&
                   forumDetails?.thread_types_map[data.type_id] && (
@@ -76,91 +102,129 @@ const ThreadItem = ({ data, className, forumDetails }: PostProps) => {
                   underline="hover"
                   className="line-clamp-2"
                 >
-                  <Stack direction="row" alignItems="center">
-                    <Typography
-                      textAlign="justify"
-                      style={{
-                        color: data.highlight_color,
-                        backgroundColor: data.highlight_bgcolor,
-                        fontWeight: data.highlight_bold ? 'bold' : undefined,
-                        fontStyle: data.highlight_italic ? 'italic' : undefined,
-                        textDecoration: data.highlight_underline
-                          ? 'underline'
-                          : undefined,
-                      }}
-                    >
-                      {data.subject}
-                    </Typography>
-                    {data.special == 1 && (
-                      <Poll
-                        htmlColor="#FA541C"
-                        style={{ width: '0.85em', marginLeft: '0.25em' }}
-                      />
-                    )}
-                  </Stack>
+                  <Typography
+                    textAlign="justify"
+                    variant="threadItemSubject"
+                    color={ignoreThreadHighlight ? 'primary' : undefined}
+                    style={
+                      ignoreThreadHighlight
+                        ? undefined
+                        : {
+                            color: data.highlight_color,
+                            backgroundColor: data.highlight_bgcolor,
+                            fontWeight: data.highlight_bold
+                              ? 'bold'
+                              : undefined,
+                            fontStyle: data.highlight_italic
+                              ? 'italic'
+                              : undefined,
+                            textDecoration: data.highlight_underline
+                              ? 'underline'
+                              : undefined,
+                          }
+                    }
+                  >
+                    {data.subject}
+                  </Typography>
                 </Link>
+                <ThreadExtraLabels thread={data} />
               </Stack>
-              <Stack direction="row" alignItems="center" className="text-sm">
-                <Link color="#3A71F2">{data.author}</Link>
-                {/* <UserCard uid={data.author_id}>
-                  <Link color="inherit">{data.author}</Link>
-                </UserCard> */}
-                <Typography fontSize="inherit" className="pl-1" color="grey">
-                  {`· ${chineseTime(data.dateline * 1000)}`}
+              <ThreadRepliesOrComments
+                threadId={data.thread_id}
+                replies={replies}
+              />
+              {showSummary && data.summary && (
+                <Typography variant="threadItemSummary" mb={0.5}>
+                  {data.summary}
                 </Typography>
-              </Stack>
-              <Stack>
-                {/* <Typography variant="subtitle2">{data.subject}</Typography> */}
-              </Stack>
+              )}
+              <ThreadAuthor thread={data} hideThreadAuthor={hideThreadAuthor} />
             </Stack>
           </Box>
-          <Box>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              sx={{ width: 265, height: 35 }}
-            >
+          <Stack justifyContent="space-between">
+            <Stack direction="row" alignItems="center">
+              {data.forum_name && (
+                <>
+                  <Box flexGrow={1} />
+                  <Link
+                    to={pages.forum(data.forum_id)}
+                    underline="hover"
+                    color=""
+                    variant="threadItemForum"
+                    sx={{
+                      '&:hover': {
+                        color: '#2175F3',
+                        'svg path.fill': {
+                          fill: '#2175F3',
+                        },
+                        'svg path.stroke': {
+                          stroke: '#2175F3',
+                        },
+                      },
+                    }}
+                  >
+                    <Stack direction="row" alignItems="center">
+                      <ForumSmall
+                        color={theme.typography.threadItemForum.color}
+                      />
+                      <Typography ml={0.5} mr={2}>
+                        {data.forum_name}
+                      </Typography>
+                    </Stack>
+                  </Link>
+                </>
+              )}
               <Stack
                 direction="row"
-                className="w-1/3 pr-2"
-                alignItems="center"
-                justifyContent="space-between"
+                justifyContent="flex-end"
+                flexGrow={1}
+                minWidth={data.forum_name ? '14em' : undefined}
               >
-                <RemoveRedEyeOutlined />
-                <Typography>{formatNumber(data.views)}</Typography>
-              </Stack>
-              <Stack
-                direction="row"
-                className="w-1/3 pl-3"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <ModeCommentOutlined />
-                <Typography>{formatNumber(data.replies)}</Typography>
-              </Stack>
-              <Stack
-                direction="row"
-                className="w-1/3 pl-5"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <ThumbUpAltOutlined />
-                <Typography>{formatNumber(data.favorite_times)}</Typography>
-              </Stack>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <Box>
-                <Typography className="pr-10">
-                  {`最新回复:`}
-                  {data.last_poster}
+                <Typography variant="threadItemStat">
+                  <Separated
+                    separator={
+                      <Typography component="span" mx={0.75}>
+                        ·
+                      </Typography>
+                    }
+                  >
+                    <>查看：{formatNumber(data.views)}</>
+                    <>回复：{formatNumber(data.replies)}</>
+                  </Separated>
                 </Typography>
-              </Box>
-              <Typography>{chineseTime(data.last_post * 1000)}</Typography>
+              </Stack>
             </Stack>
-          </Box>
+            <Stack direction="row" justifyContent="flex-end">
+              <Typography variant="threadItemAuthor">
+                <Separated
+                  separator={
+                    <Typography component="span" mx={0.75}>
+                      ·
+                    </Typography>
+                  }
+                >
+                  <>
+                    {`最新回复：`}
+                    <Link
+                      color="inherit"
+                      underline={data.last_poster ? 'hover' : 'none'}
+                      to={
+                        data.last_poster
+                          ? pages.user({ username: data.last_poster })
+                          : undefined
+                      }
+                    >
+                      {data.last_poster || '匿名'}
+                    </Link>
+                  </>
+                  <>{chineseTime(data.last_post * 1000)}</>
+                </Separated>
+              </Typography>
+            </Stack>
+          </Stack>
         </Stack>
       </Box>
-      <Divider variant="middle" style={{ backgroundColor: 'grey' }} />
+      <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />
     </Box>
   )
 }
@@ -175,12 +239,9 @@ export const ThreadItemLite = ({
   return (
     <Box px={0.25} py={0.5}>
       <Stack direction="row" alignItems="center">
-        <Avatar
-          alt={item.author}
-          uid={item.author_id}
-          sx={{ width: 30, height: 30 }}
-          variant="rounded"
-        />
+        <Link to={item.author_id ? `/user/${item.author_id}` : undefined}>
+          <Avatar alt={item.author} uid={item.author_id} size={30} />
+        </Link>
         <Link
           to={pages.thread(item.thread_id)}
           {...(fromTopList && { state: { fromTopList } })}
@@ -206,7 +267,11 @@ export const ThreadItemLite = ({
         className="text-sm"
         pl={0.5}
       >
-        <Link>{item.author}</Link>
+        <Link
+          to={item.author_id ? pages.user({ uid: item.author_id }) : undefined}
+        >
+          {item.author}
+        </Link>
         <Typography fontSize="inherit" className="pl-1" color="grey">
           {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
         </Typography>
@@ -214,5 +279,97 @@ export const ThreadItemLite = ({
     </Box>
   )
 }
+
+const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
+  <>
+    {thread.special == 1 && (
+      <Poll htmlColor="#FA541C" sx={{ width: '0.85em', mx: '0.25em' }} />
+    )}
+    {!!thread.digest && (
+      <MuiChip label="精华" variant="threadItemDigest" sx={{ mx: 0.5 }} />
+    )}
+    {(thread.stamp == 3 || thread.icon == 12) && (
+      <MuiChip label="优秀" variant="threadItemExcellent" sx={{ mx: 0.5 }} />
+    )}
+    {(thread.stamp == 5 || thread.icon == 14) && (
+      <MuiChip label="推荐" variant="threadItemRecommended" sx={{ mx: 0.5 }} />
+    )}
+    {thread.icon == 20 && (
+      <MuiChip label="新人" variant="threadItemFreshman" sx={{ mx: 0.5 }} />
+    )}
+  </>
+)
+
+const ThreadAuthor = ({
+  thread,
+  hideThreadAuthor,
+}: {
+  thread: Partial<Thread> & Required<Pick<Thread, 'dateline'>>
+  hideThreadAuthor?: boolean
+}) => {
+  const time = <>{chineseTime(thread.dateline * 1000)}</>
+  return (
+    <Stack direction="row" alignItems="center">
+      <Typography variant="threadItemAuthor">
+        {hideThreadAuthor ? (
+          time
+        ) : (
+          <Separated
+            separator={
+              <Typography component="span" mx={0.75}>
+                ·
+              </Typography>
+            }
+          >
+            <Link
+              underline={thread.author_id ? 'always' : 'none'}
+              color={thread.author_id ? undefined : 'inherit'}
+              to={
+                thread.author_id
+                  ? pages.user({ uid: thread.author_id })
+                  : undefined
+              }
+              variant="threadItemAuthorLink"
+            >
+              {thread.author}
+            </Link>
+            {time}
+          </Separated>
+        )}
+      </Typography>
+    </Stack>
+  )
+}
+
+const ThreadRepliesOrComments = ({
+  threadId,
+  replies,
+}: {
+  threadId: number
+  replies?: ThreadReplyOrCommentItem[]
+}) =>
+  replies?.length ? (
+    <Box mb={0.5}>
+      <Separated separator={<Divider sx={{ ml: 2.5 }} />}>
+        {replies.map((item, index) => (
+          <Stack direction="row" key={index}>
+            <ReplySmall style={{ flexShrink: 0 }} />
+            <Link
+              to={pages.goto(item.post_id)}
+              underline="hover"
+              ml={0.5}
+              my={0.25}
+            >
+              <Typography variant="threadItemSummary">
+                {item.summary}
+              </Typography>
+            </Link>
+          </Stack>
+        ))}
+      </Separated>
+    </Box>
+  ) : (
+    <></>
+  )
 
 export default ThreadItem

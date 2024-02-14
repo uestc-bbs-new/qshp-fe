@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 
 import LoginDialog from './components/Login/LoginDialog'
+import RegisterDialog from './components/Login/RegisterDialog'
 import ThemeProvider from './components/ThemeProvider'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
@@ -30,7 +31,10 @@ function App() {
   useEffect(() => {
     const callback = (details: UserCallbackDetails) => {
       if (details.requireSignIn) {
-        dispatch({ type: 'open login', payload: '请您登录后继续浏览。' })
+        dispatch({
+          type: 'open dialog',
+          payload: { kind: 'login', prompt: '请您登录后继续浏览。' },
+        })
       }
       dispatch({ type: 'set user', payload: details.user })
     }
@@ -50,7 +54,8 @@ function App() {
         <ThemeProvider theme={state.theme}>
           <>
             <RouterProvider router={router} />
-            <LoginDialog open={state.login.open} />
+            {state.globalDialog?.kind == 'login' && <LoginDialog open />}
+            {state.globalDialog?.kind == 'register' && <RegisterDialog open />}
           </>
         </ThemeProvider>
       </AppContext.Provider>

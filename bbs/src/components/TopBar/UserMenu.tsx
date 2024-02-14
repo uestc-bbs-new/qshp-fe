@@ -32,7 +32,7 @@ import {
 } from '@/utils/theme'
 
 import Avatar from '../Avatar'
-import { MenuItemLink } from '../Link'
+import Link, { MenuItemLink } from '../Link'
 
 const MenuContent = () => {
   const { state, dispatch } = useAppState()
@@ -60,7 +60,7 @@ const MenuContent = () => {
   }
   return (
     <Box className="py-2">
-      <MenuItem>
+      <MenuItem component={MenuItemLink} to={pages.user()}>
         <ListItemIcon>
           <Person fontSize="small" />
         </ListItemIcon>
@@ -118,15 +118,12 @@ const UserMenu = ({ user }: { user: UserState }) => {
   return (
     <>
       <Tooltip title={<MenuContent />}>
-        <Stack direction="row" alignItems="center">
-          <Avatar
-            className="mx-3"
-            uid={user.uid}
-            sx={{ width: 32, height: 32 }}
-            variant="rounded"
-          />
-          <Typography>{user.username}</Typography>
-        </Stack>
+        <Link color="inherit" underline="none" to={pages.user()}>
+          <Stack direction="row" alignItems="center">
+            <Avatar className="mx-3" uid={user.uid} size={32} />
+            <Typography>{user.username}</Typography>
+          </Stack>
+        </Link>
       </Tooltip>
     </>
   )

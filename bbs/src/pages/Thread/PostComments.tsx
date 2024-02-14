@@ -67,12 +67,10 @@ const PostComments = ({
                 <Link to={`/user/${comment.author_id}`} underline="hover">
                   <Avatar
                     sx={{
-                      width: 28,
-                      height: 28,
                       display: 'inline-block',
                       verticalAlign: 'middle',
                     }}
-                    variant="rounded"
+                    size={28}
                     uid={comment.author_id}
                   />
                   <Typography

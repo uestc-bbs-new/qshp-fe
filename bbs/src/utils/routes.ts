@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Params, useLocation, useMatches } from 'react-router-dom'
 
-const useActiveRoute = () => {
+import { ContinueMode } from '@/common/types/idas'
+
+import siteRoot from './siteRoot'
+
+export const useActiveRoute = () => {
   const location = useLocation()
   const matches = useMatches()
   const [activeRoute, setActiveRoute] = useState<{
@@ -36,13 +40,21 @@ const withSearchAndHash = (
 
 type SettingsSubPage = 'profile' | 'privacy' | 'password'
 
-const kIdasOrigin = `https://bbs.uestc.edu.cn`
+export type UserPageParams = {
+  uid?: number
+  username?: string
+  subPage?: string
+  removeVisitLog?: boolean
+  admin?: boolean
+}
+
+export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const kIdasContinueBase = `${kIdasOrigin}/continue`
-export const gotoIdas = () => {
+export const gotoIdas = (options?: { mode?: ContinueMode }) => {
   location.href = `${idasUrlBase}?service=${encodeURIComponent(
     withSearchAndHash(
-      kIdasContinueBase,
+      `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
       new URLSearchParams({
         path: `${location.pathname}${location.search}`,
       })
@@ -70,14 +82,40 @@ export const pages = {
   settings: (subPage?: SettingsSubPage) =>
     `/settings${subPage ? `/${subPage}` : ''}`,
 
-  user: (params?: { uid?: number; username?: string }) =>
-    `/user/${
-      params?.username
-        ? `name/${params.username}`
-        : params?.uid
-          ? params.uid
-          : 'me'
-    }`,
+  user: (params?: UserPageParams) =>
+    withSearchAndHash(
+      `/user/${
+        params?.username
+          ? `name/${params.username}`
+          : params?.uid
+            ? params.uid
+            : 'me'
+      }${params?.subPage ? `/${params.subPage}` : ''}`,
+      params?.removeVisitLog || params?.admin
+        ? new URLSearchParams({
+            ...(params?.removeVisitLog && { additional: 'removevlog' }),
+            ...(params?.admin && { a: '1' }),
+          })
+        : undefined
+    ),
+
+  searchThreads: (params?: {
+    keyword?: string
+    author?: string
+    digest?: boolean
+  }) =>
+    withSearchAndHash(
+      `/search`,
+      new URLSearchParams({
+        ...(params?.keyword && { q: params.keyword }),
+        ...(params?.author && { author: params.author }),
+        ...(params?.digest && { digest: '1' }),
+        type: 'post',
+      })
+    ),
 }
 
-export { useActiveRoute, kIdasOrigin }
+export const legacyPages = {
+  collection: (collection_id: number) =>
+    `${siteRoot}/forum.php?mod=collection&action=view&ctid=${collection_id}`,
+}
