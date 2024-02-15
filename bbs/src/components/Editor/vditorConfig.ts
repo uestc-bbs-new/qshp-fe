@@ -2,6 +2,7 @@
 import { getAtList } from '@/apis/thread'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
+import { persistedStates } from '@/utils/storage'
 
 import { customRenderers } from '../RichText/renderer'
 import { common, commonEmojiPath } from '../RichText/vditorConfig'
@@ -54,9 +55,17 @@ const options = ({
   },
   upload: {
     accept: 'image/*,.mp3, .wav, .rar',
-    token: 'test',
-    url: '/dev/star/api/v1/global/upload/files',
-    linkToImgUrl: '/api/upload/fetch',
+    url: '/dev/star/api/v1/attachment/upload',
+    fieldName: 'files[]',
+    extraData: {
+      kind: 'forum',
+      type: 'image',
+    },
+    setHeaders() {
+      return {
+        Authorization: persistedStates.authorizationHeader || '',
+      }
+    },
     filename(name) {
       return name
         .replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\\.)]/g, '')
