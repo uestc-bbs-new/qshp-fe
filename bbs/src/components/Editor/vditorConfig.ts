@@ -11,12 +11,14 @@ import { common, commonEmojiPath } from '../RichText/vditorConfig'
 
 const supportedImageExtensions = ['jpg', 'jpeg', 'jpe', 'png', 'gif']
 
+const getFileExtension = (fileName: string) =>
+  (fileName.match(/\.([0-9a-z]+)$/i) || [])[1]?.toLowerCase()
+
+const isFileImage = (fileName: string) =>
+  supportedImageExtensions.includes(getFileExtension(fileName))
+
 const getMarkdownFromAttachment = (item: Attachment) => {
-  const extMatch = item.filename.match(/\.([0-9a-z]+)$/i)
-  if (
-    extMatch &&
-    supportedImageExtensions.includes(extMatch[1].toLowerCase())
-  ) {
+  if (isFileImage(item.filename)) {
     return `![${item.filename}](i:${item.attachment_id})`
   }
   return `[${item.filename}](a:${item.attachment_id})`
@@ -114,7 +116,7 @@ function options({
           try {
             const result = await uploadAttachment(
               'forum',
-              'file',
+              isFileImage(file.name) ? 'image' : 'file',
               [file],
               (status) => {
                 status.progress &&
