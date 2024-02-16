@@ -216,6 +216,7 @@ const PostEditor = ({
             autoFocus={autoFocus}
             minHeight={300}
             initialValue={initialValue?.message}
+            initialAttachments={initialValue?.attachments}
             onKeyDown={handleCtrlEnter(handleSubmit)}
             ref={editor}
           />

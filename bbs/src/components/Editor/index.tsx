@@ -30,6 +30,7 @@ import options from './vditorConfig'
 
 type EditorProps = IOptions & {
   initialValue?: string
+  initialAttachments?: Attachment[]
   onKeyDown?: React.KeyboardEventHandler
   autoFocus?: boolean
 }
@@ -40,13 +41,13 @@ export interface EditorHandle {
 }
 
 const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
-  { initialValue, onKeyDown, autoFocus, ...other },
+  { initialValue, initialAttachments, onKeyDown, autoFocus, ...other },
   ref
 ) {
   const { state } = useAppState()
   const vditorRef = useRef<HTMLDivElement>(null)
   const vditorContext = useRef<VditorContext>({
-    attachments: [],
+    attachments: initialAttachments || [],
   })
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
