@@ -13,6 +13,7 @@ export type Attachment = FileInfo & {
   dateline: number
   is_image: number
   path: string
+  download_url?: string
 }
 
 export type UploadResponse = {

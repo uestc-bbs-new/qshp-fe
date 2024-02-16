@@ -22,7 +22,7 @@ import {
 import { Attachment } from '@/common/interfaces/base'
 import { useAppState } from '@/states'
 
-import { kSmilyBasePath } from '../RichText/renderer'
+import { beforeGetMarkdown, kSmilyBasePath } from '../RichText/renderer'
 import { smilyData } from '../RichText/smilyData'
 import { VditorContext } from '../RichText/types'
 import { getPreviewThemeOptions } from '../RichText/vditorConfig'
@@ -69,26 +69,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
         }
         vditorInitialized.current = true
       },
-      beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
-        if (currentMode == 'wysiwyg') {
-          const clone = el.cloneNode(true) as HTMLElement
-          ;[].forEach.call(
-            clone.querySelectorAll('img.post_smily'),
-            (img: HTMLImageElement) => {
-              img.src = img.getAttribute('data-x-original-src') || ''
-              img.alt = img.getAttribute('data-x-original-alt') || ''
-            }
-          )
-          ;[].forEach.call(
-            clone.querySelectorAll('a.post_at_user'),
-            (a: HTMLAnchorElement) => {
-              a.href = a.getAttribute('data-x-original-href') || ''
-            }
-          )
-          return clone.innerHTML
-        }
-        return undefined
-      },
+      beforeGetMarkdown,
       ...options({
         smilyToolbarItem: {
           name: 'smily',

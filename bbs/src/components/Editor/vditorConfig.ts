@@ -1,13 +1,26 @@
 // TODO: How to take the @ user information to request?
 import { uploadAttachment } from '@/apis/common'
 import { getAtList } from '@/apis/thread'
-import { UploadResponse } from '@/common/interfaces/base'
+import { Attachment, UploadResponse } from '@/common/interfaces/base'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
 
 import { customRenderers } from '../RichText/renderer'
 import { VditorContext } from '../RichText/types'
 import { common, commonEmojiPath } from '../RichText/vditorConfig'
+
+const supportedImageExtensions = ['jpg', 'jpeg', 'jpe', 'png', 'gif']
+
+const getMarkdownFromAttachment = (item: Attachment) => {
+  const extMatch = item.filename.match(/\.([0-9a-z]+)$/i)
+  if (
+    extMatch &&
+    supportedImageExtensions.includes(extMatch[1].toLowerCase())
+  ) {
+    return `![${item.filename}](i:${item.attachment_id})`
+  }
+  return `[${item.filename}](a:${item.attachment_id})`
+}
 
 function options({
   smilyToolbarItem,
@@ -59,7 +72,37 @@ function options({
       ],
     },
     upload: {
-      accept: 'image/*,.mp3, .wav, .rar',
+      accept: [
+        'png',
+        'jpg',
+        'jpe',
+        'jpeg',
+        'gif',
+        'zip',
+        'rar',
+        'tar',
+        'gz',
+        'xz',
+        'bz2',
+        '7z',
+        'flv',
+        'mp3',
+        'mp4',
+        'pdf',
+        'caj',
+        'ppt',
+        'pptx',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'txt',
+        'apk',
+        'ipa',
+        'crx',
+      ]
+        .map((ext) => `.${ext}`)
+        .join(','),
       async customUploader(files, _, onProgress) {
         const totalSize =
           files.reduce((totalSize, file) => totalSize + file.size, 0) || 1
@@ -99,7 +142,7 @@ function options({
           context?.attachments?.push(...response.uploaded)
           context?.vditor?.insertValue(
             response.uploaded
-              .map((item) => `![${item.filename}](a:${item.attachment_id})`)
+              .map((item) => getMarkdownFromAttachment(item))
               .join('\n')
           )
         }

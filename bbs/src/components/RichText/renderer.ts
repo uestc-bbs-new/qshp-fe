@@ -23,7 +23,7 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
       data-x-original-alt="${alt}"
     />`
   }
-  const match = src.match(/^a:([0-9]+)/)
+  const match = src.match(/^(?:i|a):([0-9]+)$/)
   if (match) {
     const id = parseInt(match[1])
     const path = context?.attachments?.find((item) => item.attachment_id == id)
@@ -32,7 +32,7 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
       return html`<img
         src="${kForumAttachBasePath}${path}"
         alt="${alt}"
-        class="post_attachment"
+        class="post_attachment post_attachment_image"
         data-x-special-kind="attachment"
         data-x-original-src="${src}"
         data-x-original-alt="${alt}"
@@ -41,8 +41,8 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
   }
   return html`<img src="${src}" alt="${alt || ''}" />`
 }
-const renderLink = (href: string, text: string) => {
-  const atMatch = href.match(/^at:(\d+)/)
+const renderLink = (href: string, text: string, context?: VditorContext) => {
+  const atMatch = href.match(/^at:(\d+)$/)
   if (atMatch) {
     return html`<a
       class="post_at_user"
@@ -50,6 +50,24 @@ const renderLink = (href: string, text: string) => {
       data-x-original-href="${href}"
       >${text}</a
     >`
+  }
+  const attachMatch = href.match(/^a:(\d+)$/)
+  if (attachMatch) {
+    const id = parseInt(attachMatch[1])
+    const attach = context?.attachments?.find(
+      (item) => item.attachment_id == id
+    )
+    if (attach) {
+      return html`<a
+        class="post_attachment post_attachment_file"
+        href="${attach.download_url || 'javascript:void(0)'}"
+        download="${attach.filename}"
+        data-x-special-kind="attachment"
+        data-x-original-src="${href}"
+        data-x-original-alt="${text}"
+        >${text}</a
+      >`
+    }
   }
   return html`<a href="${href}">${text}</a>`
 }
@@ -163,7 +181,7 @@ export const customRenderers = (
             html = renderImage(state.dest || '', state.text || '', context)
           } else if (state.type == 'link') {
             renderState.pop()
-            html = renderLink(state.dest || '', state.text || '')
+            html = renderLink(state.dest || '', state.text || '', context)
           } else {
             console.error('Unknown render state type', state)
           }
@@ -229,4 +247,40 @@ export const customRenderers = (
       }
     },
   }
+}
+
+export const beforeGetMarkdown = (currentMode: string, el: HTMLElement) => {
+  if (currentMode == 'wysiwyg') {
+    const clone = el.cloneNode(true) as HTMLElement
+    ;[].forEach.call(
+      clone.querySelectorAll('img.post_smily, img.post_attachment'),
+      (img: HTMLImageElement) => {
+        img.src = img.getAttribute('data-x-original-src') || ''
+        img.alt = img.getAttribute('data-x-original-alt') || ''
+      }
+    )
+    ;[].forEach.call(
+      clone.querySelectorAll('a.post_at_user'),
+      (a: HTMLAnchorElement) => {
+        a.href = a.getAttribute('data-x-original-href') || ''
+      }
+    )
+    ;[].forEach.call(
+      clone.querySelectorAll('a.post_attachment'),
+      (a: HTMLAnchorElement) => {
+        a.href = a.getAttribute('data-x-original-href') || ''
+        const text = a.getAttribute('data-x-original-alt') || ''
+        if (a.replaceChildren) {
+          a.replaceChildren(text)
+        } else {
+          while (a.childNodes.length) {
+            a.removeChild(a.childNodes[0])
+          }
+          a.appendChild(document.createTextNode(text))
+        }
+      }
+    )
+    return clone.innerHTML
+  }
+  return undefined
 }
