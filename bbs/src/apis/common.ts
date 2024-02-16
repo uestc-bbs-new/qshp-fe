@@ -1,3 +1,6 @@
+import { AxiosProgressEvent } from 'axios'
+
+import { UploadResponse } from '@/common/interfaces/base'
 import {
   Forum,
   ForumDetails,
@@ -180,4 +183,23 @@ export const getThreadList = async (params: {
 
 export const getAnnouncement = () => {
   return request.get<Thread[]>(`${commonUrl}/view/thread/bulletin`)
+}
+
+export const uploadAttachment = (
+  kind: 'forum' | 'chat',
+  type: 'image' | 'file',
+  files: File[],
+  onProgress?: (progressEvent: AxiosProgressEvent) => void
+) => {
+  const formData = new FormData()
+  formData.append('kind', kind)
+  formData.append('type', type)
+  files.forEach((file) => formData.append('files[]', file))
+  return request.postForm<UploadResponse>(
+    `${commonUrl}/attachment/upload`,
+    formData,
+    {
+      onUploadProgress: onProgress,
+    }
+  )
 }

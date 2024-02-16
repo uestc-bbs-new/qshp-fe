@@ -3,11 +3,19 @@ export type User = {
   username: string
 }
 
-export type Attachment = {
+export type FileInfo = {
+  filename: string
+  size: number
+}
+
+export type Attachment = FileInfo & {
   attachment_id: number
   dateline: number
-  filename: string
-  filesize: number
   is_image: number
   path: string
+}
+
+export type UploadResponse = {
+  uploaded?: Attachment[]
+  errors?: FileInfo[]
 }

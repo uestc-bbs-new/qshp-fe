@@ -1,8 +1,9 @@
 // TODO: How to take the @ user information to request?
+import { uploadAttachment } from '@/apis/common'
 import { getAtList } from '@/apis/thread'
+import { UploadResponse } from '@/common/interfaces/base'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
-import { persistedStates } from '@/utils/storage'
 
 import { customRenderers } from '../RichText/renderer'
 import { VditorContext } from '../RichText/types'
@@ -59,28 +60,56 @@ function options({
     },
     upload: {
       accept: 'image/*,.mp3, .wav, .rar',
-      url: '/dev/star/api/v1/attachment/upload',
-      fieldName: 'files[]',
-      extraData: {
-        kind: 'forum',
-        type: 'image',
-      },
-      setHeaders() {
-        return {
-          Authorization: persistedStates.authorizationHeader || '',
+      async customUploader(files, _, onProgress) {
+        const totalSize =
+          files.reduce((totalSize, file) => totalSize + file.size, 0) || 1
+        const allResult: UploadResponse = {
+          uploaded: [],
+          errors: [],
         }
+        for (const file of files) {
+          try {
+            const result = await uploadAttachment(
+              'forum',
+              'file',
+              [file],
+              (status) => {
+                status.progress &&
+                  onProgress((status.progress * file.size) / totalSize)
+              }
+            )
+            if (result.uploaded?.length) {
+              allResult.uploaded?.push(...result.uploaded)
+            } else if (result.errors?.length) {
+              allResult.errors?.push(...result.errors)
+            }
+          } catch (_) {
+            allResult.errors?.push({ filename: file.name, size: file.size })
+          }
+        }
+        return allResult
       },
       customUploaderCompleted(
-        response: unknown,
-        vditor: IVditor,
+        data: unknown,
+        _: IVditor,
         errorCallback: (html?: string) => void
       ) {
-        response = JSON.parse(response as string)
-        const item = response.data[0]
-        context?.attachments?.push(item)
-        context?.vditor?.insertValue(
-          `![${item.filename}](a:${item.attachment_id})`
-        )
+        const response = data as UploadResponse
+        if (response.uploaded?.length) {
+          context?.attachments?.push(...response.uploaded)
+          context?.vditor?.insertValue(
+            response.uploaded
+              .map((item) => `![${item.filename}](a:${item.attachment_id})`)
+              .join('\n')
+          )
+        }
+        if (response.errors?.length) {
+          errorCallback(
+            `<ul>${response.errors
+              .map((item) => html`<li>${item.filename} 上传失败！</li>`)
+              .join('')}</ul>`
+          )
+        }
       },
       filename(name) {
         return name
