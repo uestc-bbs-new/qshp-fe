@@ -1,4 +1,5 @@
 import { customRenderers } from './renderer'
+import { VditorContext } from './types'
 
 export const common = {
   cdn: '/third_party/vditor-patched-0.2',
@@ -20,10 +21,13 @@ export const getPreviewThemeOptions = (mode: Mode): IPreview => ({
   ...previewCommon(mode),
 })
 
-export const getPreviewOptions = (mode: Mode): IPreviewOptions => ({
+export const getPreviewOptions = (
+  mode: Mode,
+  context: VditorContext
+): IPreviewOptions => ({
   ...common,
   mode,
   ...previewCommon(mode),
   ...commonEmojiPath,
-  renderers: customRenderers('Preview'),
+  renderers: customRenderers('Preview', context),
 })

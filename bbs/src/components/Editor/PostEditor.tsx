@@ -150,9 +150,11 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        attachments: editor.current?.attachments,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -162,9 +164,11 @@ const PostEditor = ({
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
         is_anonymous: valueRef.current.is_anonymous,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
           editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -175,6 +179,7 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()

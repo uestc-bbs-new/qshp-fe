@@ -11,6 +11,7 @@ import {
   lighten,
 } from '@mui/material'
 
+import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
 import { useAppState } from '@/states'
@@ -143,12 +144,24 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
   )
 }
 
-const MarkdownPostRenderer = ({ message }: { message: string }) => {
+const MarkdownPostRenderer = ({
+  message,
+  attachments,
+}: {
+  message: string
+  attachments?: Attachment[]
+}) => {
   const { state } = useAppState()
   const el = createRef<HTMLDivElement>()
   useEffect(() => {
     el.current &&
-      Vditor.preview(el.current, message, getPreviewOptions(state.theme))
+      Vditor.preview(
+        el.current,
+        message,
+        getPreviewOptions(state.theme, {
+          attachments: attachments || [],
+        })
+      )
   }, [message])
   const navigate = useNavigate()
   return (
@@ -163,7 +176,10 @@ const MarkdownPostRenderer = ({ message }: { message: string }) => {
 
 export const PostRenderer = ({ post }: { post: PostFloor }) => {
   return post.format == 2 ? (
-    <MarkdownPostRenderer message={post.message} />
+    <MarkdownPostRenderer
+      message={post.message}
+      attachments={post.attachments}
+    />
   ) : (
     <LegacyPostRenderer post={post} />
   )

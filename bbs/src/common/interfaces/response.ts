@@ -1,3 +1,5 @@
+import { Attachment } from './base'
+
 type ForumLastestThread = {
   thread_id: number
   subject: string
@@ -225,6 +227,8 @@ export interface PostFloor {
   has_comment?: boolean
   has_rate?: boolean
   invisible: number
+
+  attachments?: Attachment[]
 }
 
 export interface PostComment {

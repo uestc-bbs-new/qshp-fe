@@ -19,6 +19,7 @@ import {
   Tabs,
 } from '@mui/material'
 
+import { Attachment } from '@/common/interfaces/base'
 import { useAppState } from '@/states'
 
 import { kSmilyBasePath } from '../RichText/renderer'
@@ -35,6 +36,7 @@ type EditorProps = IOptions & {
 
 export interface EditorHandle {
   get vditor(): Vditor | undefined
+  get attachments(): Attachment[]
 }
 
 const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
@@ -114,6 +116,9 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
     () => ({
       get vditor() {
         return vditorContext.current.vditor
+      },
+      get attachments() {
+        return vditorContext.current.attachments
       },
     }),
     []
