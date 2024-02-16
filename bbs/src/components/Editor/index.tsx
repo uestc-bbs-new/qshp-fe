@@ -1,7 +1,13 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import {
   Divider,
@@ -21,22 +27,22 @@ import { VditorContext } from '../RichText/types'
 import { getPreviewThemeOptions } from '../RichText/vditorConfig'
 import options from './vditorConfig'
 
-type props = IOptions & {
+type EditorProps = IOptions & {
   initialValue?: string
-  setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
   onKeyDown?: React.KeyboardEventHandler
   autoFocus?: boolean
 }
 
-const Editor = ({
-  initialValue,
-  setVd,
-  onKeyDown,
-  autoFocus,
-  ...other
-}: props) => {
+export interface EditorHandle {
+  get vditor(): Vditor | undefined
+}
+
+const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
+  { initialValue, onKeyDown, autoFocus, ...other },
+  ref
+) {
   const { state } = useAppState()
-  const vditorRef = createRef<HTMLDivElement>()
+  const vditorRef = useRef<HTMLDivElement>(null)
   const vditorContext = useRef<VditorContext>({
     attachments: [],
   })
@@ -58,7 +64,6 @@ const Editor = ({
         if (initialValue) {
           vditorContext.current.vditor?.insertValue(initialValue)
         }
-        setVd(vditorContext.current.vditor)
         vditorInitialized.current = true
       },
       beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
@@ -103,6 +108,16 @@ const Editor = ({
       vditorContext.current.vditor?.setTheme(theme(), state.theme)
     }
   }, [state.theme, vditorContext.current.vditor])
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      get vditor() {
+        return vditorContext.current.vditor
+      },
+    }),
+    []
+  )
   return (
     <>
       <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
@@ -159,6 +174,6 @@ const Editor = ({
       </Menu>
     </>
   )
-}
+})
 
 export default Editor

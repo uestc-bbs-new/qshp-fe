@@ -1,5 +1,3 @@
-import Vditor from 'vditor'
-
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,7 +12,7 @@ import {
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
 import { ForumDetails, PostFloor } from '@/common/interfaces/response'
-import Editor from '@/components/Editor'
+import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
 import { useAppState } from '@/states'
@@ -89,7 +87,7 @@ const PostEditor = ({
   const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
     kind
   ]
-  const [vd, setVd] = useState<Vditor>() // editor ref
+  const editor = useRef<EditorHandle>(null)
 
   const {
     props: snackbarProps,
@@ -138,7 +136,7 @@ const PostEditor = ({
       return
     }
 
-    const message = vd?.getValue() || ''
+    const message = editor.current?.vditor?.getValue() || ''
     if (!message.trim()) {
       showError('请输入内容。')
       return
@@ -154,7 +152,7 @@ const PostEditor = ({
         format: 2,
       })
         .then((result) => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -166,7 +164,7 @@ const PostEditor = ({
         is_anonymous: valueRef.current.is_anonymous,
       })
         .then(() => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -213,8 +211,8 @@ const PostEditor = ({
             autoFocus={autoFocus}
             minHeight={300}
             initialValue={initialValue?.message}
-            setVd={setVd}
             onKeyDown={handleCtrlEnter(handleSubmit)}
+            ref={editor}
           />
           <PostOptions
             forum={forum}
