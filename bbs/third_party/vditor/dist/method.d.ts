@@ -6,7 +6,7 @@ declare class Vditor {
     /** 点击图片放大 */
     static previewImage: (oldImgElement: HTMLImageElement, lang?: "en_US" | "fr_FR" | "pt_BR" | "ja_JP" | "ko_KR" | "ru_RU" | "sv_SE" | "zh_CN" | "zh_TW", theme?: string) => void;
     /** 为 element 中的代码块添加复制按钮 */
-    static codeRender: (element: HTMLElement) => void;
+    static codeRender: (element: HTMLElement, option?: IHljs) => void;
     /** 对 graphviz 进行渲染 */
     static graphvizRender: (element: HTMLElement, cdn?: string) => void;
     /** 为 element 中的代码块进行高亮渲染 */

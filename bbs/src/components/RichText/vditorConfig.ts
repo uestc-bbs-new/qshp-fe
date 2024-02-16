@@ -1,7 +1,7 @@
 import { customRenderers } from './renderer'
 
 export const common = {
-  cdn: '/third_party/vditor-patched-0.1',
+  cdn: '/third_party/vditor-patched-0.2',
 }
 export const commonEmojiPath = {
   emojiPath: `${common.cdn}/dist/images/emoji`,
