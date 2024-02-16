@@ -17,6 +17,7 @@ import { useAppState } from '@/states'
 
 import { kSmilyBasePath } from '../RichText/renderer'
 import { smilyData } from '../RichText/smilyData'
+import { VditorContext } from '../RichText/types'
 import { getPreviewThemeOptions } from '../RichText/vditorConfig'
 import options from './vditorConfig'
 
@@ -36,7 +37,9 @@ const Editor = ({
 }: props) => {
   const { state } = useAppState()
   const vditorRef = createRef<HTMLDivElement>()
-  const vditor = useRef<Vditor>()
+  const vditorContext = useRef<VditorContext>({
+    attachments: [],
+  })
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
   const smilyAnchor = useRef<HTMLElement>()
@@ -44,18 +47,18 @@ const Editor = ({
   const closeSmily = () => setSmilyOpen(false)
   const [selectedSmilyKind, setSmilyKind] = useState(smilyData[0])
   useEffect(() => {
-    if (!vditorRef.current || vditor.current) {
+    if (!vditorRef.current || vditorContext.current.vditor) {
       return
     }
-    vditor.current = new Vditor(vditorRef.current, {
+    vditorContext.current.vditor = new Vditor(vditorRef.current, {
       after: () => {
         if (autoFocus) {
-          vditor.current?.focus()
+          vditorContext.current.vditor?.focus()
         }
         if (initialValue) {
-          vditor.current?.insertValue(initialValue)
+          vditorContext.current.vditor?.insertValue(initialValue)
         }
-        setVd(vditor.current)
+        setVd(vditorContext.current.vditor)
         vditorInitialized.current = true
       },
       beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
@@ -88,6 +91,7 @@ const Editor = ({
             setSmilyOpen(true)
           },
         },
+        context: vditorContext.current,
       }),
       preview: getPreviewThemeOptions(state.theme),
       ...other,
@@ -96,9 +100,9 @@ const Editor = ({
   }, [])
   useEffect(() => {
     if (vditorInitialized.current) {
-      vditor.current?.setTheme(theme(), state.theme)
+      vditorContext.current.vditor?.setTheme(theme(), state.theme)
     }
-  }, [state.theme, vditor.current])
+  }, [state.theme, vditorContext.current.vditor])
   return (
     <>
       <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
@@ -130,7 +134,7 @@ const Editor = ({
               <Grid key={index} item>
                 <IconButton
                   onClick={() => {
-                    vditor.current?.insertValue(
+                    vditorContext.current.vditor?.insertValue(
                       ` ![${item.code || item.id}](s) `
                     )
                     closeSmily()

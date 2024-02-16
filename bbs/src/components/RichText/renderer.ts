@@ -2,6 +2,7 @@ import { html } from '@/utils/html'
 import siteRoot from '@/utils/siteRoot'
 
 import { unifiedSmilyMap } from './smilyData'
+import { VditorContext } from './types'
 
 type RenderState = {
   type: 'image' | 'link'
@@ -12,7 +13,7 @@ type RenderState = {
 const kForumAttachBasePath = siteRoot + '/data/attachment/forum/'
 export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 
-const renderImage = (src: string, alt: string) => {
+const renderImage = (src: string, alt: string, context?: VditorContext) => {
   if (src == 's' && unifiedSmilyMap[parseInt(alt || '')]) {
     return html`<img
       src="${kSmilyBasePath}${unifiedSmilyMap[parseInt(alt || '')]}"
@@ -24,8 +25,19 @@ const renderImage = (src: string, alt: string) => {
   }
   const match = src.match(/^a:([0-9]+)/)
   if (match) {
-    // attachment
-    return ''
+    const id = parseInt(match[1])
+    const path = context?.attachments?.find((item) => item.attachment_id == id)
+      ?.path
+    if (path) {
+      return html`<img
+        src="${kForumAttachBasePath}${path}"
+        alt="${alt}"
+        class="post_attachment"
+        data-x-special-kind="attachment"
+        data-x-original-src="${src}"
+        data-x-original-alt="${alt}"
+      />`
+    }
   }
   return html`<img src="${src}" alt="${alt || ''}" />`
 }
@@ -110,7 +122,10 @@ const shouldRenderMarkersOrDefault = (
   shouldRenderMarkers(nodeType, rendererType, node, entering) ||
   defaultRenderResult()
 
-export const customRenderers = (rendererType: string): ILuteRender => {
+export const customRenderers = (
+  rendererType: string,
+  context?: VditorContext
+): ILuteRender => {
   const renderState: RenderState[] = []
   return {
     renderBang: (node: ILuteNode, entering: boolean) => {
@@ -145,7 +160,7 @@ export const customRenderers = (rendererType: string): ILuteRender => {
           const state = renderState[renderState.length - 1]
           if (state.type == 'image') {
             renderState.pop()
-            html = renderImage(state.dest || '', state.text || '')
+            html = renderImage(state.dest || '', state.text || '', context)
           } else if (state.type == 'link') {
             renderState.pop()
             html = renderLink(state.dest || '', state.text || '')
