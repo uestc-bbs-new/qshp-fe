@@ -33,6 +33,7 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
         src="${kForumAttachBasePath}${path}"
         alt="${alt}"
         class="post_attachment post_attachment_image"
+        loading="lazy"
         data-x-special-kind="attachment"
         data-x-original-src="${src}"
         data-x-original-alt="${alt}"
