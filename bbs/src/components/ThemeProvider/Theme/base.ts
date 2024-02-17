@@ -38,6 +38,16 @@ const baseComponent = {
       container: rootElement,
     },
   },
+  MuiButton: {
+    variants: [
+      {
+        props: { variant: 'dialogOk' },
+      },
+      {
+        props: { variant: 'dialogCancel' },
+      },
+    ],
+  },
   MuiChip: {
     variants: [
       {
@@ -156,6 +166,13 @@ declare module '@mui/material/Typography' {
     userAction: true
     emptyListText: true
     dialogTitle: true
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    dialogOk: true
+    dialogCancel: true
   }
 }
 

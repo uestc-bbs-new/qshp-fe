@@ -145,7 +145,7 @@ export const getUserFriends = async (
   )
   return result
 }
-export const addFriend = (params: { uid: number; message: string }) =>
+export const addFriend = (params: { uid: number; message?: string }) =>
   request.put(`${userApiBase}/friend`, params)
 export const editFriend = (uid: number, params: { note: string }) =>
   request.patch(`${userApiBase}/friend/${uid}`, params)
