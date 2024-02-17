@@ -1,12 +1,6 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 
-import {
-  Component,
-  createRef,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-} from 'react'
+import { Component, forwardRef, useImperativeHandle, useRef } from 'react'
 import ReCaptcha from 'react-google-recaptcha'
 
 import { useAppState } from '@/states'
@@ -28,7 +22,7 @@ export default forwardRef(function Captcha(
 ) {
   const { state } = useAppState()
   const hCaptchaRef = useRef<HCaptcha>(null)
-  const reCaptchaRef = createRef<ReCaptcha>()
+  const reCaptchaRef = useRef<ReCaptcha>(null)
   useImperativeHandle(
     ref,
     () => ({

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Close } from '@mui/icons-material'
@@ -89,7 +89,7 @@ function Friends({
   }
 
   const navigate = useNavigate()
-  const topRef = createRef<HTMLDivElement>()
+  const topRef = useRef<HTMLDivElement>(null)
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     navigate(
       `${location.pathname}?${searchParamsAssign(searchParams, {

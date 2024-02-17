@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { createRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { CollectionsBookmark, ExpandMore } from '@mui/icons-material'
@@ -80,7 +80,7 @@ function Favorites({
   })
 
   const navigate = useNavigate()
-  const topRef = createRef<HTMLDivElement>()
+  const topRef = useRef<HTMLDivElement>(null)
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     navigate(
       `${location.pathname}?${searchParamsAssign(searchParams, {
