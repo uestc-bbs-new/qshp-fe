@@ -15,7 +15,7 @@ import { addFriend } from '@/apis/user'
 import { User } from '@/common/interfaces/base'
 import { UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
-import GeneralDialog from '@/components/GeneralDialog'
+import GeneralDialog, { DialogHandle } from '@/components/GeneralDialog'
 import Link from '@/components/Link'
 import Medals from '@/components/Medals'
 import DigestAuthor from '@/components/Medals/DigestAuthor'
@@ -232,7 +232,7 @@ const AddFriendDialog = ({
   open: boolean
   onClose: ModalProps['onClose']
 }) => {
-  const dialogRef = useRef(null)
+  const dialogRef = useRef<DialogHandle>(null)
   const inputRef = useRef<HTMLInputElement>()
   return (
     <GeneralDialog
@@ -259,7 +259,7 @@ const AddFriendDialog = ({
         inputRef={inputRef}
         autoFocus
         fullWidth
-        onKeyDown={handleEnter(() => {})}
+        onKeyDown={handleEnter(() => dialogRef.current?.ok({}))}
       />
     </GeneralDialog>
   )
