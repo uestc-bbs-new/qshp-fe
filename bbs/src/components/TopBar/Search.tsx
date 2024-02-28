@@ -14,21 +14,28 @@ import {
   debounce,
 } from '@mui/material'
 
-import { searchThreads } from '@/apis/common'
-import { Thread } from '@/common/interfaces/response'
+import { searchSummary } from '@/apis/common'
+import {
+  SearchSummaryResponse,
+  SearchSummaryThread,
+  SearchSummaryUser,
+} from '@/common/interfaces/response'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 
 type Result = {
-  thread?: Thread
-  more?: boolean
+  thread?: SearchSummaryThread
+  moreThreads?: boolean
   divider?: boolean
-  user?: boolean
+  user?: SearchSummaryUser
+  moreUsers?: boolean
+  idMatch?: boolean
 }
 
-const kPreviewCount = 5
+const kThreadPreviewCount = 5
+const kUserPreviewCount = 3
 
 const SearchBar = () => {
   const navigate = useNavigate()
@@ -41,18 +48,13 @@ const SearchBar = () => {
   const fetch = useMemo(
     () =>
       debounce(
-        async (keyword: string, callback: (threads: Thread[]) => void) => {
+        async (
+          keyword: string,
+          callback: (result: SearchSummaryResponse) => void
+        ) => {
           setLoading(true)
           try {
-            callback(
-              (
-                await searchThreads({
-                  keyWord: keyword,
-                  pageSize: kPreviewCount + 1,
-                  pageNum: 1,
-                })
-              ).threads
-            )
+            callback(await searchSummary(keyword))
           } finally {
             setLoading(false)
           }
@@ -64,13 +66,7 @@ const SearchBar = () => {
 
   const handleSubmit = () => {
     if (value.trim()) {
-      navigate({
-        pathname: '/search',
-        search: createSearchParams({
-          type: 'post',
-          name: value,
-        }).toString(),
-      })
+      navigate(pages.searchThreads({ keyword: value }))
     }
   }
 
@@ -90,7 +86,7 @@ const SearchBar = () => {
         fullWidth
         size="small"
         freeSolo
-        ListboxProps={{ sx: { maxHeight: '500px' } }}
+        ListboxProps={{ sx: { maxHeight: '640px' } }}
         filterOptions={(x) => x}
         renderInput={(params) => (
           <TextField
@@ -114,9 +110,11 @@ const SearchBar = () => {
               setOpen(false)
               if (option.thread) {
                 navigate(pages.thread(option.thread.thread_id))
-              } else if (option.more) {
+              } else if (option.moreThreads) {
                 handleSubmit()
               } else if (option.user) {
+                navigate(pages.user({ uid: option.user.uid }))
+              } else if (option.moreUsers) {
                 navigate({
                   pathname: '/search',
                   search: createSearchParams({
@@ -130,7 +128,7 @@ const SearchBar = () => {
             {option.thread && (
               <>
                 <ListItemIcon>
-                  <Avatar uid={option.thread.author_id} variant="rounded" />
+                  <Avatar uid={option.thread.author_id} />
                 </ListItemIcon>
                 <ListItemText>
                   <Typography>{option.thread.subject}</Typography>
@@ -143,15 +141,32 @@ const SearchBar = () => {
                 </ListItemText>
               </>
             )}
+            {option.user && (
+              <>
+                <ListItemIcon>
+                  <Avatar uid={option.user.uid} />
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography>{option.user.username}</Typography>
+                  <Stack direction="row">
+                    <Typography>
+                      {option.user.group_title}
+                      {option.user.group_subtitle &&
+                        ` (${option.user.group_subtitle})`}
+                    </Typography>
+                  </Stack>
+                </ListItemText>
+              </>
+            )}
             {option.divider && <Divider sx={{ width: '100%' }} />}
-            {option.more && (
+            {option.moreThreads && (
               <ListItemText>
-                <Typography>更多结果...</Typography>
+                <Typography>更多帖子...</Typography>
               </ListItemText>
             )}
-            {option.user && (
+            {option.moreUsers && (
               <ListItemText>
-                <Typography>搜索用户...</Typography>
+                <Typography>更多用户...</Typography>
               </ListItemText>
             )}
           </li>
@@ -167,16 +182,21 @@ const SearchBar = () => {
             return option
           }
           if (option.thread) {
-            return option.thread.thread_id.toString()
+            return (
+              option.thread.thread_id.toString() + (option.idMatch ? '!' : '')
+            )
+          }
+          if (option.user) {
+            return option.user.uid.toString() + (option.idMatch ? '!' : '')
           }
           if (option.divider) {
             return 'divider'
           }
-          if (option.more) {
-            return 'more'
+          if (option.moreThreads) {
+            return 'moreThreads'
           }
-          if (option.user) {
-            return 'user'
+          if (option.moreUsers) {
+            return 'moreUsers'
           }
           return ''
         }}
@@ -185,14 +205,27 @@ const SearchBar = () => {
         onInputChange={async (_, value) => {
           setValue(value)
           if (value.trim()) {
-            fetch(value, (threads) => {
+            fetch(value, (result) => {
               setSeacrhResults([
-                ...threads
-                  .slice(0, kPreviewCount)
-                  .map((thread) => ({ thread })),
-                ...(threads.length > kPreviewCount ? [{ more: true }] : []),
+                ...(result.tid_match
+                  ? [{ idMatch: true, thread: result.tid_match }]
+                  : []),
+                ...(result.uid_match
+                  ? [{ idMatch: true, user: result.uid_match }]
+                  : []),
+                ...(result.threads
+                  ?.slice(0, kThreadPreviewCount)
+                  ?.map((thread) => ({ thread })) || []),
+                ...(result.thread_count > kThreadPreviewCount
+                  ? [{ moreThreads: true }]
+                  : []),
                 { divider: true },
-                { user: true },
+                ...(result.users
+                  ?.slice(0, kUserPreviewCount)
+                  ?.map((user) => ({ user })) || []),
+                ...(result.user_count > kUserPreviewCount
+                  ? [{ moreUsers: true }]
+                  : []),
               ])
             })
           }

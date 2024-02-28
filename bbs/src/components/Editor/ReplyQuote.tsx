@@ -3,6 +3,7 @@ import { RefObject } from 'react'
 import { Typography } from '@mui/material'
 
 import { PostFloor } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -58,9 +59,10 @@ const ReplyQuote = ({
 ${lines.map((line) => `> ${line}`).join('\n')}
 
 `)
+  const { state } = useAppState()
 
   return (
-    <div className="rich-text-content">
+    <div className={`rich-text-content rich-text-theme-${state.theme}`}>
       <blockquote>
         <Typography>
           {post.author} 发表于 {postTime}

@@ -20,6 +20,7 @@ import {
 } from '@mui/material'
 
 import { idasAuth, idasChooseUser } from '@/apis/auth'
+import { ContinueMode, kDefaultContinueMode } from '@/common/types/idas'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
 import { kIdasOrigin, pages } from '@/utils/routes'
@@ -33,13 +34,10 @@ import { IdasResultEx } from './common'
 
 const kTicket = 'ticket'
 
-type Mode = 'signin' | 'register' | 'resetpassword'
-const kDefaultMode = 'signin'
-
 const Continue = () => {
   const dark = useTheme().palette.mode == 'dark'
   const idasResult = useLoaderData() as IdasResultEx
-  const mode = useParams()['mode'] as Mode | undefined
+  const mode = (useParams()['mode'] as ContinueMode) || kDefaultContinueMode
 
   const [pending, setPending] = useState(false)
   const [forceRegister, setRegister] = useState(mode == 'register')
@@ -169,7 +167,7 @@ export const ContinueLoader = async ({
   params,
 }: {
   request: Request
-  params: { mode?: Mode }
+  params: { mode?: ContinueMode }
 }) => {
   const url = new URL(request.url)
   const searchParams = url.searchParams
@@ -185,7 +183,7 @@ export const ContinueLoader = async ({
     const result = await idasAuth({
       continue: continuePath,
       ticket,
-      signin: (params.mode || kDefaultMode) == 'signin',
+      signin: (params.mode || kDefaultContinueMode) == 'signin',
     })
     if (result.authorization) {
       persistedStates.authorizationHeader = result.authorization

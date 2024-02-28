@@ -30,6 +30,7 @@ const EditOrReply = ({
       ...(threadDetails?.poll && {
         poll: threadDetails.poll,
       }),
+      attachments: post.attachments,
       editingThread: post.position == 1 && post.is_first == 1,
     }
   }

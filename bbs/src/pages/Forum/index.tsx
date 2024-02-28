@@ -357,6 +357,7 @@ function Forum() {
                                 data={item}
                                 key={item.thread_id}
                                 forumDetails={forumDetails}
+                                showSummary
                               />
                             ))}
                         </List>

@@ -1,5 +1,3 @@
-import Vditor from 'vditor'
-
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,7 +12,7 @@ import {
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
 import { ForumDetails, PostFloor } from '@/common/interfaces/response'
-import Editor from '@/components/Editor'
+import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
 import { useAppState } from '@/states'
@@ -43,8 +41,8 @@ const Author = ({
     <Stack direction={small ? 'row' : 'column'} alignItems="center" mr={2}>
       <Avatar
         uid={anonymous ? 0 : state.user.uid}
-        sx={{ width: size, height: size, mr: small ? 1 : undefined }}
-        variant="rounded"
+        size={size}
+        sx={{ mr: small ? 1 : undefined }}
       />
       <Typography mt={small ? undefined : 1} textAlign="center">
         {anonymous ? (
@@ -89,7 +87,7 @@ const PostEditor = ({
   const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
     kind
   ]
-  const [vd, setVd] = useState<Vditor>() // editor ref
+  const editor = useRef<EditorHandle>(null)
 
   const {
     props: snackbarProps,
@@ -138,7 +136,7 @@ const PostEditor = ({
       return
     }
 
-    const message = vd?.getValue() || ''
+    const message = editor.current?.vditor?.getValue() || ''
     if (!message.trim()) {
       showError('请输入内容。')
       return
@@ -152,9 +150,11 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        attachments: editor.current?.attachments,
       })
         .then((result) => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -164,9 +164,11 @@ const PostEditor = ({
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
         is_anonymous: valueRef.current.is_anonymous,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -177,6 +179,7 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()
@@ -213,8 +216,9 @@ const PostEditor = ({
             autoFocus={autoFocus}
             minHeight={300}
             initialValue={initialValue?.message}
-            setVd={setVd}
+            initialAttachments={initialValue?.attachments}
             onKeyDown={handleCtrlEnter(handleSubmit)}
+            ref={editor}
           />
           <PostOptions
             forum={forum}

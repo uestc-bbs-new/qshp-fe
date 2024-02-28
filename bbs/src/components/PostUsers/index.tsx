@@ -26,8 +26,7 @@ const PostUsers = ({ data, small, className }: PostProps) => {
             <Avatar
               alt={data.username}
               uid={data.user_id}
-              sx={small ? { width: 35, height: 35 } : { width: 54, height: 54 }}
-              variant="rounded"
+              size={small ? 35 : 54}
             />
           </Box>
           <Box className="flex-1">

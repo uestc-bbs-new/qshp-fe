@@ -91,7 +91,10 @@ const MessagePopover = () => {
     (state.user.new_grouppm_legacy ? 1 : 0)
   return (
     <>
-      <Tooltip title={<MessageTabs />}>
+      <Tooltip
+        title={<MessageTabs />}
+        slotProps={{ tooltip: { sx: { fontSize: '1em' } } }}
+      >
         <Badge badgeContent={totalMessages} className="mx-3" color="warning">
           <MarkunreadOutlined className="text-white" />
         </Badge>

@@ -1,6 +1,7 @@
 import Vditor from 'vditor'
 
-import { createRef, useEffect } from 'react'
+import React, { createRef, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Typography,
@@ -10,6 +11,7 @@ import {
   lighten,
 } from '@mui/material'
 
+import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
 import { useAppState } from '@/states'
@@ -17,12 +19,20 @@ import { useAppState } from '@/states'
 // @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
 
+import { onClickHandler } from './eventHandlers'
 import './richtext.css'
+import { transformUserHtml } from './transform'
 
 const kAuthoredColor = 'authoredColor'
 const kColorManipulated = 'colorManipulated'
 
-export const UserHtmlRenderer = ({ html }: { html: string }) => {
+export const UserHtmlRenderer = ({
+  html,
+  style,
+}: {
+  html: string
+  style?: React.CSSProperties
+}) => {
   const { state } = useAppState()
   const contentRef = createRef<HTMLDivElement>()
   const findParentBackgroundColor = (
@@ -106,13 +116,18 @@ export const UserHtmlRenderer = ({ html }: { html: string }) => {
       )
     }
   }, [state.theme])
+
+  const processedHtml = useMemo(() => transformUserHtml(html), [html])
+  const navigate = useNavigate()
   return (
     <div
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
+      style={style}
       dangerouslySetInnerHTML={{
-        __html: html,
+        __html: processedHtml,
       }}
+      onClickCapture={(e) => onClickHandler(e, navigate)}
     ></div>
   )
 }
@@ -129,16 +144,30 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
   )
 }
 
-const MarkdownPostRenderer = ({ message }: { message: string }) => {
+const MarkdownPostRenderer = ({
+  message,
+  attachments,
+}: {
+  message: string
+  attachments?: Attachment[]
+}) => {
   const { state } = useAppState()
   const el = createRef<HTMLDivElement>()
   useEffect(() => {
     el.current &&
-      Vditor.preview(el.current, message, getPreviewOptions(state.theme))
+      Vditor.preview(
+        el.current,
+        message,
+        getPreviewOptions(state.theme, {
+          attachments: attachments || [],
+        })
+      )
   }, [message])
+  const navigate = useNavigate()
   return (
     <div
       className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
+      onClickCapture={(e) => onClickHandler(e, navigate)}
     >
       <Typography color="text.primary" ref={el}></Typography>
     </div>
@@ -147,7 +176,10 @@ const MarkdownPostRenderer = ({ message }: { message: string }) => {
 
 export const PostRenderer = ({ post }: { post: PostFloor }) => {
   return post.format == 2 ? (
-    <MarkdownPostRenderer message={post.message} />
+    <MarkdownPostRenderer
+      message={post.message}
+      attachments={post.attachments}
+    />
   ) : (
     <LegacyPostRenderer post={post} />
   )
