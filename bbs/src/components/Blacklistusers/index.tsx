@@ -6,11 +6,11 @@ import { UserInfo } from '@/common/interfaces/response'
 import Avatar from '../Avatar'
 import Link from '../Link'
 
-type BlacklistusersProps = {
+type BlacklistUsersProps = {
   data: UserInfo
   className?: string
 }
-const Blacklistusers = ({ data, className }: BlacklistusersProps) => {
+const BlacklistUsers = ({ data, className }: BlacklistUsersProps) => {
   const theme = useTheme()
   return (
     <Box className={`${className}`}>
@@ -62,4 +62,4 @@ const Blacklistusers = ({ data, className }: BlacklistusersProps) => {
     </Box>
   )
 }
-export default Blacklistusers
+export default BlacklistUsers
