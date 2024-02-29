@@ -217,6 +217,7 @@ export interface PostFloor {
   is_anonymous: number
   usesig: number
   smileyoff: number
+  reply_credit: number
   lastedit_id: number
 
   pinned?: boolean
