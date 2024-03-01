@@ -28,6 +28,7 @@ import PostRates from './PostRates'
 import PostStatus from './PostStatus'
 import ThreadLikes from './ThreadLikes'
 import PollExtension from './extension/Poll'
+import { ReplyCreditBadge } from './extension/ReplyCredit'
 import { PostExtraDetailsEx } from './types'
 
 function PostSubject({
@@ -185,7 +186,6 @@ const Floor = ({
               </Typography>
             </Stack>
           </Stack>
-          <PostStatus post={post} />
           {(post.position > 1 || !post.is_first) && (
             <PostSubject
               post={post}
@@ -193,6 +193,8 @@ const Floor = ({
               forum={forumDetails}
             />
           )}
+          <PostStatus post={post} />
+          {post.reply_credit_name && <ReplyCreditBadge post={post} />}
           {children}
           {post.position == 1 && !!post.is_first && (
             <PollExtension threadDetails={threadDetails} />
