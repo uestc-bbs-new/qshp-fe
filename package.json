@@ -77,6 +77,6 @@
     "react-router-dom": "^6.21.1",
     "react-swipeable-views": "^0.14.0",
     "vditor": "file:bbs/third_party/vditor",
-    "vite": "^5.0.10"
+    "vite": "^5.1.4"
   }
 }
