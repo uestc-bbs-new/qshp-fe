@@ -145,6 +145,7 @@ export type ThreadPollOption = {
 
 type ThreadReplyCredit = {
   count: number
+  credit_amount: number
   credit_name: string
   limit_per_user: number
   probability: number

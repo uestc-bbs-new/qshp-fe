@@ -119,6 +119,7 @@ declare module '@mui/material/styles' {
     emptyListText: React.CSSProperties
     dialogTitle: React.CSSProperties
     replyCredit: React.CSSProperties
+    replyCreditDetails: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -143,6 +144,7 @@ declare module '@mui/material/styles' {
     emptyListText?: React.CSSProperties
     dialogTitle?: React.CSSProperties
     replyCredit?: React.CSSProperties
+    replyCreditDetails?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -169,6 +171,7 @@ declare module '@mui/material/Typography' {
     emptyListText: true
     dialogTitle: true
     replyCredit: true
+    replyCreditDetails: true
   }
 }
 
@@ -306,6 +309,10 @@ export const baseTheme: ThemeOptions = {
     },
     replyCredit: {
       fontSize: 14,
+      color: '#F26B4E',
+    },
+    replyCreditDetails: {
+      fontSize: 16,
       color: '#F26B4E',
     },
   },

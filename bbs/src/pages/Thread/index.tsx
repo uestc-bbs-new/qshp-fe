@@ -241,7 +241,7 @@ function Thread() {
             {info?.rows
               ? info?.rows.map((item) => {
                   return (
-                    <Card className="mb-4 pl-0" key={item.post_id}>
+                    <Card className="mb-4 px-0" key={item.post_id}>
                       <section
                         id={`post-${item.post_id}`}
                         css={scrollAnchorCss}

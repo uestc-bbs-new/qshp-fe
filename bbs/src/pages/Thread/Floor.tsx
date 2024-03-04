@@ -28,7 +28,11 @@ import PostRates from './PostRates'
 import PostStatus from './PostStatus'
 import ThreadLikes from './ThreadLikes'
 import PollExtension from './extension/Poll'
-import { ReplyCreditBadge } from './extension/ReplyCredit'
+import {
+  ReplyCreditBadge,
+  ReplyCreditFloorLeft,
+  ReplyCreditFloorRight,
+} from './extension/ReplyCredit'
 import { PostExtraDetailsEx } from './types'
 
 function PostSubject({
@@ -112,138 +116,153 @@ const Floor = ({
               theme.palette.mode == 'light' ? '#D2E2FD' : '#42516d',
           })}
           width={192}
-          px={2}
-          py={2}
         >
-          <UserCard item={post}>
-            <AuthorLink post={post}>
-              <Avatar
-                className="m-auto"
-                uid={
-                  post.is_anonymous || !post.author_details ? 0 : post.author_id
-                }
-                size={48}
+          {post.position == 1 &&
+            !!post.is_first &&
+            threadDetails?.reply_credit && (
+              <ReplyCreditFloorLeft threadDetails={threadDetails} />
+            )}
+          <Box px={2} py={2}>
+            <UserCard item={post}>
+              <AuthorLink post={post}>
+                <Avatar
+                  className="m-auto"
+                  uid={
+                    post.is_anonymous || !post.author_details
+                      ? 0
+                      : post.author_id
+                  }
+                  size={48}
+                />
+                <Typography variant="authorName" mt={0.5} component="p">
+                  {post.is_anonymous ? '匿名' : post.author}
+                </Typography>
+              </AuthorLink>
+            </UserCard>
+            {!!post.author_id && (
+              <AuthorDetails
+                author={post.author}
+                authorDetails={post.author_details}
               />
-              <Typography variant="authorName" mt={0.5} component="p">
-                {post.is_anonymous ? '匿名' : post.author}
-              </Typography>
-            </AuthorLink>
-          </UserCard>
-          {!!post.author_id && (
-            <AuthorDetails
-              author={post.author}
-              authorDetails={post.author_details}
-            />
-          )}
+            )}
+          </Box>
         </Stack>
-        <Stack className="flex-1" minWidth="1em" pl={2} pt={1.5} pb={1}>
-          {post.position == 1 && !!post.is_first && (
-            <PostSubject
-              post={post}
-              thread={threadDetails}
-              forum={forumDetails}
-            />
-          )}
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            className="text-sm text-slate-300"
-            mt={post.position == 1 && post.is_first ? 0.5 : undefined}
-            mb={1}
-          >
-            <Stack direction="row">
-              <Link color="inherit" underline="none" to={gotoLink}>
-                {chineseTime(post.dateline * 1000)}
-              </Link>
-              {threadControls}
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Link
-                color="inherit"
-                className="hover:text-blue-500"
-                mr={1}
-                to={gotoLink}
-                underline="hover"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigator.clipboard.writeText(
-                    `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-                  )
-                  show('')
-                }}
-              >
-                分享
-              </Link>
-              <Typography>
-                {post.pinned && (
-                  <PublishIcon
-                    htmlColor="#ff785b"
-                    sx={{ verticalAlign: 'middle' }}
-                  />
-                )}
-                #{post.position}
-              </Typography>
-            </Stack>
-          </Stack>
-          {(post.position > 1 || !post.is_first) && (
-            <PostSubject
-              post={post}
-              thread={threadDetails}
-              forum={forumDetails}
-            />
-          )}
-          <PostStatus post={post} />
-          {post.reply_credit_name && <ReplyCreditBadge post={post} />}
-          {children}
-          {post.position == 1 && !!post.is_first && (
-            <PollExtension threadDetails={threadDetails} />
-          )}
-          {threadDetails && post.position == 1 && post.is_first == 1 && (
-            <ThreadLikes
-              tid={threadDetails.thread_id}
-              values={[post.support, post.oppose]}
-            />
-          )}
-          <PostExtraDetailsContainer
-            loading={!!post.has_comment && !postDetails}
-            hasContent={
-              !!postDetails?.comments?.length || !!postDetails?.commentsRefresh
-            }
-          >
-            <>
-              {(postDetails?.comments || !!postDetails?.commentsRefresh) && (
-                <PostComments post={post} postDetails={postDetails} />
-              )}
-            </>
-          </PostExtraDetailsContainer>
-          <PostExtraDetailsContainer
-            loading={!!post.has_rate && !postDetails}
-            hasContent={
-              !!postDetails?.rates?.length && !!postDetails?.rate_stat
-            }
-          >
-            {postDetails?.rates && postDetails?.rate_stat && (
-              <PostRates
-                rates={postDetails.rates}
-                rateStat={postDetails.rate_stat}
+        <Stack className="flex-1" minWidth="1em">
+          {post.position == 1 &&
+            !!post.is_first &&
+            threadDetails?.reply_credit && (
+              <ReplyCreditFloorRight threadDetails={threadDetails} />
+            )}
+          <Stack className="flex-1" px={2} pt={1.5} pb={0.5}>
+            {post.position == 1 && !!post.is_first && (
+              <PostSubject
+                post={post}
+                thread={threadDetails}
+                forum={forumDetails}
               />
             )}
-          </PostExtraDetailsContainer>
-          <Box flexGrow={1} />
-          {!!post.usesig &&
-            post.author_details?.signature &&
-            post.message.length > 60 && (
-              <Signature authorDetails={post.author_details} />
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              className="text-sm text-slate-300"
+              mt={post.position == 1 && post.is_first ? 0.5 : undefined}
+              mb={1}
+            >
+              <Stack direction="row">
+                <Link color="inherit" underline="none" to={gotoLink}>
+                  {chineseTime(post.dateline * 1000)}
+                </Link>
+                {threadControls}
+              </Stack>
+              <Stack direction="row" alignItems="center">
+                <Link
+                  color="inherit"
+                  className="hover:text-blue-500"
+                  mr={1}
+                  to={gotoLink}
+                  underline="hover"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    navigator.clipboard.writeText(
+                      `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+                    )
+                    show('')
+                  }}
+                >
+                  分享
+                </Link>
+                <Typography>
+                  {post.pinned && (
+                    <PublishIcon
+                      htmlColor="#ff785b"
+                      sx={{ verticalAlign: 'middle' }}
+                    />
+                  )}
+                  #{post.position}
+                </Typography>
+              </Stack>
+            </Stack>
+            {(post.position > 1 || !post.is_first) && (
+              <PostSubject
+                post={post}
+                thread={threadDetails}
+                forum={forumDetails}
+              />
             )}
-          <Footer
-            forumDetails={forumDetails}
-            threadDetails={threadDetails}
-            post={post}
-            onReply={() => onReply(post)}
-            onComment={() => onComment(post)}
-            onEdit={() => onEdit(post)}
-          />
+            <PostStatus post={post} />
+            {post.reply_credit_name && <ReplyCreditBadge post={post} />}
+            {children}
+            {post.position == 1 && !!post.is_first && (
+              <PollExtension threadDetails={threadDetails} />
+            )}
+            {threadDetails && post.position == 1 && post.is_first == 1 && (
+              <ThreadLikes
+                tid={threadDetails.thread_id}
+                values={[post.support, post.oppose]}
+              />
+            )}
+            <PostExtraDetailsContainer
+              loading={!!post.has_comment && !postDetails}
+              hasContent={
+                !!postDetails?.comments?.length ||
+                !!postDetails?.commentsRefresh
+              }
+            >
+              <>
+                {(postDetails?.comments || !!postDetails?.commentsRefresh) && (
+                  <PostComments post={post} postDetails={postDetails} />
+                )}
+              </>
+            </PostExtraDetailsContainer>
+            <PostExtraDetailsContainer
+              loading={!!post.has_rate && !postDetails}
+              hasContent={
+                !!postDetails?.rates?.length && !!postDetails?.rate_stat
+              }
+            >
+              {postDetails?.rates && postDetails?.rate_stat && (
+                <PostRates
+                  rates={postDetails.rates}
+                  rateStat={postDetails.rate_stat}
+                />
+              )}
+            </PostExtraDetailsContainer>
+            <Box flexGrow={1} />
+            {!!post.usesig &&
+              post.author_details?.signature &&
+              post.message.length > 60 && (
+                <Signature authorDetails={post.author_details} />
+              )}
+            <Footer
+              forumDetails={forumDetails}
+              threadDetails={threadDetails}
+              post={post}
+              onReply={() => onReply(post)}
+              onComment={() => onComment(post)}
+              onEdit={() => onEdit(post)}
+            />
+          </Stack>
         </Stack>
       </Stack>
     </Box>
