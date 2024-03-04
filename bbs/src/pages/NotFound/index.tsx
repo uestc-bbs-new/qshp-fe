@@ -35,6 +35,9 @@ const NotFound = () => {
           width: (664 / 1920) * 100 + 'vw',
           right: (123 / 1920) * 100 + 'vw',
           bottom: (140 / 1920) * 100 + 'vw',
+          '@media (min-width: 1920px)': {
+            width: '664px',
+          },
           '@media (max-width: 800px)': {
             width: '65%',
           },
