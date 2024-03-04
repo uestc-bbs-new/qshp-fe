@@ -241,7 +241,13 @@ function Thread() {
             {info?.rows
               ? info?.rows.map((item) => {
                   return (
-                    <Card className="mb-4 px-0" key={item.post_id}>
+                    <Box
+                      className="mb-4 rounded-lg shadow-lg"
+                      sx={(theme) => ({
+                        backgroundColor: theme.palette.background.paper,
+                      })}
+                      key={item.post_id}
+                    >
                       <section
                         id={`post-${item.post_id}`}
                         css={scrollAnchorCss}
@@ -308,7 +314,7 @@ function Thread() {
                           </Box>
                         </Floor>
                       </section>
-                    </Card>
+                    </Box>
                   )
                 })
               : infoLoading && (
