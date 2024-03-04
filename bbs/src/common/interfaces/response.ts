@@ -102,6 +102,7 @@ type ThreadExtended = {
   icon?: number
   poll?: ThreadPollDetails
   reply_credit?: ThreadReplyCredit
+  reply_credit_remaining_amount?: number
 }
 export type Thread = ThreadBasics & ThreadExtended
 
