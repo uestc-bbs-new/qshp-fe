@@ -239,7 +239,7 @@ function Thread() {
               onChange={handlePageChange}
             />
             {info?.rows
-              ? info?.rows.map((item) => {
+              ? info?.rows.map((item, index) => {
                   return (
                     <Box
                       className="mb-4 rounded-lg shadow-lg"
@@ -257,6 +257,7 @@ function Thread() {
                           postDetails={postDetails[item.post_id]}
                           threadDetails={threadDetails}
                           forumDetails={forumDetails}
+                          firstInPage={index == 0}
                           onReply={handleReply}
                           onComment={handleComment}
                           onEdit={handleEdit}

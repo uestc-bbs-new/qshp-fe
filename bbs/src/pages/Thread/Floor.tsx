@@ -78,6 +78,7 @@ type props = {
   postDetails?: PostExtraDetailsEx
   threadDetails?: Thread
   forumDetails?: ForumDetails
+  firstInPage?: boolean
   onReply: (post: PostFloor) => void
   onComment: (post: PostFloor) => void
   onEdit: (post: PostFloor) => void
@@ -90,6 +91,7 @@ const Floor = ({
   postDetails,
   threadDetails,
   forumDetails,
+  firstInPage,
   onReply,
   onComment,
   onEdit,
@@ -117,11 +119,9 @@ const Floor = ({
           })}
           width={192}
         >
-          {post.position == 1 &&
-            !!post.is_first &&
-            threadDetails?.reply_credit && (
-              <ReplyCreditFloorLeft threadDetails={threadDetails} />
-            )}
+          {firstInPage && threadDetails?.reply_credit && (
+            <ReplyCreditFloorLeft threadDetails={threadDetails} />
+          )}
           <Box px={2} py={2}>
             <UserCard item={post}>
               <AuthorLink post={post}>
@@ -148,11 +148,9 @@ const Floor = ({
           </Box>
         </Stack>
         <Stack className="flex-1" minWidth="1em">
-          {post.position == 1 &&
-            !!post.is_first &&
-            threadDetails?.reply_credit && (
-              <ReplyCreditFloorRight threadDetails={threadDetails} />
-            )}
+          {firstInPage && threadDetails?.reply_credit && (
+            <ReplyCreditFloorRight threadDetails={threadDetails} />
+          )}
           <Stack className="flex-1" px={2} pt={1.5} pb={0.5}>
             {post.position == 1 && !!post.is_first && (
               <PostSubject
