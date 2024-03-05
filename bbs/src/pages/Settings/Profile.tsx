@@ -12,19 +12,21 @@ import {
   useTheme,
 } from '@mui/material'
 
-import Avatar from '@/components/Avatar'
 import { StyledField } from '@/components/StyledField'
 import { StyledSelect } from '@/components/StyledSelect'
+
+import ProfileAvatar from './ProfileAvatar'
 
 const menuItems = ['公开', '好友可见', '保密']
 
 const Profile = () => {
   const theme = useTheme()
-  const [name, setName] = useState('之前的昵称')
+  const [name, setName] = useState('之前的用户名')
   const [selfIntroduction, setSelfIntroduction] = useState('之前的自我介绍')
   const [title, setTitle] = useState('之前的自定义头衔')
   const [sign, setSign] = useState('之前的个人签名')
   const [privacy, setPrivacy] = useState('公开')
+
   return (
     <>
       <Box className="relative overflow-hidden p-2" sx={{ width: '100%' }}>
@@ -35,10 +37,10 @@ const Profile = () => {
             </Typography>
             <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>头像</Typography>
-              <Avatar uid={0} size={100} />
+              <ProfileAvatar />
             </Stack>
             <Stack direction="row" alignItems="center">
-              <Typography sx={{ width: 100 }}>昵称</Typography>
+              <Typography sx={{ width: 100 }}>用户名</Typography>
               <StyledField
                 value={name}
                 onChange={(e) => setName(e.target.value)}
