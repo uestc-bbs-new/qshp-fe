@@ -38,6 +38,16 @@ const baseComponent = {
       container: rootElement,
     },
   },
+  MuiButton: {
+    variants: [
+      {
+        props: { variant: 'dialogOk' },
+      },
+      {
+        props: { variant: 'dialogCancel' },
+      },
+    ],
+  },
   MuiChip: {
     variants: [
       {
@@ -108,6 +118,8 @@ declare module '@mui/material/styles' {
     userAction: React.CSSProperties
     emptyListText: React.CSSProperties
     dialogTitle: React.CSSProperties
+    replyCredit: React.CSSProperties
+    replyCreditDetails: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -131,6 +143,8 @@ declare module '@mui/material/styles' {
     userAction?: React.CSSProperties
     emptyListText?: React.CSSProperties
     dialogTitle?: React.CSSProperties
+    replyCredit?: React.CSSProperties
+    replyCreditDetails?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -156,6 +170,15 @@ declare module '@mui/material/Typography' {
     userAction: true
     emptyListText: true
     dialogTitle: true
+    replyCredit: true
+    replyCreditDetails: true
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    dialogOk: true
+    dialogCancel: true
   }
 }
 
@@ -283,6 +306,14 @@ export const baseTheme: ThemeOptions = {
       fontSize: 20,
       fontWeight: 500,
       color: '#2175F3',
+    },
+    replyCredit: {
+      fontSize: 14,
+      color: '#F26B4E',
+    },
+    replyCreditDetails: {
+      fontSize: 16,
+      color: '#F26B4E',
     },
   },
 

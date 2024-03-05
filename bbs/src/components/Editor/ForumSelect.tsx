@@ -1,4 +1,4 @@
-import { createRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Close } from '@mui/icons-material'
 import {
@@ -178,7 +178,7 @@ const ForumButton = ({
   fid?: number
   onChooseForum: (forum: Forum, noSub?: boolean) => void
 }) => {
-  const buttonRef = createRef<HTMLButtonElement>()
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const button = (
     <Button
       size="large"

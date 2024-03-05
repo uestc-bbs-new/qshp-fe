@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 
-import React, { createRef, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -34,7 +34,7 @@ export const UserHtmlRenderer = ({
   style?: React.CSSProperties
 }) => {
   const { state } = useAppState()
-  const contentRef = createRef<HTMLDivElement>()
+  const contentRef = useRef<HTMLDivElement>(null)
   const findParentBackgroundColor = (
     el: HTMLElement,
     upTo: HTMLElement | null
@@ -152,7 +152,7 @@ const MarkdownPostRenderer = ({
   attachments?: Attachment[]
 }) => {
   const { state } = useAppState()
-  const el = createRef<HTMLDivElement>()
+  const el = useRef<HTMLDivElement>(null)
   useEffect(() => {
     el.current &&
       Vditor.preview(

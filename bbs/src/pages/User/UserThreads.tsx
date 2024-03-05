@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { createRef, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import {
@@ -241,7 +241,7 @@ const UserThreads = ({
 }: SubPageCommonProps) => {
   const subPage = useParams().subPage
   const activeTab = tabs.find((item) => item.id == subPage) || tabs[0]
-  const topRef = createRef<HTMLDivElement>()
+  const topRef = useRef<HTMLDivElement>(null)
   return (
     <Box pb={1}>
       <div ref={topRef} css={scrollAnchorCss} />

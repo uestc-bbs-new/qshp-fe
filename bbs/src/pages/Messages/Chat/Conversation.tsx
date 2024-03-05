@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
 import { Send } from '@mui/icons-material'
@@ -125,7 +125,7 @@ const Conversation = ({
       }
     },
   })
-  const scrollContainer = createRef<HTMLUListElement>()
+  const scrollContainer = useRef<HTMLUListElement>(null)
   const lastScrollHeight = useRef<number>()
   useLayoutEffect(() => {
     if (!scrollContainer.current) {
