@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import {
+  Alert,
   Box,
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Snackbar,
   Stack,
   Switch,
   TextField,
@@ -14,6 +16,8 @@ import {
   ThreadPollDetails,
   ThreadPollOption,
 } from '@/common/interfaces/response'
+
+import { useSnackbar } from '../Snackbar'
 
 type Props = {
   isVote: boolean
@@ -39,6 +43,11 @@ export const VoteSelection = ({
     { value: '' },
   ])
 
+  const {
+    props: snackbarProps,
+    message: snackbarMessage,
+    show: showError,
+  } = useSnackbar()
   const [configurations, setConfiguration] = useState<
     Omit<ThreadPollDetails, 'selected_options' | 'voter_count' | 'options'>
   >({
@@ -90,7 +99,7 @@ export const VoteSelection = ({
 
       {isVote ? (
         <Stack
-          className="w-9/12 bg-indigo-100 px-6 py-4 flex justify-between flex-row"
+          className="w-9/12 px-6 py-4 flex justify-between flex-row"
           sx={(theme) => ({
             backgroundColor:
               theme.palette.mode == 'light' ? 'rgb(232, 243, 255)' : 'black',
@@ -193,7 +202,7 @@ export const VoteSelection = ({
                       max_choices: Number(e.target.value),
                     })
                   } else {
-                    console.log(
+                    showError(
                       '选择数不能低于 2，且不能大于选项数，否则帖子无法正常新增'
                     )
                   }
@@ -220,6 +229,14 @@ export const VoteSelection = ({
       ) : (
         <></>
       )}
+      <Snackbar
+        {...snackbarProps}
+        autoHideDuration={5000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        style={{ position: 'absolute', bottom: '60px' }}
+      >
+        <Alert severity="error">{snackbarMessage}</Alert>
+      </Snackbar>
     </Stack>
   )
 }
