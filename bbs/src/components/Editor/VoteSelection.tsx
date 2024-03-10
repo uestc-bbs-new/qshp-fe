@@ -89,7 +89,13 @@ export const VoteSelection = ({
       </FormGroup>
 
       {isVote ? (
-        <Stack className="w-9/12 bg-indigo-100 px-6 py-4 flex justify-between flex-row">
+        <Stack
+          className="w-9/12 bg-indigo-100 px-6 py-4 flex justify-between flex-row"
+          sx={(theme) => ({
+            backgroundColor:
+              theme.palette.mode == 'light' ? 'rgb(232, 243, 255)' : 'black',
+          })}
+        >
           <Box className="flex flex-col">
             <Box>选项：最多可以填写 100 个选项</Box>
             {options.map((item, index) => {
