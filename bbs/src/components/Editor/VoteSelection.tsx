@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import {
   Box,
+  Checkbox,
   FormControlLabel,
   FormGroup,
   Stack,
@@ -74,12 +75,13 @@ export const VoteSelection = ({
         {/* 后面如果有多个类型可以改成 for in 枚举 typeState 生成复选框 */}
         <FormControlLabel
           control={
-            <Switch
+            <Checkbox
               checked={isVote}
               onChange={(e) => {
                 changeIsVote(e.target.checked)
               }}
               name="isVote"
+              color="primary"
             />
           }
           label="isVote"
