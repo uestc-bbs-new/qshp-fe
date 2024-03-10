@@ -89,11 +89,10 @@ export const VoteSelection = ({
               onChange={(e) => {
                 changeIsVote(e.target.checked)
               }}
-              name="投票贴"
               color="primary"
             />
           }
-          label="isVote"
+          label="投票"
         />
       </FormGroup>
 
@@ -112,7 +111,7 @@ export const VoteSelection = ({
                 <TextField
                   key={index}
                   id={index.toString()}
-                  label={`选项 ${index}`}
+                  label={`选项 ${index + 1}`}
                   variant="outlined"
                   size="small"
                   className="mt-4"
@@ -160,7 +159,7 @@ export const VoteSelection = ({
                     onChange={(e) => {
                       setConfiguration({
                         ...configurations,
-                        visible: e.target.checked,
+                        visible: !e.target.checked,
                       })
                     }}
                     name="visible"
@@ -212,7 +211,7 @@ export const VoteSelection = ({
               <></>
             )}
             <TextField
-              label={`投票过期时间`}
+              label={`计票天数`}
               variant="outlined"
               type="number"
               size="small"
