@@ -1,3 +1,4 @@
+import { Attachment } from '@/common/interfaces/base'
 import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
   PostDetails,
@@ -58,6 +59,7 @@ export type PostCommonDetails = {
   message: string
   format?: number
   is_anonymous?: boolean
+  attachments?: Attachment[]
 }
 
 export type PostThreadDetails = PostCommonDetails & {

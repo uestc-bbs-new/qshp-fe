@@ -1,4 +1,4 @@
-import React, { createRef, useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import { Search } from '@mui/icons-material'
@@ -43,7 +43,7 @@ const SearchBar = () => {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [searchResults, setSeacrhResults] = useState<Result[]>([])
-  const searchAnchorRef = createRef<HTMLDivElement>()
+  const searchAnchorRef = useRef<HTMLDivElement>(null)
 
   const fetch = useMemo(
     () =>

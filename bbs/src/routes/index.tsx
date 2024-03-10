@@ -9,14 +9,13 @@ import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
 import Chat from '@/pages/Messages/Chat'
 import Notifications from '@/pages/Messages/Notifications'
+import NotFound from '@/pages/NotFound'
 import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
 
 import routes from './routes'
-
-// import NotFound from '@/pages/ErrorPage'
 
 routes.current = [
   {
@@ -28,6 +27,7 @@ routes.current = [
       </>
     ),
     children: [
+      { path: '*', id: '404', element: <NotFound /> },
       { path: '/', id: 'index', element: <Home /> },
       { path: '/search', id: 'search', element: <Search /> },
       { path: '/post/:fid?', id: 'post', element: <Edit /> },

@@ -239,9 +239,15 @@ function Thread() {
               onChange={handlePageChange}
             />
             {info?.rows
-              ? info?.rows.map((item) => {
+              ? info?.rows.map((item, index) => {
                   return (
-                    <Card className="mb-4 pl-0" key={item.post_id}>
+                    <Box
+                      className="mb-4 rounded-lg shadow-lg"
+                      sx={(theme) => ({
+                        backgroundColor: theme.palette.background.paper,
+                      })}
+                      key={item.post_id}
+                    >
                       <section
                         id={`post-${item.post_id}`}
                         css={scrollAnchorCss}
@@ -251,6 +257,7 @@ function Thread() {
                           postDetails={postDetails[item.post_id]}
                           threadDetails={threadDetails}
                           forumDetails={forumDetails}
+                          firstInPage={index == 0}
                           onReply={handleReply}
                           onComment={handleComment}
                           onEdit={handleEdit}
@@ -308,7 +315,7 @@ function Thread() {
                           </Box>
                         </Floor>
                       </section>
-                    </Card>
+                    </Box>
                   )
                 })
               : infoLoading && (

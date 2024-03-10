@@ -1,7 +1,13 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import {
   Divider,
@@ -13,30 +19,36 @@ import {
   Tabs,
 } from '@mui/material'
 
+import { Attachment } from '@/common/interfaces/base'
 import { useAppState } from '@/states'
 
-import { kSmilyBasePath } from '../RichText/renderer'
+import { beforeGetMarkdown, kSmilyBasePath } from '../RichText/renderer'
 import { smilyData } from '../RichText/smilyData'
+import { VditorContext } from '../RichText/types'
 import { getPreviewThemeOptions } from '../RichText/vditorConfig'
 import options from './vditorConfig'
 
-type props = IOptions & {
+type EditorProps = IOptions & {
   initialValue?: string
-  setVd: React.Dispatch<React.SetStateAction<Vditor | undefined>>
+  initialAttachments?: Attachment[]
   onKeyDown?: React.KeyboardEventHandler
   autoFocus?: boolean
 }
 
-const Editor = ({
-  initialValue,
-  setVd,
-  onKeyDown,
-  autoFocus,
-  ...other
-}: props) => {
+export interface EditorHandle {
+  get vditor(): Vditor | undefined
+  get attachments(): Attachment[]
+}
+
+const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
+  { initialValue, initialAttachments, onKeyDown, autoFocus, ...other },
+  ref
+) {
   const { state } = useAppState()
-  const vditorRef = createRef<HTMLDivElement>()
-  const vditor = useRef<Vditor>()
+  const vditorRef = useRef<HTMLDivElement>(null)
+  const vditorContext = useRef<VditorContext>({
+    attachments: initialAttachments || [],
+  })
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
   const smilyAnchor = useRef<HTMLElement>()
@@ -44,40 +56,20 @@ const Editor = ({
   const closeSmily = () => setSmilyOpen(false)
   const [selectedSmilyKind, setSmilyKind] = useState(smilyData[0])
   useEffect(() => {
-    if (!vditorRef.current || vditor.current) {
+    if (!vditorRef.current || vditorContext.current.vditor) {
       return
     }
-    vditor.current = new Vditor(vditorRef.current, {
+    vditorContext.current.vditor = new Vditor(vditorRef.current, {
       after: () => {
         if (autoFocus) {
-          vditor.current?.focus()
+          vditorContext.current.vditor?.focus()
         }
         if (initialValue) {
-          vditor.current?.insertValue(initialValue)
+          vditorContext.current.vditor?.insertValue(initialValue)
         }
-        setVd(vditor.current)
         vditorInitialized.current = true
       },
-      beforeGetMarkdown: (currentMode: string, el: HTMLElement) => {
-        if (currentMode == 'wysiwyg') {
-          const clone = el.cloneNode(true) as HTMLElement
-          ;[].forEach.call(
-            clone.querySelectorAll('img.post_smily'),
-            (img: HTMLImageElement) => {
-              img.src = img.getAttribute('data-x-original-src') || ''
-              img.alt = img.getAttribute('data-x-original-alt') || ''
-            }
-          )
-          ;[].forEach.call(
-            clone.querySelectorAll('a.post_at_user'),
-            (a: HTMLAnchorElement) => {
-              a.href = a.getAttribute('data-x-original-href') || ''
-            }
-          )
-          return clone.innerHTML
-        }
-        return undefined
-      },
+      beforeGetMarkdown,
       ...options({
         smilyToolbarItem: {
           name: 'smily',
@@ -88,6 +80,7 @@ const Editor = ({
             setSmilyOpen(true)
           },
         },
+        context: vditorContext.current,
       }),
       preview: getPreviewThemeOptions(state.theme),
       ...other,
@@ -96,9 +89,22 @@ const Editor = ({
   }, [])
   useEffect(() => {
     if (vditorInitialized.current) {
-      vditor.current?.setTheme(theme(), state.theme)
+      vditorContext.current.vditor?.setTheme(theme(), state.theme)
     }
-  }, [state.theme, vditor.current])
+  }, [state.theme, vditorContext.current.vditor])
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      get vditor() {
+        return vditorContext.current.vditor
+      },
+      get attachments() {
+        return vditorContext.current.attachments
+      },
+    }),
+    []
+  )
   return (
     <>
       <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
@@ -130,7 +136,7 @@ const Editor = ({
               <Grid key={index} item>
                 <IconButton
                   onClick={() => {
-                    vditor.current?.insertValue(
+                    vditorContext.current.vditor?.insertValue(
                       ` ![${item.code || item.id}](s) `
                     )
                     closeSmily()
@@ -155,6 +161,6 @@ const Editor = ({
       </Menu>
     </>
   )
-}
+})
 
 export default Editor

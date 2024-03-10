@@ -1,5 +1,3 @@
-import Vditor from 'vditor'
-
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,7 +17,7 @@ import {
   ThreadPollDetails,
   ThreadPollOption,
 } from '@/common/interfaces/response'
-import Editor from '@/components/Editor'
+import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
 import { useAppState } from '@/states'
@@ -95,7 +93,7 @@ const PostEditor = ({
   const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
     kind
   ]
-  const [vd, setVd] = useState<Vditor>() // editor ref
+  const editor = useRef<EditorHandle>(null)
 
   const {
     props: snackbarProps,
@@ -155,7 +153,7 @@ const PostEditor = ({
       return
     }
 
-    const message = vd?.getValue() || ''
+    const message = editor.current?.vditor?.getValue() || ''
     if (!message.trim()) {
       showError('请输入内容。')
       return
@@ -170,9 +168,11 @@ const PostEditor = ({
         message,
         format: 2,
         poll: typeState.isVote ? pollOptions.current : undefined,
+        attachments: editor.current?.attachments,
       })
         .then((result) => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -182,9 +182,11 @@ const PostEditor = ({
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
         is_anonymous: valueRef.current.is_anonymous,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
-          vd?.setValue('')
+          editor.current?.vditor?.setValue('')
+          editor.current?.attachments?.splice(0)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -195,6 +197,7 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
+        attachments: editor.current?.attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()
@@ -231,8 +234,9 @@ const PostEditor = ({
             autoFocus={autoFocus}
             minHeight={300}
             initialValue={initialValue?.message}
-            setVd={setVd}
+            initialAttachments={initialValue?.attachments}
             onKeyDown={handleCtrlEnter(handleSubmit)}
+            ref={editor}
           />
           <PostOptions
             forum={forum}

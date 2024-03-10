@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { createRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import {
@@ -60,7 +60,7 @@ function MessageBoard({
   const { state } = useAppState()
 
   const navigate = useNavigate()
-  const topRef = createRef<HTMLDivElement>()
+  const topRef = useRef<HTMLDivElement>(null)
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     navigate(
       `${location.pathname}?${searchParamsAssign(searchParams, {

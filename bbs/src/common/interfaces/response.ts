@@ -1,3 +1,5 @@
+import { Attachment } from './base'
+
 type ForumLastestThread = {
   thread_id: number
   subject: string
@@ -92,7 +94,6 @@ type ThreadExtended = {
   favorite_times: number
   share_times: number
   cover: number
-  reply_credit: number
   max_position: number
   comments: number
   reverse_replies: boolean
@@ -100,6 +101,8 @@ type ThreadExtended = {
   stamp?: number
   icon?: number
   poll?: ThreadPollDetails
+  reply_credit?: ThreadReplyCredit
+  reply_credit_remaining_amount?: number
 }
 export type Thread = ThreadBasics & ThreadExtended
 
@@ -138,6 +141,15 @@ export type ThreadPollOption = {
    * 需要改变选项顺序时设置为显示顺序，取值范围 1~127。*/
   display_order: number
   voters?: number[]
+}
+
+type ThreadReplyCredit = {
+  count: number
+  credit_amount: number
+  credit_name: string
+  limit_per_user: number
+  probability: number
+  remaining_amount: number
 }
 
 export type Users = {
@@ -215,7 +227,6 @@ export interface PostFloor {
   is_anonymous: number
   usesig: number
   smileyoff: number
-  lastedit_id: number
 
   pinned?: boolean
   blocked?: boolean
@@ -224,6 +235,10 @@ export interface PostFloor {
   password?: boolean
   has_comment?: boolean
   has_rate?: boolean
+  reply_credit_amount?: number
+  reply_credit_name?: string
+  lastedit_id?: number
+  attachments?: Attachment[]
   invisible: number
 }
 

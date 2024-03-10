@@ -282,6 +282,20 @@ export const ThreadItemLite = ({
 
 const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
   <>
+    {!!thread.reply_credit_remaining_amount && (
+      <MuiChip
+        label={
+          <>
+            回帖奖励
+            <Typography fontWeight="bold" ml={0.5} component="span">
+              {thread.reply_credit_remaining_amount}
+            </Typography>
+          </>
+        }
+        variant="threadItemHot"
+        sx={{ mx: 0.5 }}
+      />
+    )}
     {thread.special == 1 && (
       <Poll htmlColor="#FA541C" sx={{ width: '0.85em', mx: '0.25em' }} />
     )}

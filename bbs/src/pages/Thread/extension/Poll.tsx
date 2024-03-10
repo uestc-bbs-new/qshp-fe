@@ -51,6 +51,11 @@ const Poll = ({
   } = useSnackbar()
 
   const handleChange = (option_id: number, checked: boolean) => {
+    // <Radio> fires onChange only when checked so we have to clear to make
+    // sure only one option is set.
+    if (!poll.multiple) {
+      selectedOptions.current.clear()
+    }
     selectedOptions.current.set(option_id, checked)
     let count = 0
     for (const [_, checked] of selectedOptions.current) {
@@ -172,26 +177,22 @@ const PollOption = ({
     borderRadius: `${kBarHeight / 2}px`,
   }
 
-  const percentage = ((option.votes || 0) / (poll.voter_count || 1)) * 100
+  const percentage =
+    Math.min(1, (option.votes || 0) / (poll.voter_count || 1)) * 100
   const color = kPalette[index % kPalette.length]
   const label = `${index + 1}. ${option.text}`
   const handleChange =
     onChange &&
-    ((_: React.ChangeEvent<HTMLInputElement>, checked: boolean) =>
+    ((_: React.SyntheticEvent<Element, Event>, checked: boolean) =>
       onChange(option.id, checked))
-
   return (
     <>
       {!ended || poll.selected_options ? (
         <FormControlLabel
           value={option.id}
-          control={
-            poll.multiple ? (
-              <Checkbox defaultChecked={checked} onChange={handleChange} />
-            ) : (
-              <Radio defaultChecked={checked} onChange={handleChange} />
-            )
-          }
+          control={poll.multiple ? <Checkbox /> : <Radio />}
+          checked={poll.selected_options ? checked : undefined}
+          onChange={handleChange}
           disabled={
             !!poll.selected_options || ended || (noMoreChoices && !checked)
           }
