@@ -80,7 +80,7 @@ export const VoteSelection = ({
               onChange={(e) => {
                 changeIsVote(e.target.checked)
               }}
-              name="isVote"
+              name="投票贴"
               color="primary"
             />
           }
@@ -141,7 +141,7 @@ export const VoteSelection = ({
               <FormControlLabel
                 control={
                   <Switch
-                    checked={configurations.visible}
+                    checked={!configurations.visible}
                     onChange={(e) => {
                       setConfiguration({
                         ...configurations,
@@ -151,7 +151,7 @@ export const VoteSelection = ({
                     name="visible"
                   />
                 }
-                label="未投票时结果可见"
+                label="投票后结果可见"
               />
               <FormControlLabel
                 control={
@@ -197,7 +197,7 @@ export const VoteSelection = ({
               <></>
             )}
             <TextField
-              label={`计票天数`}
+              label={`投票过期时间`}
               variant="outlined"
               type="number"
               size="small"
