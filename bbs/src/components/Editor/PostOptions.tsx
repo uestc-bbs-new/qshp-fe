@@ -12,13 +12,13 @@ const PostOptions = ({
   forum,
   initialValue,
   valueRef,
-  onChanged,
+  onAnonymousChanged,
 }: {
   kind?: PostEditorKind
   forum?: ForumDetails
   initialValue?: PostEditorValue
   valueRef?: RefObject<PostEditorValue>
-  onChanged?: () => void
+  onAnonymousChanged?: () => void
 }) => {
   const [anonymous, setAnonymous] = useState(
     initialValue?.is_anonymous || false
@@ -35,7 +35,7 @@ const PostOptions = ({
                   const checked = e.target.checked
                   setAnonymous(checked)
                   valueRef?.current && (valueRef.current.is_anonymous = checked)
-                  onChanged && onChanged()
+                  onAnonymousChanged && onAnonymousChanged()
                 }}
               />
             }

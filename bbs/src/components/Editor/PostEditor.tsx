@@ -186,10 +186,6 @@ const PostEditor = ({
     }
   }
 
-  const handleOptionsChange = () => {
-    setAnonymous(!!valueRef.current.is_anonymous)
-  }
-
   return (
     <>
       {forumLoading ? (
@@ -223,7 +219,9 @@ const PostEditor = ({
             forum={forum}
             initialValue={initialValue}
             valueRef={valueRef}
-            onChanged={handleOptionsChange}
+            onAnonymousChanged={() =>
+              setAnonymous(!!valueRef.current.is_anonymous)
+            }
           />
         </Stack>
       </Stack>
