@@ -8,9 +8,8 @@ import {
   useTheme,
 } from '@mui/material'
 
+import { ForumBasics, ForumDetails } from '@/common/interfaces/forum'
 import {
-  ForumBasics,
-  ForumDetails,
   Thread,
   ThreadInList,
   TopListKey,

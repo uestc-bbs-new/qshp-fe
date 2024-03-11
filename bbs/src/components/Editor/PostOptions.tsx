@@ -2,7 +2,7 @@ import { RefObject, useState } from 'react'
 
 import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 
 import { VoteSelection } from './VoteSelection'
 import { PostEditorKind, PostEditorValue } from './types'

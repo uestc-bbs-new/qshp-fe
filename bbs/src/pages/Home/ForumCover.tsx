@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { Forum } from '@/common/interfaces/response'
+import { Forum } from '@/common/interfaces/forum'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'

@@ -1,20 +1,19 @@
 import { AxiosProgressEvent } from 'axios'
 
 import { UploadResponse } from '@/common/interfaces/base'
+import { Forum, ForumDetails } from '@/common/interfaces/forum'
 import {
-  Forum,
-  ForumDetails,
   GenericList,
   IndexData,
   SearchSummaryResponse,
   Thread,
   ThreadInList,
   ThreadList,
-  ThreadTypeMap,
   TopList,
   UserInfo,
   Users,
 } from '@/common/interfaces/response'
+import { ThreadTypeMap } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { authServiceWithUser, commonUrl } from '@/utils/request'
 

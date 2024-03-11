@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 
 import { RichTextRenderer } from '../RichText'
 

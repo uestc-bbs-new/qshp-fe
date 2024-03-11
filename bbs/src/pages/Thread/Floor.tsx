@@ -3,8 +3,8 @@ import React, { ReactNode } from 'react'
 import PublishIcon from '@mui/icons-material/Publish'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 
+import { ForumDetails } from '@/common/interfaces/forum'
 import {
-  ForumDetails,
   PostAuthorDetails,
   PostFloor,
   Thread,

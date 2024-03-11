@@ -22,7 +22,8 @@ import {
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
 
 import { getThreadList } from '@/apis/common'
-import { ForumDetails, ThreadType } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { ThreadType } from '@/common/interfaces/thread'
 import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import Chip from '@/components/Chip'

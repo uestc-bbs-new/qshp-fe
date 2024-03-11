@@ -11,7 +11,8 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { ForumDetails, PostFloor } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'

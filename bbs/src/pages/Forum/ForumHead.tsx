@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import Separated from '@/components/Separated'

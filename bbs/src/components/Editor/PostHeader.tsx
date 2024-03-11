@@ -10,13 +10,12 @@ import {
   TextField,
 } from '@mui/material'
 
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 import { pages } from '@/utils/routes'
 import { handleCtrlEnter } from '@/utils/tools'
 
 import { ForumSelect } from './ForumSelect'
-import { PostEditorKind } from './PostEditor'
-import { PostEditorValue } from './types'
+import { PostEditorKind, PostEditorValue } from './types'
 
 export const ThreadPostHeader = ({
   kind,

@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { Forum } from '@/common/interfaces/response'
+import { Forum } from '@/common/interfaces/forum'
 import Link from '@/components/Link'
 import { useAppState, useForumList } from '@/states'
 import { pages } from '@/utils/routes'

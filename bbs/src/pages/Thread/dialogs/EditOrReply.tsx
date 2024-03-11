@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material'
 
-import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor, Thread } from '@/common/interfaces/response'
 import PostEditor from '@/components/Editor/PostEditor'
 
 const EditOrReply = ({

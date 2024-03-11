@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { ForumType } from '@/common/interfaces/response'
+import { ForumType } from '@/common/interfaces/forum'
 import Card from '@/components/Card'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'

@@ -3,7 +3,8 @@ import React from 'react'
 import { Close } from '@mui/icons-material'
 import { IconButton, Stack, Typography } from '@mui/material'
 
-import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor, Thread } from '@/common/interfaces/response'
 import DraggableDialog from '@/components/DraggableDialog'
 
 import { ActionDialogType } from '../types'

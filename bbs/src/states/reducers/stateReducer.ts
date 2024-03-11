@@ -1,4 +1,4 @@
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 
 import { guestUser } from '..'
 
