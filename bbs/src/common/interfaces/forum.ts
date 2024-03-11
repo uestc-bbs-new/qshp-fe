@@ -1,3 +1,4 @@
+import { ExtCreditName } from './base'
 import { ThreadType, ThreadTypeMap } from './thread'
 
 export type ForumBasics = {
@@ -39,6 +40,7 @@ export type ForumDetails = ForumCommon & {
   announcement_format: string
   post_notice_format: 'bbcode' | 'markdown'
   post_notice: PostNotice
+  reply_credit?: ReplyCreditStatus
 }
 
 export type ForumStat = ForumCommon & {
@@ -66,4 +68,15 @@ export type PostNotice = {
   editthread: string
   editthread_mobile: string
   poll: string
+}
+
+export type ReplyCreditStatus = {
+  allowed_credits: string[]
+  details: { [credit_name in ExtCreditName]: ReplyCreditStatusDetails }
+}
+
+export type ReplyCreditStatusDetails = {
+  remaining_credits: number
+  max_credits: number
+  tax_rate: number
 }

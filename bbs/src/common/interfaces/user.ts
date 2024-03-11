@@ -1,8 +1,7 @@
 import { FieldOptional } from '@/utils/types'
 
-import { User } from './base'
+import { ExtCreditMap, User } from './base'
 import {
-  ExtCreditMap,
   GenericList,
   ThreadBasics,
   ThreadInList,

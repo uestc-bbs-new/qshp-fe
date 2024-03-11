@@ -20,3 +20,6 @@ export type UploadResponse = {
   uploaded?: Attachment[]
   errors?: FileInfo[]
 }
+
+export type ExtCreditName = '水滴' | '威望' | '奖励券'
+export type ExtCreditMap = { [name in ExtCreditName]?: number }

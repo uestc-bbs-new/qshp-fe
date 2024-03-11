@@ -1,4 +1,4 @@
-import { Attachment } from './base'
+import { Attachment, ExtCreditMap } from './base'
 import { Forum, ForumDetails } from './forum'
 
 export type ThreadBasics = {
@@ -132,8 +132,6 @@ export interface PostDetails {
   rows: PostFloor[]
 }
 
-export type ExtCreditName = '水滴' | '威望' | '奖励券'
-export type ExtCreditMap = { [name in ExtCreditName]?: number }
 /** 用户组相关信息 */
 export type UserGroupDetails = {
   /** 用户组 ID */
