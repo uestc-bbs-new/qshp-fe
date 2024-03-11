@@ -62,13 +62,15 @@ export type PostCommonDetails = {
   attachments?: Attachment[]
 }
 
+export type PostThreadPollDetails = Omit<
+  ThreadPollDetails,
+  'multiple' | 'selected_options' | 'voter_count' | 'options'
+> & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
+
 export type PostThreadDetails = PostCommonDetails & {
   forum_id: number
   type_id?: number
-  poll?: Omit<
-    ThreadPollDetails,
-    'selected_options' | 'voter_count' | 'options'
-  > & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
+  poll?: PostThreadPollDetails
 }
 export const postThread = (details: PostThreadDetails) => {
   return request.post(`${commonUrl}/thread/new`, {

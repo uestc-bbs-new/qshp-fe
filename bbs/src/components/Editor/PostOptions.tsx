@@ -4,14 +4,17 @@ import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/response'
 
-import { PostEditorValue } from './types'
+import { VoteSelection } from './VoteSelection'
+import { PostEditorKind, PostEditorValue } from './types'
 
 const PostOptions = ({
+  kind,
   forum,
   initialValue,
   valueRef,
   onChanged,
 }: {
+  kind?: PostEditorKind
   forum?: ForumDetails
   initialValue?: PostEditorValue
   valueRef?: RefObject<PostEditorValue>
@@ -40,6 +43,7 @@ const PostOptions = ({
           />
         </FormGroup>
       )}
+      {kind === 'newthread' && <VoteSelection valueRef={valueRef} />}
     </Box>
   )
 }

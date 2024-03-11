@@ -11,12 +11,7 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import {
-  ForumDetails,
-  PostFloor,
-  ThreadPollDetails,
-  ThreadPollOption,
-} from '@/common/interfaces/response'
+import { ForumDetails, PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
@@ -29,10 +24,7 @@ import Link from '../Link'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
-import { VoteSelection } from './VoteSelection'
-import { PostEditorValue } from './types'
-
-export type PostEditorKind = 'newthread' | 'reply' | 'edit'
+import { PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
   small,
@@ -104,17 +96,6 @@ const PostEditor = ({
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
 
-  // 帖子类型状态
-  const [typeState, setTypeState] = useState({
-    isVote: false,
-  })
-  // 投票选项
-  const pollOptions = useRef<
-    Omit<ThreadPollDetails, 'selected_options' | 'voter_count' | 'options'> & {
-      options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[]
-    }
-  >()
-
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
       showError('请选择合适的版块。')
@@ -168,7 +149,6 @@ const PostEditor = ({
         message,
         format: 2,
         attachments: editor.current?.attachments,
-        poll: typeState.isVote ? pollOptions.current : undefined,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
@@ -239,6 +219,7 @@ const PostEditor = ({
             ref={editor}
           />
           <PostOptions
+            kind={kind}
             forum={forum}
             initialValue={initialValue}
             valueRef={valueRef}
@@ -246,20 +227,6 @@ const PostEditor = ({
           />
         </Stack>
       </Stack>
-      {kind === 'newthread' ? (
-        <VoteSelection
-          className="ml-24"
-          isVote={typeState.isVote}
-          changeIsVote={(e) => {
-            setTypeState({ ...typeState, isVote: e })
-          }}
-          updateVotesOption={(poll) => {
-            pollOptions.current = poll
-          }}
-        ></VoteSelection>
-      ) : (
-        <></>
-      )}
       <Stack
         direction="row"
         alignItems="center"

@@ -1,93 +1,67 @@
-import { useEffect, useState } from 'react'
+import { RefObject, useRef, useState } from 'react'
 
 import {
-  Alert,
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
-  Snackbar,
   Stack,
   Switch,
   TextField,
+  Typography,
 } from '@mui/material'
 
-import {
-  ThreadPollDetails,
-  ThreadPollOption,
-} from '@/common/interfaces/response'
+import { PostThreadPollDetails } from '@/apis/thread'
 
-import { useSnackbar } from '../Snackbar'
+import { PostEditorValue } from './types'
 
-type Props = {
-  isVote: boolean
-  changeIsVote: (status: boolean) => void
-  // props 投票信息改变后主动上报给父组件
-  updateVotesOption: (
-    poll: Omit<
-      ThreadPollDetails,
-      'selected_options' | 'voter_count' | 'options'
-    > & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
-  ) => void
-  [key: string]: any
-}
 export const VoteSelection = ({
-  isVote,
-  changeIsVote,
-  updateVotesOption,
-  ...props
-}: Props) => {
-  const [options, setOptions] = useState([
-    { value: '' },
-    { value: '' },
-    { value: '' },
-  ])
-
-  const {
-    props: snackbarProps,
-    message: snackbarMessage,
-    show: showError,
-  } = useSnackbar()
-  const [configurations, setConfiguration] = useState<
-    Omit<ThreadPollDetails, 'selected_options' | 'voter_count' | 'options'>
-  >({
-    show_voters: false,
-    multiple: true,
-    visible: true,
-    max_choices: 1,
-    is_image: false, // todo: 暂不支持
-    expiration: 0,
-  })
-
-  useEffect(() => {
-    const VoteOptions: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] =
-      []
-    // useMemo 可以优化下
-    options.forEach((item, index) => {
-      if (item.value) {
-        VoteOptions.push({
-          text: item.value,
-          display_order: index,
-        })
-      }
-    })
-    updateVotesOption({
-      ...configurations,
-      options: VoteOptions,
-    })
-  }, [options])
+  valueRef,
+}: {
+  valueRef?: RefObject<PostEditorValue>
+}) => {
+  const initialPollDetails = valueRef?.current?.poll
+  const [isVote, setVote] = useState(!!initialPollDetails)
+  const savedPollDetails = useRef<PostThreadPollDetails>()
+  const [options, setOptions] = useState<string[]>(['', '', ''])
+  const [multiple, setMultiple] = useState(
+    initialPollDetails && initialPollDetails.max_choices > 1
+  )
+  const [maxChoices, setMaxChoices] = useState(
+    initialPollDetails?.max_choices || 2
+  )
+  const maxChoicesError =
+    multiple && maxChoices <= 1
+      ? '多选投票允许选择的数目至少为 2'
+      : maxChoices > options.length
+        ? '允许选择的数目超过了选项数目'
+        : undefined
 
   return (
-    // 如果是多种发帖类型，选项也应该抽离到父组件
-    <Stack {...props}>
+    <Box>
       <FormGroup row>
-        {/* 后面如果有多个类型可以改成 for in 枚举 typeState 生成复选框 */}
         <FormControlLabel
           control={
             <Checkbox
               checked={isVote}
               onChange={(e) => {
-                changeIsVote(e.target.checked)
+                setVote(e.target.checked)
+                if (valueRef?.current) {
+                  if (e.target.checked) {
+                    valueRef.current.poll = savedPollDetails.current || {
+                      max_choices: 1,
+                      visible: true,
+                      show_voters: false,
+                      expiration: 0,
+                      is_image: false,
+                      options: [],
+                    }
+                  } else {
+                    savedPollDetails.current = valueRef?.current?.poll
+                    valueRef.current.poll = undefined
+                  }
+                }
               }}
               color="primary"
             />
@@ -96,58 +70,60 @@ export const VoteSelection = ({
         />
       </FormGroup>
 
-      {isVote ? (
+      {isVote && (
         <Stack
-          className="w-9/12 px-6 py-4 flex justify-between flex-row"
+          className="px-6 py-4 flex flex-row"
           sx={(theme) => ({
             backgroundColor:
               theme.palette.mode == 'light' ? 'rgb(232, 243, 255)' : 'black',
           })}
         >
-          <Box className="flex flex-col">
-            <Box>选项：最多可以填写 100 个选项</Box>
+          <Stack mr={4}>
+            <Typography mt={1} mb={3}>
+              选项：最多可以填写 100 个选项
+            </Typography>
             {options.map((item, index) => {
               return (
                 <TextField
                   key={index}
-                  id={index.toString()}
                   label={`选项 ${index + 1}`}
                   variant="outlined"
                   size="small"
-                  className="mt-4"
-                  // 如果用 onChange， 每次输入，整个列表都需要重新 diff 或者 渲染，感觉性能开销有点大
-                  // change: 如果对该场景有要求，可以切成 onChange
+                  sx={{ mb: 1.25, width: '20em' }}
                   onBlur={(e) => {
-                    console.log(e)
-                    const newOption = [...options]
-                    options[index].value = e.target.value
-                    setOptions(newOption)
+                    const newOptions = [...options]
+                    newOptions[index] = e.target.value.trim()
+                    setOptions(newOptions)
+                    if (valueRef?.current?.poll) {
+                      valueRef.current.poll.options = newOptions
+                        .filter((item) => !!item)
+                        .map((item) => ({
+                          text: item,
+                        }))
+                    }
                   }}
                 />
               )
             })}
-            <Box
-              className="w-full text-center h-10 border"
+            <Button
               onClick={() => {
-                setOptions([...options, { value: '' }])
+                setOptions([...options, ''])
               }}
             >
               +
-            </Box>
-          </Box>
-          <Box className="flex-col">
+            </Button>
+          </Stack>
+          <Stack>
             <FormGroup row>
               <FormControlLabel
                 control={
                   <Switch
-                    checked={configurations.show_voters}
+                    defaultChecked={valueRef?.current?.poll?.show_voters}
                     onChange={(e) => {
-                      setConfiguration({
-                        ...configurations,
-                        show_voters: e.target.checked,
-                      })
+                      if (valueRef?.current?.poll) {
+                        valueRef.current.poll.show_voters = e.target.checked
+                      }
                     }}
-                    name="show_voters"
                   />
                 }
                 label="公开投票参与人"
@@ -155,87 +131,70 @@ export const VoteSelection = ({
               <FormControlLabel
                 control={
                   <Switch
-                    checked={!configurations.visible}
+                    defaultChecked={valueRef?.current?.poll?.visible == false}
                     onChange={(e) => {
-                      setConfiguration({
-                        ...configurations,
-                        visible: !e.target.checked,
-                      })
+                      if (valueRef?.current?.poll) {
+                        valueRef.current.poll.visible = !e.target.checked
+                      }
                     }}
-                    name="visible"
                   />
                 }
                 label="投票后结果可见"
               />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={configurations.multiple}
-                    onChange={(e) => {
-                      setConfiguration({
-                        ...configurations,
-                        max_choices: e.target.checked ? 2 : 1,
-                        multiple: e.target.checked,
-                      })
-                    }}
-                    name="multiple"
-                  />
-                }
-                label="多选投票"
-              />
             </FormGroup>
-            {configurations.multiple ? (
-              <TextField
-                label={`最多选择数`}
-                variant="outlined"
-                size="small"
-                className="mt-4"
-                type="number"
-                onChange={(e) => {
-                  if (
-                    Number(e.target.value) > 1 &&
-                    Number(e.target.value) < options.length
-                  ) {
-                    setConfiguration({
-                      ...configurations,
-                      max_choices: Number(e.target.value),
-                    })
-                  } else {
-                    showError(
-                      '选择数不能低于 2，且不能大于选项数，否则帖子无法正常新增'
-                    )
-                  }
-                }}
-              />
-            ) : (
-              <></>
-            )}
             <TextField
               label={`计票天数`}
               variant="outlined"
               type="number"
               size="small"
-              className="mt-4"
+              sx={{ width: '6em', mt: 1.75, mb: 1 }}
+              defaultValue={initialPollDetails?.expiration || ''} // TODO: Calculate days when editing threads.
               onChange={(e) => {
-                setConfiguration({
-                  ...configurations,
-                  expiration: Number(e.target.value),
-                })
+                if (valueRef?.current?.poll) {
+                  valueRef.current.poll.expiration =
+                    (parseInt(e.target.value) || 0) * 60 * 60 * 24
+                }
               }}
             />
-          </Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={multiple}
+                  onChange={(e) => {
+                    setMultiple(e.target.checked)
+                    if (valueRef?.current?.poll) {
+                      valueRef.current.poll.max_choices = e.target.checked
+                        ? maxChoices
+                        : 1
+                    }
+                  }}
+                />
+              }
+              label="多选投票"
+            />
+            {multiple && (
+              <TextField
+                label={`可选数目`}
+                variant="outlined"
+                size="small"
+                className="mt-4"
+                sx={{ width: '6em', mt: 1.75 }}
+                type="number"
+                error={!!maxChoicesError}
+                helperText={maxChoicesError}
+                value={maxChoices}
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value) || 1
+                  setMaxChoices(newValue)
+                  if (valueRef?.current?.poll) {
+                    valueRef.current.poll.max_choices = newValue
+                  }
+                }}
+              />
+            )}
+          </Stack>
         </Stack>
-      ) : (
-        <></>
       )}
-      <Snackbar
-        {...snackbarProps}
-        autoHideDuration={5000}
-        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-        style={{ position: 'absolute', bottom: '60px' }}
-      >
-        <Alert severity="error">{snackbarMessage}</Alert>
-      </Snackbar>
-    </Stack>
+    </Box>
   )
 }
