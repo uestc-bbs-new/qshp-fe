@@ -21,17 +21,17 @@ type ForumLastestThread = {
 export type Forum = ForumCommon & {
   todayposts?: number
   latest_thread?: ForumLastestThread
-  moderators?: Array<string>
-  children?: Array<Forum>
+  moderators?: string[]
+  children?: Forum[]
 }
 
 export type ForumDetails = ForumCommon & {
   threads: number
   todayposts: number
-  moderators: Array<string>
-  children: Array<ForumType>
-  parents: Array<ForumType>
-  thread_types: Array<ThreadType>
+  moderators: string[]
+  children: ForumStat[]
+  parents: ForumStat[]
+  thread_types: ThreadType[]
   thread_types_map?: ThreadTypeMap
   optional_thread_type: boolean
   can_post_anonymously: boolean
@@ -41,7 +41,7 @@ export type ForumDetails = ForumCommon & {
   post_notice: PostNotice
 }
 
-export type ForumType = ForumCommon & {
+export type ForumStat = ForumCommon & {
   threads: number
   posts: number
   todayposts: number
