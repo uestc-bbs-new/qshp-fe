@@ -14,6 +14,7 @@ import {
 
 import { PostThreadPollDetails } from '@/apis/thread'
 
+import { PostOptionsBlock } from './PostOptionsBase'
 import { PostEditorValue } from './types'
 
 export const VoteSelection = ({
@@ -71,129 +72,125 @@ export const VoteSelection = ({
       </FormGroup>
 
       {isVote && (
-        <Stack
-          className="px-6 py-4 flex flex-row"
-          sx={(theme) => ({
-            backgroundColor:
-              theme.palette.mode == 'light' ? 'rgb(232, 243, 255)' : 'black',
-          })}
-        >
-          <Stack mr={4}>
-            <Typography mt={1} mb={3}>
-              选项：最多可以填写 100 个选项
-            </Typography>
-            {options.map((item, index) => {
-              return (
-                <TextField
-                  key={index}
-                  label={`选项 ${index + 1}`}
-                  variant="outlined"
-                  size="small"
-                  sx={{ mb: 1.25, width: '20em' }}
-                  onBlur={(e) => {
-                    const newOptions = [...options]
-                    newOptions[index] = e.target.value.trim()
-                    setOptions(newOptions)
-                    if (valueRef?.current?.poll) {
-                      valueRef.current.poll.options = newOptions
-                        .filter((item) => !!item)
-                        .map((item) => ({
-                          text: item,
-                        }))
-                    }
-                  }}
-                />
-              )
-            })}
-            <Button
-              onClick={() => {
-                setOptions([...options, ''])
-              }}
-            >
-              +
-            </Button>
-          </Stack>
-          <Stack>
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Switch
-                    defaultChecked={valueRef?.current?.poll?.show_voters}
-                    onChange={(e) => {
+        <PostOptionsBlock>
+          <Stack direction="row">
+            <Stack mr={4}>
+              <Typography mt={1} mb={3}>
+                选项：最多可以填写 100 个选项
+              </Typography>
+              {options.map((item, index) => {
+                return (
+                  <TextField
+                    key={index}
+                    label={`选项 ${index + 1}`}
+                    variant="outlined"
+                    size="small"
+                    sx={{ mb: 1.25, width: '20em' }}
+                    onBlur={(e) => {
+                      const newOptions = [...options]
+                      newOptions[index] = e.target.value.trim()
+                      setOptions(newOptions)
                       if (valueRef?.current?.poll) {
-                        valueRef.current.poll.show_voters = e.target.checked
+                        valueRef.current.poll.options = newOptions
+                          .filter((item) => !!item)
+                          .map((item) => ({
+                            text: item,
+                          }))
                       }
                     }}
                   />
-                }
-                label="公开投票参与人"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    defaultChecked={valueRef?.current?.poll?.visible == false}
-                    onChange={(e) => {
-                      if (valueRef?.current?.poll) {
-                        valueRef.current.poll.visible = !e.target.checked
-                      }
-                    }}
-                  />
-                }
-                label="投票后结果可见"
-              />
-            </FormGroup>
-            <TextField
-              label={`计票天数`}
-              variant="outlined"
-              type="number"
-              size="small"
-              sx={{ width: '6em', mt: 1.75, mb: 1 }}
-              defaultValue={initialPollDetails?.expiration || ''} // TODO: Calculate days when editing threads.
-              onChange={(e) => {
-                if (valueRef?.current?.poll) {
-                  valueRef.current.poll.expiration =
-                    (parseInt(e.target.value) || 0) * 60 * 60 * 24
-                }
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={multiple}
-                  onChange={(e) => {
-                    setMultiple(e.target.checked)
-                    if (valueRef?.current?.poll) {
-                      valueRef.current.poll.max_choices = e.target.checked
-                        ? maxChoices
-                        : 1
-                    }
-                  }}
+                )
+              })}
+              <Button
+                onClick={() => {
+                  setOptions([...options, ''])
+                }}
+              >
+                +
+              </Button>
+            </Stack>
+            <Stack>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      defaultChecked={valueRef?.current?.poll?.show_voters}
+                      onChange={(e) => {
+                        if (valueRef?.current?.poll) {
+                          valueRef.current.poll.show_voters = e.target.checked
+                        }
+                      }}
+                    />
+                  }
+                  label="公开投票参与人"
                 />
-              }
-              label="多选投票"
-            />
-            {multiple && (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      defaultChecked={valueRef?.current?.poll?.visible == false}
+                      onChange={(e) => {
+                        if (valueRef?.current?.poll) {
+                          valueRef.current.poll.visible = !e.target.checked
+                        }
+                      }}
+                    />
+                  }
+                  label="投票后结果可见"
+                />
+              </FormGroup>
               <TextField
-                label={`可选数目`}
+                label={`计票天数`}
                 variant="outlined"
-                size="small"
-                className="mt-4"
-                sx={{ width: '6em', mt: 1.75 }}
                 type="number"
-                error={!!maxChoicesError}
-                helperText={maxChoicesError}
-                value={maxChoices}
+                size="small"
+                sx={{ width: '6em', mt: 1.75, mb: 1 }}
+                defaultValue={initialPollDetails?.expiration || ''} // TODO: Calculate days when editing threads.
                 onChange={(e) => {
-                  const newValue = parseInt(e.target.value) || 1
-                  setMaxChoices(newValue)
                   if (valueRef?.current?.poll) {
-                    valueRef.current.poll.max_choices = newValue
+                    valueRef.current.poll.expiration =
+                      (parseInt(e.target.value) || 0) * 60 * 60 * 24
                   }
                 }}
               />
-            )}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={multiple}
+                    onChange={(e) => {
+                      setMultiple(e.target.checked)
+                      if (valueRef?.current?.poll) {
+                        valueRef.current.poll.max_choices = e.target.checked
+                          ? maxChoices
+                          : 1
+                      }
+                    }}
+                  />
+                }
+                label="多选投票"
+              />
+              {multiple && (
+                <TextField
+                  label={`可选数目`}
+                  variant="outlined"
+                  size="small"
+                  className="mt-4"
+                  sx={{ width: '6em', mt: 1.75 }}
+                  type="number"
+                  error={!!maxChoicesError}
+                  helperText={maxChoicesError}
+                  value={maxChoices}
+                  onChange={(e) => {
+                    const newValue = parseInt(e.target.value) || 1
+                    setMaxChoices(newValue)
+                    if (valueRef?.current?.poll) {
+                      valueRef.current.poll.max_choices = newValue
+                    }
+                  }}
+                />
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        </PostOptionsBlock>
       )}
     </Box>
   )
