@@ -95,7 +95,7 @@ export type ThreadPollOption = {
   voters?: number[]
 }
 
-type ThreadReplyCredit = {
+export type ThreadReplyCredit = {
   count: number
   credit_amount: number
   credit_name: string

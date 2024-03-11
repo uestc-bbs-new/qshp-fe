@@ -71,8 +71,8 @@ export type PostNotice = {
 }
 
 export type ReplyCreditStatus = {
-  allowed_credits: string[]
-  details: { [credit_name in ExtCreditName]: ReplyCreditStatusDetails }
+  allowed_credits: ExtCreditName[]
+  details: { [credit_name in ExtCreditName]?: ReplyCreditStatusDetails }
 }
 
 export type ReplyCreditStatusDetails = {

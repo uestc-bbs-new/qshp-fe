@@ -1,9 +1,10 @@
-import { RefObject, useState } from 'react'
+import { MutableRefObject, useState } from 'react'
 
 import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 
+import ReplyCredit from './ReplyCredit'
 import { VoteSelection } from './VoteSelection'
 import { PostEditorKind, PostEditorValue } from './types'
 
@@ -17,7 +18,7 @@ const PostOptions = ({
   kind?: PostEditorKind
   forum?: ForumDetails
   initialValue?: PostEditorValue
-  valueRef?: RefObject<PostEditorValue>
+  valueRef: MutableRefObject<PostEditorValue>
   onAnonymousChanged?: () => void
 }) => {
   const [anonymous, setAnonymous] = useState(
@@ -34,7 +35,7 @@ const PostOptions = ({
                 onChange={(e) => {
                   const checked = e.target.checked
                   setAnonymous(checked)
-                  valueRef?.current && (valueRef.current.is_anonymous = checked)
+                  valueRef.current && (valueRef.current.is_anonymous = checked)
                   onAnonymousChanged && onAnonymousChanged()
                 }}
               />
@@ -44,6 +45,9 @@ const PostOptions = ({
         </FormGroup>
       )}
       {kind === 'newthread' && <VoteSelection valueRef={valueRef} />}
+      {kind === 'newthread' && forum?.reply_credit && (
+        <ReplyCredit status={forum.reply_credit} valueRef={valueRef} />
+      )}
     </Box>
   )
 }
