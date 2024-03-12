@@ -10,7 +10,7 @@ type RenderState = {
   dest?: string
 }
 
-const kForumAttachBasePath = siteRoot + '/data/attachment/forum/'
+const kForumAttachBasePath = siteRoot
 export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 
 const renderImage = (src: string, alt: string, context?: VditorContext) => {
