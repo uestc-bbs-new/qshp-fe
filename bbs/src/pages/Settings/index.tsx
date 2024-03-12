@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import {
   Box,
@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 
 import Link from '@/components/Link'
-import { pages } from '@/utils/routes'
+import { SettingsSubPage, pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
 import Blacklist from './Blacklist'
@@ -19,9 +19,17 @@ import PasswordSecurity from './PasswordSecurity'
 import PrivacyFilter from './PrivacyFilter'
 import Profile from './Profile'
 
-const listItems = [
+type subPageItem = {
+  id?: SettingsSubPage
+  link?: string
+  name: string
+  external?: boolean
+  Component?: React.ElementType
+}
+
+const listItems: subPageItem[] = [
   {
-    link: pages.settings('profile'),
+    id: 'profile',
     name: '个人资料',
     external: false,
     Component: Profile,
@@ -37,19 +45,19 @@ const listItems = [
     external: true,
   },
   {
-    link: pages.settings('privacy'),
+    id: 'privacy',
     name: '隐私筛选',
     external: false,
     Component: PrivacyFilter,
   },
   {
-    link: pages.settings('password'),
+    id: 'password',
     name: '密码安全',
     external: false,
     Component: PasswordSecurity,
   },
   {
-    link: pages.settings('blacklist'),
+    id: 'blacklist',
     name: '黑名单管理',
     external: false,
     Component: Blacklist,
@@ -57,13 +65,8 @@ const listItems = [
 ]
 
 const Settings = () => {
-  const location = useLocation()
-  const { id } = useParams()
-  const initialIndex = listItems.findIndex((item) => {
-    const linkParts = item.link.split('/')
-    const lastPart = linkParts[linkParts.length - 1]
-    return id === lastPart
-  })
+  const id = useParams()['id'] || listItems.find((item) => !!item.id)?.id
+  const initialIndex = listItems.findIndex((item) => id === item.id)
   const [selectedIndex, setSelectedIndex] = useState(
     initialIndex !== -1 ? initialIndex : 0
   )
@@ -92,7 +95,9 @@ const Settings = () => {
               <List disablePadding>
                 {listItems.map((item, index) => (
                   <Link
-                    to={item.link}
+                    to={
+                      item.id == undefined ? item.link : pages.settings(item.id)
+                    }
                     key={item.name}
                     underline="none"
                     color="inherit"
