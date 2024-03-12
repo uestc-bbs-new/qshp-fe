@@ -77,6 +77,7 @@ export type ReplyCreditStatus = {
 
 export type ReplyCreditStatusDetails = {
   remaining_credits: number
-  max_credits: number
+  max_single_credits?: number
+  max_total_credits?: number
   tax_rate: number
 }

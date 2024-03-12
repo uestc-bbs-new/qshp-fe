@@ -45,6 +45,7 @@ const ReplyCredit = ({
       setDetails(newDetails)
     }
   }
+  const settings = status.details[status.allowed_credits[0]]
   const totalAmount = details.credit_amount * details.count
   const taxRate = status.details[status.allowed_credits[0]]?.tax_rate || 0
   const creditsToPay = Math.ceil(totalAmount * (1 + taxRate))
@@ -55,12 +56,14 @@ const ReplyCredit = ({
   ) {
     errorText = '您的' + status.allowed_credits[0] + '不足！'
   }
+  if (settings?.max_total_credits && totalAmount > settings.max_total_credits) {
+    errorText = `回帖奖励总额太大（不超过 ${settings.max_total_credits}）！`
+  }
   if (
-    totalAmount > (status.details[status.allowed_credits[0]]?.max_credits || 0)
+    settings?.max_single_credits &&
+    details.credit_amount > settings.max_single_credits
   ) {
-    errorText = `回帖奖励总额太大（不超过 ${status.details[
-      status.allowed_credits[0]
-    ]?.max_credits}）！`
+    errorText = `每次回帖奖励数额太大（不超过 ${settings.max_single_credits}）！`
   }
   return (
     <>
