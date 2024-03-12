@@ -38,7 +38,7 @@ const withSearchAndHash = (
   return baseUrl
 }
 
-type SettingsSubPage = 'profile' | 'privacy' | 'password'
+type SettingsSubPage = 'profile' | 'privacy' | 'password' | 'blacklist'
 
 export type UserPageParams = {
   uid?: number

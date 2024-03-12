@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 
 import {
   Box,
@@ -13,6 +14,7 @@ import Link from '@/components/Link'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
+import Blacklist from './Blacklist'
 import PasswordSecurity from './PasswordSecurity'
 import PrivacyFilter from './PrivacyFilter'
 import Profile from './Profile'
@@ -46,14 +48,24 @@ const listItems = [
     external: false,
     Component: PasswordSecurity,
   },
+  {
+    link: pages.settings('blacklist'),
+    name: '黑名单管理',
+    external: false,
+    Component: Blacklist,
+  },
 ]
 
 const Settings = () => {
+  const location = useLocation()
+  const { id } = useParams()
+  const initialIndex = listItems.findIndex((item) => {
+    const linkParts = item.link.split('/')
+    const lastPart = linkParts[linkParts.length - 1]
+    return id === lastPart
+  })
   const [selectedIndex, setSelectedIndex] = useState(
-    listItems.findIndex(
-      (item) =>
-        location.pathname.endsWith(item.link) || location.pathname.endsWith('')
-    )
+    initialIndex !== -1 ? initialIndex : 0
   )
 
   const handleListItemClick = (
