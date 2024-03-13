@@ -11,8 +11,10 @@ import {
 } from '@mui/material'
 
 import Avatar from '@/components/Avatar'
+import { useAppState } from '@/states'
 
 const ProfileAvatar = () => {
+  const { state } = useAppState()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [editor, setEditor] = useState<AvatarEditor | null>(null)
   const [scale, setScale] = useState(1)
@@ -45,6 +47,9 @@ const ProfileAvatar = () => {
   }
   const closeDialog = () => {
     setIsDialogOpen(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
   const handleButtonClick = () => {
     if (editor && imageType !== 'image/gif') {
@@ -79,6 +84,7 @@ const ProfileAvatar = () => {
         }
       })
       console.log(images)
+      closeDialog()
     }
     //gif, scale and cropping rect
     if (editor && imageType === 'image/gif') {
@@ -91,7 +97,7 @@ const ProfileAvatar = () => {
   return (
     <>
       <Avatar
-        uid={0}
+        uid={state.user.uid}
         size={100}
         onClick={handleAvatarClick}
         style={{ cursor: 'pointer' }}
@@ -115,10 +121,10 @@ const ProfileAvatar = () => {
               <AvatarEditor
                 ref={setEditorRef}
                 image={avatarUrl}
-                width={300}
-                height={300}
-                border={5}
-                color={[255, 255, 255, 0.6]} // RGBA
+                width={250}
+                height={250}
+                border={60}
+                color={[0, 0, 0, 0.5]} // RGBA
                 scale={scale}
               />
             )}
