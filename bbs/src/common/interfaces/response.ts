@@ -1,4 +1,5 @@
 import { Attachment, ExtCreditMap } from './base'
+import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
 export type ThreadBasics = {
@@ -52,11 +53,14 @@ type ThreadExtended = {
   can_reply: boolean
   stamp?: number
   icon?: number
-  poll?: ThreadPollDetails
-  reply_credit?: ThreadReplyCredit
   reply_credit_remaining_amount?: number
 }
-export type Thread = ThreadBasics & ThreadExtended
+export type Thread = ThreadBasics &
+  ThreadExtended & {
+    poll?: ThreadPollDetails
+    reply_credit?: ThreadReplyCredit
+    collections?: Collection[]
+  }
 
 export type ThreadPollDetails = {
   /** 投票选项 */
