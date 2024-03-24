@@ -28,6 +28,7 @@ type NavLink = {
 
 type NavData<T extends boolean> = {
   data: T extends true ? Forum : NavLink[]
+  navName?: string
   isForum: T //true时显示Forum部分
 }
 
@@ -64,6 +65,34 @@ const listServiceItems: NavLink[] = [
   },
 ]
 
+const schoolServiceItems: NavLink[] = [
+  {
+    link: 'thread/1430861',
+    name: '校车时刻表',
+    external: false,
+  },
+  { link: '/forum/305', name: '失物招领', external: false },
+  { link: 'thread/1493930', name: '校历', external: false },
+  {
+    link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
+    name: '网上报修',
+    external: true,
+  },
+  { link: 'https://ecard.uestc.edu.cn/', name: '一卡通查询', external: true },
+  {
+    link: 'https://eportal.uestc.edu.cn/',
+    name: '网上服务大厅',
+    external: true,
+  },
+  {
+    link: 'https://hq.uestc.edu.cn/yzs/commentSite/commentSiteIndex',
+    name: '后勤建议',
+    external: true,
+  },
+  { link: 'https://gis.uestc.edu.cn/', name: '校园地图', external: true },
+  { link: 'https://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
+]
+
 const renderLink = (
   link: string,
   name: string,
@@ -89,7 +118,7 @@ const renderLink = (
   </Link>
 )
 
-const Ordinate = ({ data, isForum }: NavData<boolean>) => {
+const Ordinate = ({ data, isForum, navName }: NavData<boolean>) => {
   const [open, setOpen] = useState(false)
 
   const handleClick = () => {
@@ -102,7 +131,7 @@ const Ordinate = ({ data, isForum }: NavData<boolean>) => {
         <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className="font-bold">
-            {isForum ? (data as Forum).name : '论坛服务'}
+            {isForum ? (data as Forum).name : navName}
           </Typography>
         </ListItemText>
         {open ? (
@@ -142,7 +171,21 @@ const Sections = () => {
           </ListItemText>
         </ListItemButton>
       </Link>
-      <Ordinate data={listServiceItems} isForum={false} />
+      <Ordinate data={listServiceItems} isForum={false} navName="论坛服务" />
+      <Ordinate
+        data={schoolServiceItems}
+        isForum={false}
+        navName="校园直通车"
+      />
+      {/* todo: 禁止 hover  */}
+      <ListItemButton>
+        <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
+        <ListItemText>
+          <Typography color="inherit" className="font-bold text-zinc-900">
+            板块
+          </Typography>
+        </ListItemText>
+      </ListItemButton>
       <>
         {!forumList?.length ? (
           <List>
@@ -158,7 +201,7 @@ const Sections = () => {
           </List>
         ) : (
           forumList.map((item) => (
-            <Ordinate key={item.name} data={item} isForum={true} />
+            <Ordinate key={item.name} data={item} isForum={true} navName="" />
           ))
         )}
       </>
