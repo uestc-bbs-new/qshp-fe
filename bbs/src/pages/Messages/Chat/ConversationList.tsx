@@ -16,11 +16,13 @@ const ConversationList = ({
   pagination,
   lite,
   activeConversation,
+  showOptSelect,
 }: {
   list: ChatConversation[]
   pagination?: PaginationParams
   lite?: boolean
   activeConversation?: ChatConversation
+  showOptSelect: boolean
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeRef = useRef<HTMLLIElement>(null)
@@ -29,7 +31,7 @@ const ConversationList = ({
   }, [activeRef.current])
   return (
     <>
-      <List disablePadding>
+      <List>
         {list.map((chat) => (
           <ConversationItem
             key={chat.conversation_id}
@@ -37,9 +39,11 @@ const ConversationList = ({
             lite={lite}
             selected={chat == activeConversation}
             ref={chat == activeConversation ? activeRef : undefined}
+            showOptSelect={showOptSelect}
           />
         ))}
       </List>
+      {/* 分页栏 */}
       {pagination && (
         <Stack alignItems="center" my={1.5}>
           <Pagination
