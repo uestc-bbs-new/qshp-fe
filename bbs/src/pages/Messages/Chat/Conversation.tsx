@@ -2,10 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
+import { useNavigate } from 'react-router-dom'
 
 import { Send } from '@mui/icons-material'
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
 import {
   Box,
+  Button,
   Divider,
   IconButton,
   List,
@@ -37,10 +40,12 @@ const Conversation = ({
   chatId,
   uid,
   initialList,
+  showOptSelect,
 }: {
   chatId?: number
   uid?: number
   initialList?: ChatConversation[]
+  showOptSelect: boolean
 }) => {
   const { state } = useAppState()
   const [chatList, setChatList] = useState(initialList)
@@ -174,26 +179,44 @@ const Conversation = ({
     fetchMode.current = 'sent'
     refreshNewMessages()
   }
+  //高度最大为视窗高度减去200像素
   return (
     <Stack direction="row" maxHeight="calc(100vh - 200px)">
+      {/* 左侧栏 */}
       <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
         <ConversationList
-          list={chatList || []}
+          list={chatList || []} // 聊天列表，如果不存在则为空数组
           lite={true}
+          showOptSelect={showOptSelect}
           activeConversation={chatList?.find(
             (item) => item.conversation_id == chatId || item.to_uid == uid
           )}
         />
       </Box>
       <Stack flexGrow={1}>
+        <Box
+          sx={(theme) => ({
+            height: '40px',
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#D7E6FD' : '#545454',
+            textAlign: 'right',
+          })}
+          flexShrink={0}
+          overflow="auto"
+        >
+          <ChildComponent />
+        </Box>
+
         <List
-          sx={{
+          sx={(theme) => ({
             p: 1,
             overflow: 'auto',
             width: '100%',
             flexGrow: 1,
             flexShrink: 1,
-          }}
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#FAFBFC' : '#262626',
+          })}
           ref={scrollContainer}
         >
           {!isEnded && !(isFetching && query.page == 1) && (
@@ -261,7 +284,12 @@ const Conversation = ({
             multiline
             autoFocus
             rows={4}
-            sx={{ flexGrow: 1, flexShrink: 1 }}
+            sx={(theme) => ({
+              flexGrow: 1,
+              flexShrink: 1,
+              backgroundColor:
+                theme.palette.mode == 'light' ? '#F8FAFF' : '#545454',
+            })}
             onKeyDown={handleCtrlEnter(sendMessage)}
             inputRef={messageRef}
           />
@@ -275,6 +303,34 @@ const Conversation = ({
         </Stack>
       </Stack>
     </Stack>
+  )
+}
+
+//让返回按钮能够返回站内信的主页面
+const ChildComponent = () => {
+  const navigate = useNavigate()
+
+  const handleReturn = () => {
+    // 返回父页面的路径，例如 "/"
+    navigate('/messages/chat')
+  }
+
+  return (
+    <Button
+      sx={(theme) => ({
+        color: theme.palette.mode == 'light' ? '#0268FD' : '#90CAF9',
+        marginRight: '30px',
+        width: 'auto',
+        backgroundColor: 'inherit',
+        border: 'none',
+        height: '40px',
+        fontSize: '13px',
+      })}
+      onClick={handleReturn}
+    >
+      <KeyboardReturnIcon sx={{ marginRight: '4px', width: '18px' }} />
+      返回
+    </Button>
   )
 }
 
