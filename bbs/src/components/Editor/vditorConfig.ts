@@ -9,7 +9,15 @@ import { customRenderers } from '../RichText/renderer'
 import { VditorContext } from '../RichText/types'
 import { common, commonEmojiPath } from '../RichText/vditorConfig'
 
-const supportedImageExtensions = ['jpg', 'jpeg', 'jpe', 'png', 'gif']
+const supportedImageExtensions = [
+  'jpg',
+  'jpeg',
+  'jpe',
+  'png',
+  'gif',
+  'heic',
+  'heif',
+]
 
 const getFileExtension = (fileName: string) =>
   (fileName.match(/\.([0-9a-z]+)$/i) || [])[1]?.toLowerCase()
@@ -80,6 +88,8 @@ function options({
         'jpe',
         'jpeg',
         'gif',
+        'heic',
+        'heif',
         'zip',
         'rar',
         'tar',
