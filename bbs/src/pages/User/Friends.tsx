@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { editFriend, getUserFriends } from '@/apis/user'
+import { deleteFriend, editFriend, getUserFriends } from '@/apis/user'
 import { UserFriend, UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'
@@ -206,7 +206,7 @@ const FriendItem = ({
       self
         ? [
             { title: '修改备注', onClick: () => onEditFriendNote(item) },
-            { title: '删除' },
+            { title: '删除', onClick: () => deleteFriend(item.uid) },
           ]
         : undefined
     }
