@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import KeyboardCommandKeyIcon from '@mui/icons-material/KeyboardCommandKey'
+import OtherHousesIcon from '@mui/icons-material/OtherHouses'
 import {
   Box,
   Collapse,
@@ -136,7 +137,7 @@ const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
       <ListItemButton onClick={handleClick}>
         <ListItemIcon className=" min-w-10 text-[#0268FD]">
           {Icon !== undefined ? (
-            <Icon></Icon>
+            Icon
           ) : (
             <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>
           )}
@@ -176,13 +177,13 @@ const ListItemLink = ({
 }: {
   link: string
   name: string
-  Icon?: React.ReactNode
+  Icon?: () => React.ReactNode
 }) => {
   return (
     <Link to={link} underline="none" color="inherit">
       <ListItemButton>
         <ListItemIcon className=" min-w-10" sx={{ color: '#0268FD' }}>
-          <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>
+          {Icon ? Icon() : <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>}
         </ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className=" font-normal text-black">
@@ -198,7 +199,11 @@ const Sections = () => {
   const forumList = useForumList()
   return (
     <List style={{ color: '#7082a7' }} className=" pl-4">
-      <ListItemLink link="pages.index()" name="首页"></ListItemLink>
+      <ListItemLink
+        link="pages.index()"
+        name="首页"
+        Icon={() => <OtherHousesIcon />}
+      ></ListItemLink>
       <Ordinate data={listServiceItems} isForum={false} navName="论坛服务" />
       <Ordinate
         data={schoolServiceItems}
