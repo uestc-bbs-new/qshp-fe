@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import KeyboardCommandKeyIcon from '@mui/icons-material/KeyboardCommandKey'
 import {
   Box,
   Collapse,
@@ -30,6 +31,7 @@ type NavData<T extends boolean> = {
   data: T extends true ? Forum : NavLink[]
   navName?: string
   isForum: T //true时显示Forum部分
+  Icon?: React.ReactNode
 }
 
 const listServiceItems: NavLink[] = [
@@ -93,6 +95,10 @@ const schoolServiceItems: NavLink[] = [
   { link: 'https://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
 ]
 
+const OtherOption = [
+  { link: 'https://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
+]
+
 const renderLink = (
   link: string,
   name: string,
@@ -107,7 +113,7 @@ const renderLink = (
     external={external ?? false}
     target={external ? '_blank' : undefined}
   >
-    <ListItemButton sx={{ pl: 4 }}>
+    <ListItemButton sx={{}}>
       <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
       <ListItemText>
         <Typography color="inherit" className="font-bold">
@@ -118,7 +124,7 @@ const renderLink = (
   </Link>
 )
 
-const Ordinate = ({ data, isForum, navName }: NavData<boolean>) => {
+const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
   const [open, setOpen] = useState(false)
 
   const handleClick = () => {
@@ -128,9 +134,15 @@ const Ordinate = ({ data, isForum, navName }: NavData<boolean>) => {
   return (
     <>
       <ListItemButton onClick={handleClick}>
-        <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
+        <ListItemIcon className=" min-w-10 text-[#0268FD]">
+          {Icon !== undefined ? (
+            <Icon></Icon>
+          ) : (
+            <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>
+          )}
+        </ListItemIcon>
         <ListItemText>
-          <Typography color="inherit" className="font-bold">
+          <Typography color="inherit" className=" font-normal text-black">
             {isForum ? (data as Forum).name : navName}
           </Typography>
         </ListItemText>
@@ -157,20 +169,36 @@ const Ordinate = ({ data, isForum, navName }: NavData<boolean>) => {
   )
 }
 
+const ListItemLink = ({
+  link,
+  name,
+  Icon,
+}: {
+  link: string
+  name: string
+  Icon?: React.ReactNode
+}) => {
+  return (
+    <Link to={link} underline="none" color="inherit">
+      <ListItemButton>
+        <ListItemIcon className=" min-w-10" sx={{ color: '#0268FD' }}>
+          <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>
+        </ListItemIcon>
+        <ListItemText>
+          <Typography color="inherit" className=" font-normal text-black">
+            {name}
+          </Typography>
+        </ListItemText>
+      </ListItemButton>
+    </Link>
+  )
+}
+
 const Sections = () => {
   const forumList = useForumList()
   return (
-    <List style={{ color: '#7082a7' }}>
-      <Link to={pages.index()} underline="none" color="inherit">
-        <ListItemButton>
-          <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
-          <ListItemText>
-            <Typography color="inherit" className="font-bold">
-              首页
-            </Typography>
-          </ListItemText>
-        </ListItemButton>
-      </Link>
+    <List style={{ color: '#7082a7' }} className=" pl-4">
+      <ListItemLink link="pages.index()" name="首页"></ListItemLink>
       <Ordinate data={listServiceItems} isForum={false} navName="论坛服务" />
       <Ordinate
         data={schoolServiceItems}
@@ -178,14 +206,13 @@ const Sections = () => {
         navName="校园直通车"
       />
       {/* todo: 禁止 hover  */}
-      <ListItemButton>
-        <ListItemIcon>{/* <InboxIcon /> */}</ListItemIcon>
+      <ListItem>
         <ListItemText>
           <Typography color="inherit" className="font-bold text-zinc-900">
             板块
           </Typography>
         </ListItemText>
-      </ListItemButton>
+      </ListItem>
       <>
         {!forumList?.length ? (
           <List>
@@ -205,6 +232,19 @@ const Sections = () => {
           ))
         )}
       </>
+      {/* todo: 禁止 hover  */}
+      <ListItem>
+        <ListItemText>
+          <Typography color="inherit" className="font-bold text-zinc-900">
+            其他
+          </Typography>
+        </ListItemText>
+      </ListItem>
+      <ListItemLink
+        link={pages.thread(1812091)}
+        name="客户端下载"
+      ></ListItemLink>
+      <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink>
     </List>
   )
 }
