@@ -76,8 +76,6 @@ function User() {
       })
   }
 
-  console.log(commonUserData)
-
   return (
     <Box>
       <Stack direction="row">

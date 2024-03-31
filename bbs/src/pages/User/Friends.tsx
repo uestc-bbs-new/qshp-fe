@@ -88,6 +88,11 @@ function Friends({
     setFriendNoteOpen(true)
   }
 
+  const deleteFriendNode = async (uid: number) => {
+    await deleteFriend(uid)
+    refetch()
+  }
+
   const navigate = useNavigate()
   const topRef = useRef<HTMLDivElement>(null)
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
@@ -160,6 +165,7 @@ function Friends({
                   item={item}
                   self={self}
                   onEditFriendNote={editFriendNote}
+                  onDeleteFriend={deleteFriendNode}
                 />
               ))}
             </Separated>
@@ -195,10 +201,12 @@ const FriendItem = ({
   item,
   self,
   onEditFriendNote,
+  onDeleteFriend,
 }: {
   item: UserFriend
   self: boolean
   onEditFriendNote: (item: UserFriend) => void
+  onDeleteFriend: (uid: number) => void
 }) => (
   <CommonUserItem
     user={item}
@@ -206,7 +214,12 @@ const FriendItem = ({
       self
         ? [
             { title: '修改备注', onClick: () => onEditFriendNote(item) },
-            { title: '删除', onClick: () => deleteFriend(item.uid) },
+            {
+              title: '删除',
+              onClick: () => {
+                onDeleteFriend(item.uid)
+              },
+            },
           ]
         : undefined
     }

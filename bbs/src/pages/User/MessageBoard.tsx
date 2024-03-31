@@ -58,7 +58,6 @@ function MessageBoard({
     queryFn: async () => {
       const data = await getUserComments(query.common, query.page)
       onLoad && onLoad(data)
-      console.log(data)
       return data
     },
   })
@@ -93,9 +92,12 @@ function MessageBoard({
     topRef.current?.scrollIntoView()
   }
 
-  const handleComment = () => {
+  const handleComment = async () => {
     if (userSummary && inputRef.current?.value) {
-      addComment({ uid: userSummary.uid, message: inputRef.current.value })
+      await addComment({
+        uid: userSummary.uid,
+        message: inputRef.current.value,
+      })
       inputRef.current.value = ''
       refetch()
     }
@@ -112,6 +114,7 @@ function MessageBoard({
             placeholder="请输入留言"
             inputRef={inputRef}
             sx={{ width: 624 }}
+            multiline
           />
           <Button
             variant="contained"
@@ -172,7 +175,9 @@ function MessageBoard({
                   }
                 >
                   <Typography variant="userItemSummary">
-                    <UserHtmlRenderer html={comment.message} />
+                    <UserHtmlRenderer
+                      html={comment.message.replace(/\n/g, '<br>')}
+                    />
                   </Typography>
                   <Typography variant="userItemDetails" mt={0.5}>
                     {chineseTime(comment.dateline * 1000)}
@@ -240,7 +245,7 @@ const CommentEditDialog = ({
     <Dialog
       open={open}
       onClose={() => onClose && onClose()}
-      disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
+      disableRestoreFocus
     >
       <DialogTitle
         sx={{
@@ -268,14 +273,12 @@ const CommentEditDialog = ({
       {item && (
         <DialogContent>
           <Stack direction="column" alignItems="center" minWidth={320} m={1}>
-            <Typography ml={1} mb={2} color="#A1ADC5">
-              {item.message}
-            </Typography>
             <TextField
               size="small"
-              placeholder="请输入新留言"
+              defaultValue={item.message}
               inputRef={inputRef}
               sx={{ width: 500 }}
+              multiline
             />
           </Stack>
           <Stack alignItems="center">
