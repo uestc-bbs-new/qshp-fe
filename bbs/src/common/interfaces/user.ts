@@ -77,7 +77,7 @@ export type CommonUserQueryRpsoense = {
 export type UserCommonList<T> = CommonUserQueryRpsoense & GenericList<T>
 
 /** 用户空间中的留言 */
-export type UserComment = {
+export type UserComment = CommonUserSummary & {
   comment_id: number
   author_id: number
   author: string
