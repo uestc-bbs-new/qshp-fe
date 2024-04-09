@@ -24,6 +24,7 @@ import {
 import Chip from '@/components/Chip'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
+import { setVariantForThumbnailUrl } from '@/utils/thumbnail'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -414,7 +415,11 @@ const ThreadRepliesOrComments = ({
 const SummaryAttachmentItem = ({ item }: { item: AttachmentSummary }) => (
   <SummaryAttachmentGrid>
     <img
-      src={item.thumbnail_url ?? item.path}
+      src={
+        item.thumbnail_url
+          ? setVariantForThumbnailUrl(item.thumbnail_url, 'summary')
+          : item.path
+      }
       loading="lazy"
       css={{
         width: '100%',
