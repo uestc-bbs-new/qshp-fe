@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Poll } from '@mui/icons-material'
 import {
@@ -22,6 +22,7 @@ import {
   TopListThread,
 } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
+import ImageViewDialog from '@/dialogs/ImageViewDialog'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 import { setVariantForThumbnailUrl } from '@/utils/thumbnail'
@@ -69,6 +70,8 @@ const ThreadItem = ({
   ignoreThreadHighlight,
 }: ThreadItemProps) => {
   const theme = useTheme()
+  const [fullImageOpen, setFullImageOpen] = useState(false)
+  const [activeImage, setActiveImage] = useState<string>()
 
   return (
     <Box className="p-0.5">
@@ -154,7 +157,14 @@ const ThreadItem = ({
                         .filter((item) => item.is_image)
                         .slice(0, kMaxAttachmentInSummary)
                         .map((item, index) => (
-                          <SummaryAttachmentItem item={item} key={index} />
+                          <SummaryAttachmentItem
+                            item={item}
+                            onClick={() => {
+                              setActiveImage(item.path)
+                              setFullImageOpen(true)
+                            }}
+                            key={index}
+                          />
                         ))}
                       {data.summary_attachments.length >
                         kMaxAttachmentInSummary && (
@@ -251,6 +261,13 @@ const ThreadItem = ({
         </Stack>
       </Box>
       <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />
+      {fullImageOpen && activeImage && (
+        <ImageViewDialog
+          open
+          onClose={() => setFullImageOpen(false)}
+          singleImage={{ fullUrl: activeImage }}
+        />
+      )}
     </Box>
   )
 }
@@ -412,8 +429,14 @@ const ThreadRepliesOrComments = ({
     <></>
   )
 
-const SummaryAttachmentItem = ({ item }: { item: AttachmentSummary }) => (
-  <SummaryAttachmentGrid>
+const SummaryAttachmentItem = ({
+  item,
+  onClick,
+}: {
+  item: AttachmentSummary
+  onClick?: () => void
+}) => (
+  <SummaryAttachmentGrid onClick={onClick}>
     <img
       src={
         item.thumbnail_url
@@ -449,11 +472,13 @@ const SummaryAttachmentMore = ({ threadId }: { threadId: number }) => (
 const SummaryAttachmentGrid = ({
   children,
   sx,
+  onClick,
 }: {
   children?: React.ReactNode
   sx?: SxProps<Theme>
+  onClick?: () => void
 }) => (
-  <Grid m={0.5} sx={{ cursor: 'pointer', ...sx }}>
+  <Grid m={0.5} sx={{ cursor: 'pointer', ...sx }} onClick={onClick}>
     <Stack
       justifyContent="center"
       alignItems="center"
