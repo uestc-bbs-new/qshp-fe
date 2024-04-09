@@ -18,6 +18,13 @@ export type Attachment = FileInfo & {
   raw_url?: string
 }
 
+export type AttachmentSummary = Partial<FileInfo> & {
+  path: string
+  is_image: number
+  thumbnail_url?: string
+  raw_url?: string
+}
+
 export type UploadResponse = {
   uploaded?: Attachment[]
   errors?: FileInfo[]

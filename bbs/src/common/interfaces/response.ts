@@ -1,4 +1,4 @@
-import { Attachment, ExtCreditMap } from './base'
+import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
 import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
@@ -11,6 +11,7 @@ export type ThreadBasics = {
   dateline: number
   last_post: number
   summary?: string
+  summary_attachments?: AttachmentSummary[]
   views: number
   replies: number
 }
