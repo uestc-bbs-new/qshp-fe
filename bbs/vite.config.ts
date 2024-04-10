@@ -5,6 +5,21 @@ import { URL, fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import viteCompression from 'vite-plugin-compression'
 
+const staticProxies = {}
+
+if (process.env['UESTC_BBS_IMGPROXY_SERVER']) {
+  staticProxies['/thumb'] = {
+    target: process.env['UESTC_BBS_IMGPROXY_SERVER'],
+    rewrite: (path) => path.replace(/^\/thumb/, ''),
+  }
+}
+if (process.env['UESTC_BBS_DATA_SERVER']) {
+  staticProxies['/data'] = {
+    target: process.env['UESTC_BBS_DATA_SERVER'],
+    changeOrigin: true,
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -32,6 +47,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dev/, ''),
       },
+      ...staticProxies,
     },
   },
 })
