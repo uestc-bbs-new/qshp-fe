@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Poll } from '@mui/icons-material'
 import {
@@ -22,7 +22,7 @@ import {
   TopListThread,
 } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
-import ImageViewDialog from '@/dialogs/ImageViewDialog'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 import { setVariantForThumbnailUrl } from '@/utils/thumbnail'
@@ -70,8 +70,7 @@ const ThreadItem = ({
   ignoreThreadHighlight,
 }: ThreadItemProps) => {
   const theme = useTheme()
-  const [fullImageOpen, setFullImageOpen] = useState(false)
-  const [activeImage, setActiveImage] = useState<string>()
+  const { dispatch } = useAppState()
 
   return (
     <Box className="p-0.5">
@@ -160,8 +159,13 @@ const ThreadItem = ({
                           <SummaryAttachmentItem
                             item={item}
                             onClick={() => {
-                              setActiveImage(item.path)
-                              setFullImageOpen(true)
+                              dispatch({
+                                type: 'open dialog',
+                                payload: {
+                                  kind: 'image',
+                                  imageDetails: item.path,
+                                },
+                              })
                             }}
                             key={index}
                           />
@@ -261,13 +265,6 @@ const ThreadItem = ({
         </Stack>
       </Box>
       <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />
-      {fullImageOpen && activeImage && (
-        <ImageViewDialog
-          open
-          onClose={() => setFullImageOpen(false)}
-          singleImage={{ fullUrl: activeImage }}
-        />
-      )}
     </Box>
   )
 }

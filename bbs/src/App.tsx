@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router-dom'
 import LoginDialog from './components/Login/LoginDialog'
 import RegisterDialog from './components/Login/RegisterDialog'
 import ThemeProvider from './components/ThemeProvider'
+import ImageViewDialog from './dialogs/ImageViewDialog'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
 import {
@@ -56,6 +57,14 @@ function App() {
             <RouterProvider router={router} />
             {state.globalDialog?.kind == 'login' && <LoginDialog open />}
             {state.globalDialog?.kind == 'register' && <RegisterDialog open />}
+            {state.globalDialog?.kind == 'image' &&
+              state.globalDialog?.imageDetails && (
+                <ImageViewDialog
+                  open
+                  onClose={() => dispatch({ type: 'close dialog' })}
+                  singleImage={{ fullUrl: state.globalDialog.imageDetails }}
+                />
+              )}
           </>
         </ThemeProvider>
       </AppContext.Provider>
