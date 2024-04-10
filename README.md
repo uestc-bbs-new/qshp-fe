@@ -105,4 +105,4 @@ pnpm run bbs:build
 
 - 采用 Material UI 进行界面搭建，风格统一
 - 基于 Vite，让冷启动不再等待
-- Workspaces 同时管理论坛及未来其他页面
+- Workspaces 同时管理论坛及其他模块
