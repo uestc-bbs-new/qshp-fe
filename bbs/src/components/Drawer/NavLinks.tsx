@@ -32,7 +32,7 @@ type NavData<T extends boolean> = {
   data: T extends true ? Forum : NavLink[]
   navName?: string
   isForum: T //true时显示Forum部分
-  Icon?: React.ReactNode
+  Icon?: React.ElementType
 }
 
 const listServiceItems: NavLink[] = [
@@ -70,12 +70,12 @@ const listServiceItems: NavLink[] = [
 
 const schoolServiceItems: NavLink[] = [
   {
-    link: 'thread/1430861',
+    link: pages.thread(1430861),
     name: '校车时刻表',
     external: false,
   },
-  { link: '/forum/305', name: '失物招领', external: false },
-  { link: 'thread/1493930', name: '校历', external: false },
+  { link: pages.forum(305), name: '失物招领', external: false },
+  { link: pages.thread(1493930), name: '校历', external: false },
   {
     link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
     name: '网上报修',
@@ -136,11 +136,7 @@ const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
     <>
       <ListItemButton onClick={handleClick}>
         <ListItemIcon className=" min-w-10 text-[#0268FD]">
-          {Icon !== undefined ? (
-            Icon
-          ) : (
-            <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>
-          )}
+          {Icon !== undefined ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className=" font-normal text-black">
@@ -177,13 +173,13 @@ const ListItemLink = ({
 }: {
   link: string
   name: string
-  Icon?: () => React.ReactNode
+  Icon?: React.ElementType
 }) => {
   return (
     <Link to={link} underline="none" color="inherit">
       <ListItemButton>
         <ListItemIcon className=" min-w-10" sx={{ color: '#0268FD' }}>
-          {Icon ? Icon() : <KeyboardCommandKeyIcon></KeyboardCommandKeyIcon>}
+          {Icon ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
           <Typography color="inherit" className=" font-normal text-black">
@@ -200,16 +196,12 @@ const Sections = () => {
   return (
     <List style={{ color: '#7082a7' }} className=" pl-4">
       <ListItemLink
-        link="pages.index()"
+        link={pages.index()}
         name="首页"
         Icon={() => <OtherHousesIcon />}
       ></ListItemLink>
       <Ordinate data={listServiceItems} isForum={false} navName="论坛服务" />
-      <Ordinate
-        data={schoolServiceItems}
-        isForum={false}
-        navName="校园直通车"
-      />
+      <Ordinate data={schoolServiceItems} isForum={false} navName="校园服务" />
       {/* todo: 禁止 hover  */}
       <ListItem>
         <ListItemText>
@@ -237,7 +229,6 @@ const Sections = () => {
           ))
         )}
       </>
-      {/* todo: 禁止 hover  */}
       <ListItem>
         <ListItemText>
           <Typography color="inherit" className="font-bold text-zinc-900">
