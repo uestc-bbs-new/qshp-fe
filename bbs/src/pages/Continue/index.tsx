@@ -184,7 +184,6 @@ export const ContinueLoader = async ({
   originalSearchParams.delete(codeKey)
   originalSearchParams.delete(kVersion)
   const continuePath = `${kIdasOrigin}${url.pathname}?${originalSearchParams}`
-  console.log(version, code, path)
   try {
     const result = await idasAuth({
       continue: continuePath,
