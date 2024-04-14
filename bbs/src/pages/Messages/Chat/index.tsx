@@ -81,14 +81,12 @@ const Chat = () => {
             })}
             onClick={toggleOptSelect}
           >
-            {showOptSelect ? '取消选择' : '多选'}
+            {showOptSelect ? '取消选择' : '选择消息'}
           </Button>
           {showOptSelect && (
             <>
               <Button
                 sx={(theme) => ({
-                  marginLeft: '12px',
-                  width: 'auto',
                   backgroundColor: 'inherit',
                   border: 'none',
                   fontSize: '14px',
@@ -99,7 +97,6 @@ const Chat = () => {
               </Button>
               <Button
                 sx={(theme) => ({
-                  width: 'auto',
                   backgroundColor: 'inherit',
                   border: 'none',
                   fontSize: '14px',
@@ -107,6 +104,16 @@ const Chat = () => {
                 })}
               >
                 删除
+              </Button>
+              <Button
+                sx={(theme) => ({
+                  backgroundColor: 'inherit',
+                  border: 'none',
+                  fontSize: '14px',
+                  color: theme.palette.mode == 'light' ? '#0268FD' : '#90CAF9',
+                })}
+              >
+                举报
               </Button>
             </>
           )}

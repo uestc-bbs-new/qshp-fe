@@ -1,56 +1,93 @@
-import { MouseEvent, useState } from 'react'
+import { Fragment, useState } from 'react'
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SendIcon from '@mui/icons-material/Send'
-import { Button, Menu, MenuItem } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Stack,
+  TextField,
+} from '@mui/material'
+
+import AddRecipient from './AddRecipient'
 
 const StartConversation = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+  const [open, setOpen] = useState(false)
+
+  const handleClickOpen = () => {
+    setOpen(true)
   }
   const handleClose = () => {
-    setAnchorEl(null)
+    setOpen(false)
   }
   return (
-    <div>
+    <Fragment>
+      {/* 点击按钮打开对话框 */}
       <Button
         sx={{ fontSize: '14px', width: 180 }}
-        id="basic-button"
-        aria-controls={open ? 'demo-positioned-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
         variant="contained"
+        onClick={handleClickOpen}
       >
         <SendIcon sx={{ mr: 1 }} />
         <span style={{ marginRight: '6px' }}>开始聊天</span>
-        <ExpandMoreIcon />
       </Button>
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
+      <Dialog
         open={open}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+        sx={{
+          minWidth: '50%', // 设置宽度为屏幕宽度的40%
+          maxWidth: '60%',
+          margin: 'auto', // 水平居中
         }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+        PaperProps={{
+          //需要注意一下，这里还需要修改！
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            const formData = new FormData(event.currentTarget)
+            const formJson = Object.fromEntries((formData as any).entries())
+            const email = formJson.email
+            console.log(email)
+            handleClose()
+          },
         }}
       >
-        <MenuItem sx={{ fontSize: '14px', width: 180 }} onClick={handleClose}>
-          发起私聊
-        </MenuItem>
-        <MenuItem sx={{ fontSize: '14px', width: 180 }} onClick={handleClose}>
-          发起群聊
-        </MenuItem>
-      </Menu>
-    </div>
+        <DialogTitle style={{ fontWeight: 'bold', color: '#2175F3' }}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: '6px',
+              height: '14px',
+              backgroundColor: '#2175F3',
+              marginRight: '4px',
+            }}
+          ></span>
+          开始聊天
+        </DialogTitle>
+        <DialogContent>
+          <Stack direction="row">
+            <AddRecipient></AddRecipient>
+          </Stack>
+          <DialogContentText marginBottom={1}></DialogContentText>
+          <TextField
+            fullWidth
+            id="outlined-multiline-static"
+            label="发送内容*"
+            placeholder="请填写发送内容"
+            multiline
+            rows={5}
+            margin="dense"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>取消发送</Button>
+          <Button type="submit">发送</Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
   )
 }
 

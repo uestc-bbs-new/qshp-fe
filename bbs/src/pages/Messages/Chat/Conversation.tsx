@@ -27,8 +27,10 @@ import {
 } from '@/apis/messages'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes.ts'
 import { handleCtrlEnter } from '@/utils/tools'
 
 import ConversationList from './ConversationList'
@@ -311,12 +313,13 @@ const ChildComponent = () => {
   const navigate = useNavigate()
 
   const handleReturn = () => {
-    // 返回父页面的路径，例如 "/"
-    navigate('/messages/chat')
+    navigate(pages.chat())
   }
 
   return (
     <Button
+      component={Link}
+      to={pages.chat()}
       sx={(theme) => ({
         color: theme.palette.mode == 'light' ? '#0268FD' : '#90CAF9',
         marginRight: '30px',
@@ -326,7 +329,6 @@ const ChildComponent = () => {
         height: '40px',
         fontSize: '13px',
       })}
-      onClick={handleReturn}
     >
       <KeyboardReturnIcon sx={{ marginRight: '4px', width: '18px' }} />
       返回
