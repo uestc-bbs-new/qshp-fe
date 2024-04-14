@@ -1,3 +1,4 @@
+import { User } from '@/common/interfaces/base'
 import { authService, authServiceWithUser, commonUrl } from '@/utils/request'
 
 const authUrl = `${commonUrl}/auth`
@@ -13,10 +14,7 @@ export type AuthorizationResult = {
 
 export type IdasAuthResult = Partial<AuthorizationResult> & {
   new_user?: boolean
-  users?: {
-    uid: number
-    username: string
-  }[]
+  users?: User[]
   ephemeral_authorization: string
   remaining_registers?: number
 }

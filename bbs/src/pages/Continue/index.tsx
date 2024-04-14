@@ -20,6 +20,7 @@ import {
 } from '@mui/material'
 
 import { idasAuth, idasChooseUser } from '@/apis/auth'
+import { User } from '@/common/interfaces/base'
 import { ContinueMode, kDefaultContinueMode } from '@/common/types/idas'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
@@ -128,7 +129,7 @@ const Continue = () => {
                   idasResult={idasResult}
                   disabled={pending}
                   showRegister={!!idasResult.remaining_registers}
-                  onSignIn={(uid: number) => signIn(uid)}
+                  onClick={(user: User) => signIn(user.uid)}
                   onRegister={() => setRegister(true)}
                 />
               </Box>
