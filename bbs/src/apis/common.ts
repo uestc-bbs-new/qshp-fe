@@ -6,11 +6,11 @@ import {
   GenericList,
   IndexData,
   SearchSummaryResponse,
+  SearchSummaryUser,
   Thread,
   ThreadInList,
   ThreadList,
   TopList,
-  UserInfo,
   Users,
 } from '@/common/interfaces/response'
 import { ThreadTypeMap } from '@/common/interfaces/thread'
@@ -146,10 +146,24 @@ export const searchThreads = ({
   })
 }
 
-export const searchUsers = (params: object) => {
-  return request.get<{ total: number; rows: UserInfo[] }>(
-    `${commonUrl}/global/search/`,
-    { params: params }
+export const searchUsers = ({
+  query,
+  withFriends,
+  page,
+}: {
+  query?: string | null
+  withFriends?: boolean
+  page?: number
+}) => {
+  return request.get<GenericList<SearchSummaryUser>>(
+    `${commonUrl}/search/users`,
+    {
+      params: {
+        ...(query && { q: query }),
+        ...(withFriends && { with_friends: 1 }),
+        ...(page && { page }),
+      },
+    }
   )
 }
 

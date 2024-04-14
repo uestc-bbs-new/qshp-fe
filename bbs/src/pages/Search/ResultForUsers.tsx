@@ -31,7 +31,7 @@ const RersultForUsers = ({
   const [currentName, setCurrentName] = useState(target)
   const { data, refetch } = useQuery({
     queryKey: ['search'],
-    queryFn: () => searchUsers({ username: currentName, page: currentPage }),
+    queryFn: () => searchUsers({ query: currentName, page: currentPage }),
     // searchType == 'username'
     //   ? searchUsers({ username: currentName, page: currentPage })
     //   : searchUsers_uid({ uid: currentName, page: currentPage })
@@ -59,7 +59,7 @@ const RersultForUsers = ({
           <Grid container spacing={0.5}>
             {data?.rows.map((item, index) => (
               <Grid item md={6} xl={6} key={index}>
-                <PostUsers data={item} key={item.user_id} />
+                <PostUsers data={item} key={item.uid} />
               </Grid>
             ))}
           </Grid>
