@@ -50,16 +50,34 @@ export type UserPageParams = {
 
 export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
+const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
+const kIdasClientId = '1191760355037016064'
+export const kIdasVersion2 = 2
 const kIdasContinueBase = `${kIdasOrigin}/continue`
-export const gotoIdas = (options?: { mode?: ContinueMode }) => {
-  location.href = `${idasUrlBase}?service=${encodeURIComponent(
-    withSearchAndHash(
-      `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
-      new URLSearchParams({
-        path: `${location.pathname}${location.search}`,
-      })
-    )
-  )}`
+export const gotoIdas = (options?: {
+  mode?: ContinueMode
+  version?: number
+}) => {
+  const version = options?.version //2
+  const continueUrl = withSearchAndHash(
+    `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
+    new URLSearchParams({
+      path: `${location.pathname}${location.search}`,
+      ...(version ? { version: version.toString() } : {}),
+    })
+  )
+  location.href =
+    version == 2
+      ? withSearchAndHash(
+          idas2UrlBase,
+          new URLSearchParams({
+            response_type: 'code',
+            client_id: kIdasClientId,
+            redirect_uri: continueUrl,
+            state: '1',
+          })
+        )
+      : `${idasUrlBase}?service=${encodeURIComponent(continueUrl)}`
 }
 
 export const pages = {

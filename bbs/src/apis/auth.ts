@@ -4,7 +4,7 @@ import { authService, authServiceWithUser, commonUrl } from '@/utils/request'
 const authUrl = `${commonUrl}/auth`
 
 export type EphemeralAuthorization = {
-  ticket: string
+  code: string
   ephemeral_authorization: string
 }
 
@@ -37,8 +37,9 @@ export const signIn = (params: {
 
 export const idasAuth = (params: {
   continue: string
-  ticket: string
+  code: string
   signin?: boolean
+  version?: number
 }) => {
   return authServiceWithUser.post<IdasAuthResult>(`${authUrl}/idas`, params)
 }

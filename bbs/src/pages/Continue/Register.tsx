@@ -34,7 +34,7 @@ export const RegisterForm = ({
       onClose()
     } else {
       persistedStates.authorizationHeader = await idasFreshman({
-        ticket: idasResult.ticket,
+        code: idasResult.code,
         ephemeral_authorization: idasResult.ephemeral_authorization,
       })
       navigate(idasResult.continue, { replace: true })
@@ -58,7 +58,7 @@ export const RegisterForm = ({
     setUserNameError('')
     if (
       !(await checkUserName({
-        ticket: idasResult.ticket,
+        code: idasResult.code,
         ephemeral_authorization: idasResult.ephemeral_authorization,
         username,
       })) &&
@@ -96,7 +96,7 @@ export const RegisterForm = ({
       return
     }
     persistedStates.authorizationHeader = await register({
-      ticket: idasResult.ticket,
+      code: idasResult.code,
       ephemeral_authorization: idasResult.ephemeral_authorization,
       username: username.toString(),
       password: password.toString(),

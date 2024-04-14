@@ -23,7 +23,7 @@ import { idasAuth, idasChooseUser } from '@/apis/auth'
 import { ContinueMode, kDefaultContinueMode } from '@/common/types/idas'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
-import { kIdasOrigin, pages } from '@/utils/routes'
+import { kIdasOrigin, kIdasVersion2, pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import logo from '../../assets/logo-signin.png'
@@ -32,7 +32,9 @@ import { RegisterForm } from './Register'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
 
-const kTicket = 'ticket'
+const kVersion = 'version'
+const kV1Code = 'ticket'
+const kV2Code = 'code'
 
 const Continue = () => {
   const dark = useTheme().palette.mode == 'dark'
@@ -46,7 +48,7 @@ const Continue = () => {
     setPending(true)
     idasChooseUser({
       user_id,
-      ticket: idasResult.ticket,
+      code: idasResult.code,
       ephemeral_authorization: idasResult.ephemeral_authorization,
     })
       .then((authorization) => {
@@ -171,25 +173,30 @@ export const ContinueLoader = async ({
 }) => {
   const url = new URL(request.url)
   const searchParams = url.searchParams
-  const ticket = searchParams.get(kTicket)
+  const version = parseInt(searchParams.get(kVersion) || '0')
+  const codeKey = version == kIdasVersion2 ? kV2Code : kV1Code
+  const code = searchParams.get(codeKey)
   const path = sanitizeContinuePath(searchParams.get('path'))
-  if (!ticket) {
+  if (!code) {
     return redirect(path)
   }
   const originalSearchParams = new URLSearchParams(searchParams)
-  originalSearchParams.delete(kTicket)
+  originalSearchParams.delete(codeKey)
+  originalSearchParams.delete(kVersion)
   const continuePath = `${kIdasOrigin}${url.pathname}?${originalSearchParams}`
+  console.log(version, code, path)
   try {
     const result = await idasAuth({
       continue: continuePath,
-      ticket,
+      code,
       signin: (params.mode || kDefaultContinueMode) == 'signin',
+      ...(version && { version }),
     })
     if (result.authorization) {
       persistedStates.authorizationHeader = result.authorization
       return redirect(path)
     }
-    return { ...result, ticket, continue: path }
+    return { ...result, code, continue: path }
   } catch (_) {
     return redirect(path)
   }
