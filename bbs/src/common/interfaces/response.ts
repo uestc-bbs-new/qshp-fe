@@ -235,17 +235,6 @@ export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
 }
 
-export type IdasAuthResult = {
-  authorization?: string
-  new_user?: boolean
-  users?: {
-    uid: number
-    username: string
-  }[]
-  ephemeral_authorization: string
-  remaining_registers?: number
-}
-
 export type PaginationParams = {
   total: number
   page_size: number
