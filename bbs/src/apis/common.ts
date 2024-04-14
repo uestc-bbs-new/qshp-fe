@@ -11,7 +11,6 @@ import {
   ThreadInList,
   ThreadList,
   TopList,
-  Users,
 } from '@/common/interfaces/response'
 import { ThreadTypeMap } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
@@ -164,13 +163,6 @@ export const searchUsers = ({
         ...(page && { page }),
       },
     }
-  )
-}
-
-export const searchUsers_at = (params: object) => {
-  return request.get<{ total: number; rows: Users[] }>(
-    `${commonUrl}/global/search/at`,
-    { params: params }
   )
 }
 
