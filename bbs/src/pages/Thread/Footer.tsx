@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { Button, Stack } from '@mui/material'
 
 import { votePost } from '@/apis/thread'
-import { ForumDetails, PostFloor, Thread } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
 type FooterProps = {

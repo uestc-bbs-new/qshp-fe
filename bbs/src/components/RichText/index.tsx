@@ -119,6 +119,7 @@ export const UserHtmlRenderer = ({
 
   const processedHtml = useMemo(() => transformUserHtml(html), [html])
   const navigate = useNavigate()
+  const { dispatch } = useAppState()
   return (
     <div
       ref={contentRef}
@@ -127,7 +128,7 @@ export const UserHtmlRenderer = ({
       dangerouslySetInnerHTML={{
         __html: processedHtml,
       }}
-      onClickCapture={(e) => onClickHandler(e, navigate)}
+      onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
     ></div>
   )
 }
@@ -164,10 +165,11 @@ const MarkdownPostRenderer = ({
       )
   }, [message])
   const navigate = useNavigate()
+  const { dispatch } = useAppState()
   return (
     <div
       className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
-      onClickCapture={(e) => onClickHandler(e, navigate)}
+      onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
     >
       <Typography color="text.primary" ref={el}></Typography>
     </div>

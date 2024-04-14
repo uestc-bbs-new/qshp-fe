@@ -18,7 +18,7 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { Forum } from '@/common/interfaces/response'
+import { Forum } from '@/common/interfaces/forum'
 import Link from '@/components/Link'
 import Tooltip from '@/components/Tooltip'
 import { globalCache, useForumList } from '@/states'

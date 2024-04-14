@@ -18,7 +18,8 @@ import {
 
 import { getUserFavorites } from '@/apis/user'
 import { User } from '@/common/interfaces/base'
-import { Collection, UserFavorite } from '@/common/interfaces/user'
+import { Collection } from '@/common/interfaces/collection'
+import { UserFavorite } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'

@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { editFriend, getUserFriends } from '@/apis/user'
+import { deleteFriend, editFriend, getUserFriends } from '@/apis/user'
 import { UserFriend, UserSummary } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'
@@ -86,6 +86,11 @@ function Friends({
   const editFriendNote = (item: UserFriend) => {
     setActiveFriend(item)
     setFriendNoteOpen(true)
+  }
+
+  const deleteFriendNode = async (uid: number) => {
+    await deleteFriend(uid)
+    refetch()
   }
 
   const navigate = useNavigate()
@@ -160,6 +165,7 @@ function Friends({
                   item={item}
                   self={self}
                   onEditFriendNote={editFriendNote}
+                  onDeleteFriend={deleteFriendNode}
                 />
               ))}
             </Separated>
@@ -195,10 +201,12 @@ const FriendItem = ({
   item,
   self,
   onEditFriendNote,
+  onDeleteFriend,
 }: {
   item: UserFriend
   self: boolean
   onEditFriendNote: (item: UserFriend) => void
+  onDeleteFriend: (uid: number) => void
 }) => (
   <CommonUserItem
     user={item}
@@ -206,7 +214,12 @@ const FriendItem = ({
       self
         ? [
             { title: '修改备注', onClick: () => onEditFriendNote(item) },
-            { title: '删除' },
+            {
+              title: '删除',
+              onClick: () => {
+                onDeleteFriend(item.uid)
+              },
+            },
           ]
         : undefined
     }

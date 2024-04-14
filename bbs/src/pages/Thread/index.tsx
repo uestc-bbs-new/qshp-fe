@@ -11,11 +11,8 @@ import {
 import { Box, List, ListItem, Pagination, Skeleton, Stack } from '@mui/material'
 
 import { getPostDetails, getThreadsInfo, kPostPageSize } from '@/apis/thread'
-import {
-  ForumDetails,
-  PostFloor,
-  Thread as ThreadType,
-} from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
 import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import PostEditor from '@/components/Editor/PostEditor'

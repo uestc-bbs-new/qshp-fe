@@ -6,7 +6,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { Box } from '@mui/material'
 
 import { getForumDetails } from '@/apis/common'
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 import Card from '@/components/Card'
 import PostEditor from '@/components/Editor/PostEditor'
 import { useAppState } from '@/states'

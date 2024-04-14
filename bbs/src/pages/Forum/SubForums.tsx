@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { ForumType } from '@/common/interfaces/response'
+import { ForumStat } from '@/common/interfaces/forum'
 import Card from '@/components/Card'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'
@@ -20,7 +20,7 @@ import { chineseTime } from '@/utils/dayjs'
 import { unescapeSubject } from '@/utils/htmlEscape'
 import { pages } from '@/utils/routes'
 
-const SubForums = ({ children }: { children: ForumType[] }) => {
+const SubForums = ({ children }: { children: ForumStat[] }) => {
   const [collapsed, setCollapsed] = useState(false)
   const theme = useTheme()
 

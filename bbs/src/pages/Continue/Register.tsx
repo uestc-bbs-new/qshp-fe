@@ -33,7 +33,7 @@ export const RegisterForm = ({
     if (idasResult.users) {
       onClose()
     } else {
-      await idasFreshman({
+      persistedStates.authorizationHeader = await idasFreshman({
         ticket: idasResult.ticket,
         ephemeral_authorization: idasResult.ephemeral_authorization,
       })

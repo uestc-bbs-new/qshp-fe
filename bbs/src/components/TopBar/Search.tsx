@@ -14,12 +14,12 @@ import {
   debounce,
 } from '@mui/material'
 
-import { searchSummary } from '@/apis/common'
+import { searchSummary } from '@/apis/search'
 import {
   SearchSummaryResponse,
   SearchSummaryThread,
   SearchSummaryUser,
-} from '@/common/interfaces/response'
+} from '@/common/interfaces/search'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 

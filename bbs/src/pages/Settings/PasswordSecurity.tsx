@@ -104,40 +104,8 @@ const PasswordSecurity = () => {
             >
               如果不需要更改密码，此处请留空
             </Typography>
-            <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
-              <Typography sx={{ width: 100 }}>邮箱</Typography>
-              <StyledField
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{ width: '40%' }}
-              />
-            </Stack>
-            <Typography
-              sx={{
-                ml: 13,
-                mt: 1,
-                mb: 1,
-                color: 'orange',
-              }}
-              fontSize={12}
-            >
-              新邮箱（{`1445987647@qq.com`}）等待验证中...
-            </Typography>
-            <Typography
-              sx={{
-                ml: 13,
-                mt: 1,
-                mb: 3,
-                color: alpha(theme.palette.text.secondary, 0.3),
-              }}
-              fontSize={12}
-            >
-              系统已经向该邮箱发送了一封验证激活邮件，请查收邮件，进行验证激活。
-              <br />
-              如果哦没有收到邮件，您可以更换一个邮箱，或者
-              <Button>重新接受验证邮件</Button>
-            </Typography>
-            <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
+
+            <Stack direction="row" alignItems="center" sx={{ mb: 4 }}>
               <Typography sx={{ width: 100 }}>安全提问</Typography>
               <FormControl sx={{ width: '30%' }}>
                 <StyledSelect
@@ -155,12 +123,20 @@ const PasswordSecurity = () => {
                 </StyledSelect>
               </FormControl>
             </Stack>
-            <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
+            <Stack direction="row" alignItems="center" sx={{ mb: 4 }}>
               <Typography sx={{ width: 100 }}>回答</Typography>
               <StyledField
                 value={securityAnswer}
                 onChange={(e) => setSecurityAnswer(e.target.value)}
                 sx={{ width: '30%' }}
+              />
+            </Stack>
+            <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
+              <Typography sx={{ width: 100 }}>邮箱</Typography>
+              <StyledField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{ width: '40%' }}
               />
             </Stack>
             <Stack direction="row" sx={{ mb: 7 }}>

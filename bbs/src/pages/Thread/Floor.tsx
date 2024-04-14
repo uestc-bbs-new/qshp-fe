@@ -3,8 +3,8 @@ import React, { ReactNode } from 'react'
 import PublishIcon from '@mui/icons-material/Publish'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 
+import { ForumDetails } from '@/common/interfaces/forum'
 import {
-  ForumDetails,
   PostAuthorDetails,
   PostFloor,
   Thread,
@@ -26,6 +26,7 @@ import PostComments from './PostComments'
 import { PostExtraDetailsContainer } from './PostExtraDetails'
 import PostRates from './PostRates'
 import PostStatus from './PostStatus'
+import ThreadCollections from './ThreadCollections'
 import ThreadLikes from './ThreadLikes'
 import PollExtension from './extension/Poll'
 import {
@@ -220,6 +221,11 @@ const Floor = ({
                 values={[post.support, post.oppose]}
               />
             )}
+            {threadDetails?.collections &&
+              post.position == 1 &&
+              post.is_first == 1 && (
+                <ThreadCollections collections={threadDetails.collections} />
+              )}
             <PostExtraDetailsContainer
               loading={!!post.has_comment && !postDetails}
               hasContent={

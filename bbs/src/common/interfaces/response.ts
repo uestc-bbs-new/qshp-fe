@@ -1,53 +1,6 @@
-import { Attachment } from './base'
-
-type ForumLastestThread = {
-  thread_id: number
-  subject: string
-  lastpost_time: number
-  lastpost_author: string
-  lastpost_authorid: number
-}
-export type Forum = ForumCommon & {
-  todayposts?: number
-  latest_thread?: ForumLastestThread
-  moderators?: Array<string>
-  children?: Array<Forum>
-}
-
-export type ForumAside = {
-  fid: number
-  fup: number
-  type: string
-  name: string
-  status: boolean
-  threads: number
-  posts: number
-  todayposts: number
-  yesterdayposts: number
-  autoclose: number
-  modworks: number
-  favtimes: number
-  sharetimes: number
-}
-
-export type ForumList = {
-  group: Array<{
-    fid: number
-    fup: number
-    type: string
-    name: string
-    threads: number
-    posts: number
-    todayposts: number
-    yesterdayposts: number
-    moderators: Array<string>
-    forums: Array<Forum>
-    autoclose: number
-    modworks: number
-    favtimes: number
-    sharetimes: number
-  }>
-}
+import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
+import { Collection } from './collection'
+import { Forum, ForumDetails } from './forum'
 
 export type ThreadBasics = {
   thread_id: number
@@ -58,6 +11,7 @@ export type ThreadBasics = {
   dateline: number
   last_post: number
   summary?: string
+  summary_attachments?: AttachmentSummary[]
   views: number
   replies: number
 }
@@ -100,11 +54,14 @@ type ThreadExtended = {
   can_reply: boolean
   stamp?: number
   icon?: number
-  poll?: ThreadPollDetails
-  reply_credit?: ThreadReplyCredit
   reply_credit_remaining_amount?: number
 }
-export type Thread = ThreadBasics & ThreadExtended
+export type Thread = ThreadBasics &
+  ThreadExtended & {
+    poll?: ThreadPollDetails
+    reply_credit?: ThreadReplyCredit
+    collections?: Collection[]
+  }
 
 export type ThreadPollDetails = {
   /** 投票选项 */
@@ -143,7 +100,7 @@ export type ThreadPollOption = {
   voters?: number[]
 }
 
-type ThreadReplyCredit = {
+export type ThreadReplyCredit = {
   count: number
   credit_amount: number
   credit_name: string
@@ -180,8 +137,6 @@ export interface PostDetails {
   rows: PostFloor[]
 }
 
-export type ExtCreditName = '水滴' | '威望' | '奖励券'
-export type ExtCreditMap = { [name in ExtCreditName]?: number }
 /** 用户组相关信息 */
 export type UserGroupDetails = {
   /** 用户组 ID */
@@ -279,67 +234,6 @@ export interface PostExtraDetails {
 export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
 }
-
-export type ForumBasics = {
-  fid: number
-  name: string
-}
-
-export type ForumCommon = ForumBasics & {
-  can_post_thread?: boolean
-  can_post_reply?: boolean
-}
-
-export type PostNotice = {
-  newthread: string
-  newthread_mobile: string
-  newthread_quick: string
-  reply: string
-  reply_mobile: string
-  reply_quick: string
-  reply_quick_mobile: string
-  editthread: string
-  editthread_mobile: string
-  poll: string
-}
-
-export type ForumDetails = ForumCommon & {
-  threads: number
-  todayposts: number
-  moderators: Array<string>
-  children: Array<ForumType>
-  parents: Array<ForumType>
-  thread_types: Array<ThreadType>
-  thread_types_map?: ThreadTypeMap
-  optional_thread_type: boolean
-  can_post_anonymously: boolean
-  announcement: string
-  announcement_format: string
-  post_notice_format: 'bbcode' | 'markdown'
-  post_notice: PostNotice
-}
-
-export type ForumType = ForumCommon & {
-  threads: number
-  posts: number
-  todayposts: number
-  yesterdayposts: number
-  latest_thread: {
-    thread_id: number
-    subject: string
-    lastpost_time: number
-    lastpost_author: string
-    lastpost_authorid: number
-  }
-}
-
-export type ThreadType = {
-  type_id: number
-  name: string
-  moderators_only: boolean
-}
-
-export type ThreadTypeMap = { [type_id: number]: ThreadType }
 
 export type IdasAuthResult = {
   authorization?: string
@@ -466,27 +360,4 @@ export type IndexData = {
   global_stat?: GlobalStat
   forum_list?: Forum[]
   top_list?: TopList
-}
-
-export type SearchSummaryUser = UserGroupDetails & {
-  uid: number
-  username: string
-}
-
-export type SearchSummaryThread = {
-  thread_id: number
-  forum_id: number
-  subject: string
-  author: string
-  author_id: number
-  dateline: number
-}
-
-export type SearchSummaryResponse = {
-  threads?: SearchSummaryThread[]
-  thread_count: number
-  users?: SearchSummaryUser[]
-  user_count: number
-  tid_match?: SearchSummaryThread
-  uid_match?: SearchSummaryUser
 }

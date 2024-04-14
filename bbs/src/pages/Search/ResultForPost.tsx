@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { searchThreads } from '@/apis/common'
+import { searchThreads } from '@/apis/search'
 import EmptyList from '@/components/EmptyList'
 import ThreadItem from '@/components/ThreadItem'
 import { searchParamsAssign } from '@/utils/tools'

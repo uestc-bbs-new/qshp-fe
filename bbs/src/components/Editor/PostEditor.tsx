@@ -11,7 +11,8 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { ForumDetails, PostFloor } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
@@ -24,9 +25,7 @@ import Link from '../Link'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
-import { PostEditorValue } from './types'
-
-export type PostEditorKind = 'newthread' | 'reply' | 'edit'
+import { PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
   small,
@@ -188,10 +187,6 @@ const PostEditor = ({
     }
   }
 
-  const handleOptionsChange = () => {
-    setAnonymous(!!valueRef.current.is_anonymous)
-  }
-
   return (
     <>
       {forumLoading ? (
@@ -221,10 +216,13 @@ const PostEditor = ({
             ref={editor}
           />
           <PostOptions
+            kind={kind}
             forum={forum}
             initialValue={initialValue}
             valueRef={valueRef}
-            onChanged={handleOptionsChange}
+            onAnonymousChanged={() =>
+              setAnonymous(!!valueRef.current.is_anonymous)
+            }
           />
         </Stack>
       </Stack>

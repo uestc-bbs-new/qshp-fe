@@ -1,4 +1,4 @@
-import { ForumDetails } from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
 
 import { guestUser } from '..'
 
@@ -23,8 +23,9 @@ type ThreadBreadcumbEntry = {
 }
 
 type GlobalDialogState = {
-  kind?: 'login' | 'register'
+  kind?: 'login' | 'register' | 'image'
   prompt?: string
+  imageDetails?: string
 }
 
 export type State = {

@@ -5,6 +5,7 @@ import {
   PostDetailsByPostId,
   ThreadPollDetails,
   ThreadPollOption,
+  ThreadReplyCredit,
 } from '@/common/interfaces/response'
 import { unescapeSubject } from '@/utils/htmlEscape'
 import request, { commonUrl } from '@/utils/request'
@@ -62,13 +63,21 @@ export type PostCommonDetails = {
   attachments?: Attachment[]
 }
 
+export type PostThreadPollDetails = Omit<
+  ThreadPollDetails,
+  'multiple' | 'selected_options' | 'voter_count' | 'options'
+> & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
+
+export type PostThreadReplyCreditDetails = Omit<
+  ThreadReplyCredit,
+  'remaining_amount'
+>
+
 export type PostThreadDetails = PostCommonDetails & {
   forum_id: number
   type_id?: number
-  poll?: Omit<
-    ThreadPollDetails,
-    'selected_options' | 'voter_count' | 'options'
-  > & { options: Partial<Omit<ThreadPollOption, 'votes' | 'voters'>>[] }
+  poll?: PostThreadPollDetails
+  reply_credit?: PostThreadReplyCreditDetails
 }
 export const postThread = (details: PostThreadDetails) => {
   return request.post(`${commonUrl}/thread/new`, {
