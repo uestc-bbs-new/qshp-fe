@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useInView } from 'react-cool-inview'
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
 import { Close } from '@mui/icons-material'
 import {
@@ -14,7 +15,7 @@ import {
 
 import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
-import ThreadItem from '@/components/ThreadItem'
+import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 
@@ -71,7 +72,7 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
   })
 
   return (
-    <Stack>
+    <Stack height="100%">
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -92,14 +93,16 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
           <Close />
         </IconButton>
       </Stack>
-      <Box flexShrink={1} overflow="auto">
-        {list?.map((item) => (
-          <ThreadItem
-            key={item.thread_id}
-            data={{ ...item, last_poster: '' }}
-            showSummary
-          />
-        ))}
+      <Box flexShrink={1} overflow="auto" p={1}>
+        <ResponsiveMasonry
+          columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}
+        >
+          <Masonry gutter="12px">
+            {list?.map((item) => (
+              <ThreadItemGrid key={item.thread_id} item={item} />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
         {!isEnded && !(isFetching && page == 1) && (
           <Stack
             direction="row"
