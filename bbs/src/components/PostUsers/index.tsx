@@ -1,6 +1,6 @@
 import React, { Box, Stack, useTheme } from '@mui/material'
 
-import { SearchSummaryUser } from '@/common/interfaces/response'
+import { SearchSummaryUser } from '@/common/interfaces/search'
 import Chip from '@/components/Chip'
 
 import Avatar from '../Avatar'

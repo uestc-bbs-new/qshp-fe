@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 
 import { Box, Grid, Pagination, Stack, Typography } from '@mui/material'
 
-import { searchUsers } from '@/apis/common'
+import { searchUsers } from '@/apis/search'
 import PostUsers from '@/components/PostUsers'
 
 import EmptySearch from './EmptySearch'
