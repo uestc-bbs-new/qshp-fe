@@ -46,8 +46,6 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(vite@5.1.4)
 
-  SSO: {}
-
   bbs:
     dependencies:
       '@emotion/babel-plugin':
