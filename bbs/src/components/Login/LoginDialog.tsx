@@ -131,7 +131,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   const doSignIn = async (formData: FormData, captchaValue?: string) => {
     try {
       setSigninPending(true)
-      const authorization = await signIn({
+      const result = await signIn({
         username: formData.username,
         password: formData.password,
         keep_signed_in: formData.keepSignedIn,
@@ -140,10 +140,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           captcha_type: captcha?.name,
         }),
       })
-      if (authorization) {
-        persistedStates.authorizationHeader = authorization
-        close()
-      }
+      persistedStates.authorizationHeader = result.authorization
+      close()
     } catch (e_) {
       const e = e_ as
         | {

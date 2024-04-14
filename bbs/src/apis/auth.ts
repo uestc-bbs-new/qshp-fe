@@ -8,6 +8,10 @@ export type EphemeralAuthorization = {
   ephemeral_authorization: string
 }
 
+export type AuthorizationResult = {
+  authorization: string
+}
+
 export const signIn = (params: {
   username: string
   password: string
@@ -15,7 +19,7 @@ export const signIn = (params: {
   captcha_value?: string
   captcha_type?: string
 }) => {
-  return authServiceWithUser.post<string>(
+  return authServiceWithUser.post<AuthorizationResult>(
     `${authUrl}/signin`,
     {
       username: params.username,
@@ -49,11 +53,17 @@ export const idasChooseUser = (
     user_id: number
   }
 ) => {
-  return authServiceWithUser.post<string>(`${authUrl}/signin/user`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/signin/user`,
+    params
+  )
 }
 
 export const idasFreshman = (params: EphemeralAuthorization) => {
-  return authServiceWithUser.post<string>(`${authUrl}/signin/freshman`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/signin/freshman`,
+    params
+  )
 }
 
 export const checkUserName = (
@@ -72,7 +82,10 @@ export const register = (
     invitation?: string
   }
 ) => {
-  return authServiceWithUser.post<string>(`${authUrl}/register`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/register`,
+    params
+  )
 }
 
 export const signOut = () => {

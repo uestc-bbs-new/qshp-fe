@@ -51,8 +51,8 @@ const Continue = () => {
       code: idasResult.code,
       ephemeral_authorization: idasResult.ephemeral_authorization,
     })
-      .then((authorization) => {
-        persistedStates.authorizationHeader = authorization
+      .then((result) => {
+        persistedStates.authorizationHeader = result.authorization
         navigate(idasResult.continue, {
           replace: true,
         })

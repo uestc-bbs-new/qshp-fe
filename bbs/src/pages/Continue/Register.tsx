@@ -33,10 +33,12 @@ export const RegisterForm = ({
     if (idasResult.users) {
       onClose()
     } else {
-      persistedStates.authorizationHeader = await idasFreshman({
-        code: idasResult.code,
-        ephemeral_authorization: idasResult.ephemeral_authorization,
-      })
+      persistedStates.authorizationHeader = (
+        await idasFreshman({
+          code: idasResult.code,
+          ephemeral_authorization: idasResult.ephemeral_authorization,
+        })
+      ).authorization
       navigate(idasResult.continue, { replace: true })
     }
   }
@@ -95,13 +97,15 @@ export const RegisterForm = ({
     if (!username || !password || !email) {
       return
     }
-    persistedStates.authorizationHeader = await register({
-      code: idasResult.code,
-      ephemeral_authorization: idasResult.ephemeral_authorization,
-      username: username.toString(),
-      password: password.toString(),
-      email: email.toString(),
-    })
+    persistedStates.authorizationHeader = (
+      await register({
+        code: idasResult.code,
+        ephemeral_authorization: idasResult.ephemeral_authorization,
+        username: username.toString(),
+        password: password.toString(),
+        email: email.toString(),
+      })
+    ).authorization
     navigate(idasResult.continue, { replace: true })
   }
   return (
