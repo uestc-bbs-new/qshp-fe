@@ -1,4 +1,5 @@
-import { Attachment, ExtCreditMap } from './base'
+import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
+import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
 export type ThreadBasics = {
@@ -10,6 +11,7 @@ export type ThreadBasics = {
   dateline: number
   last_post: number
   summary?: string
+  summary_attachments?: AttachmentSummary[]
   views: number
   replies: number
 }
@@ -52,11 +54,14 @@ type ThreadExtended = {
   can_reply: boolean
   stamp?: number
   icon?: number
-  poll?: ThreadPollDetails
-  reply_credit?: ThreadReplyCredit
   reply_credit_remaining_amount?: number
 }
-export type Thread = ThreadBasics & ThreadExtended
+export type Thread = ThreadBasics &
+  ThreadExtended & {
+    poll?: ThreadPollDetails
+    reply_credit?: ThreadReplyCredit
+    collections?: Collection[]
+  }
 
 export type ThreadPollDetails = {
   /** 投票选项 */
@@ -355,27 +360,4 @@ export type IndexData = {
   global_stat?: GlobalStat
   forum_list?: Forum[]
   top_list?: TopList
-}
-
-export type SearchSummaryUser = UserGroupDetails & {
-  uid: number
-  username: string
-}
-
-export type SearchSummaryThread = {
-  thread_id: number
-  forum_id: number
-  subject: string
-  author: string
-  author_id: number
-  dateline: number
-}
-
-export type SearchSummaryResponse = {
-  threads?: SearchSummaryThread[]
-  thread_count: number
-  users?: SearchSummaryUser[]
-  user_count: number
-  tid_match?: SearchSummaryThread
-  uid_match?: SearchSummaryUser
 }

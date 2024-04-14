@@ -1,13 +1,19 @@
+import React from 'react'
+
 import { Poll } from '@mui/icons-material'
 import {
   Box,
   Divider,
+  Grid,
   Chip as MuiChip,
   Stack,
+  SxProps,
+  Theme,
   Typography,
   useTheme,
 } from '@mui/material'
 
+import { AttachmentSummary } from '@/common/interfaces/base'
 import { ForumBasics, ForumDetails } from '@/common/interfaces/forum'
 import {
   Thread,
@@ -16,8 +22,10 @@ import {
   TopListThread,
 } from '@/common/interfaces/response'
 import Chip from '@/components/Chip'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
+import { setVariantForThumbnailUrl } from '@/utils/thumbnail'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -51,6 +59,8 @@ type ThreadItemProps = {
   ignoreThreadHighlight?: boolean
 }
 
+const kMaxAttachmentInSummary = 9
+
 const ThreadItem = ({
   data,
   forumDetails,
@@ -60,6 +70,7 @@ const ThreadItem = ({
   ignoreThreadHighlight,
 }: ThreadItemProps) => {
   const theme = useTheme()
+  const { dispatch } = useAppState()
 
   return (
     <Box className="p-0.5">
@@ -132,10 +143,40 @@ const ThreadItem = ({
                 threadId={data.thread_id}
                 replies={replies}
               />
-              {showSummary && data.summary && (
-                <Typography variant="threadItemSummary" mb={0.5}>
-                  {data.summary}
-                </Typography>
+              {showSummary && (
+                <>
+                  {data.summary && (
+                    <Typography variant="threadItemSummary" mb={0.5}>
+                      {data.summary}
+                    </Typography>
+                  )}
+                  {!!data.summary_attachments?.length && (
+                    <Grid container>
+                      {data.summary_attachments
+                        .filter((item) => item.is_image)
+                        .slice(0, kMaxAttachmentInSummary)
+                        .map((item, index) => (
+                          <SummaryAttachmentItem
+                            item={item}
+                            onClick={() => {
+                              dispatch({
+                                type: 'open dialog',
+                                payload: {
+                                  kind: 'image',
+                                  imageDetails: item.path,
+                                },
+                              })
+                            }}
+                            key={index}
+                          />
+                        ))}
+                      {data.summary_attachments.length >
+                        kMaxAttachmentInSummary && (
+                        <SummaryAttachmentMore threadId={data.thread_id} />
+                      )}
+                    </Grid>
+                  )}
+                </>
               )}
               <ThreadAuthor thread={data} hideThreadAuthor={hideThreadAuthor} />
             </Stack>
@@ -385,4 +426,63 @@ const ThreadRepliesOrComments = ({
     <></>
   )
 
+const SummaryAttachmentItem = ({
+  item,
+  onClick,
+}: {
+  item: AttachmentSummary
+  onClick?: () => void
+}) => (
+  <SummaryAttachmentGrid onClick={onClick}>
+    <img
+      src={
+        item.thumbnail_url
+          ? setVariantForThumbnailUrl(item.thumbnail_url, 'summary')
+          : item.path
+      }
+      loading="lazy"
+      css={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      }}
+    />
+  </SummaryAttachmentGrid>
+)
+
+const SummaryAttachmentMore = ({ threadId }: { threadId: number }) => (
+  <SummaryAttachmentGrid sx={{ backgroundColor: '#eeeeee' }}>
+    <Link
+      to={pages.thread(threadId)}
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      ...
+    </Link>
+  </SummaryAttachmentGrid>
+)
+const SummaryAttachmentGrid = ({
+  children,
+  sx,
+  onClick,
+}: {
+  children?: React.ReactNode
+  sx?: SxProps<Theme>
+  onClick?: () => void
+}) => (
+  <Grid m={0.5} sx={{ cursor: 'pointer', ...sx }} onClick={onClick}>
+    <Stack
+      justifyContent="center"
+      alignItems="center"
+      sx={{ width: 72, height: 72 }}
+    >
+      {children}
+    </Stack>
+  </Grid>
+)
 export default ThreadItem

@@ -69,7 +69,11 @@ function User() {
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
   const onLoad = (data: CommonUserQueryRpsoense) => {
     ;(data.user_summary || data.user_summary) &&
-      setCommonUserData({ ...commonUserData, ...data })
+      setCommonUserData({
+        ...commonUserData,
+        ...data,
+        recent_visitors: data.recent_visitors ?? [],
+      })
   }
 
   return (
@@ -148,6 +152,7 @@ function User() {
                   queryOptions={queryOptions}
                   onLoad={onLoad}
                   self={self}
+                  userSummary={commonUserData?.user_summary}
                 />
               )}
             </>

@@ -1,11 +1,26 @@
+import React from 'react'
 import { NavigateFunction, matchRoutes } from 'react-router-dom'
 
 import routes from '@/routes/routes'
+import { StateAction } from '@/states/reducers/stateReducer'
 
 export const onClickHandler = (
   e: React.MouseEvent<HTMLDivElement>,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  dispatch: React.Dispatch<StateAction>
 ) => {
+  if (e.target instanceof HTMLImageElement) {
+    const img = e.target
+    if (img.classList.contains('post_attachment_image')) {
+      dispatch({
+        type: 'open dialog',
+        payload: {
+          kind: 'image',
+          imageDetails: img.getAttribute('data-x-fullsize-path') || img.src,
+        },
+      })
+    }
+  }
   let a: HTMLElement | null | EventTarget = e.target
   while (
     a &&

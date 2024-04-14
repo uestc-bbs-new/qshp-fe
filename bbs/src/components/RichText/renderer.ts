@@ -10,7 +10,7 @@ type RenderState = {
   dest?: string
 }
 
-const kForumAttachBasePath = siteRoot + '/data/attachment/forum/'
+const kForumAttachBasePath = siteRoot
 export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 
 const renderImage = (src: string, alt: string, context?: VditorContext) => {
@@ -26,11 +26,14 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
   const match = src.match(/^(?:i|a):([0-9]+)$/)
   if (match) {
     const id = parseInt(match[1])
-    const path = context?.attachments?.find((item) => item.attachment_id == id)
-      ?.path
+    const attachment = context?.attachments?.find(
+      (item) => item.attachment_id == id
+    )
+    const path = attachment?.thumbnail_url || attachment?.path
     if (path) {
       return html`<img
         src="${kForumAttachBasePath}${path}"
+        data-x-fullsize-path="${kForumAttachBasePath}${attachment?.path}"
         alt="${alt}"
         class="post_attachment post_attachment_image"
         loading="lazy"

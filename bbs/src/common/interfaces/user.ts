@@ -1,6 +1,7 @@
 import { FieldOptional } from '@/utils/types'
 
 import { ExtCreditMap, User } from './base'
+import { Collection } from './collection'
 import {
   GenericList,
   ThreadBasics,
@@ -76,7 +77,7 @@ export type CommonUserQueryRpsoense = {
 export type UserCommonList<T> = CommonUserQueryRpsoense & GenericList<T>
 
 /** 用户空间中的留言 */
-export type UserComment = {
+export type UserComment = CommonUserSummary & {
   comment_id: number
   author_id: number
   author: string
@@ -133,31 +134,6 @@ export type UserFavorite = {
   description?: string
   dateline: number
   thread_details?: ThreadInList
-}
-
-export type Collection = {
-  collection_id: number
-  uid: number
-  username: string
-  name: string
-  dateline: number
-  follows: number
-  threads: number
-  comments: number
-  description: string
-  last_update: number
-  average_rate: number
-  rates: number
-  latest_thread: {
-    thread_id: number
-    subject: string
-    dateline: number
-    lastpost_author: string
-  }
-  last_visit: number
-  keyword: string
-
-  is_owner: boolean
 }
 
 export type UserFavoritesList = FieldOptional<

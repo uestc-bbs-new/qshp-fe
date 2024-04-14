@@ -23,8 +23,9 @@ type ThreadBreadcumbEntry = {
 }
 
 type GlobalDialogState = {
-  kind?: 'login' | 'register'
+  kind?: 'login' | 'register' | 'image'
   prompt?: string
+  imageDetails?: string
 }
 
 export type State = {
