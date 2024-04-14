@@ -72,10 +72,13 @@ const transformTopList = (result: TopList) => {
   }
   return result
 }
-export const getTopLists = async (ids: string | string[]) =>
+export const getTopLists = async (ids: string | string[], page?: number) =>
   transformTopList(
     await request.get<TopList>(`${commonUrl}/forum/toplist`, {
-      params: { idlist: normalizeStringArray(ids).join(',') },
+      params: {
+        idlist: normalizeStringArray(ids).join(','),
+        ...(page ? { page } : {}),
+      },
     })
   )
 

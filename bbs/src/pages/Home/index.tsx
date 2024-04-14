@@ -1,9 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { Box, List, Skeleton, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  List,
+  Skeleton,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import { getIndexData } from '@/apis/common'
 import headerImg from '@/assets/header.jpg'
@@ -15,10 +24,12 @@ import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
 
 import { ForumGroup } from './ForumCover'
+import TopListView from './TopListView'
 
 const Home = () => {
   const { state } = useAppState()
   const location = useLocation()
+  const [topListOpen, setTopListOpen] = useState(false)
 
   const theme = useTheme()
   const {
@@ -56,7 +67,10 @@ const Home = () => {
           </Typography>
         </Box>
       </Banner>
-      <OverviewInfo data={indexData?.global_stat} />
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <OverviewInfo data={indexData?.global_stat} />
+        <Button onClick={() => setTopListOpen(true)}>更多</Button>
+      </Stack>
       {!indexData?.top_list && isLoading ? (
         <Skeleton height={480} />
       ) : (
@@ -91,6 +105,14 @@ const Home = () => {
         </Box>
         <Aside topList={indexData?.top_list} homepage />
       </Stack>
+
+      <Dialog
+        open={topListOpen}
+        onClose={() => setTopListOpen(false)}
+        fullScreen
+      >
+        <TopListView onClose={() => setTopListOpen(false)} />
+      </Dialog>
     </>
   )
 }
