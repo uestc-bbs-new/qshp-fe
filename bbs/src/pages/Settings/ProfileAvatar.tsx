@@ -74,7 +74,8 @@ const ProfileAvatar = () => {
               const url = URL.createObjectURL(blob)
               const img = new Image()
               img.src = url
-              document.body.appendChild(img)
+              // preview
+              //document.body.appendChild(img)
             },
             isTransparent ? 'image/png' : 'image/jpeg'
           )
@@ -83,9 +84,11 @@ const ProfileAvatar = () => {
           return dataUrl
         }
       })
+      // TODO: upload images
       console.log(images)
       closeDialog()
     }
+    // TODO: upload gif
     //gif, scale and cropping rect
     if (editor && imageType === 'image/gif') {
       console.log('gif')
