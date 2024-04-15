@@ -94,6 +94,18 @@ export const register = (
     params
   )
 }
+export const resetPassword = (
+  params: EphemeralAuthorization & {
+    user_id: number
+    password: string
+    clear_password_question?: boolean
+  }
+) => {
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/resetpassword`,
+    params
+  )
+}
 
 export const signOut = () => {
   return authService.post(`${authUrl}/signout`)

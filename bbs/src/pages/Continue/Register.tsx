@@ -102,6 +102,7 @@ export const RegisterForm = ({
           )}
         </>
       }
+      onClose={onClose}
     >
       <tr>
         <th>

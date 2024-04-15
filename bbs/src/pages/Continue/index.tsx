@@ -30,6 +30,7 @@ import { persistedStates } from '@/utils/storage'
 import logo from '../../assets/logo-signin.png'
 import Back from './Back'
 import { RegisterForm } from './Register'
+import ResetPassword from './ResetPassword'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
 
@@ -37,13 +38,33 @@ const kVersion = 'version'
 const kV1Code = 'ticket'
 const kV2Code = 'code'
 
+type Page = 'register' | 'userList' | 'resetPassword'
+
 const Continue = () => {
   const dark = useTheme().palette.mode == 'dark'
   const idasResult = useLoaderData() as IdasResultEx
   const mode = (useParams()['mode'] as ContinueMode) || kDefaultContinueMode
+  const initialPage = (() => {
+    if (mode == 'resetpassword') {
+      const userCount = idasResult.users?.length
+      if (userCount && userCount > 1) {
+        return 'userList'
+      }
+      return 'resetPassword'
+    }
+    if (mode == 'register' || !idasResult.users) {
+      return 'register'
+    }
+    return 'userList'
+  })()
+  const [page, setPage] = useState<Page>(initialPage)
+  const [selectedUser, setSelecetdUser] = useState(
+    mode == 'resetpassword' && idasResult.users?.length == 1
+      ? idasResult.users[0]
+      : undefined
+  )
 
   const [pending, setPending] = useState(false)
-  const [forceRegister, setRegister] = useState(mode == 'register')
   const navigate = useNavigate()
   const signIn = (user_id: number) => {
     setPending(true)
@@ -59,6 +80,14 @@ const Continue = () => {
         })
       })
       .catch(() => setPending(false))
+  }
+
+  const back = () => {
+    if (page == initialPage) {
+      navigate(pages.index())
+    } else {
+      setPage(initialPage)
+    }
   }
 
   return (
@@ -118,42 +147,63 @@ const Continue = () => {
             flexGrow={1}
             flexShrink={1}
           >
-            {idasResult.users && !forceRegister ? (
+            {page == 'userList' && (
               <Box>
                 <Back to={idasResult.continue} replace />
                 <Typography variant="signinTitle">选择账号</Typography>
                 <Typography my={2}>
-                  您注册了多个账号，请选择您需要登录的账号：
+                  {mode == 'resetpassword'
+                    ? '请选择需要重置密码的账号：'
+                    : '您注册了多个账号，请选择您需要登录的账号：'}
                 </Typography>
                 <UserList
                   idasResult={idasResult}
                   disabled={pending}
                   showRegister={!!idasResult.remaining_registers}
-                  onClick={(user: User) => signIn(user.uid)}
-                  onRegister={() => setRegister(true)}
+                  onClick={(user: User) => {
+                    if (mode == 'resetpassword') {
+                      setSelecetdUser(user)
+                      setPage('resetPassword')
+                    } else {
+                      signIn(user.uid)
+                    }
+                  }}
+                  onRegister={() => setPage('register')}
                 />
               </Box>
-            ) : idasResult.remaining_registers ? (
-              <RegisterForm
-                freshman={!idasResult.users}
-                idasResult={idasResult}
-                onClose={() => setRegister(false)}
-              />
-            ) : (
+            )}
+            {page == 'register' && (
               <>
-                <Alert severity="error">
-                  每个学号最多注册三个用户，您的注册次数已用完，无法注册新用户。
-                </Alert>
-                <Stack alignItems="center" mt={2}>
-                  <Button
-                    component={Link}
-                    to={pages.index()}
-                    variant="outlined"
-                  >
-                    返回首页
-                  </Button>
-                </Stack>
+                {idasResult.remaining_registers ? (
+                  <RegisterForm
+                    freshman={!idasResult.users}
+                    idasResult={idasResult}
+                    onClose={back}
+                  />
+                ) : (
+                  <>
+                    <Alert severity="error">
+                      每个学号最多注册三个用户，您的注册次数已用完，无法注册新用户。
+                    </Alert>
+                    <Stack alignItems="center" mt={2}>
+                      <Button
+                        component={Link}
+                        to={pages.index()}
+                        variant="outlined"
+                      >
+                        返回首页
+                      </Button>
+                    </Stack>
+                  </>
+                )}
               </>
+            )}
+            {page == 'resetPassword' && selectedUser && (
+              <ResetPassword
+                user={selectedUser}
+                idasResult={idasResult}
+                onClose={back}
+              />
             )}
           </Stack>
         </Stack>
