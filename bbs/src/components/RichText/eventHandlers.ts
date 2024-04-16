@@ -31,14 +31,27 @@ export const onClickHandler = (
     a = a.parentElement
   }
   if (a && a instanceof HTMLAnchorElement && a.href) {
-    const url = new URL(a.href)
+    let processClick = false
+    // Adapted from |shouldProcessLinkClick| of React Router, which is not
+    // exported. See https://github.com/remix-run/react-router/blob/main/packages/react-router-dom/dom.ts#L36.
     if (
-      url.host == location.host &&
-      matchRoutes(routes.current, url.pathname)
+      e.button == 0 &&
+      (!a.target || a.target == '_self') &&
+      !(e.metaKey || e.altKey || e.ctrlKey || e.shiftKey)
     ) {
-      navigate(url.pathname + url.search + url.hash)
-      e.preventDefault()
-    } else if (url.host == 'wiki.stuhome.net') {
+      processClick = true
+    }
+    const url = new URL(a.href)
+    if (processClick && url.host == location.host) {
+      const matches = matchRoutes(routes.current, url.pathname)
+      if (matches && matches.every((item) => item.route.id != '404')) {
+        navigate(url.pathname + url.search + url.hash)
+        e.preventDefault()
+        return
+      }
+    }
+
+    if (url.host == 'wiki.stuhome.net') {
       // TODO(fangjue): Show some prompt and provide a link to
       // https://bbs.uestc.edu.cn/forum.php?mod=viewthread&tid=1328284.
       e.preventDefault()
