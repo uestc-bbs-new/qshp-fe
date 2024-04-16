@@ -16,6 +16,8 @@ import Avatar from '@/components/Avatar'
 import { StyledField } from '@/components/StyledField'
 import { StyledSelect } from '@/components/StyledSelect'
 
+import ProfileSign from './ProfileSign'
+
 const menuItems = ['公开', '好友可见', '保密']
 
 const Profile = () => {
@@ -87,13 +89,7 @@ const Profile = () => {
             </Stack>
             <Stack direction="row" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100, mt: 1 }}>个人签名</Typography>
-              <StyledField
-                multiline
-                rows={5}
-                value={sign}
-                onChange={(e) => setSign(e.target.value)}
-                sx={{ width: '70%' }}
-              />
+              <ProfileSign />
             </Stack>
             <Stack direction="row" sx={{ mb: 3 }}>
               <Box sx={{ width: 100 }}></Box>
