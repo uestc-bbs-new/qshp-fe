@@ -175,6 +175,9 @@ importers:
 
   legacy:
     dependencies:
+      markdown-renderer:
+        specifier: workspace:^
+        version: link:../markdown-renderer
       vditor:
         specifier: file:../bbs/third_party/vditor
         version: file:bbs/third_party/vditor
@@ -188,6 +191,15 @@ importers:
       vite:
         specifier: ^5.2.0
         version: 5.2.8(terser@5.30.3)
+
+  markdown-renderer:
+    devDependencies:
+      typescript:
+        specifier: ^5.2.2
+        version: 5.3.3
+      vite:
+        specifier: ^5.2.0
+        version: 5.2.8(@types/node@20.10.5)
 
 packages:
 

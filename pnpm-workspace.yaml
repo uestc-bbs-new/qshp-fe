@@ -1,3 +1,4 @@
 packages:
   - 'bbs'
   - 'legacy'
+  - 'markdown-renderer'

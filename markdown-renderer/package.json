@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "./dist/markdown-renderer.umd.js",
+  "module": "./dist/markdown-renderer.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

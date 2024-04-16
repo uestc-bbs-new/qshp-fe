@@ -10,10 +10,10 @@
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "@vitejs/plugin-legacy": "^5.3.2"
+    "vite": "^5.2.0"
   },
   "dependencies": {
+    "markdown-renderer": "workspace:^",
     "vditor": "file:../bbs/third_party/vditor"
   }
 }
