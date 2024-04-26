@@ -1,6 +1,7 @@
 import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
 
-import Continue, { ContinueLoader } from '@/pages/Continue'
+import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
+import { RegisterHome } from '@/pages/Continue/Register'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
 import Goto from '@/pages/Goto'
@@ -74,12 +75,6 @@ routes.current = [
         id: 'settings',
         element: <Settings />,
       },
-      {
-        path: '/continue/:mode?',
-        id: 'continue',
-        loader: ContinueLoader,
-        element: <Continue />,
-      },
       { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
       {
         path: '/user/name/:username/:subPage?',
@@ -87,6 +82,18 @@ routes.current = [
         element: <User />,
       },
     ],
+  },
+  {
+    path: '/continue/:mode?',
+    id: 'continue',
+    loader: ContinueLoader,
+    element: <Continue />,
+    errorElement: <ContinueError />,
+  },
+  {
+    path: '/register',
+    id: 'register',
+    element: <RegisterHome />,
   },
 ]
 

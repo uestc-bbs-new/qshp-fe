@@ -5,8 +5,10 @@ import { Button, Stack, Typography } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
 import Link from '@/components/Link'
+import { gotoIdas } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
+import CommonLayout from './CommonLayout'
 import { CommonForm, SignUpTextField } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
@@ -170,3 +172,20 @@ export const RegisterForm = ({
     </CommonForm>
   )
 }
+
+export const RegisterHome = () => (
+  <CommonLayout>
+    <Stack>
+      <Typography>欢迎来到清水河畔</Typography>
+      <Typography>
+        清水河畔属于高校官方论坛，账号注册时必须进行实名关联。请点击“统一身份认证”按钮，使用学号与网上服务大厅密码登录后继续注册：
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={() => gotoIdas({ mode: 'register' })}
+      >
+        统一身份认证
+      </Button>
+    </Stack>
+  </CommonLayout>
+)
