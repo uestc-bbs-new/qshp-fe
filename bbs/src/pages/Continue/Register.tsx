@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Stack, Typography } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
+import Link from '@/components/Link'
 import { persistedStates } from '@/utils/storage'
 
 import { CommonForm, SignUpTextField } from './Forms'
@@ -152,6 +153,17 @@ export const RegisterForm = ({
                 到处逛逛，稍后注册
               </Button>
             )}
+          </Stack>
+          <Stack direction="row" justifyContent="flex-end">
+            <Link
+              external
+              to="/member.php?mod=register&forceold=1"
+              target="_blank"
+              underline="hover"
+              sx={{ color: '#ccc' }}
+            >
+              返回旧版
+            </Link>
           </Stack>
         </td>
       </tr>
