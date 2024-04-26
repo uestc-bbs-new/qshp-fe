@@ -16,7 +16,6 @@ import {
   DialogContent,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material'
 
 import { idasAuth, idasChooseUser } from '@/apis/auth'
@@ -42,7 +41,6 @@ const kV2Code = 'code'
 type Page = 'register' | 'userList' | 'resetPassword'
 
 const Continue = () => {
-  const dark = useTheme().palette.mode == 'dark'
   const idasResult = useLoaderData() as IdasResultEx
   const mode = (useParams()['mode'] as ContinueMode) || kDefaultContinueMode
   const initialPage = (() => {
@@ -163,9 +161,13 @@ export const ContinueError = () => {
   const error = useRouteError()
   console.log(error)
   return (
-    <CommonLayout>
-      <Error error={error} sx={{ width: '100%' }} />
-    </CommonLayout>
+    <Dialog open fullScreen>
+      <DialogContent sx={{ p: 0 }}>
+        <CommonLayout>
+          <Error error={error} sx={{ width: '100%' }} />
+        </CommonLayout>
+      </DialogContent>
+    </Dialog>
   )
 }
 
