@@ -164,7 +164,7 @@ export const ContinueError = () => {
   console.log(error)
   return (
     <CommonLayout>
-      <Error isError error={error} />
+      <Error error={error} sx={{ width: '100%' }} />
     </CommonLayout>
   )
 }

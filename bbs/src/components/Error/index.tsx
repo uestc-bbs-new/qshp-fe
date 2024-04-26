@@ -1,11 +1,22 @@
-import { Alert, AlertTitle, Button, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Stack,
+  SxProps,
+  Theme,
+  Typography,
+} from '@mui/material'
 
-type Props = {
-  isError: boolean
+const Error = ({
+  error,
+  sx,
+  onRefresh,
+}: {
   error: any
+  sx?: SxProps<Theme>
   onRefresh?: () => void
-}
-const Error = ({ isError, error, onRefresh }: Props) => {
+}) => {
   let message = error.message
   if (error.type == 'http') {
     if (error.status == 401) {
@@ -18,10 +29,10 @@ const Error = ({ isError, error, onRefresh }: Props) => {
   } else if (!message) {
     message = '系统错误'
   }
-  return isError ? (
+  return (
     <Alert
       severity="error"
-      sx={{ alignItems: 'center' }}
+      sx={{ alignItems: 'center', ...sx }}
       action={
         error.type == 'network' && onRefresh ? (
           <Stack alignItems="center">
@@ -33,8 +44,6 @@ const Error = ({ isError, error, onRefresh }: Props) => {
       <AlertTitle>错误</AlertTitle>
       <Typography>{message}</Typography>
     </Alert>
-  ) : (
-    <></>
   )
 }
 

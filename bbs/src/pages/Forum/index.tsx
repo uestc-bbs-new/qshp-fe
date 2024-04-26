@@ -264,7 +264,7 @@ function Forum() {
     <Stack direction="row">
       <Box className="flex-1" style={{ marginTop: '20px' }}>
         {isError ? (
-          <Error isError={isError} error={error} onRefresh={refetch} />
+          <Error error={error} onRefresh={refetch} />
         ) : (
           <>
             {isFetching && !forumDetails ? (

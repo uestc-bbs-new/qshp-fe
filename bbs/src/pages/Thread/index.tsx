@@ -227,7 +227,7 @@ function Thread() {
     <Stack direction="row">
       <Box className="flex-1" minWidth="1em">
         {isError ? (
-          <Error isError={isError} error={error} onRefresh={refetch} />
+          <Error error={error} onRefresh={refetch} />
         ) : (
           <>
             <ForumPagination
