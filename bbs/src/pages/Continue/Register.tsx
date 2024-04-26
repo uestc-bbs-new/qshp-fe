@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
 import Link from '@/components/Link'
@@ -156,7 +156,33 @@ export const RegisterForm = ({
               </Button>
             )}
           </Stack>
-          <Stack direction="row" justifyContent="flex-end">
+        </td>
+      </tr>
+    </CommonForm>
+  )
+}
+
+export const RegisterHome = () => (
+  <Dialog open fullScreen>
+    <DialogContent sx={{ p: 0 }}>
+      <CommonLayout>
+        <Stack pl={2} pr={4}>
+          <Typography variant="signinTitle">欢迎来到清水河畔！</Typography>
+          <Typography variant="h6" textAlign="justify" my={3}>
+            清水河畔属于高校官方论坛，账号注册时必须进行实名关联。
+            <br />
+            点击以下按钮，使用学号与网上服务大厅密码登录与授权后继续注册：
+          </Typography>
+          <Stack direction="row" justifyContent="center">
+            <Button
+              variant="contained"
+              sx={{ fontSize: 20, px: 5, py: 1.5 }}
+              onClick={() => gotoIdas({ mode: 'register' })}
+            >
+              进入统一身份认证平台
+            </Button>
+          </Stack>
+          <Stack direction="row" justifyContent="flex-end" mt={3}>
             <Link
               external
               to="/member.php?mod=register&forceold=1"
@@ -167,25 +193,8 @@ export const RegisterForm = ({
               返回旧版
             </Link>
           </Stack>
-        </td>
-      </tr>
-    </CommonForm>
-  )
-}
-
-export const RegisterHome = () => (
-  <CommonLayout>
-    <Stack>
-      <Typography>欢迎来到清水河畔</Typography>
-      <Typography>
-        清水河畔属于高校官方论坛，账号注册时必须进行实名关联。请点击“统一身份认证”按钮，使用学号与网上服务大厅密码登录后继续注册：
-      </Typography>
-      <Button
-        variant="contained"
-        onClick={() => gotoIdas({ mode: 'register' })}
-      >
-        统一身份认证
-      </Button>
-    </Stack>
-  </CommonLayout>
+        </Stack>
+      </CommonLayout>
+    </DialogContent>
+  </Dialog>
 )
