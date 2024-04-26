@@ -1,5 +1,3 @@
-import { css } from '@emotion/react'
-
 import React, { forwardRef } from 'react'
 
 import { TextField, styled } from '@mui/material'
@@ -25,11 +23,19 @@ type CommonFormProps = {
 export const CommonForm = forwardRef<HTMLFormElement, CommonFormProps>(
   function CommonForm({ title, children, onClose }: CommonFormProps, ref) {
     return (
-      <form ref={ref} style={{ width: '70%' }}>
+      <form
+        ref={ref}
+        css={{
+          width: '70%',
+          '@media (max-width: 1200px)': {
+            width: '80%',
+          },
+        }}
+      >
         <Back onClick={onClose} />
         {title}
         <table
-          css={css({
+          css={{
             width: '100%',
             '& th': {
               textAlign: 'left',
@@ -37,7 +43,7 @@ export const CommonForm = forwardRef<HTMLFormElement, CommonFormProps>(
               paddingTop: '16.5px',
               width: '6em',
             },
-          })}
+          }}
         >
           {children}
         </table>
