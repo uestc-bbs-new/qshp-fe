@@ -57,7 +57,7 @@ export const PasswordInput = ({
             helperText={
               passwordError ||
               passwordError2 ||
-              '建议设置一个安全的河畔密码并妥善保存，以便今后登录。'
+              '请设置一个安全的河畔密码并妥善保存，以便今后登录。'
             }
             onBlur={() => validatePassword()}
             inputRef={password1}
