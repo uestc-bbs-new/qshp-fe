@@ -10,6 +10,7 @@ import Tooltip from '@/components/Tooltip'
 import ConversationItem from '@/pages/Messages/Chat/ConversationItem'
 import NotificationItem from '@/pages/Messages/Notifications/NotificationItem'
 import { useAppState } from '@/states'
+import { isIdasRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 
 import { MenuItemLink } from '../Link'
@@ -25,6 +26,9 @@ const MessageTabs = () => {
     queryFn: () => getMessagesSummary(),
   })
 
+  if (isIdasRelease) {
+    return <></>
+  }
   return (
     <Box
       sx={{ borderBottom: 1, borderColor: 'divider' }}

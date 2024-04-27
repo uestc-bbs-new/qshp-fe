@@ -22,6 +22,7 @@ import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
+import { isIdasRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
@@ -35,6 +36,10 @@ import Avatar from '../Avatar'
 import Link, { MenuItemLink } from '../Link'
 
 const MenuContent = () => {
+  if (isIdasRelease) {
+    return <></>
+  }
+
   const { state, dispatch } = useAppState()
   const [themeSetting, setThemeSetting] = useState(persistedStates.theme)
   const [systemTheme, setSystemTheme] = useState(getSystemTheme())
