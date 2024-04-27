@@ -25,6 +25,21 @@ export const PasswordInput = ({
       onValidated(false)
       return
     }
+    if (password1.current) {
+      const password = password1.current.value
+      const matches =
+        (password.match(/[a-z]/) ? 1 : 0) +
+        (password.match(/[A-Z]/) ? 1 : 0) +
+        (password.match(/[0-9]/) ? 1 : 0) +
+        (password.match(/[^a-zA-Z0-9]/) ? 1 : 0)
+      if (matches < 3) {
+        setPasswordError(
+          `密码必须包含大写字母、小写字母、数字、特殊字符中的任意三种字符。`
+        )
+        onValidated(false)
+        return
+      }
+    }
     if (
       confirmPassword &&
       password1.current &&

@@ -29,6 +29,7 @@ export const RegisterForm = ({
   const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
   const [userNameError, setUserNameError] = useState('')
+  const [emailError, setEmailError] = useState('')
   const passwordValid = useRef(false)
   const goFreshmanOrBack = async () => {
     if (idasResult.users) {
@@ -70,11 +71,19 @@ export const RegisterForm = ({
       setUserNameError('该用户名已注册，请重新输入。')
     }
   }
+  const validateEmail = () => {
+    const email = getFormField('email')
+    setEmailError(
+      email.match(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/)
+        ? ''
+        : '请输入有效的邮箱地址。'
+    )
+  }
   const handleRegister = async () => {
     if (!formRef.current) {
       return
     }
-    if (userNameError || !passwordValid.current) {
+    if (userNameError || !passwordValid.current || emailError) {
       return
     }
     const data = new FormData(formRef.current)
@@ -134,7 +143,15 @@ export const RegisterForm = ({
           <Typography>Email</Typography>
         </th>
         <td>
-          <SignUpTextField type="email" fullWidth name="email" />
+          <SignUpTextField
+            type="email"
+            fullWidth
+            name="email"
+            error={!!emailError}
+            helperText={emailError}
+            onBlur={validateEmail}
+            required
+          />
         </td>
       </tr>
       <tr>
