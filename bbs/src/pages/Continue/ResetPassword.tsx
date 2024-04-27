@@ -1,13 +1,21 @@
 import { css } from '@emotion/react'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
-import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogContent,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import { resetPassword } from '@/apis/auth'
 import { User } from '@/common/interfaces/base'
+import Error from '@/components/Error'
 import Link from '@/components/Link'
-import { gotoIdas } from '@/utils/routes'
+import { gotoIdas, pages } from '@/utils/routes'
 
 import CommonLayout from './CommonLayout'
 import { CommonForm } from './Forms'
@@ -25,6 +33,9 @@ const ResetPassword = ({
 }) => {
   const formRef = useRef<HTMLFormElement>(null)
   const passwordValid = useRef(false)
+  const [apiError, setApiError] = useState<unknown>()
+  const [success, setSuccess] = useState(false)
+  const [pending, setPending] = useState(false)
 
   const getFormField = (name: string) => {
     if (!formRef.current) {
@@ -38,13 +49,21 @@ const ResetPassword = ({
     if (!passwordValid.current || !password) {
       return
     }
-    await resetPassword({
-      code: idasResult.code,
-      ephemeral_authorization: idasResult.ephemeral_authorization,
-      user_id: user.uid,
-      password,
-    })
-    alert('密码已重置！')
+    setPending(true)
+    try {
+      await resetPassword({
+        code: idasResult.code,
+        ephemeral_authorization: idasResult.ephemeral_authorization,
+        user_id: user.uid,
+        password,
+      })
+    } catch (e) {
+      setApiError(e)
+      return
+    } finally {
+      setPending(false)
+    }
+    setSuccess(true)
   }
   return (
     <CommonForm
@@ -60,7 +79,10 @@ const ResetPassword = ({
           <Typography>{user.username}</Typography>
         </td>
       </tr>
-      <PasswordInput onValidated={(valid) => (passwordValid.current = valid)} />
+      <PasswordInput
+        onValidated={(valid) => (passwordValid.current = valid)}
+        disabled={pending}
+      />
       <tr>
         <th></th>
         <td>
@@ -70,10 +92,30 @@ const ResetPassword = ({
             alignItems="center"
             my={2}
           >
-            <Button variant="contained" onClick={handleReset}>
-              重置密码
-            </Button>
+            {success && idasResult.users && idasResult.users.length > 1 && (
+              <Button variant="outlined" onClick={onClose} sx={{ mr: 2 }}>
+                重置其他账号
+              </Button>
+            )}
+            {success && (
+              <Button component={Link} to={pages.index()} variant="contained">
+                返回首页
+              </Button>
+            )}
+            {!success && (
+              <Button
+                disabled={pending}
+                variant="contained"
+                onClick={handleReset}
+              >
+                重置密码
+              </Button>
+            )}
           </Stack>
+          {success && (
+            <Alert severity="success">密码已重置，请使用新密码登录。</Alert>
+          )}
+          {!!apiError && <Error error={apiError} />}
         </td>
       </tr>
     </CommonForm>

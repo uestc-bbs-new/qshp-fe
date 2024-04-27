@@ -45,7 +45,7 @@ export const CommonForm = forwardRef<HTMLFormElement, CommonFormProps>(
             },
           }}
         >
-          {children}
+          <tbody>{children}</tbody>
         </table>
       </form>
     )
