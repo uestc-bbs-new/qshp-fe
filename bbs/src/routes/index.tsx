@@ -2,6 +2,7 @@ import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
 
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import { RegisterHome } from '@/pages/Continue/Register'
+import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
 import Goto from '@/pages/Goto'
@@ -103,6 +104,11 @@ routes.current = [
     path: '/register',
     id: 'register',
     element: <RegisterHome />,
+  },
+  {
+    path: '/resetpassword',
+    id: 'resetpassword',
+    element: <ResetPasswordHome />,
   },
 ]
 

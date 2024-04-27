@@ -193,7 +193,10 @@ const sanitizeContinuePath = (path: string | null) => {
     if (
       matches &&
       matches.every(
-        (item) => !['404', 'continue', 'register'].includes(item.route.id ?? '')
+        (item) =>
+          !['404', 'continue', 'register', 'resetpassword'].includes(
+            item.route.id ?? ''
+          )
       )
     ) {
       result = path

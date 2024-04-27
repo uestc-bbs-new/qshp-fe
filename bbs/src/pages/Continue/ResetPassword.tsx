@@ -2,11 +2,14 @@ import { css } from '@emotion/react'
 
 import { useRef } from 'react'
 
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 
 import { resetPassword } from '@/apis/auth'
 import { User } from '@/common/interfaces/base'
+import Link from '@/components/Link'
+import { gotoIdas } from '@/utils/routes'
 
+import CommonLayout from './CommonLayout'
 import { CommonForm } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
@@ -74,6 +77,47 @@ const ResetPassword = ({
         </td>
       </tr>
     </CommonForm>
+  )
+}
+
+export const ResetPasswordHome = () => {
+  return (
+    <Dialog open fullScreen>
+      <DialogContent sx={{ p: 0 }}>
+        <CommonLayout>
+          <Stack pl={2} pr={4}>
+            <Typography variant="signinTitle">忘记密码</Typography>
+            <Typography variant="h6" textAlign="justify" my={3}>
+              在校用户请通过统一身份认证验证后重置密码：
+            </Typography>
+            <Stack direction="row" justifyContent="flex-start">
+              <Button
+                variant="contained"
+                sx={{ fontSize: 20, px: 5, py: 1.5 }}
+                onClick={() => gotoIdas({ mode: 'resetpassword' })}
+              >
+                进入统一身份认证平台
+              </Button>
+            </Stack>
+            <Typography variant="h6" textAlign="justify" mt={6}>
+              如果您无法通过统一身份认证平台登录，请通过清水河畔官方 QQ 号
+              1942224235 联系站长。
+            </Typography>
+            <Stack direction="row" justifyContent="flex-end" mt={2}>
+              <Link
+                external
+                to="/plugin.php?id=rnreg:resetpassword&forceold=1"
+                target="_blank"
+                underline="hover"
+                sx={{ color: '#ccc' }}
+              >
+                返回旧版
+              </Link>
+            </Stack>
+          </Stack>
+        </CommonLayout>
+      </DialogContent>
+    </Dialog>
   )
 }
 
