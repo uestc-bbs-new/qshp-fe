@@ -31,7 +31,7 @@ const Renew = () => {
         <Button
           variant="contained"
           sx={{ fontSize: 16, px: 3, py: 1 }}
-          onClick={() => gotoIdas({ mode: 'register' })}
+          onClick={() => gotoIdas({ mode: 'renew' })}
         >
           通过统一身份认证平台验证新学号
         </Button>

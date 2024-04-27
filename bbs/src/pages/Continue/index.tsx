@@ -39,12 +39,15 @@ const kVersion = 'version'
 const kV1Code = 'ticket'
 const kV2Code = 'code'
 
-type Page = 'register' | 'userList' | 'resetPassword'
+type Page = 'register' | 'userList' | 'resetPassword' | 'renew'
 
 const Continue = () => {
   const idasResult = useLoaderData() as IdasResultEx
   const mode = (useParams()['mode'] as ContinueMode) || kDefaultContinueMode
   const initialPage = (() => {
+    if (mode == 'renew') {
+      return 'renew'
+    }
     if (mode == 'resetpassword') {
       const userCount = idasResult.users?.length
       if (userCount && userCount > 1) {
@@ -178,6 +181,14 @@ const Continue = () => {
                 </Stack>
               )}
             </>
+          )}
+          {page == 'renew' && (
+            <Stack>
+              <Typography variant="signinTitle">实名换绑</Typography>
+              <Typography variant="h6" my={2}>
+                下列账号将换绑至新学号，请确认：
+              </Typography>
+            </Stack>
           )}
         </CommonLayout>
       </DialogContent>
