@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 
-import { checkUserName, idasFreshman, register } from '@/apis/auth'
+import {
+  AuthorizationResult,
+  checkUserName,
+  idasFreshman,
+  register,
+} from '@/apis/auth'
+import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { isIdasRelease } from '@/utils/releaseMode'
 import { gotoIdas } from '@/utils/routes'
@@ -30,6 +36,7 @@ export const RegisterForm = ({
   const formRef = useRef<HTMLFormElement>(null)
   const [userNameError, setUserNameError] = useState('')
   const [emailError, setEmailError] = useState('')
+  const [registerError, setRegisterError] = useState<unknown>()
   const passwordValid = useRef(false)
   const goFreshmanOrBack = async () => {
     if (idasResult.users) {
@@ -93,16 +100,22 @@ export const RegisterForm = ({
     if (!username || !password || !email) {
       return
     }
-    persistedStates.authorizationHeader = (
-      await register({
+    let result: AuthorizationResult | undefined = undefined
+    try {
+      result = await register({
         code: idasResult.code,
         ephemeral_authorization: idasResult.ephemeral_authorization,
         username: username.toString(),
         password: password.toString(),
         email: email.toString(),
       })
-    ).authorization
-    navigate(idasResult.continue, { replace: true })
+    } catch (e) {
+      setRegisterError(e)
+    }
+    if (result) {
+      persistedStates.authorizationHeader = result.authorization
+      navigate(idasResult.continue, { replace: true })
+    }
   }
   return (
     <CommonForm
@@ -176,6 +189,7 @@ export const RegisterForm = ({
               </Button>
             )}
           </Stack>
+          {registerError ? <Error error={registerError} /> : <></>}
         </td>
       </tr>
     </CommonForm>
