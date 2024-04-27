@@ -50,7 +50,7 @@ export type UserPageParams = {
 
 export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
-const idas2UrlBase = `https://authserver.uestc.edu.cn/authserver/oauth2.0/authorize`
+const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
 const kIdasClientId = '1191760355037016064'
 export const kIdasVersion2 = 2
 const kIdasContinueBase = `${kIdasOrigin}/continue`
