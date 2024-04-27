@@ -2,6 +2,7 @@ import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
 
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import { RegisterHome } from '@/pages/Continue/Register'
+import Renew from '@/pages/Continue/Renew'
 import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
@@ -91,6 +92,12 @@ routes.current = [
     children: [
       { path: '*', id: '404', element: <NotFound /> },
       ...(isIdasRelease ? idasPreviewPages : pages),
+
+      {
+        path: '/renew',
+        id: 'renew',
+        element: <Renew />,
+      },
     ],
   },
   {
