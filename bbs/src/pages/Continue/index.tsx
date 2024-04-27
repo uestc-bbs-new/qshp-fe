@@ -6,6 +6,7 @@ import {
   useNavigate,
   useParams,
   useRouteError,
+  useSearchParams,
 } from 'react-router-dom'
 
 import {
@@ -24,7 +25,7 @@ import { ContinueMode, kDefaultContinueMode } from '@/common/types/idas'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
-import { kIdasOrigin, kIdasVersion2, pages } from '@/utils/routes'
+import { gotoIdas, kIdasOrigin, kIdasVersion2, pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import Back from './Back'
@@ -159,20 +160,47 @@ const Continue = () => {
 
 export const ContinueError = () => {
   const error = useRouteError()
-  console.log(error)
+  const mode = useParams()['mode'] as ContinueMode | undefined
+  const [searchParams] = useSearchParams()
   return (
     <Dialog open fullScreen>
       <DialogContent sx={{ p: 0 }}>
         <CommonLayout>
-          <Error error={error} sx={{ width: '100%' }} />
+          <Error error={error} sx={{ width: '90%' }} />
+          <Button
+            variant="outlined"
+            sx={{ mt: 2 }}
+            onClick={() =>
+              gotoIdas({
+                mode,
+                continuePath: sanitizeContinuePath(searchParams.get('path')),
+              })
+            }
+          >
+            重试
+          </Button>
         </CommonLayout>
       </DialogContent>
     </Dialog>
   )
 }
 
-const sanitizeContinuePath = (path: string | null) =>
-  path && matchRoutes(routes.current, path) ? path : '/'
+const sanitizeContinuePath = (path: string | null) => {
+  let result = '/'
+  if (path) {
+    const matches = matchRoutes(routes.current, path)
+    console.log(matches)
+    if (
+      matches &&
+      matches.every(
+        (item) => !['404', 'continue', 'register'].includes(item.route.id ?? '')
+      )
+    ) {
+      result = path
+    }
+  }
+  return result
+}
 
 export const ContinueLoader = async ({
   request,

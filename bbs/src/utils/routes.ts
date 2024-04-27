@@ -57,12 +57,13 @@ const kIdasContinueBase = `${kIdasOrigin}/continue`
 export const gotoIdas = (options?: {
   mode?: ContinueMode
   version?: number
+  continuePath?: string
 }) => {
   const version = options?.version ?? kIdasVersion2
   const continueUrl = withSearchAndHash(
     `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
     new URLSearchParams({
-      path: `${location.pathname}${location.search}`,
+      path: options?.continuePath ?? `${location.pathname}${location.search}`,
       ...(version ? { version: version.toString() } : {}),
     })
   )
