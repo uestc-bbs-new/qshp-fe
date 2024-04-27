@@ -5,6 +5,7 @@ import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 
 import { checkUserName, idasFreshman, register } from '@/apis/auth'
 import Link from '@/components/Link'
+import { isIdasRelease } from '@/utils/releaseMode'
 import { gotoIdas } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
@@ -101,7 +102,9 @@ export const RegisterForm = ({
         <>
           <Typography variant="signinTitle">注册</Typography>
           {freshman && (
-            <Typography>欢迎来到清水河畔！请填写信息完成注册：</Typography>
+            <Typography variant="h6" my={2}>
+              欢迎来到清水河畔！请填写信息完成注册：
+            </Typography>
           )}
         </>
       }
@@ -146,7 +149,7 @@ export const RegisterForm = ({
             <Button variant="contained" onClick={handleRegister}>
               立即注册
             </Button>
-            {!idasResult.users && (
+            {!idasResult.users && !isIdasRelease && (
               <Button
                 variant="outlined"
                 sx={{ ml: 2 }}

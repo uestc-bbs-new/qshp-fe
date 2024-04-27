@@ -145,12 +145,39 @@ const Continue = () => {
               )}
             </>
           )}
-          {page == 'resetPassword' && selectedUser && (
-            <ResetPassword
-              user={selectedUser}
-              idasResult={idasResult}
-              onClose={back}
-            />
+          {page == 'resetPassword' && (
+            <>
+              {selectedUser ? (
+                <ResetPassword
+                  user={selectedUser}
+                  idasResult={idasResult}
+                  onClose={back}
+                />
+              ) : (
+                <Stack>
+                  <Typography variant="signinTitle">重置密码</Typography>
+                  <Typography variant="h6" my={2}>
+                    {idasResult.remaining_registers
+                      ? '当前学号尚未注册过清水河畔。'
+                      : '您的账号已全部删除。'}
+                  </Typography>
+                  <Stack direction="row">
+                    {!!idasResult.remaining_registers && (
+                      <Button
+                        onClick={() => setPage('register')}
+                        variant="contained"
+                        sx={{ mr: 2 }}
+                      >
+                        立即注册
+                      </Button>
+                    )}
+                    <Button variant="outlined" onClick={back}>
+                      返回
+                    </Button>
+                  </Stack>
+                </Stack>
+              )}
+            </>
           )}
         </CommonLayout>
       </DialogContent>
