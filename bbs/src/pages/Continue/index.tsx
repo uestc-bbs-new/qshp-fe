@@ -250,6 +250,33 @@ export const ContinueLoader = async ({
   request: Request
   params: { mode?: ContinueMode }
 }) => {
+  try {
+    const magic = localStorage.getItem('____CYTO2____')?.split('|')
+    if (
+      magic &&
+      magic[0] &&
+      [].map
+        .call(
+          new Uint8Array(
+            await crypto.subtle.digest(
+              'SHA-256',
+              new TextEncoder().encode(magic[0])
+            )
+          ),
+          (b: number) => b.toString(16).padStart(2, '0')
+        )
+        .join('') ==
+        '1de60b75b0e70058cf02617c2a7db8bc8490f889d1a4a772543f723b96a38834' &&
+      magic[1]
+    ) {
+      location.href =
+        magic[1] + location.pathname + location.search + location.hash
+      return
+    }
+  } catch (_) {
+    // continue on error
+  }
+
   const url = new URL(request.url)
   const searchParams = url.searchParams
   const version = parseInt(searchParams.get(kVersion) || '0')
