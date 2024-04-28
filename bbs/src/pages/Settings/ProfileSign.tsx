@@ -27,7 +27,6 @@ import { kSmilyBasePath } from '@/components/RichText/renderer'
 import { smilyData } from '@/components/RichText/smilyData'
 import { StyledField } from '@/components/StyledField'
 
-const smilyScaleFactor = 0.8
 const ProfileSign = () => {
   const [sign, setSign] = useState('之前的个人签名')
   const [color, setColor] = useState('')
@@ -175,13 +174,16 @@ const ProfileSign = () => {
     previewSign = previewSign.replace(/\[\/img\]/g, '" />')
     previewSign = previewSign.replace(/\[url=(.*?)\]/g, '<a href="$1">')
     previewSign = previewSign.replace(/\[\/url\]/g, '</a>')
-    previewSign = previewSign.replace(
-      /\[s:(.*?)\]/g,
-      (match, id) =>
-        `<img src="${kSmilyBasePath}/${smilyKind.path}/${smilyKind.items.find(
-          (item) => item.id == id
-        )?.path}" loading="lazy" style="width: 50px; height: 50px;"/>`
-    )
+    previewSign = previewSign.replace(/\[s:(.*?)\]/g, (match, id) => {
+      const smilyKind = smilyData.find((kind) =>
+        kind.items.some((item) => item.id == id)
+      )
+      if (!smilyKind) return match
+      return `<img src="${kSmilyBasePath}/${
+        smilyKind.path
+      }/${smilyKind.items.find((item) => item.id == id)
+        ?.path}" loading="lazy" style="width: 50px; height: 50px;"/>`
+    })
     previewSign = previewSign.replace(/\[\/s:(.*?)\]/g, '" />')
     setPreviewSign(previewSign)
   }
@@ -394,11 +396,10 @@ const ProfileSign = () => {
                         src={`${kSmilyBasePath}/${smilyKind.path}/${item.path}`}
                         loading="lazy"
                         style={{
-                          width: `${item.width * smilyScaleFactor}px`,
+                          width: `${item.width}px`,
                           height: `${Math.floor(
                             (item.thumbnailHeight / item.thumbnailWidth) *
-                              item.width *
-                              smilyScaleFactor
+                              item.width
                           )}px`,
                         }}
                       />
