@@ -49,8 +49,11 @@ export type UserPageParams = {
 }
 
 export const kIdasOrigin =
-  location.hostname == `bbs-uestc-edu-cn-s.vpn.uestc.edu.cn`
-    ? location.origin
+  // @ts-expect-error preserve code as is
+  window[['L'.toLowerCase(), 'ocation'].join('')].hostname ==
+  `bbs-uestc-edu-cn-s.vpn.uestc.edu.cn`
+    ? // @ts-expect-error preserve code as is
+      window[['L'.toLowerCase(), 'ocation'].join('')].origin
     : `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
@@ -70,7 +73,8 @@ export const gotoIdas = (options?: {
       ...(version ? { version: version.toString() } : {}),
     })
   )
-  location.href =
+  // @ts-expect-error preserve code as is
+  window[['L'.toLowerCase(), 'ocation'].join('')].href =
     version == 2
       ? withSearchAndHash(
           idas2UrlBase,
