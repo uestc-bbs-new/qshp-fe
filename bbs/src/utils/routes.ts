@@ -48,7 +48,10 @@ export type UserPageParams = {
   admin?: boolean
 }
 
-export const kIdasOrigin = `https://bbs.uestc.edu.cn`
+export const kIdasOrigin =
+  location.hostname == `bbs-uestc-edu-cn-s.vpn.uestc.edu.cn`
+    ? location.origin
+    : `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
 const kIdasClientId = '1191760355037016064'
