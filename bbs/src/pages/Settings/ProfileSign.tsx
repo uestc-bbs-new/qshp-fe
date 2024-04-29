@@ -82,7 +82,7 @@ const ProfileSign = () => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus()
-      if (position)
+      if (position.current)
         inputRef.current.setSelectionRange(position.current, position.current)
     }
   }, [sign])
