@@ -89,7 +89,7 @@ export const gotoIdas = (options?: {
 }
 
 export const pages = {
-  index: () => `/`,
+  index: () => `/new`,
 
   thread: (thread_id: number, query?: URLSearchParams, hashValue?: string) =>
     withSearchAndHash(`/thread/${thread_id}`, query, hashValue),

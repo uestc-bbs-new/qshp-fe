@@ -1,4 +1,8 @@
-import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
+import {
+  ScrollRestoration,
+  createBrowserRouter,
+  redirect,
+} from 'react-router-dom'
 
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import { RegisterHome } from '@/pages/Continue/Register'
@@ -22,7 +26,8 @@ import { isIdasRelease } from '@/utils/releaseMode'
 import routes from './routes'
 
 const pages = [
-  { path: '/', id: 'index', element: <Home /> },
+  { path: '/', loader: () => redirect('/new') },
+  { path: '/new', id: 'index', element: <Home /> },
   { path: '/search', id: 'search', element: <Search /> },
   { path: '/post/:fid?', id: 'post', element: <Edit /> },
   { path: '/forum/:id', id: 'forum', element: <Forum /> },
