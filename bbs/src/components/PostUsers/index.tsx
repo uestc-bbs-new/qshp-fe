@@ -2,6 +2,7 @@ import React, { Box, Stack, useTheme } from '@mui/material'
 
 import { SearchSummaryUser } from '@/common/interfaces/search'
 import Chip from '@/components/Chip'
+import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -29,7 +30,7 @@ const PostUsers = ({ data, small, className }: PostProps) => {
             <Stack justifyContent="space-between">
               <Stack direction="row">
                 <Link
-                  to={`/user/${data.uid}`}
+                  to={pages.user({ uid: data.uid })}
                   color="inherit"
                   underline="hover"
                   className={small ? 'line-clamp-3' : 'line-clamp-2'}

@@ -54,7 +54,7 @@ const ForumCover = ({ data }: ForumData) => {
             className="font-bold"
             color="inherit"
             underline="hover"
-            to={`forum/${data.fid}`}
+            to={pages.forum(data.fid)}
           >
             <Typography variant="h6" fontWeight="bold">
               {data.name}
@@ -163,7 +163,7 @@ export const ForumGroup = ({ data }: ForumData) => {
                 key={index}
                 color="inherit"
                 variant="subtitle2"
-                to={`/user/name/${moderator}`}
+                to={pages.user({ username: moderator })}
               >
                 {moderator}
               </Link>

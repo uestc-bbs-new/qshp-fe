@@ -10,6 +10,7 @@ import { PostFloor } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 
 import { PostExtraDetailsAccordian } from './PostExtraDetails'
 import { PostExtraDetailsEx } from './types'
@@ -64,7 +65,10 @@ const PostComments = ({
             }
             return (
               <Box key={comment.id} my={2}>
-                <Link to={`/user/${comment.author_id}`} underline="hover">
+                <Link
+                  to={pages.user({ uid: comment.author_id })}
+                  underline="hover"
+                >
                   <Avatar
                     sx={{
                       display: 'inline-block',

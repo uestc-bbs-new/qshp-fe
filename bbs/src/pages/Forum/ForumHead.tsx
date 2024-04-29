@@ -15,6 +15,7 @@ import { ForumDetails } from '@/common/interfaces/forum'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import Separated from '@/components/Separated'
+import { pages } from '@/utils/routes'
 
 type HeadProps = {
   data: ForumDetails
@@ -67,7 +68,7 @@ const Head = ({ data }: HeadProps) => {
                     key={index}
                     color="inherit"
                     variant="subtitle2"
-                    to={`/user/name/${moderator}`}
+                    to={pages.user({ username: moderator })}
                   >
                     {moderator}
                   </Link>

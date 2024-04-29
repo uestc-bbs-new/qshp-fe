@@ -20,6 +20,7 @@ import { PostRate, PostRateStat } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
+import { pages } from '@/utils/routes'
 
 import { PostExtraDetailsAccordian } from './PostExtraDetails'
 
@@ -151,7 +152,7 @@ const RateTable = ({
         {rates.map((rate, index) => (
           <TableRow key={index}>
             <TableCell>
-              <Link to={`/user/${rate.user_id}`} underline="hover">
+              <Link to={pages.user({ uid: rate.user_id })} underline="hover">
                 <Stack direction="row" alignItems="center">
                   <Avatar
                     sx={{

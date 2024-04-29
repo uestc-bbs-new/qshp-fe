@@ -80,7 +80,9 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
                             <Link
                               color="inherit"
                               sx={{ textDecoration: 'none' }}
-                              to={`/user/name/${child.latest_thread.lastpost_author}`}
+                              to={pages.user({
+                                username: child.latest_thread.lastpost_author,
+                              })}
                             >
                               {child.latest_thread.lastpost_author}
                             </Link>
