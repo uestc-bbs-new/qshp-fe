@@ -182,7 +182,7 @@ const ProfileSign = () => {
       return `<img src="${kSmilyBasePath}/${
         smilyKind.path
       }/${smilyKind.items.find((item) => item.id == id)
-        ?.path}" loading="lazy" style="width: 50px; height: 50px;"/>`
+        ?.path}" loading="lazy"/>`
     })
     previewSign = previewSign.replace(/\[\/s:(.*?)\]/g, '" />')
     setPreviewSign(previewSign)
