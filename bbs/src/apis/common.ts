@@ -1,5 +1,6 @@
 import { AxiosProgressEvent } from 'axios'
 
+import request, { commonUrl } from '@/apis/request'
 import { UploadResponse } from '@/common/interfaces/base'
 import { Forum, ForumDetails } from '@/common/interfaces/forum'
 import {
@@ -10,19 +11,6 @@ import {
 } from '@/common/interfaces/response'
 import { ThreadTypeMap } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { authServiceWithUser, commonUrl } from '@/utils/request'
-
-import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
-import registerAuthHeaderInterceptors from './interceptors/authHeader'
-import registerUserInterceptors from './interceptors/user'
-import registerSystemInterceptors from './interceptors/user'
-
-registerAuthHeaderInterceptors(request)
-registerAuthAdoptLegacyInterceptors(request.axios)
-registerUserInterceptors(request)
-registerUserInterceptors(authServiceWithUser)
-registerSystemInterceptors(request)
-registerSystemInterceptors(authServiceWithUser)
 
 export const makeThreadTypesMap = (forum?: ForumDetails) => {
   if (forum && forum.thread_types) {

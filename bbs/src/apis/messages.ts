@@ -1,3 +1,4 @@
+import request, { commonUrl } from '@/apis/request'
 import {
   ChatConversation,
   ChatMessageList,
@@ -5,7 +6,6 @@ import {
   MessagesSummary,
 } from '@/common/interfaces/response'
 import { Notification } from '@/common/interfaces/response'
-import request, { commonUrl } from '@/utils/request'
 
 export const getMessagesSummary = () => {
   return request.get<MessagesSummary>(`${commonUrl}/messages/summary`)

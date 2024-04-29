@@ -1,5 +1,5 @@
+import request, { commonUrl } from '@/apis/request'
 import { SystemSettings, SystemSettingsKey } from '@/common/interfaces/system'
-import request, { commonUrl } from '@/utils/request'
 
 export const getSystemSettings = (
   key: SystemSettingsKey | 'all',

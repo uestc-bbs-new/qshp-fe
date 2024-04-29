@@ -1,3 +1,4 @@
+import request, { commonUrl } from '@/apis/request'
 import { Attachment } from '@/common/interfaces/base'
 import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
@@ -8,7 +9,6 @@ import {
   ThreadReplyCredit,
 } from '@/common/interfaces/response'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { commonUrl } from '@/utils/request'
 
 import { makeThreadTypesMap } from '../common'
 

@@ -1,12 +1,12 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
-import { notifyUserCallbacks } from '@/states/user'
 import {
   apiResultCode,
   authServiceWithUser,
   commonUrl,
   kHttpUnauthorized,
-} from '@/utils/request'
+} from '@/apis/request'
+import { notifyUserCallbacks } from '@/states/user'
 import { persistedStates } from '@/utils/storage'
 
 let adoptLegacyAttempted = false

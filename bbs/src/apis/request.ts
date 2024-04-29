@@ -7,6 +7,11 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios'
 
+import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
+import registerAuthHeaderInterceptors from './interceptors/authHeader'
+import registerSystemInterceptors from './interceptors/system'
+import registerUserInterceptors from './interceptors/user'
+
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
 const commonUrl = '/star/api/v1'
 
@@ -204,6 +209,13 @@ const authConfig = {
 
 const authService = new AxiosWrapper(axios.create(authConfig))
 const authServiceWithUser = new AxiosWrapper(axios.create(authConfig))
+
+registerAuthHeaderInterceptors(service)
+registerAuthAdoptLegacyInterceptors(service.axios)
+registerUserInterceptors(service)
+registerUserInterceptors(authServiceWithUser)
+registerSystemInterceptors(service)
+registerSystemInterceptors(authServiceWithUser)
 
 // Export window.api for easier testing in development
 if (import.meta.env.DEV) {

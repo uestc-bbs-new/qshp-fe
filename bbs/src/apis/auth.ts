@@ -1,5 +1,5 @@
+import { authService, authServiceWithUser, commonUrl } from '@/apis/request'
 import { User } from '@/common/interfaces/base'
-import { authService, authServiceWithUser, commonUrl } from '@/utils/request'
 
 const authUrl = `${commonUrl}/auth`
 

@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
+import { AxiosWrapper, apiResultCode } from '@/apis/request'
 import { updateSystemSettingsVersion } from '@/states/settings'
-import { AxiosWrapper, apiResultCode } from '@/utils/request'
 
 export default (axios: AxiosInstance | AxiosWrapper) =>
   axios.interceptors.response.use((response: AxiosResponse) => {
