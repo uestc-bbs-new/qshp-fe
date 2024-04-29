@@ -135,7 +135,7 @@ const ProfileSign = () => {
       return
     let insertTextPre = ''
     let insertTextSuf = ''
-    if (imageWidth === 0 && imageHeight === 0) {
+    if (!imageWidth || !imageHeight) {
       insertTextPre = '[img]'
       insertTextSuf = '[/img]'
     } else {
