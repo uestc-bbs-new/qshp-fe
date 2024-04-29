@@ -22,6 +22,7 @@ import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
+import { isDeveloper } from '@/states/settings'
 
 import { ForumGroup } from './ForumCover'
 import TopListView from './TopListView'
@@ -69,7 +70,9 @@ const Home = () => {
       </Banner>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <OverviewInfo data={indexData?.global_stat} />
-        <Button onClick={() => setTopListOpen(true)}>更多</Button>
+        {isDeveloper() && (
+          <Button onClick={() => setTopListOpen(true)}>更多</Button>
+        )}
       </Stack>
       {!indexData?.top_list && isLoading ? (
         <Skeleton height={480} />
