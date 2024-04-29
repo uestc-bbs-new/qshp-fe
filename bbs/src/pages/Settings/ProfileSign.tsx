@@ -42,7 +42,7 @@ const ProfileSign = () => {
   const [smilyKind, setSmilyKind] = useState(smilyData[0])
   const [previewSign, setPreviewSign] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const [position, setPosition] = useState(0)
+  const position = useRef<number>(0)
 
   const handleBoldButtonClick = () => {
     if (
@@ -51,17 +51,19 @@ const ProfileSign = () => {
       inputRef.current.selectionEnd === null
     )
       return
+    const insertTextPre = `[b]`
+    const insertTextSuf = '[/b]'
     const newSign =
       sign.slice(0, inputRef.current.selectionStart) +
-      '[b]' +
+      insertTextPre +
       sign.slice(
         inputRef.current.selectionStart,
         inputRef.current.selectionEnd
       ) +
-      '[/b]' +
+      insertTextSuf +
       sign.slice(inputRef.current.selectionEnd)
     setSign(newSign)
-    setPosition(inputRef.current.selectionEnd + 7)
+    position.current = inputRef.current.selectionEnd + insertTextPre.length
   }
 
   const handleClose = () => {
@@ -80,7 +82,8 @@ const ProfileSign = () => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus()
-      if (position) inputRef.current.setSelectionRange(position, position)
+      if (position)
+        inputRef.current.setSelectionRange(position.current, position.current)
     }
   }, [sign])
 
@@ -92,19 +95,19 @@ const ProfileSign = () => {
       inputRef.current.selectionEnd === null
     )
       return
+    const insertTextPre = `[color=${color}]`
+    const insertTextSuf = '[/color]'
     const newSign =
       sign.slice(0, inputRef.current.selectionStart) +
-      `[color=${color}]` +
+      insertTextPre +
       sign.slice(
         inputRef.current.selectionStart,
         inputRef.current.selectionEnd
       ) +
-      '[/color]' +
+      insertTextSuf +
       sign.slice(inputRef.current.selectionEnd)
     setSign(newSign)
-    setPosition(
-      inputRef.current.selectionEnd + `[color=${color}][/color]`.length
-    )
+    position.current = inputRef.current.selectionEnd + insertTextPre.length
     handleClose()
   }
 
@@ -130,24 +133,22 @@ const ProfileSign = () => {
       inputRef.current.selectionEnd === null
     )
       return
+    let insertTextPre = ''
+    let insertTextSuf = ''
     if (imageWidth === 0 && imageHeight === 0) {
-      newSign =
-        sign.slice(0, inputRef.current.selectionStart) +
-        `[img]${imageUrl}[/img]` +
-        sign.slice(inputRef.current.selectionStart)
-      setPosition(
-        inputRef.current.selectionStart + `[img]${imageUrl}[/img]`.length
-      )
+      insertTextPre = '[img]'
+      insertTextSuf = '[/img]'
     } else {
-      newSign =
-        sign.slice(0, inputRef.current.selectionStart) +
-        `[img=${imageWidth},${imageHeight}]${imageUrl}[/img]` +
-        sign.slice(inputRef.current.selectionStart)
-      setPosition(
-        inputRef.current.selectionStart +
-          `[img=${imageWidth},${imageHeight}]${imageUrl}[/img]`.length
-      )
+      insertTextPre = `[img=${imageWidth},${imageHeight}]`
+      insertTextSuf = '[/img]'
     }
+    newSign =
+      sign.slice(0, inputRef.current.selectionStart) +
+      `${insertTextPre}${imageUrl}${insertTextSuf}` +
+      sign.slice(inputRef.current.selectionStart)
+    position.current =
+      inputRef.current.selectionStart +
+      `${insertTextPre}${imageUrl}${insertTextSuf}`.length
     setSign(newSign)
     handleClose()
   }
@@ -162,15 +163,17 @@ const ProfileSign = () => {
       inputRef.current.selectionEnd === null
     )
       return
+    const insertTextPre = `[url=${linkUrl}]`
+    const insertTextSuf = '[/url]'
     const newSign =
       sign.slice(0, inputRef.current.selectionStart) +
-      `[url=${linkUrl}]${linkText}[/url]` +
+      `${insertTextPre}${linkText}${insertTextSuf}` +
       sign.slice(inputRef.current.selectionStart)
     setSign(newSign)
-    setPosition(
+    position.current =
       inputRef.current.selectionStart +
-        `[url=${linkUrl}]${linkText}[/url]`.length
-    )
+      `${insertTextPre}${linkText}${insertTextSuf}`.length
+
     handleClose()
   }
 
@@ -407,12 +410,13 @@ const ProfileSign = () => {
                         if (inputRef.current === null) return
                         const selectionStart = inputRef.current.selectionStart!
                         const selectionEnd = inputRef.current.selectionEnd!
+                        const insertText = `[s:${item.id}]`
                         const newSign =
                           sign.slice(0, selectionStart) +
-                          `[s:${item.id}]` +
+                          insertText +
                           sign.slice(selectionEnd)
                         setSign(newSign)
-                        setPosition(selectionEnd + `[s:${item.id}]`.length)
+                        position.current = selectionStart + insertText.length
                         handleClose()
                       }}
                     >
@@ -440,7 +444,7 @@ const ProfileSign = () => {
           value={sign}
           onChange={(e) => {
             setSign(e.target.value)
-            setPosition(inputRef.current!.selectionEnd!)
+            position.current = inputRef.current!.selectionEnd!
           }}
           inputRef={inputRef}
         />
