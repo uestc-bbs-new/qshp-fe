@@ -42,12 +42,13 @@ const ProfileSign = () => {
   const [smilyKind, setSmilyKind] = useState(smilyData[0])
   const [previewSign, setPreviewSign] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const [position, setPosition] = useState(0)
 
   const handleBoldButtonClick = () => {
     if (
       !inputRef.current ||
-      !inputRef.current.selectionStart ||
-      !inputRef.current.selectionEnd
+      inputRef.current.selectionStart === null ||
+      inputRef.current.selectionEnd === null
     )
       return
     const newSign =
@@ -60,6 +61,7 @@ const ProfileSign = () => {
       '[/b]' +
       sign.slice(inputRef.current.selectionEnd)
     setSign(newSign)
+    setPosition(inputRef.current.selectionEnd + 7)
   }
 
   const handleClose = () => {
@@ -75,12 +77,19 @@ const ProfileSign = () => {
     setSmilyAnchorEl(null)
     setSmilyKind(smilyData[0])
   }
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+      if (position) inputRef.current.setSelectionRange(position, position)
+    }
+  }, [sign])
+
   const handleColorSelect = () => {
     if (color === '') return
     if (
       !inputRef.current ||
-      !inputRef.current.selectionStart ||
-      !inputRef.current.selectionEnd
+      inputRef.current.selectionStart === null ||
+      inputRef.current.selectionEnd === null
     )
       return
     const newSign =
@@ -93,6 +102,9 @@ const ProfileSign = () => {
       '[/color]' +
       sign.slice(inputRef.current.selectionEnd)
     setSign(newSign)
+    setPosition(
+      inputRef.current.selectionEnd + `[color=${color}][/color]`.length
+    )
     handleClose()
   }
 
@@ -114,8 +126,8 @@ const ProfileSign = () => {
     let newSign = ''
     if (
       !inputRef.current ||
-      !inputRef.current.selectionStart ||
-      !inputRef.current.selectionEnd
+      inputRef.current.selectionStart === null ||
+      inputRef.current.selectionEnd === null
     )
       return
     if (imageWidth === 0 && imageHeight === 0) {
@@ -123,11 +135,18 @@ const ProfileSign = () => {
         sign.slice(0, inputRef.current.selectionStart) +
         `[img]${imageUrl}[/img]` +
         sign.slice(inputRef.current.selectionStart)
+      setPosition(
+        inputRef.current.selectionStart + `[img]${imageUrl}[/img]`.length
+      )
     } else {
       newSign =
         sign.slice(0, inputRef.current.selectionStart) +
         `[img=${imageWidth},${imageHeight}]${imageUrl}[/img]` +
         sign.slice(inputRef.current.selectionStart)
+      setPosition(
+        inputRef.current.selectionStart +
+          `[img=${imageWidth},${imageHeight}]${imageUrl}[/img]`.length
+      )
     }
     setSign(newSign)
     handleClose()
@@ -139,8 +158,8 @@ const ProfileSign = () => {
   const handleLinkSubmit = () => {
     if (
       !inputRef.current ||
-      !inputRef.current.selectionStart ||
-      !inputRef.current.selectionEnd
+      inputRef.current.selectionStart === null ||
+      inputRef.current.selectionEnd === null
     )
       return
     const newSign =
@@ -148,6 +167,10 @@ const ProfileSign = () => {
       `[url=${linkUrl}]${linkText}[/url]` +
       sign.slice(inputRef.current.selectionStart)
     setSign(newSign)
+    setPosition(
+      inputRef.current.selectionStart +
+        `[url=${linkUrl}]${linkText}[/url]`.length
+    )
     handleClose()
   }
 
@@ -389,6 +412,7 @@ const ProfileSign = () => {
                           `[s:${item.id}]` +
                           sign.slice(selectionEnd)
                         setSign(newSign)
+                        setPosition(selectionEnd + `[s:${item.id}]`.length)
                         handleClose()
                       }}
                     >
@@ -414,7 +438,10 @@ const ProfileSign = () => {
           multiline
           rows={5}
           value={sign}
-          onChange={(e) => setSign(e.target.value)}
+          onChange={(e) => {
+            setSign(e.target.value)
+            setPosition(inputRef.current!.selectionEnd!)
+          }}
           inputRef={inputRef}
         />
         <div
