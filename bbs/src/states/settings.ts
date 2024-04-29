@@ -18,7 +18,7 @@ const kSystemSettingsVersion = '_version'
 
 let currentVersion: number | undefined
 
-let isDeveloperFlag = false
+let isDeveloperFlag = import.meta.env.DEV
 export const setDeveloper = () => (isDeveloperFlag = true)
 export const isDeveloper = () => isDeveloperFlag
 
