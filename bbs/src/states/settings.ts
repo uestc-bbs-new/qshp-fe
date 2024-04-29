@@ -18,6 +18,10 @@ const kSystemSettingsVersion = '_version'
 
 let currentVersion: number | undefined
 
+let isDeveloperFlag = false
+export const setDeveloper = () => (isDeveloperFlag = true)
+export const isDeveloper = () => isDeveloperFlag
+
 export const updateSystemSettingsVersion = async (version: number) => {
   if (version != currentVersion) {
     await set(kSystemSettingsVersion, version, store)
