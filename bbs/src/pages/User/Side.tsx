@@ -47,7 +47,7 @@ const Side = ({
             </Grid>
           ))}
         </Grid>
-        {visits && (
+        {!!visits && (
           <Typography mt={1} color="rgba(96, 98, 102, 0.8)">
             已有 {visits} 人次来访
           </Typography>
