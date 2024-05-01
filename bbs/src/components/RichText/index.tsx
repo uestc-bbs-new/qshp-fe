@@ -1,5 +1,3 @@
-import Vditor from 'vditor'
-
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -155,14 +153,17 @@ const MarkdownPostRenderer = ({
   const { state } = useAppState()
   const el = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    el.current &&
-      Vditor.preview(
-        el.current,
-        message,
-        getPreviewOptions(state.theme, {
-          attachments: attachments || [],
-        })
-      )
+    ;(async () => {
+      const Vditor = (await import('vditor')).default
+      el.current &&
+        Vditor.preview(
+          el.current,
+          message,
+          getPreviewOptions(state.theme, {
+            attachments: attachments || [],
+          })
+        )
+    })()
   }, [message])
   const navigate = useNavigate()
   const { dispatch } = useAppState()
