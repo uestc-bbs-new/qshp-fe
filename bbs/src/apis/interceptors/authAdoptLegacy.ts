@@ -9,6 +9,8 @@ import {
 import { notifyUserCallbacks } from '@/states/user'
 import { persistedStates } from '@/utils/storage'
 
+import { AuthorizationResult } from '../auth'
+
 let adoptLegacyAttempted = false
 
 let delayFurtherRequestsIInterceptorId: number | null = null
@@ -23,9 +25,9 @@ const adoptLegacyAuth = (axios: AxiosInstance) => {
   if (!attempting) {
     attempting = true
     pendingPromise = authServiceWithUser
-      .post<string>(`${commonUrl}/auth/adoptLegacyAuth`)
-      .then((authorization) => {
-        persistedStates.authorizationHeader = authorization
+      .post<AuthorizationResult>(`${commonUrl}/auth/adoptLegacyAuth`)
+      .then((result) => {
+        persistedStates.authorizationHeader = result.authorization
       })
       .finally(() => {
         axios.interceptors.request.eject(
