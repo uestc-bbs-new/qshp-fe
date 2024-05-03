@@ -80,11 +80,13 @@ export const RegisterForm = ({
   }
   const validateEmail = () => {
     const email = getFormField('email')
-    setEmailError(
-      email.match(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/)
-        ? ''
-        : '请输入有效的邮箱地址。'
-    )
+    if (email.length > 64) {
+      setEmailError('邮箱地址太长。')
+    } else if (email.match(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/)) {
+      setEmailError('')
+    } else {
+      setEmailError('请输入有效的邮箱地址。')
+    }
   }
   const handleRegister = async () => {
     if (!formRef.current) {
