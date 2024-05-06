@@ -86,17 +86,19 @@ const Home = () => {
         <Box className="flex-1">
           {!indexData?.forum_list?.length ? (
             <>
-              <Skeleton variant="rounded" height={40} />
-              <Box className="flex-1" display="flex">
-                {Array.from(new Array(2)).map((index) => (
-                  <Box
-                    key={index}
-                    sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
-                  >
-                    <Skeleton variant="rectangular" height={118} />
-                  </Box>
-                ))}
-              </Box>
+              <Skeleton variant="rounded" height={40} sx={{ my: 1 }} />
+              {Array.from(new Array(2)).map((_, index) => (
+                <Box key={index} className="flex-1" display="flex">
+                  {Array.from(new Array(2)).map((_, index) => (
+                    <Box
+                      key={index}
+                      sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
+                    >
+                      <Skeleton variant="rectangular" height={118} />
+                    </Box>
+                  ))}
+                </Box>
+              ))}
             </>
           ) : (
             <List>
