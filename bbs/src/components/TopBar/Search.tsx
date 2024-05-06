@@ -75,7 +75,8 @@ const SearchBar = () => {
       direction="row"
       alignItems="center"
       className="rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
-      sx={{ minWidth: 420 }}
+      flexShrink={1}
+      width={420}
       ref={searchAnchorRef}
     >
       <Autocomplete

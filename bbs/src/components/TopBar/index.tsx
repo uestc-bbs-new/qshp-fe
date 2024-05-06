@@ -29,12 +29,7 @@ const Options = ({ state }: { state: State }) => {
   const postLink = pages.post(fid)
 
   return (
-    <Stack
-      justifyContent="flex-end"
-      alignItems="center"
-      direction="row"
-      className="basis-1/4 text-right"
-    >
+    <>
       <UserMenu user={state.user} />
       <Message />
       {/* <AboutMe unread={state.messages.unread_count}/> */}
@@ -48,21 +43,17 @@ const Options = ({ state }: { state: State }) => {
       >
         发帖
       </Button>
-    </Stack>
+    </>
   )
 }
 
 const LoginComponent = () => {
   const { dispatch } = useAppState()
   return (
-    <Stack
-      justifyContent="flex-end"
-      direction="row"
-      spacing={1}
-      className="basis-1/4"
-    >
+    <>
       <Button
         variant="contained"
+        sx={{ mr: 1 }}
         onClick={() =>
           dispatch({ type: 'open dialog', payload: { kind: 'login' } })
         }
@@ -77,7 +68,7 @@ const LoginComponent = () => {
       >
         注册
       </Button>
-    </Stack>
+    </>
   )
 }
 
@@ -101,8 +92,15 @@ const TopBar = () => {
       position="fixed"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, px: 2.5 }}
     >
-      <Toolbar disableGutters>
-        <Stack direction="row" className="basis-1/4" alignItems="center">
+      <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          flexGrow={0}
+          flexShrink={1}
+          minWidth="1em"
+          mr={1}
+        >
           <IconButton
             edge="start"
             color="inherit"
@@ -121,28 +119,29 @@ const TopBar = () => {
           </Link>
           <SearchBar />
         </Stack>
-        <Stack sx={{ flexGrow: 1 }}></Stack>
-        {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
-        <Link
-          to={pages.thread(1812091)}
-          className="text-white"
-          underline="none"
-          sx={{ ml: 2, mr: 1 }}
-        >
-          <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
-        </Link>
-        <Link
-          to={legacyUrl}
-          external
-          target="_blank"
-          className="text-white"
-          underline="none"
-        >
-          <Stack direction="row" alignItems="center">
-            <MeetingRoomTwoTone fontSize="small" />
-            <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
-          </Stack>
-        </Link>
+        <Stack direction="row" alignItems="center" flexGrow={0} flexShrink={0}>
+          {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
+          <Link
+            to={pages.thread(1812091)}
+            className="text-white"
+            underline="none"
+            sx={{ ml: 2, mr: 1 }}
+          >
+            <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
+          </Link>
+          <Link
+            to={legacyUrl}
+            external
+            target="_blank"
+            className="text-white"
+            underline="none"
+          >
+            <Stack direction="row" alignItems="center">
+              <MeetingRoomTwoTone fontSize="small" />
+              <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
+            </Stack>
+          </Link>
+        </Stack>
       </Toolbar>
     </AppBar>
   )
