@@ -1,9 +1,11 @@
 import {
+  RouteObject,
   ScrollRestoration,
   createBrowserRouter,
   redirect,
 } from 'react-router-dom'
 
+import adminRoutes from '@/admin/routes'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import { RegisterHome } from '@/pages/Continue/Register'
 import Renew from '@/pages/Continue/Renew'
@@ -25,7 +27,7 @@ import { isIdasRelease } from '@/utils/releaseMode'
 
 import routes from './routes'
 
-const pages = [
+const pages: RouteObject[] = [
   { path: '/', loader: () => redirect('/new') },
   { path: '/new', id: 'index', element: <Home /> },
   { path: '/search', id: 'search', element: <Search /> },
@@ -79,6 +81,7 @@ const pages = [
     id: 'userByName',
     element: <User />,
   },
+  ...adminRoutes,
 ]
 
 const idasPreviewPages = [
@@ -97,7 +100,6 @@ routes.current = [
     children: [
       { path: '*', id: '404', element: <NotFound /> },
       ...(isIdasRelease ? idasPreviewPages : pages),
-
       {
         path: '/renew',
         id: 'renew',
