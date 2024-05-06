@@ -135,11 +135,11 @@ const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
   return (
     <>
       <ListItemButton onClick={handleClick}>
-        <ListItemIcon className=" min-w-10 text-[#0268FD]">
+        <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
           {Icon !== undefined ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
-          <Typography color="inherit" className=" font-normal text-black">
+          <Typography variant="drawerItemText">
             {isForum ? (data as Forum).name : navName}
           </Typography>
         </ListItemText>
@@ -178,13 +178,11 @@ const ListItemLink = ({
   return (
     <Link to={link} underline="none" color="inherit">
       <ListItemButton>
-        <ListItemIcon className=" min-w-10" sx={{ color: '#0268FD' }}>
+        <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
           {Icon ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
-          <Typography color="inherit" className=" font-normal text-black">
-            {name}
-          </Typography>
+          <Typography variant="drawerItemText">{name}</Typography>
         </ListItemText>
       </ListItemButton>
     </Link>
@@ -205,9 +203,7 @@ const Sections = () => {
       {/* todo: 禁止 hover  */}
       <ListItem>
         <ListItemText>
-          <Typography color="inherit" className="font-bold text-zinc-900">
-            板块
-          </Typography>
+          <Typography variant="drawerHeading">板块</Typography>
         </ListItemText>
       </ListItem>
       <>
@@ -231,9 +227,7 @@ const Sections = () => {
       </>
       <ListItem>
         <ListItemText>
-          <Typography color="inherit" className="font-bold text-zinc-900">
-            其他
-          </Typography>
+          <Typography variant="drawerHeading">其他</Typography>
         </ListItemText>
       </ListItem>
       <ListItemLink

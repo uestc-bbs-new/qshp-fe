@@ -120,6 +120,8 @@ declare module '@mui/material/styles' {
     dialogTitle: React.CSSProperties
     replyCredit: React.CSSProperties
     replyCreditDetails: React.CSSProperties
+    drawerItemText: React.CSSProperties
+    drawerHeading: React.CSSProperties
   }
   interface TypographyVariantsOptions {
     signinTitle?: React.CSSProperties
@@ -145,6 +147,8 @@ declare module '@mui/material/styles' {
     dialogTitle?: React.CSSProperties
     replyCredit?: React.CSSProperties
     replyCreditDetails?: React.CSSProperties
+    drawerItemText?: React.CSSProperties
+    drawerHeading?: React.CSSProperties
   }
 }
 declare module '@mui/material/Typography' {
@@ -172,6 +176,8 @@ declare module '@mui/material/Typography' {
     dialogTitle: true
     replyCredit: true
     replyCreditDetails: true
+    drawerItemText: true
+    drawerHeading: true
   }
 }
 
@@ -314,6 +320,13 @@ export const baseTheme: ThemeOptions = {
     replyCreditDetails: {
       fontSize: 16,
       color: '#F26B4E',
+    },
+    drawerItemText: {
+      color: '#000000',
+    },
+    drawerHeading: {
+      color: '#18181b',
+      fontWeight: 700,
     },
   },
 

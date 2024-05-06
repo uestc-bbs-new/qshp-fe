@@ -71,6 +71,12 @@ const darkTheme = createTheme(
       userAction: {
         color: lighten('#5F6166', 0.7),
       },
+      drawerItemText: {
+        color: '#dddddd',
+      },
+      drawerHeading: {
+        color: '#dddddd',
+      },
     },
     commonSx: {
       headerCardGradient: {
