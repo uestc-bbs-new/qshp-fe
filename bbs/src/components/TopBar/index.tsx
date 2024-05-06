@@ -31,24 +31,23 @@ const Options = ({ state }: { state: State }) => {
   return (
     <Stack
       justifyContent="flex-end"
+      alignItems="center"
       direction="row"
       className="basis-1/4 text-right"
     >
-      <Toolbar disableGutters>
-        <UserMenu user={state.user} />
-        <Message />
-        {/* <AboutMe unread={state.messages.unread_count}/> */}
-        <Button
-          className="ml-3 bg-white bg-opacity-40"
-          variant="contained"
-          startIcon={<Add />}
-          component={Link}
-          to={postLink}
-          state={fid && state.activeForum}
-        >
-          发帖
-        </Button>
-      </Toolbar>
+      <UserMenu user={state.user} />
+      <Message />
+      {/* <AboutMe unread={state.messages.unread_count}/> */}
+      <Button
+        className="ml-3 bg-white bg-opacity-40"
+        variant="contained"
+        startIcon={<Add />}
+        component={Link}
+        to={postLink}
+        state={fid && state.activeForum}
+      >
+        发帖
+      </Button>
     </Stack>
   )
 }
@@ -100,9 +99,9 @@ const TopBar = () => {
   return (
     <AppBar
       position="fixed"
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, px: 2.5 }}
     >
-      <Stack direction="row" alignItems="center" className="px-6">
+      <Toolbar disableGutters>
         <Stack direction="row" className="basis-1/4" alignItems="center">
           <IconButton
             edge="start"
@@ -144,7 +143,7 @@ const TopBar = () => {
             <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
           </Stack>
         </Link>
-      </Stack>
+      </Toolbar>
     </AppBar>
   )
 }
