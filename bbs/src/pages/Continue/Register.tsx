@@ -191,7 +191,7 @@ export const RegisterForm = ({
               </Button>
             )}
           </Stack>
-          {registerError ? <Error error={registerError} /> : <></>}
+          {registerError ? <Error error={registerError} small /> : <></>}
         </td>
       </tr>
     </CommonForm>

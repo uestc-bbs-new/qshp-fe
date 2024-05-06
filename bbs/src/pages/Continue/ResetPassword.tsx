@@ -115,7 +115,7 @@ const ResetPassword = ({
           {success && (
             <Alert severity="success">密码已重置，请使用新密码登录。</Alert>
           )}
-          {!!apiError && <Error error={apiError} />}
+          {!!apiError && <Error error={apiError} small />}
         </td>
       </tr>
     </CommonForm>

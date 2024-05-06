@@ -204,7 +204,7 @@ export const ContinueError = () => {
     <Dialog open fullScreen>
       <DialogContent sx={{ p: 0 }}>
         <CommonLayout>
-          <Error error={error} sx={{ width: '90%' }} />
+          <Error error={error} sx={{ width: '90%' }} small />
           <Button
             variant="outlined"
             sx={{ mt: 2 }}
