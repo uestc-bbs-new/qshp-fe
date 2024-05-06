@@ -7,6 +7,7 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import Link from '@/components/Link'
@@ -87,6 +88,8 @@ const TopBar = () => {
     import.meta.url
   ).href.toString()
 
+  const narrowTopBar = useMediaQuery('(max-width: 850px')
+
   return (
     <AppBar
       position="fixed"
@@ -121,26 +124,30 @@ const TopBar = () => {
         </Stack>
         <Stack direction="row" alignItems="center" flexGrow={0} flexShrink={0}>
           {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
-          <Link
-            to={pages.thread(1812091)}
-            className="text-white"
-            underline="none"
-            sx={{ ml: 2, mr: 1 }}
-          >
-            <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
-          </Link>
-          <Link
-            to={legacyUrl}
-            external
-            target="_blank"
-            className="text-white"
-            underline="none"
-          >
-            <Stack direction="row" alignItems="center">
-              <MeetingRoomTwoTone fontSize="small" />
-              <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
-            </Stack>
-          </Link>
+          {!narrowTopBar && (
+            <>
+              <Link
+                to={pages.thread(1812091)}
+                className="text-white"
+                underline="none"
+                sx={{ ml: 2, mr: 1 }}
+              >
+                <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
+              </Link>
+              <Link
+                to={legacyUrl}
+                external
+                target="_blank"
+                className="text-white"
+                underline="none"
+              >
+                <Stack direction="row" alignItems="center">
+                  <MeetingRoomTwoTone fontSize="small" />
+                  <Typography sx={{ fontSize: 12 }}>返回旧版</Typography>
+                </Stack>
+              </Link>
+            </>
+          )}
         </Stack>
       </Toolbar>
     </AppBar>
