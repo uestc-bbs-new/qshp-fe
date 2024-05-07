@@ -42,7 +42,7 @@ const ImageViewDialog = ({
         <LazyImageView {...{ onClose, singleImage }} />
       </Suspense>
       <IconButton
-        sx={{
+        sx={(theme) => ({
           position: 'absolute',
           right: 10,
           top: 10,
@@ -51,7 +51,8 @@ const ImageViewDialog = ({
           '&:hover': {
             backgroundColor: 'white',
           },
-        }}
+          color: theme.palette.mode == 'dark' ? '#333' : undefined,
+        })}
         onClick={onClose}
       >
         <Close />
