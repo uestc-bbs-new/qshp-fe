@@ -1,7 +1,15 @@
 import { Outlet } from 'react-router-dom'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
-import { Box, Fab, Toolbar, useMediaQuery } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Fab,
+  Slide,
+  Snackbar,
+  Toolbar,
+  useMediaQuery,
+} from '@mui/material'
 
 import Announcement from '@/components/Announcement'
 import Drawer from '@/components/Drawer'
@@ -11,7 +19,7 @@ import TopBar from '@/components/TopBar'
 import { useAppState } from '@/states'
 
 const Layout = () => {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   // 1720 comes from the content width 1280 plus 2 * drawer width 210
   const matches = useMediaQuery('(min-width: 1720px)')
   const drawerWidth = 210
@@ -45,6 +53,31 @@ const Layout = () => {
             <KeyboardArrowUp />
           </Fab>
         </ScrollTop>
+        {state.globalSnackbar && (
+          <Snackbar
+            key={state.globalSnackbar.key}
+            open
+            TransitionComponent={Slide}
+            autoHideDuration={3000}
+            onClose={() => dispatch({ type: 'close snackbar' })}
+            sx={{
+              '&.MuiSnackbar-root': {
+                left: '50%',
+                top: '50%',
+                right: 'auto',
+                bottom: 'auto',
+                transform: 'translate(-50%, -50%)',
+              },
+            }}
+          >
+            <Alert
+              severity={state.globalSnackbar.severity ?? 'info'}
+              variant="filled"
+            >
+              {state.globalSnackbar.message}
+            </Alert>
+          </Snackbar>
+        )}
       </Box>
     </>
   )

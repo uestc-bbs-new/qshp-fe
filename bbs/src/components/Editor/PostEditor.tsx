@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
+import { extCreditNames } from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
@@ -83,6 +84,7 @@ const PostEditor = ({
   }
 
   const navigate = useNavigate()
+  const { dispatch } = useAppState()
   const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
     kind
   ]
@@ -165,9 +167,37 @@ const PostEditor = ({
         is_anonymous: valueRef.current.is_anonymous,
         attachments: editor.current?.attachments,
       })
-        .then(() => {
+        .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          if (result.ext_credits_update) {
+            let hasNegative = false
+            const message = extCreditNames
+              .map((k) => {
+                if (!result.ext_credits_update) {
+                  return ''
+                }
+                const v = result.ext_credits_update[k]
+                if (!v) {
+                  return ''
+                }
+                if (v < 0) {
+                  hasNegative = true
+                }
+                return `${k} ${v > 0 ? `+${v}` : v}`
+              })
+              .filter((text) => !!text)
+              .join('，')
+            if (message) {
+              dispatch({
+                type: 'open snackbar',
+                payload: {
+                  severity: hasNegative ? 'warning' : 'success',
+                  message,
+                },
+              })
+            }
+          }
           setPostPending(false)
           onSubmitted && onSubmitted()
         })

@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { useEffect } from 'react'
-import React from 'react'
 import { RouterProvider } from 'react-router-dom'
 
 import LoginDialog from './components/Login/LoginDialog'

@@ -2,6 +2,9 @@ import { ForumDetails } from '@/common/interfaces/forum'
 
 import { guestUser } from '..'
 
+let uniqueKey = 0
+const newUniqueKey = () => ++uniqueKey
+
 export type UserState = {
   uid: number
   username: string
@@ -28,6 +31,12 @@ type GlobalDialogState = {
   imageDetails?: string
 }
 
+type GlobalSnackbarState = {
+  message: string
+  severity?: 'success' | 'warning' | 'error'
+  key: number
+}
+
 export type State = {
   drawer: boolean
   user: UserState
@@ -35,6 +44,7 @@ export type State = {
   activeForum?: ForumDetails
   activeThread?: ThreadBreadcumbEntry
   globalDialog?: GlobalDialogState
+  globalSnackbar?: GlobalSnackbarState
   theme: 'light' | 'dark'
 }
 
@@ -110,6 +120,16 @@ export const stateReducer = (state: State, action: StateAction): State => {
       return {
         ...state,
         globalDialog: undefined,
+      }
+    case 'open snackbar':
+      return {
+        ...state,
+        globalSnackbar: { ...action.payload, key: newUniqueKey() },
+      }
+    case 'close snackbar':
+      return {
+        ...state,
+        globalSnackbar: undefined,
       }
     default:
       return state

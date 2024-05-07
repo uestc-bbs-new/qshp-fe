@@ -8,6 +8,7 @@ import {
   ThreadPollOption,
   ThreadReplyCredit,
 } from '@/common/interfaces/response'
+import { PostReplyResult } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
 
 import { makeThreadTypesMap } from '../common'
@@ -91,7 +92,7 @@ export type ReplyThreadDetails = PostCommonDetails & {
 }
 
 export const replyThread = (details: ReplyThreadDetails) => {
-  return request.post<PostDetails>(`${commonUrl}/thread/reply`, {
+  return request.post<PostReplyResult>(`${commonUrl}/thread/reply`, {
     ...details,
     format: 2,
   })
