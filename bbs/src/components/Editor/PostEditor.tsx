@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { extCreditNames } from '@/common/interfaces/base'
+import { ExtCreditMap, extCreditNames } from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
@@ -156,6 +156,7 @@ const PostEditor = ({
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          notifyCreditsUpdate(result.ext_credits_update)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -170,34 +171,7 @@ const PostEditor = ({
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
-          if (result.ext_credits_update) {
-            let hasNegative = false
-            const message = extCreditNames
-              .map((k) => {
-                if (!result.ext_credits_update) {
-                  return ''
-                }
-                const v = result.ext_credits_update[k]
-                if (!v) {
-                  return ''
-                }
-                if (v < 0) {
-                  hasNegative = true
-                }
-                return `${k} ${v > 0 ? `+${v}` : v}`
-              })
-              .filter((text) => !!text)
-              .join('，')
-            if (message) {
-              dispatch({
-                type: 'open snackbar',
-                payload: {
-                  severity: hasNegative ? 'warning' : 'success',
-                  message,
-                },
-              })
-            }
-          }
+          notifyCreditsUpdate(result.ext_credits_update)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -214,6 +188,34 @@ const PostEditor = ({
           onSubmitted && onSubmitted()
         })
         .catch(handleError)
+    }
+  }
+
+  const notifyCreditsUpdate = (updates?: ExtCreditMap) => {
+    if (updates) {
+      let hasNegative = false
+      const message = extCreditNames
+        .map((k) => {
+          const v = updates[k]
+          if (!v) {
+            return ''
+          }
+          if (v < 0) {
+            hasNegative = true
+          }
+          return `${k} ${v > 0 ? `+${v}` : v}`
+        })
+        .filter((text) => !!text)
+        .join('，')
+      if (message) {
+        dispatch({
+          type: 'open snackbar',
+          payload: {
+            severity: hasNegative ? 'warning' : 'success',
+            message,
+          },
+        })
+      }
     }
   }
 

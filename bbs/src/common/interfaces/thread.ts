@@ -8,6 +8,11 @@ export type ThreadType = {
 
 export type ThreadTypeMap = { [type_id: number]: ThreadType }
 
+export type PostThreadResult = {
+  thread_id: number
+  ext_credits_update?: ExtCreditMap
+}
+
 export type PostReplyResult = {
   post_id: number
   ext_credits_update?: ExtCreditMap

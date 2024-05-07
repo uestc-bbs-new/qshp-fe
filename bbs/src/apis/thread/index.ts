@@ -8,7 +8,7 @@ import {
   ThreadPollOption,
   ThreadReplyCredit,
 } from '@/common/interfaces/response'
-import { PostReplyResult } from '@/common/interfaces/thread'
+import { PostReplyResult, PostThreadResult } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
 
 import { makeThreadTypesMap } from '../common'
@@ -81,7 +81,7 @@ export type PostThreadDetails = PostCommonDetails & {
   reply_credit?: PostThreadReplyCreditDetails
 }
 export const postThread = (details: PostThreadDetails) => {
-  return request.post(`${commonUrl}/thread/new`, {
+  return request.post<PostThreadResult>(`${commonUrl}/thread/new`, {
     ...details,
   })
 }
