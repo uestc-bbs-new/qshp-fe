@@ -14,7 +14,7 @@ const passthrough = (
       result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
     }
   })
-  return (prepend ?? '') + result.join('&')
+  return (result.length ? prepend ?? '' : '') + result.join('&')
 }
 
 const kIndexUrl = `${siteRoot}/forum.php`
@@ -27,7 +27,7 @@ export const useDiscuzLink = () => {
     case 'thread':
       return `${siteRoot}/forum.php?mod=viewthread&tid=${
         match.params.id
-      }&${passthrough(searchParams, ['page', 'authorid'], '&')}`
+      }${passthrough(searchParams, ['page', 'authorid'], '&')}`
     case 'post':
       if (match.params.fid) {
         return `${siteRoot}/forum.php?mod=post&action=newthread&fid=${match.params.fid}`
@@ -47,7 +47,7 @@ export const useDiscuzLink = () => {
     case 'user':
     // fall through.
     case 'userByName': {
-      let base = `${siteRoot}/home.php?mod=space`
+      let base = `${siteRoot}/home.php?mod=space&`
       if (match.params.uid) {
         base += 'uid=' + encodeURIComponent(match.params.uid)
       }
@@ -73,7 +73,7 @@ export const useDiscuzLink = () => {
           base += 'do=wall'
           break
       }
-      return `${base}&${passthrough(searchParams, ['additional', 'page'])}`
+      return `${base}${passthrough(searchParams, ['additional', 'page'], '&')}`
     }
     case `setting`:
       switch (match.params.id) {
