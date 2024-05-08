@@ -119,6 +119,7 @@ const Error = ({
               variant="contained"
               disabled={!creditsEnough(forumRestrictions)}
               onClick={() =>
+                forumRestrictions &&
                 payForum(forumRestrictions.forum_id).then(
                   () => onRefresh && onRefresh()
                 )
