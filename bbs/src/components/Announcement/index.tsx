@@ -1,9 +1,11 @@
-// TODO: this carousel component should be replaced due to long time no maintain
 import { useQuery } from '@tanstack/react-query'
+import 'swiper/css'
+import 'swiper/css/autoplay'
+import 'swiper/css/pagination'
+import { Autoplay, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
-import React, { useState } from 'react'
-import SwipeableViews from 'react-swipeable-views'
-import { autoPlay } from 'react-swipeable-views-utils'
+import React from 'react'
 
 import { Campaign } from '@mui/icons-material'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
@@ -12,7 +14,6 @@ import { getAnnouncement } from '@/apis/common'
 import { pages } from '@/utils/routes'
 
 import Link from '../Link'
-import SlidePagination from './SlidePagination'
 
 type SlideProps = {
   children: React.ReactElement | string
@@ -49,45 +50,40 @@ const Slide = ({ children, tid }: SlideProps) => {
   )
 }
 
-const AutoPlay = autoPlay(SwipeableViews)
-
 const Announcement = () => {
   const theme = useTheme()
-  const [index, setIndex] = useState(0)
-  const { data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['announcement'],
     queryFn: () => getAnnouncement(),
   })
 
-  const handleIndexChange = (index: number) => {
-    setIndex(index)
-  }
-
   if (data) {
-    console.log(data)
     return (
-      <Box className="relative">
-        <AutoPlay
-          interval={5000}
-          style={{
-            border: '2px solid black',
-            borderColor: theme.palette.primary.main,
-          }}
-          className="mb-4"
-          index={index}
-          onChangeIndex={handleIndexChange}
+      <Box
+        className="relative"
+        mb={1.75}
+        sx={{
+          border: '2px solid black',
+          borderColor: theme.palette.primary.main,
+          '--swiper-pagination-bottom': 0,
+          '--swiper-pagination-bullet-size': '6px',
+          '--swiper-theme-color': theme.palette.primary.main,
+          '--swiper-pagination-bullet-inactive-color': '#ccc',
+          '--swiper-pagination-bullet-inactive-opacity': 1,
+        }}
+      >
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          autoplay={{ delay: 5000 }}
+          pagination={{ clickable: true }}
+          slidesPerView={1}
         >
-          {data.map((item) => (
-            <Slide key={item.thread_id} tid={item.thread_id}>
-              {item.subject}
-            </Slide>
+          {data.map((item, index) => (
+            <SwiperSlide key={index}>
+              <Slide tid={item.thread_id}>{item.subject}</Slide>
+            </SwiperSlide>
           ))}
-        </AutoPlay>
-        <SlidePagination
-          count={data.length}
-          setIndex={handleIndexChange}
-          index={index}
-        />
+        </Swiper>
       </Box>
     )
   } else {

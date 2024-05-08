@@ -26,7 +26,6 @@
     "husky": "^8.0.3",
     "postcss": "^8.4.32",
     "prettier-plugin-tailwindcss": "^0.5.9",
-    "react-swipeable-views-utils": "^0.14.0",
     "tailwindcss": "^3.4.0"
   },
   "dependencies": {
@@ -51,8 +50,8 @@
     "react-hook-form": "^7.49.2",
     "react-responsive-masonry": "^2.2.0",
     "react-router-dom": "^6.21.1",
-    "react-swipeable-views": "^0.14.0",
     "react-zoom-pan-pinch": "^3.4.4",
+    "swiper": "^11.1.1",
     "vditor": "file:third_party/vditor"
   }
 }
