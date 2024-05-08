@@ -30,14 +30,6 @@ const Slide = ({ children, tid }: SlideProps) => {
       }}
       direction="row"
     >
-      <Box
-        className="p-2 flex items-center"
-        style={{
-          backgroundColor: theme.palette.primary.main,
-        }}
-      >
-        <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
-      </Box>
       <Box className="p-4 flex-1 overflow-hidden">
         <Typography className="line-clamp-2">
           {children}
@@ -57,12 +49,15 @@ const Announcement = () => {
     queryFn: () => getAnnouncement(),
   })
 
-  if (data) {
+  const leftWidth = 48
+
+  if (data?.length) {
     return (
       <Box
         className="relative"
         mb={1.75}
         sx={{
+          paddingLeft: `${leftWidth}px`,
           border: '2px solid black',
           borderColor: theme.palette.primary.main,
           '--swiper-pagination-bottom': 0,
@@ -77,6 +72,7 @@ const Announcement = () => {
           autoplay={{ delay: 5000 }}
           pagination={{ clickable: true }}
           slidesPerView={1}
+          loop
         >
           {data.map((item, index) => (
             <SwiperSlide key={index}>
@@ -84,6 +80,21 @@ const Announcement = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+        <Stack
+          position="absolute"
+          justifyContent="center"
+          alignItems="center"
+          width={leftWidth}
+          left={0}
+          top={0}
+          bottom={0}
+          zIndex={1}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+          }}
+        >
+          <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
+        </Stack>
       </Box>
     )
   } else {
