@@ -74,12 +74,9 @@ const ProfileAvatar = () => {
               const url = URL.createObjectURL(blob)
               const img = new Image()
               img.src = url
-              // preview
-              //document.body.appendChild(img)
             },
             isTransparent ? 'image/png' : 'image/jpeg'
           )
-
           const dataUrl = targetCanvas.toDataURL()
           return dataUrl
         }
@@ -110,6 +107,7 @@ const ProfileAvatar = () => {
         ref={fileInputRef}
         style={{ display: 'none' }}
         onChange={handleFileChange}
+        accept="image/png, image/jpeg, image/gif"
       />
       <Dialog open={isDialogOpen} onClose={closeDialog}>
         <DialogTitle>编辑头像</DialogTitle>
@@ -127,7 +125,7 @@ const ProfileAvatar = () => {
                 width={250}
                 height={250}
                 border={60}
-                color={[0, 0, 0, 0.5]} // RGBA
+                color={[0, 0, 0, 0.5]}
                 scale={scale}
               />
             )}
