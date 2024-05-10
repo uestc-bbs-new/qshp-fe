@@ -2,6 +2,7 @@ import { PlaylistRemove } from '@mui/icons-material'
 import { Box, Button, Paper, Stack, Typography, useTheme } from '@mui/material'
 
 import { UserInfo } from '@/common/interfaces/response'
+import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -35,7 +36,7 @@ const BlacklistUsers = ({ data, className }: BlacklistUsersProps) => {
             <Stack justifyContent="space-between">
               <Stack direction="row">
                 <Link
-                  to={`/user/${data.user_id}`}
+                  to={pages.user({ uid: data.user_id })}
                   className={'line-clamp-2'}
                   underline="none"
                 >
