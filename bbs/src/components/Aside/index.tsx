@@ -6,6 +6,7 @@ import { TopList } from '@/common/interfaces/response'
 import { useTopList } from '@/states'
 
 import SideTabs from '../TopList/SideTabs'
+import FriendLink from './FriendLink'
 
 const Aside = ({
   loading,
@@ -20,6 +21,7 @@ const Aside = ({
   return (
     <Box className="ml-2 w-60">
       <SideTabs {...{ loading, topList: data, homepage }} />
+      <FriendLink />
     </Box>
   )
 }
