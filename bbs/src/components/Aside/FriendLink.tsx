@@ -61,8 +61,11 @@ const FriendLink = () => {
         target={'_blank'}
         underline="none"
       >
-        {/* <img src={uesteImg} alt="电子科技大学" style={{ width: '100%' }} /> */}
+        <img src={starStudioImg} alt="星辰工作室" style={{ width: '70%' }} />
       </Link>
+      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+        1998-2024 StarStudio
+      </Typography>
     </>
   )
 }
