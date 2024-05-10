@@ -91,6 +91,7 @@ const ProfileAvatar = () => {
       console.log('gif')
       console.log('Scale:', scale)
       console.log('Cropping rect:', editor.getCroppingRect())
+      closeDialog()
     }
   }
 
