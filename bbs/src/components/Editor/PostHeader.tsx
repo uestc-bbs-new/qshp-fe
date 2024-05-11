@@ -37,24 +37,30 @@ export const ThreadPostHeader = ({
   const [subject, setSubject] = useState(initialValue?.subject || '')
   const [typeId, setTypeId] = useState(initialValue?.type_id)
 
-  const shouldRenderSubject = kind != 'reply' && (kind != 'edit' || subject)
+  const renderForumSelect = kind == 'newthread'
+  const renderSubject = kind != 'reply' && (kind != 'edit' || subject)
+  const renderThreadType =
+    kind == 'newthread' || (kind == 'edit' && initialValue?.editingThread)
 
   if (initialValue && valueRef?.current) {
     Object.assign(valueRef.current, initialValue)
   }
 
+  if (!renderForumSelect && !renderSubject && !renderThreadType) {
+    return <></>
+  }
+
   return (
     <>
-      <Stack direction="row" className={kind != 'reply' ? 'pb-4' : undefined}>
-        {kind == 'newthread' && (
+      <Stack direction="row" pb={1.5}>
+        {renderForumSelect && (
           <TextField
             value={selectedForum?.name || '请选择版块'}
             sx={{ minWidth: '12em', mr: 1 }}
             onClick={() => setOpenForumSelect(true)}
           />
         )}
-        {(kind == 'newthread' ||
-          (kind == 'edit' && initialValue?.editingThread)) && (
+        {renderThreadType && (
           <>
             {threadTypes.length > 0 && (
               <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
@@ -84,7 +90,7 @@ export const ThreadPostHeader = ({
             )}
           </>
         )}
-        {shouldRenderSubject && (
+        {renderSubject && (
           <TextField
             fullWidth
             label="标题"
@@ -98,16 +104,18 @@ export const ThreadPostHeader = ({
           />
         )}
       </Stack>
-      <ForumSelect
-        open={openForumSelect}
-        selectedFid={selectedForum?.fid}
-        onCompleted={(fid: number | undefined) => {
-          if (fid != selectedForum?.fid) {
-            navigate(pages.post(fid))
-          }
-          setOpenForumSelect(false)
-        }}
-      />
+      {renderForumSelect && (
+        <ForumSelect
+          open={openForumSelect}
+          selectedFid={selectedForum?.fid}
+          onCompleted={(fid: number | undefined) => {
+            if (fid != selectedForum?.fid) {
+              navigate(pages.post(fid))
+            }
+            setOpenForumSelect(false)
+          }}
+        />
+      )}
     </>
   )
 }
