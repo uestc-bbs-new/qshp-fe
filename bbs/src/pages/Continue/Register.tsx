@@ -11,7 +11,7 @@ import {
 } from '@/apis/auth'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
-import { isIdasRelease } from '@/utils/releaseMode'
+import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
 import { gotoIdas } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
@@ -181,7 +181,7 @@ export const RegisterForm = ({
             <Button variant="contained" onClick={handleRegister}>
               立即注册
             </Button>
-            {!idasResult.users && !isIdasRelease && (
+            {!idasResult.users && !isIdasRelease && !isPreviewRelease && (
               <Button
                 variant="outlined"
                 sx={{ ml: 2 }}
