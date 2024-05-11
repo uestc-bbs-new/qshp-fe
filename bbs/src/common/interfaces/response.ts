@@ -345,8 +345,22 @@ export type TopList = {
   [id in TopListKey]?: TopListThread[]
 }
 
+export const kAnnouncementSimple = 1
+
+export type Announcement = {
+  kind: number
+  title: string
+  summary?: string
+  href?: string
+  start_time?: number
+  end_time?: number
+  highlight_color?: number
+  dark_highlight_color?: number
+}
+
 export type IndexData = {
   global_stat?: GlobalStat
+  announcement?: Announcement[]
   forum_list?: Forum[]
   top_list?: TopList
 }

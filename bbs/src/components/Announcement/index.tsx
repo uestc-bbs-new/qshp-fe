@@ -1,39 +1,90 @@
-import { useQuery } from '@tanstack/react-query'
 import 'swiper/css'
 import 'swiper/css/autoplay'
 import 'swiper/css/pagination'
 import { Autoplay, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useMatches } from 'react-router-dom'
 
 import { Campaign } from '@mui/icons-material'
-import { Box, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  Stack,
+  SxProps,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
-import { getAnnouncement } from '@/apis/common'
-import { pages } from '@/utils/routes'
+import { getIndexData } from '@/apis/common'
+import { Announcement as AnnouncementItem } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 
 import Link from '../Link'
 
-type SlideProps = {
-  children: React.ReactElement | string
-  tid: number
+export const AnnouncementBox = ({
+  children,
+  sx,
+  ...props
+}: {
+  children?: React.ReactNode
+  sx?: SxProps
+} & BoxProps) => {
+  const leftWidth = 48
+  const theme = useTheme()
+  return (
+    <Box
+      position="relative"
+      {...props}
+      sx={{
+        paddingLeft: `${leftWidth}px`,
+        border: '2px solid black',
+        borderColor: theme.palette.primary.main,
+        ...sx,
+      }}
+    >
+      {children}
+      <Stack
+        position="absolute"
+        justifyContent="center"
+        alignItems="center"
+        width={leftWidth}
+        left={0}
+        top={0}
+        bottom={0}
+        zIndex={1}
+        sx={{
+          backgroundColor: theme.palette.primary.main,
+        }}
+      >
+        <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
+      </Stack>
+    </Box>
+  )
 }
 
-const Slide = ({ children, tid }: SlideProps) => {
+export const AnnouncementBody = ({
+  item,
+  sx,
+}: {
+  item: AnnouncementItem
+  sx?: SxProps
+}) => {
   const theme = useTheme()
   return (
     <Stack
-      style={{
+      sx={{
         backgroundColor: theme.palette.background.paper,
         minHeight: '70px',
+        ...sx,
       }}
       direction="row"
     >
       <Box className="p-4 flex-1 overflow-hidden">
         <Typography className="line-clamp-2">
-          {children}
-          <Link to={pages.thread(tid)} underline="none">
+          {item.title}
+          <Link to={item.href} underline="none">
             【点我查看】
           </Link>
         </Typography>
@@ -44,22 +95,27 @@ const Slide = ({ children, tid }: SlideProps) => {
 
 const Announcement = () => {
   const theme = useTheme()
-  const { data } = useQuery({
-    queryKey: ['announcement'],
-    queryFn: () => getAnnouncement(),
-  })
+  const { state, dispatch } = useAppState()
+  const matches = useMatches()
+  useEffect(() => {
+    if (
+      matches.length &&
+      matches[matches.length - 1].id != 'index' &&
+      !state.announcement
+    ) {
+      getIndexData({ announcement: true }).then(
+        (data) =>
+          data.announcement &&
+          dispatch({ type: 'set announcement', payload: data.announcement })
+      )
+    }
+  }, [])
 
-  const leftWidth = 48
-
-  if (data?.length) {
+  if (state.announcement?.length) {
     return (
-      <Box
-        className="relative"
+      <AnnouncementBox
         mb={1.75}
         sx={{
-          paddingLeft: `${leftWidth}px`,
-          border: '2px solid black',
-          borderColor: theme.palette.primary.main,
           '--swiper-pagination-bottom': 0,
           '--swiper-pagination-bullet-size': '6px',
           '--swiper-theme-color': theme.palette.primary.main,
@@ -72,30 +128,15 @@ const Announcement = () => {
           autoplay={{ delay: 5000 }}
           pagination={{ clickable: true }}
           slidesPerView={1}
-          loop
+          loop={state.announcement.length > 1}
         >
-          {data.map((item, index) => (
+          {state.announcement.map((item, index) => (
             <SwiperSlide key={index}>
-              <Slide tid={item.thread_id}>{item.subject}</Slide>
+              <AnnouncementBody item={item} />
             </SwiperSlide>
           ))}
         </Swiper>
-        <Stack
-          position="absolute"
-          justifyContent="center"
-          alignItems="center"
-          width={leftWidth}
-          left={0}
-          top={0}
-          bottom={0}
-          zIndex={1}
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-          }}
-        >
-          <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
-        </Stack>
-      </Box>
+      </AnnouncementBox>
     )
   } else {
     return <></>

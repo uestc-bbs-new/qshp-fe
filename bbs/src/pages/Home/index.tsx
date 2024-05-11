@@ -28,7 +28,7 @@ import { ForumGroup } from './ForumCover'
 import TopListView from './TopListView'
 
 const Home = () => {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
 
@@ -42,12 +42,16 @@ const Home = () => {
     queryFn: () => {
       return getIndexData({
         globalStat: true,
+        announcement: true,
         forumList: true,
         topList: ['newreply', 'newthread', 'digest', 'life', 'hotlist'],
       })
     },
   })
   useEffect(() => {
+    if (indexData?.announcement) {
+      dispatch({ type: 'set announcement', payload: indexData.announcement })
+    }
     if (indexData?.forum_list) {
       setForumListCache(indexData.forum_list)
     }

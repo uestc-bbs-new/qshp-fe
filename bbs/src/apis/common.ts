@@ -72,16 +72,19 @@ export const getTopLists = async (ids: string | string[], page?: number) =>
 
 export const getIndexData = async ({
   globalStat,
+  announcement,
   forumList,
   topList,
 }: {
   globalStat?: boolean
+  announcement?: boolean
   forumList?: boolean
   topList?: string | string[]
 }) => {
   const result = await request.get<IndexData>(`${commonUrl}/index`, {
     params: {
       ...(globalStat && { global_stat: 1 }),
+      ...(announcement && { announcement: 1 }),
       ...(forumList && { forum_list: 1 }),
       ...(topList && { top_list: normalizeStringArray(topList).join(',') }),
     },

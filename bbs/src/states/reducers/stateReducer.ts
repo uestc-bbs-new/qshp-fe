@@ -1,4 +1,5 @@
 import { ForumDetails } from '@/common/interfaces/forum'
+import { Announcement } from '@/common/interfaces/response'
 
 import { guestUser } from '..'
 
@@ -46,6 +47,7 @@ export type State = {
   globalDialog?: GlobalDialogState
   globalSnackbar?: GlobalSnackbarState
   theme: 'light' | 'dark'
+  announcement?: Announcement[]
 }
 
 export interface StateAction {
@@ -130,6 +132,11 @@ export const stateReducer = (state: State, action: StateAction): State => {
       return {
         ...state,
         globalSnackbar: undefined,
+      }
+    case 'set announcement':
+      return {
+        ...state,
+        announcement: action.payload,
       }
     default:
       return state

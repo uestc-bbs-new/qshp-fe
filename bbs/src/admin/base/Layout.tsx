@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-import { List, ListItem, ListItemButton, Stack } from '@mui/material'
+import { Box, List, ListItem, ListItemButton, Stack } from '@mui/material'
 
 import Link from '@/components/Link'
 
@@ -22,7 +22,9 @@ const Layout = () => (
         </ListItem>
       ))}
     </List>
-    <Outlet />
+    <Box flexGrow={1} flexShrink={1}>
+      <Outlet />
+    </Box>
   </Stack>
 )
 
