@@ -354,8 +354,8 @@ export type Announcement = {
   href?: string
   start_time?: number
   end_time?: number
-  highlight_color?: number
-  dark_highlight_color?: number
+  highlight_color?: string
+  dark_highlight_color?: string
 }
 
 export type IndexData = {
