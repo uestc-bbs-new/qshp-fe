@@ -1,3 +1,4 @@
+import { Attachment } from '@/common/interfaces/base'
 import { html } from '@/utils/html'
 import siteRoot from '@/utils/siteRoot'
 
@@ -10,8 +11,25 @@ type RenderState = {
   dest?: string
 }
 
-const kForumAttachBasePath = siteRoot
 export const kSmilyBasePath = siteRoot + '/static/image/smiley/'
+
+export const renderAttachmentImage = (
+  attach: Attachment,
+  extraAttributes?: string
+) => {
+  const src = attach.thumbnail_url
+    ? attach.thumbnail_url
+    : siteRoot + attach.path
+  let img = html`<img
+    src="${src}"
+    data-x-fullsize-path="${siteRoot}${attach.path}"
+    class="post_attachment post_attachment_image"
+    loading="lazy"`
+  if (extraAttributes) {
+    img += ` ${extraAttributes}`
+  }
+  return `${img}/>`
+}
 
 const renderImage = (src: string, alt: string, context?: VditorContext) => {
   if (src == 's' && unifiedSmilyMap[parseInt(alt || '')]) {
@@ -29,18 +47,12 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
     const attachment = context?.attachments?.find(
       (item) => item.attachment_id == id
     )
-    const path = attachment?.thumbnail_url || attachment?.path
-    if (path) {
-      return html`<img
-        src="${kForumAttachBasePath}${path}"
-        data-x-fullsize-path="${kForumAttachBasePath}${attachment?.path}"
-        alt="${alt}"
-        class="post_attachment post_attachment_image"
-        loading="lazy"
-        data-x-special-kind="attachment"
-        data-x-original-src="${src}"
-        data-x-original-alt="${alt}"
-      />`
+    if (attachment) {
+      return renderAttachmentImage(
+        attachment,
+        html`alt="${alt}" data-x-special-kind="attachment"
+        data-x-original-src="${src}" data-x-original-alt="${alt}"`
+      )
     }
   }
   return html`<img src="${src}" alt="${alt || ''}" />`

@@ -13,8 +13,6 @@ import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { getPreviewOptions } from '@/components/RichText/vditorConfig'
 import { useAppState } from '@/states'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import bbcode2html from '@/utils/bbcode/bbcode'
 
 import { onClickHandler } from './eventHandlers'
@@ -26,9 +24,12 @@ const kColorManipulated = 'colorManipulated'
 
 export const UserHtmlRenderer = ({
   html,
+  // TODO: Maybe render orphan attachment with React?
+  orphanAttachments,
   style,
 }: {
   html: string
+  orphanAttachments?: Attachment[]
   style?: React.CSSProperties
 }) => {
   const { state } = useAppState()
@@ -132,15 +133,21 @@ export const UserHtmlRenderer = ({
 }
 
 const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
-  return (
-    <UserHtmlRenderer
-      html={bbcode2html(post.message, {
-        allowimgurl: true,
-        bbcodeoff: post.format != 0,
-        smileyoff: post.smileyoff,
-      })}
-    />
+  const orphanAttachments: Attachment[] = []
+  const html = bbcode2html(
+    post.message,
+    {
+      allowimgurl: true,
+      bbcodeoff: post.format != 0,
+      smileyoff: !!post.smileyoff,
+      // TODO: legacyPhpwindAt: post.post_id >= ???
+      legacyPhpwindAt: post.post_id <= 24681051,
+      legacyPhpwindCode: post.post_id <= 24681051,
+    },
+    post.attachments,
+    orphanAttachments
   )
+  return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
 
 const MarkdownPostRenderer = ({
