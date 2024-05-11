@@ -24,6 +24,7 @@ const EditOrReply = ({
       subject: post.subject,
       message: post.message,
       format: post.format,
+      smileyoff: post.smileyoff,
       is_anonymous: !!post.is_anonymous,
       ...(threadDetails && {
         type_id: threadDetails.type_id,

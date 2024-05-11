@@ -1,13 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
   Alert,
   Button,
+  Card,
   Skeleton,
   Snackbar,
   Stack,
+  Tab,
+  Tabs,
+  TextField,
   Typography,
+  debounce,
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
@@ -23,6 +28,10 @@ import { handleCtrlEnter } from '@/utils/tools'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
+import {
+  LegacyPostRenderer,
+  renderLegacyPostToDangerousHtml,
+} from '../RichText'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
@@ -81,6 +90,22 @@ const PostEditor = ({
   kind = kind || 'newthread'
   if (kind == 'reply' && !threadId) {
     return <></>
+  }
+  if (kind == 'edit' && initialValue && initialValue.format != 2) {
+    initialValue = { ...initialValue }
+    if (initialValue.format == 1 || initialValue.format == -1) {
+      initialValue.format = 2
+    }
+    if (
+      initialValue.format == 2 &&
+      initialValue.smileyoff == 0 &&
+      initialValue.message
+    ) {
+      initialValue.message = initialValue.message.replace(
+        /\[(?:s|a):(\d+)\]/g,
+        '![$1](s)'
+      )
+    }
   }
 
   const navigate = useNavigate()
@@ -219,6 +244,33 @@ const PostEditor = ({
     }
   }
 
+  const [editLegacy, setEditLegacy] = useState(initialValue?.format == 0)
+  const [legacyMessage, setLegacyMessage] = useState(initialValue?.message)
+  const [legacyHtml, setLegacyHtml] = useState()
+  const legacyPost = editLegacy &&
+    postId && {
+      post_id: postId,
+      smileyoff: initialValue?.smileyoff || 0,
+      format: 0,
+      message: legacyMessage || '',
+      attachments: initialValue?.attachments,
+    }
+  const switchLegacyEdit = (legacy: boolean) => {
+    if (!legacyHtml && !legacy && legacyPost) {
+      // TODO: Convert attach and smiley.
+      setLegacyHtml(renderLegacyPostToDangerousHtml(legacyPost))
+    }
+    setEditLegacy(legacy)
+    valueRef.current.format = legacy ? 0 : 2
+  }
+  const updateLegacyPreview = useMemo(
+    () =>
+      debounce(() => {
+        setLegacyMessage(valueRef.current.message)
+      }, 300),
+    []
+  )
+
   return (
     <>
       {forumLoading ? (
@@ -239,14 +291,53 @@ const PostEditor = ({
           {replyPost && (replyPost.position > 1 || !replyPost.is_first) && (
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
-          <Editor
-            autoFocus={autoFocus}
-            minHeight={300}
-            initialValue={initialValue?.message}
-            initialAttachments={initialValue?.attachments}
-            onKeyDown={handleCtrlEnter(handleSubmit)}
-            ref={editor}
-          />
+          {initialValue?.format == 0 && (
+            <>
+              <Alert severity="info">
+                本帖在旧版河畔发表。您可以编辑旧版代码并预览效果，或转换为新版并重新调整格式。
+              </Alert>
+              <Tabs
+                sx={{ my: 0.5 }}
+                value={editLegacy ? 0 : 2}
+                onChange={(_, value) => switchLegacyEdit(value == 0)}
+              >
+                <Tab label="编辑旧版代码" value={0} />
+                <Tab label="转换为新版并调整格式" value={2} />
+              </Tabs>
+            </>
+          )}
+          {editLegacy && legacyPost && (
+            <Stack>
+              <TextField
+                multiline
+                defaultValue={initialValue?.message}
+                onChange={(e) => {
+                  valueRef.current.message = e.target.value
+                  updateLegacyPreview()
+                }}
+                maxRows={16}
+              />
+              <Card
+                elevation={3}
+                sx={{ maxHeight: '35vh', overflow: 'auto', mt: 1 }}
+              >
+                <LegacyPostRenderer post={legacyPost} />
+              </Card>
+            </Stack>
+          )}
+          {!editLegacy && (
+            <Editor
+              autoFocus={autoFocus}
+              minHeight={300}
+              initialValue={
+                initialValue?.format == 0 ? undefined : initialValue?.message
+              }
+              initialHtml={legacyHtml}
+              initialAttachments={initialValue?.attachments}
+              onKeyDown={handleCtrlEnter(handleSubmit)}
+              ref={editor}
+            />
+          )}
           <PostOptions
             kind={kind}
             forum={forum}

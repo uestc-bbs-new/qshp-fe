@@ -62,6 +62,7 @@ export type PostCommonDetails = {
   format?: number
   is_anonymous?: boolean
   attachments?: Attachment[]
+  smileyoff?: number
 }
 
 export type PostThreadPollDetails = Omit<

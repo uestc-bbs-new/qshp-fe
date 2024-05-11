@@ -132,9 +132,16 @@ export const UserHtmlRenderer = ({
   )
 }
 
-const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
-  const orphanAttachments: Attachment[] = []
-  const html = bbcode2html(
+type PickedPost = Pick<
+  PostFloor,
+  'format' | 'smileyoff' | 'post_id' | 'message' | 'attachments'
+>
+
+export const renderLegacyPostToDangerousHtml = (
+  post: PickedPost,
+  orphanAttachments?: Attachment[]
+) =>
+  bbcode2html(
     post.message,
     {
       allowimgurl: true,
@@ -147,6 +154,10 @@ const LegacyPostRenderer = ({ post }: { post: PostFloor }) => {
     post.attachments,
     orphanAttachments
   )
+
+export const LegacyPostRenderer = ({ post }: { post: PickedPost }) => {
+  const orphanAttachments: Attachment[] = []
+  const html = renderLegacyPostToDangerousHtml(post, orphanAttachments)
   return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
 
