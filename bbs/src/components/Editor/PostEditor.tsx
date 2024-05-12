@@ -64,6 +64,13 @@ const Author = ({
   )
 }
 
+const convertLegacySmilies = (message: string) =>
+  message.replace(/\[(?:s|a):(\d+)\]/g, '![$1](s)')
+const convertLegacySimple = (message: string) =>
+  convertLegacySmilies(message)
+    .replace(/\[attach(?:img)?\](\d+)\[\/attach(?:img)?\]/g, '![](a:$1)')
+    .replace(/\[url=home\.php\?mod=space&uid=(\d+)\]/g, '[url=/user/$1]')
+
 const PostEditor = ({
   forum,
   forumLoading,
@@ -101,10 +108,7 @@ const PostEditor = ({
       initialValue.smileyoff == 0 &&
       initialValue.message
     ) {
-      initialValue.message = initialValue.message.replace(
-        /\[(?:s|a):(\d+)\]/g,
-        '![$1](s)'
-      )
+      initialValue.message = convertLegacySmilies(initialValue.message)
     }
   }
 
@@ -120,7 +124,7 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const valueRef = useRef<PostEditorValue>(initialValue || {})
+  const valueRef = useRef<PostEditorValue>({ ...initialValue })
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
 
@@ -162,7 +166,10 @@ const PostEditor = ({
       return
     }
 
-    const message = editor.current?.vditor?.getValue() || ''
+    let message = editor.current?.vditor?.getValue() || ''
+    if (valueRef.current.format == 0) {
+      message = valueRef.current.message || ''
+    }
     if (!message.trim()) {
       showError('请输入内容。')
       return
@@ -257,8 +264,13 @@ const PostEditor = ({
     }
   const switchLegacyEdit = (legacy: boolean) => {
     if (!legacyHtml && !legacy && legacyPost) {
-      // TODO: Convert attach and smiley.
-      setLegacyHtml(renderLegacyPostToDangerousHtml(legacyPost))
+      console.log(convertLegacySimple(legacyPost.message))
+      setLegacyHtml(
+        renderLegacyPostToDangerousHtml({
+          ...legacyPost,
+          message: convertLegacySimple(legacyPost.message),
+        })
+      )
     }
     setEditLegacy(legacy)
     valueRef.current.format = legacy ? 0 : 2
@@ -310,7 +322,7 @@ const PostEditor = ({
             <Stack>
               <TextField
                 multiline
-                defaultValue={initialValue?.message}
+                defaultValue={legacyMessage}
                 onChange={(e) => {
                   valueRef.current.message = e.target.value
                   updateLegacyPreview()

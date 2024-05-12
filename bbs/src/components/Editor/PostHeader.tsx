@@ -42,10 +42,6 @@ export const ThreadPostHeader = ({
   const renderThreadType =
     kind == 'newthread' || (kind == 'edit' && initialValue?.editingThread)
 
-  if (initialValue && valueRef?.current) {
-    Object.assign(valueRef.current, initialValue)
-  }
-
   if (!renderForumSelect && !renderSubject && !renderThreadType) {
     return <></>
   }
