@@ -5,9 +5,12 @@ import { Attachment, UploadResponse } from '@/common/interfaces/base'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
 
-import { customRenderers } from '../RichText/renderer'
-import { VditorContext } from '../RichText/types'
-import { common, commonEmojiPath } from '../RichText/vditorConfig'
+import { customRenderers } from '../../../../markdown-renderer/src/renderer/renderer'
+import { VditorContext } from '../../../../markdown-renderer/src/renderer/types'
+import {
+  common,
+  commonEmojiPath,
+} from '../../../../markdown-renderer/src/renderer/vditorConfig'
 
 const supportedImageExtensions = [
   'jpg',

@@ -23,9 +23,10 @@ import {
   debounce,
 } from '@mui/material'
 
-import { kSmilyBasePath } from '@/components/RichText/renderer'
-import { smilyData } from '@/components/RichText/smilyData'
 import { StyledField } from '@/components/StyledField'
+
+import { kSmilyBasePath } from '../../../../markdown-renderer/src/renderer/renderer'
+import { smilyData } from '../../../../markdown-renderer/src/renderer/smilyData'
 
 const ProfileSign = () => {
   const [sign, setSign] = useState('之前的个人签名')

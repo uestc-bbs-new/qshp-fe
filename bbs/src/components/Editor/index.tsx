@@ -22,10 +22,13 @@ import {
 import { Attachment } from '@/common/interfaces/base'
 import { useAppState } from '@/states'
 
-import { beforeGetMarkdown, kSmilyBasePath } from '../RichText/renderer'
-import { smilyData } from '../RichText/smilyData'
-import { VditorContext } from '../RichText/types'
-import { getPreviewThemeOptions } from '../RichText/vditorConfig'
+import {
+  beforeGetMarkdown,
+  kSmilyBasePath,
+} from '../../../../markdown-renderer/src/renderer/renderer'
+import { smilyData } from '../../../../markdown-renderer/src/renderer/smilyData'
+import { VditorContext } from '../../../../markdown-renderer/src/renderer/types'
+import { getPreviewThemeOptions } from '../../../../markdown-renderer/src/renderer/vditorConfig'
 import options from './vditorConfig'
 
 type EditorProps = IOptions & {

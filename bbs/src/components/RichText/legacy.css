@@ -1,0 +1,11 @@
+.rich-text-content-legacy .list-type-decimal li {
+  list-style-type: decimal;
+}
+
+.rich-text-content-legacy .list-type-lower-alpha li {
+  list-style-type: lower-alpha;
+}
+
+.rich-text-content-legacy .list-type-upper-alpha li {
+  list-style-type: upper-alpha;
+}

@@ -1,8 +1,11 @@
 import { Attachment } from '@/common/interfaces/base'
-import { renderAttachmentImage } from '@/components/RichText/renderer'
 import siteRoot from '@/utils/siteRoot'
 
-import { legacySmilyMaps, smilyMaps } from '../../components/RichText/smilyData'
+import { renderAttachmentImage } from '../../../../markdown-renderer/src/renderer/renderer'
+import {
+  legacySmilyMaps,
+  smilyMaps,
+} from '../../../../markdown-renderer/src/renderer/smilyData'
 
 const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 

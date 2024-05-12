@@ -11,12 +11,13 @@ import {
 
 import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
-import { getPreviewOptions } from '@/components/RichText/vditorConfig'
 import { useAppState } from '@/states'
 import bbcode2html from '@/utils/bbcode/bbcode'
 
+import '../../../../markdown-renderer/src/renderer/richtext.css'
+import { getPreviewOptions } from '../../../../markdown-renderer/src/renderer/vditorConfig'
 import { onClickHandler } from './eventHandlers'
-import './richtext.css'
+import './legacy.css'
 import { transformUserHtml } from './transform'
 
 const kAuthoredColor = 'authoredColor'
