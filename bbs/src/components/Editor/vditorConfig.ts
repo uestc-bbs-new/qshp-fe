@@ -54,6 +54,7 @@ function options({
     cache: { enable: false },
     // change the z-index due to the mui base z-index = 1200
     fullscreen: { index: 1202 },
+    tab: '\t',
     hint: {
       ...commonEmojiPath,
       extend: [
