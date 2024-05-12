@@ -5,7 +5,7 @@ import routes from '@/routes/routes'
 import { StateAction } from '@/states/reducers/stateReducer'
 
 export const onClickHandler = (
-  e: React.MouseEvent<HTMLDivElement>,
+  e: React.MouseEvent<HTMLElement>,
   navigate: NavigateFunction,
   dispatch: React.Dispatch<StateAction>
 ) => {

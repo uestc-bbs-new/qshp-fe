@@ -27,13 +27,16 @@ export const UserHtmlRenderer = ({
   // TODO: Maybe render orphan attachment with React?
   orphanAttachments,
   style,
+  Component,
 }: {
   html: string
   orphanAttachments?: Attachment[]
   style?: React.CSSProperties
+  Component?: React.ElementType
 }) => {
+  const Container = Component ?? 'div'
   const { state } = useAppState()
-  const contentRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLElement>(null)
   const findParentBackgroundColor = (
     el: HTMLElement,
     upTo: HTMLElement | null
@@ -120,15 +123,17 @@ export const UserHtmlRenderer = ({
   const navigate = useNavigate()
   const { dispatch } = useAppState()
   return (
-    <div
+    <Container
       ref={contentRef}
       className={`rich-text-content rich-text-content-legacy rich-text-theme-${state.theme}`}
       style={style}
       dangerouslySetInnerHTML={{
         __html: processedHtml,
       }}
-      onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
-    ></div>
+      onClickCapture={(e: React.MouseEvent<HTMLElement>) =>
+        onClickHandler(e, navigate, dispatch)
+      }
+    ></Container>
   )
 }
 
@@ -144,7 +149,6 @@ export const renderLegacyPostToDangerousHtml = (
   bbcode2html(
     post.message,
     {
-      allowimgurl: true,
       bbcodeoff: post.format != 0,
       smileyoff: !!post.smileyoff,
       // TODO: legacyPhpwindAt: post.post_id >= ???

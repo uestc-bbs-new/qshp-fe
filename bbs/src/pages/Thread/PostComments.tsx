@@ -9,6 +9,8 @@ import { getPostDetails } from '@/apis/thread'
 import { PostFloor } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
+import { UserHtmlRenderer } from '@/components/RichText'
+import bbcode2html from '@/utils/bbcode/bbcode'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -91,9 +93,11 @@ const PostComments = ({
                     {comment.author}
                   </Typography>
                 </Link>
-                <span style={{ verticalAlign: 'middle' }}>
-                  {comment.message}
-                </span>
+                <UserHtmlRenderer
+                  Component="span"
+                  style={{ verticalAlign: 'middle' }}
+                  html={bbcode2html(comment.message, { mode: 'postcomment' })}
+                />
                 <span
                   className="text-sm text-slate-300"
                   style={{

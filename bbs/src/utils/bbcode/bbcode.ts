@@ -193,11 +193,14 @@ const parseTable = (width?: string, bgcolor?: string, str?: string) => {
 }
 
 export type BbcodeOptions = {
-  bbcodeoff: boolean
-  smileyoff: boolean
-  legacyPhpwindAt: boolean
-  legacyPhpwindCode: boolean
+  bbcodeoff?: boolean
+  smileyoff?: boolean
+  legacyPhpwindAt?: boolean
+  legacyPhpwindCode?: boolean
+  mode?: 'post' | 'postcomment' | 'chat'
 }
+
+const kDefaultMode = 'post'
 
 export default function bbcode2html(
   str: string,
@@ -212,7 +215,7 @@ export default function bbcode2html(
     )
   }
 
-  if (!options.bbcodeoff) {
+  if (!options.bbcodeoff && (options.mode ?? kDefaultMode) == 'post') {
     return processTextFragmentsByRegEx(
       str,
       /\[code\](?:\r|\n)?(.+?)\[\/code\]/gis,
@@ -243,7 +246,7 @@ function parseNonCodeBbcode(
   str = str.replace(/</g, '&lt;')
   str = str.replace(/>/g, '&gt;')
 
-  if (!options.smileyoff) {
+  if (!options.smileyoff && options.mode != 'postcomment') {
     str = str.replace(
       /\[(a|s):([0-9]+)\]/g,
       (fullCode: string, codePrefix: string, code: string) => {
@@ -267,79 +270,128 @@ function parseNonCodeBbcode(
       orphanAttachments.push(...attachments)
     }
   } else {
-    str = str.replace(
-      /\[url\]\s*((https?|ftp|gopher|news|telnet|rtsp|mms|callto|bctp|thunder|qqdl|synacast){1}:\/\/|www\.)([^["']+?)\s*\[\/url\]/gi,
-      function ($1, $2, $3, $4) {
-        return cuturl($2 + $4)
-      }
-    )
-    str = str.replace(
-      /\[url=((https?|ftp|gopher|news|telnet|rtsp|mms|callto|bctp|thunder|qqdl|synacast){1}:\/\/|www\.|mailto:)?([^\r\n["']+?)\]([\s\S]+?)\[\/url\]/gi,
-      '<a href="$1$3" target="_blank">$4</a>'
-    )
-    str = str.replace(
-      /\[email\](.[^\\=[]"*)\[\/email\]/gi,
-      '<a href="mailto:$1">$1</a>'
-    )
-    str = str.replace(
-      /\[email=(.[^\\=[]"*)\](.*?)\[\/email\]/gi,
-      '<a href="mailto:$1" target="_blank">$2</a>'
-    )
-    str = str.replace(/\[postbg\]\s*([^[<\r\n;'"?()]+?)\s*\[\/postbg\]/gi, '')
+    if (options.mode != 'postcomment') {
+      str = str.replace(
+        /\[url\]\s*((https?|ftp|gopher|news|telnet|rtsp|mms|callto|bctp|thunder|qqdl|synacast){1}:\/\/|www\.)([^["']+?)\s*\[\/url\]/gi,
+        function ($1, $2, $3, $4) {
+          return cuturl($2 + $4)
+        }
+      )
+      str = str.replace(
+        /\[url=((https?|ftp|gopher|news|telnet|rtsp|mms|callto|bctp|thunder|qqdl|synacast){1}:\/\/|www\.|mailto:)?([^\r\n["']+?)\]([\s\S]+?)\[\/url\]/gi,
+        '<a href="$1$3" target="_blank">$4</a>'
+      )
+      str = str.replace(
+        /\[email\](.[^\\=[]"*)\[\/email\]/gi,
+        '<a href="mailto:$1">$1</a>'
+      )
+      str = str.replace(
+        /\[email=(.[^\\=[]"*)\](.*?)\[\/email\]/gi,
+        '<a href="mailto:$1" target="_blank">$2</a>'
+      )
+      str = str.replace(/\[postbg\]\s*([^[<\r\n;'"?()]+?)\s*\[\/postbg\]/gi, '')
+    }
     str = str.replace(
       /\[color=([\w#(),\s]+?)\]/gi,
       '<span class="post-text-color" style="color:$1">'
     )
-    str = str.replace(
-      /\[backcolor=([\w#(),\s]+?)\]/gi,
-      '<span class="post-bg-color" style="background-color:$1">'
-    )
-    str = str.replace(
-      /\[size=(\d+?)\]/gi,
-      (_, legacyFontSize) =>
-        `<span style="font-size:${mapLegacyFontSize(legacyFontSize)}">`
-    )
-    str = str.replace(
-      /\[size=(\d+(\.\d+)?(px|pt)+?)\]/gi,
-      '<span style="font-size:$1">'
-    )
-    str = str.replace(/\[font=([^[<"=]+?)\]/gi, '<span style="font-family:$1">')
-    str = str.replace(/\[align=([^[<"=]+?)\]/gi, '<div style="text-align:$1">') // Quirk: text-align: -webkit-center for align="center"
-    str = str.replace(
-      /\[p=(\d{1,2}|null), (\d{1,2}|null), (left|center|right)\]/gi,
-      '<p style="line-height:$1px;text-indent:$2em;text-align:$3">'
-    )
-    str = str.replace(
-      /\[float=left\]/gi,
-      '<br style="clear:both"><span style="float:left;margin-right:5px">'
-    )
-    str = str.replace(
-      /\[float=right\]/gi,
-      '<br style="clear:both"><span style="float:right;margin-left:5px">'
-    )
-    str = str.replace(
-      /\[quote]([\s\S]*?)\[\/quote\]\s?\s?/gi,
-      '<div class="quote"><blockquote>$1</blockquote></div>\n'
-    )
-
-    const kTableRegEx =
-      /\[table(?:=(\d{1,4}%?)(?:,([()%,#\w ]+))?)?\]\s*([\s\S]+?)\s*\[\/table\]/gi
-    for (let i = 0; i < 4; i++) {
-      str = str.replace(kTableRegEx, (_, width, bgcolor, children) =>
-        parseTable(width, bgcolor, children)
+    if (options.mode != 'postcomment') {
+      str = str.replace(
+        /\[backcolor=([\w#(),\s]+?)\]/gi,
+        '<span class="post-bg-color" style="background-color:$1">'
       )
+      str = str.replace(
+        /\[size=(\d+?)\]/gi,
+        (_, legacyFontSize) =>
+          `<span style="font-size:${mapLegacyFontSize(legacyFontSize)}">`
+      )
+      str = str.replace(
+        /\[size=(\d+(\.\d+)?(px|pt)+?)\]/gi,
+        '<span style="font-size:$1">'
+      )
+      str = str.replace(
+        /\[font=([^[<"=]+?)\]/gi,
+        '<span style="font-family:$1">'
+      )
+      str = str.replace(
+        /\[align=([^[<"=]+?)\]/gi,
+        (_, align) =>
+          `<div style="text-align:${align}${
+            align == 'center' ? ';text-align:-webkit-center' : ''
+          }">`
+      )
+      str = str.replace(
+        /\[p=(\d{1,2}|null), (\d{1,2}|null), (left|center|right)\]/gi,
+        '<p style="line-height:$1px;text-indent:$2em;text-align:$3">'
+      )
+      str = str.replace(
+        /\[float=left\]/gi,
+        '<br style="clear:both"><span style="float:left;margin-right:5px">'
+      )
+      str = str.replace(
+        /\[float=right\]/gi,
+        '<br style="clear:both"><span style="float:right;margin-left:5px">'
+      )
+      str = str.replace(
+        /\[quote]([\s\S]*?)\[\/quote\]\s?\s?/gi,
+        '<div class="quote"><blockquote>$1</blockquote></div>\n'
+      )
+
+      const kTableRegEx =
+        /\[table(?:=(\d{1,4}%?)(?:,([()%,#\w ]+))?)?\]\s*([\s\S]+?)\s*\[\/table\]/gi
+      for (let i = 0; i < 4; i++) {
+        str = str.replace(kTableRegEx, (_, width, bgcolor, children) =>
+          parseTable(width, bgcolor, children)
+        )
+      }
     }
 
+    const nonPostCommentMatches =
+      options.mode == 'postcomment'
+        ? []
+        : [
+            /\[i=s\]/g,
+            /\[\/backcolor\]/g,
+            /\[\/size\]/g,
+            /\[\/font\]/g,
+            /\[\/align\]/g,
+            /\[\/p\]/g,
+            /\[hr\]/g,
+            /\[list\]/g,
+            /\[list=1\]/g,
+            /\[list=a\]/g,
+            /\[list=A\]/g,
+            /\s?\[\*\]/g,
+            /\[\/list\]/g,
+            /\[indent\]/g,
+            /\[\/indent\]/g,
+            /\[\/float\]/g,
+          ]
+    const nonPostCommentReplaces =
+      options.mode == 'postcomment'
+        ? []
+        : [
+            '<i class="post-edit-status">',
+            '</span>',
+            '</span>',
+            '</span>',
+            '</div>',
+            '</p>',
+            '<hr class="l">',
+            '<ul>',
+            '<ul class="list-type-decimal">',
+            '<ul class="list-type-lower-alpha">',
+            '<ul class="list-type-upper-alpha">',
+            '<li>',
+            '</ul>',
+            '<blockquote>',
+            '</blockquote>',
+            '</span>',
+          ]
     str = replace(
       str,
       [
-        /\[i=s\]/g,
         /\[\/color\]/g,
-        /\[\/backcolor\]/g,
-        /\[\/size\]/g,
-        /\[\/font\]/g,
-        /\[\/align\]/g,
-        /\[\/p\]/g,
         /\[b\]/g,
         /\[\/b\]/g,
         /\[i\]/g,
@@ -348,25 +400,10 @@ function parseNonCodeBbcode(
         /\[\/u\]/g,
         /\[s\]/g,
         /\[\/s\]/g,
-        /\[hr\]/g,
-        /\[list\]/g,
-        /\[list=1\]/g,
-        /\[list=a\]/g,
-        /\[list=A\]/g,
-        /\s?\[\*\]/g,
-        /\[\/list\]/g,
-        /\[indent\]/g,
-        /\[\/indent\]/g,
-        /\[\/float\]/g,
+        ...nonPostCommentMatches,
       ],
       [
-        '<i class="post-edit-status">',
         '</span>',
-        '</span>',
-        '</span>',
-        '</span>',
-        '</div>',
-        '</p>',
         '<b>',
         '</b>',
         '<i>',
@@ -375,16 +412,7 @@ function parseNonCodeBbcode(
         '</u>',
         '<strike>',
         '</strike>',
-        '<hr class="l">',
-        '<ul>',
-        '<ul class="list-type-decimal">',
-        '<ul class="list-type-lower-alpha">',
-        '<ul class="list-type-upper-alpha">',
-        '<li>',
-        '</ul>',
-        '<blockquote>',
-        '</blockquote>',
-        '</span>',
+        ...nonPostCommentReplaces,
       ]
     )
 
@@ -408,24 +436,26 @@ function parseNonCodeBbcode(
       )
     }
 
-    str = str.replace(
-      /\[img\]\s*([^["<\r\n]+?)\s*\[\/img\]/gi,
-      '<img src="$1" style="max-width:400px">'
-    )
-    str = parseAttachments(str, options, attachments, orphanAttachments)
-    str = str.replace(
-      /\[img=(\d{1,4})[x|,](\d{1,4})\]\s*([^["<\r\n]+?)\s*\[\/img\]/gi,
-      function (_, width, height, url) {
-        return (
-          '<img' +
-          (width > 0 ? ' width="' + width + '"' : '') +
-          (height > 0 ? ' _height="' + height + '"' : '') +
-          ' src="' +
-          url +
-          '">'
-        )
-      }
-    )
+    if (options.mode != 'postcomment') {
+      str = str.replace(
+        /\[img\]\s*([^["<\r\n]+?)\s*\[\/img\]/gi,
+        '<img src="$1" style="max-width:400px">'
+      )
+      str = parseAttachments(str, options, attachments, orphanAttachments)
+      str = str.replace(
+        /\[img=(\d{1,4})[x|,](\d{1,4})\]\s*([^["<\r\n]+?)\s*\[\/img\]/gi,
+        function (_, width, height, url) {
+          return (
+            '<img' +
+            (width > 0 ? ' width="' + width + '"' : '') +
+            (height > 0 ? ' _height="' + height + '"' : '') +
+            ' src="' +
+            url +
+            '">'
+          )
+        }
+      )
+    }
   }
 
   str = str.replace(/(^|>)([^<]+)(?=<|$)/gi, function (_, $2, $3) {
