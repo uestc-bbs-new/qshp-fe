@@ -253,7 +253,7 @@ const PostEditor = ({
 
   const [editLegacy, setEditLegacy] = useState(initialValue?.format == 0)
   const [legacyMessage, setLegacyMessage] = useState(initialValue?.message)
-  const [legacyHtml, setLegacyHtml] = useState()
+  const [legacyHtml, setLegacyHtml] = useState<string>()
   const legacyPost = editLegacy &&
     postId && {
       post_id: postId,

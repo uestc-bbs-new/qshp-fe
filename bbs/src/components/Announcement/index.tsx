@@ -8,14 +8,7 @@ import React, { useEffect } from 'react'
 import { useMatches } from 'react-router-dom'
 
 import { Campaign } from '@mui/icons-material'
-import {
-  Box,
-  BoxProps,
-  Stack,
-  SxProps,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import { Box, Stack, SxProps, Typography, useTheme } from '@mui/material'
 
 import { getIndexData } from '@/apis/common'
 import { Announcement as AnnouncementItem } from '@/common/interfaces/response'
@@ -26,18 +19,22 @@ import Link from '../Link'
 export const AnnouncementBox = ({
   children,
   sx,
-  ...props
+  ...other
 }: {
   children?: React.ReactNode
   sx?: SxProps
-} & BoxProps) => {
+  mb?: number
+  m?: number
+  width?: string
+}) => {
   const leftWidth = 48
   const theme = useTheme()
   return (
     <Box
       position="relative"
-      {...props}
+      {...other}
       sx={{
+        position: 'relative',
         paddingLeft: `${leftWidth}px`,
         border: '2px solid black',
         borderColor: theme.palette.primary.main,
