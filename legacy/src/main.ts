@@ -3,6 +3,7 @@ import Vditor from 'vditor/dist/method.min.js'
 
 import { previewOptions } from '../../markdown-renderer/src/main'
 import { Attachment } from '../../markdown-renderer/src/renderer/types'
+import './extra.css'
 
 const kThumbPrefix = '/thumb'
 const kForumAttachmentPrefix = '/data/attachment/forum/'

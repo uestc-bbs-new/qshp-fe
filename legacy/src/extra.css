@@ -1,0 +1,7 @@
+.post-message-markdown.vditor-reset blockquote {
+  border: 1px solid #DADADA;
+  padding: 10px 65px;
+  background: url(/template/qshpan/image/icon_quote_s.gif) no-repeat 20px 6px,
+    url(/template/qshpan/image/icon_quote_e.gif) no-repeat calc(100% - 20px) calc(100% - 6px);
+  background-color: #F9F9F9;
+}
