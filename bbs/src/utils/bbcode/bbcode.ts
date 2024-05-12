@@ -193,7 +193,6 @@ const parseTable = (width?: string, bgcolor?: string, str?: string) => {
 }
 
 export type BbcodeOptions = {
-  allowimgurl: boolean
   bbcodeoff: boolean
   smileyoff: boolean
   legacyPhpwindAt: boolean
