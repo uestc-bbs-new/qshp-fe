@@ -31,6 +31,14 @@ const Home = () => {
   const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
+  const openTopList = () => {
+    document.body.style.overflow = 'hidden'
+    setTopListOpen(true)
+  }
+  const closeTopList = () => {
+    document.body.style.overflow = ''
+    setTopListOpen(false)
+  }
 
   const theme = useTheme()
   const {
@@ -74,9 +82,7 @@ const Home = () => {
       </Banner>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <OverviewInfo data={indexData?.global_stat} />
-        {isDeveloper() && (
-          <Button onClick={() => setTopListOpen(true)}>更多</Button>
-        )}
+        {isDeveloper() && <Button onClick={openTopList}>更多</Button>}
       </Stack>
       {!indexData?.top_list && isLoading ? (
         <Skeleton height={480} />
@@ -115,12 +121,8 @@ const Home = () => {
         <Aside topList={indexData?.top_list} homepage />
       </Stack>
 
-      <Dialog
-        open={topListOpen}
-        onClose={() => setTopListOpen(false)}
-        fullScreen
-      >
-        <TopListView onClose={() => setTopListOpen(false)} />
+      <Dialog open={topListOpen} onClose={closeTopList} fullScreen>
+        <TopListView onClose={closeTopList} />
       </Dialog>
     </>
   )
