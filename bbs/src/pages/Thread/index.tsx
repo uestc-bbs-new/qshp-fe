@@ -19,6 +19,7 @@ import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
+import { ThreadStamp } from '@/components/Stamps'
 import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
@@ -247,8 +248,11 @@ function Thread() {
                     >
                       <section
                         id={`post-${item.post_id}`}
-                        css={scrollAnchorCss}
+                        css={{ ...scrollAnchorCss, position: 'relative' }}
                       >
+                        {!!item.is_first && item.position == 1 && (
+                          <ThreadStamp stamp={threadDetails?.stamp} />
+                        )}
                         <Floor
                           post={item}
                           postDetails={postDetails[item.post_id]}
