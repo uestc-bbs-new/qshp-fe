@@ -85,8 +85,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
 
   const { observe } = useInView({
     rootMargin: '50px 0px',
-    onEnter: async ({ unobserve }) => {
-      unobserve()
+    onEnter: async () => {
       if (!isEnded && !isFetching) {
         setFetching(true)
         setError(false)

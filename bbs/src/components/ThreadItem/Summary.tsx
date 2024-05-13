@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { BurstMode } from '@mui/icons-material'
 import { Grid, Stack, SxProps, Theme, Typography } from '@mui/material'
 
 import { AttachmentSummary } from '@/common/interfaces/base'
@@ -48,7 +49,7 @@ export const SummaryAttachmentMore = ({ threadId }: { threadId: number }) => (
         alignItems: 'center',
       }}
     >
-      ...
+      <BurstMode />
     </Link>
   </SummaryAttachmentGrid>
 )
@@ -61,7 +62,11 @@ export const SummaryAttachmentGrid = ({
   sx?: SxProps<Theme>
   onClick?: () => void
 }) => (
-  <Grid m={0.5} sx={{ cursor: 'pointer', ...sx }} onClick={onClick}>
+  <Grid
+    m={0.5}
+    sx={{ cursor: 'pointer', borderRadius: '4px', overflow: 'hidden', ...sx }}
+    onClick={onClick}
+  >
     <Stack
       justifyContent="center"
       alignItems="center"
