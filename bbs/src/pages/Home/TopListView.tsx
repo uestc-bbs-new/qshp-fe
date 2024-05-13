@@ -54,19 +54,25 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
         </IconButton>
       </Stack>
 
-      <Swiper
-        ref={swiperRef}
-        slidesPerView={1}
-        loop
-        css={{ maxWidth: '100%' }}
-        onSlideChange={(swiper) => setActiveTab(topListKeys[swiper.realIndex])}
-      >
-        {topListKeys.map((key) => (
-          <SwiperSlide key={key}>
-            <TopListTab tab={key} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <Box flexShrink={1} overflow="auto" boxSizing="border-box">
+        <Swiper
+          ref={swiperRef}
+          slidesPerView={1}
+          autoHeight
+          loop
+          initialSlide={1}
+          css={{ maxWidth: '100%' }}
+          onSlideChange={(swiper) =>
+            setActiveTab(topListKeys[swiper.realIndex])
+          }
+        >
+          {topListKeys.map((key) => (
+            <SwiperSlide key={key}>
+              <TopListTab tab={key} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
     </Stack>
   )
 }
@@ -123,13 +129,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
   })
 
   return (
-    <Box
-      flexShrink={1}
-      overflow="auto"
-      p={1}
-      maxHeight="100%"
-      boxSizing="border-box"
-    >
+    <Box p={2}>
       <ResponsiveMasonry columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}>
         <Masonry gutter="12px">
           {list?.map((item) => (
