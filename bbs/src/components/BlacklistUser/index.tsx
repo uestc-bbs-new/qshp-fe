@@ -7,11 +7,11 @@ import { pages } from '@/utils/routes'
 import Avatar from '../Avatar'
 import Link from '../Link'
 
-type BlacklistUsersProps = {
+type BlacklistUserProps = {
   data: UserInfo
   className?: string
 }
-const BlacklistUsers = ({ data, className }: BlacklistUsersProps) => {
+const BlacklistUser = ({ data, className }: BlacklistUserProps) => {
   const theme = useTheme()
   return (
     <Box className={`${className}`}>
@@ -63,4 +63,4 @@ const BlacklistUsers = ({ data, className }: BlacklistUsersProps) => {
     </Box>
   )
 }
-export default BlacklistUsers
+export default BlacklistUser
