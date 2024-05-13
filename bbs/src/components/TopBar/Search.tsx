@@ -83,6 +83,7 @@ const SearchBar = () => {
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
+        onKeyDown={(e) => e.key == 'Enter' && handleSubmit()}
         loading={loading}
         fullWidth
         size="small"
