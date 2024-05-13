@@ -31,14 +31,6 @@ const Home = () => {
   const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
-  const openTopList = () => {
-    document.body.style.overflow = 'hidden'
-    setTopListOpen(true)
-  }
-  const closeTopList = () => {
-    document.body.style.overflow = ''
-    setTopListOpen(false)
-  }
 
   const theme = useTheme()
   const {
@@ -82,7 +74,9 @@ const Home = () => {
       </Banner>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <OverviewInfo data={indexData?.global_stat} />
-        {isDeveloper() && <Button onClick={openTopList}>更多</Button>}
+        {isDeveloper() && (
+          <Button onClick={() => setTopListOpen(true)}>更多</Button>
+        )}
       </Stack>
       {!indexData?.top_list && isLoading ? (
         <Skeleton height={480} />
@@ -121,10 +115,20 @@ const Home = () => {
         <Aside topList={indexData?.top_list} homepage />
       </Stack>
 
-      <Dialog open={topListOpen} onClose={closeTopList} fullScreen>
-        <TopListView onClose={closeTopList} />
-      </Dialog>
+      {topListOpen && <TopListDialog onClose={() => setTopListOpen(false)} />}
     </>
+  )
+}
+
+const TopListDialog = ({ onClose }: { onClose: () => void }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => void (document.body.style.overflow = '')
+  }, [])
+  return (
+    <Dialog open onClose={onClose} fullScreen>
+      <TopListView onClose={onClose} />
+    </Dialog>
   )
 }
 export default Home
