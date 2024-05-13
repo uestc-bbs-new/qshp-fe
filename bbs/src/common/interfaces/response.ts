@@ -329,6 +329,7 @@ export type GlobalStat = {
     uid: number
     username: string
   }
+  online_users?: number
 }
 
 export type TopListKey =

@@ -45,6 +45,13 @@ const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
               </Link>
             </>
           )}
+          {!!data.online_users && (
+            <>
+              <Divider_ />
+              <Typography color="grey">在线用户：</Typography>
+              {data.online_users}
+            </>
+          )}
         </>
       ) : (
         <Skeleton sx={{ flexGrow: 1 }} />
