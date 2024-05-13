@@ -1,14 +1,18 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Pageview, Textsms } from '@mui/icons-material'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
 
 import { TopListThread } from '@/common/interfaces/response'
+import { globalCache } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
+import ForumSmall from '../icons/ForumSmall'
 import Summary from './Summary'
 
 const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
+  const theme = useTheme()
   return (
     <Box
       p={1}
@@ -38,12 +42,53 @@ const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
         color="inherit"
         underline="hover"
         className="line-clamp-2"
+        mt={1}
+        mb={0.5}
       >
         <Typography textAlign="justify" variant="threadItemSubject">
           {item.subject}
         </Typography>
       </Link>
       <Summary item={item} />
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        my={1}
+      >
+        <Typography variant="threadItemStat">
+          <Stack direction="row" alignItems="center">
+            <Pageview sx={{ mr: 0.25 }} />
+            {item.views}
+            <Textsms sx={{ ml: 1, mr: 0.25 }} />
+            {item.replies}
+          </Stack>
+        </Typography>
+        <Link
+          to={pages.forum(item.forum_id)}
+          underline="hover"
+          color=""
+          variant="threadItemForum"
+          sx={{
+            '&:hover': {
+              color: '#2175F3',
+              'svg path.fill': {
+                fill: '#2175F3',
+              },
+              'svg path.stroke': {
+                stroke: '#2175F3',
+              },
+            },
+          }}
+        >
+          <Stack direction="row" alignItems="center">
+            <ForumSmall color={theme.typography.threadItemForum.color} />
+            <Typography ml={0.5} mr={2}>
+              {globalCache.fidNameMap[item.forum_id]}
+            </Typography>
+          </Stack>
+        </Link>
+      </Stack>
     </Box>
   )
 }
