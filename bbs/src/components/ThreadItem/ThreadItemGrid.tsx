@@ -1,4 +1,4 @@
-import { Pageview, Textsms } from '@mui/icons-material'
+import { Face5, Textsms } from '@mui/icons-material'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 
 import { TopListThread } from '@/common/interfaces/response'
@@ -58,9 +58,9 @@ const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
       >
         <Typography variant="threadItemStat">
           <Stack direction="row" alignItems="center">
-            <Pageview sx={{ mr: 0.25 }} />
+            <Face5 sx={{ mr: 0.5 }} />
             {item.views}
-            <Textsms sx={{ ml: 1, mr: 0.25 }} />
+            <Textsms sx={{ ml: 1.5, mr: 0.5 }} />
             {item.replies}
           </Stack>
         </Typography>
