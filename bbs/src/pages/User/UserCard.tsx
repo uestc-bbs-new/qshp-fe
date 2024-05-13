@@ -52,13 +52,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
           minHeight: `calc(${avatarSize}px + ${theme.spacing(avatarM * 2)})`,
         })}
       >
-        <Box
-          m={avatarM}
-          position="absolute"
-          left={0}
-          top={0}
-          sx={{ backgroundColor: '#eee' }}
-        >
+        <Box m={avatarM} position="absolute" left={0} top={0}>
           {userSummary && (
             <Avatar
               alt={userSummary?.username}
@@ -68,6 +62,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               variant="rounded"
               sx={{
                 boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.25)',
+                backgroundColor: '#eee',
               }}
             />
           )}
