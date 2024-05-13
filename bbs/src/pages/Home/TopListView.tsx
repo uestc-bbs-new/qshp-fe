@@ -1,4 +1,9 @@
-import { useEffect, useState } from 'react'
+import 'swiper/css'
+import 'swiper/css/autoplay'
+import 'swiper/css/pagination'
+import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
+
+import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
@@ -21,6 +26,52 @@ import { topListKeys, topListTitleMap } from '@/utils/constants'
 
 const TopListView = ({ onClose }: { onClose: () => void }) => {
   const [activeTab, setActiveTab] = useState<TopListKey>('newthread')
+  const swiperRef = useRef<SwiperRef>(null)
+
+  return (
+    <Stack height="100%">
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        pr={1}
+      >
+        <Tabs value={activeTab}>
+          {topListKeys.map((key) => (
+            <Tab
+              key={key}
+              label={topListTitleMap[key]}
+              value={key}
+              onClick={() => {
+                setActiveTab(key)
+                swiperRef.current?.swiper?.slideTo(topListKeys.indexOf(key))
+              }}
+            ></Tab>
+          ))}
+        </Tabs>
+        <IconButton onClick={() => onClose()}>
+          <Close />
+        </IconButton>
+      </Stack>
+
+      <Swiper
+        ref={swiperRef}
+        slidesPerView={1}
+        loop
+        css={{ maxWidth: '100%' }}
+        onSlideChange={(swiper) => setActiveTab(topListKeys[swiper.realIndex])}
+      >
+        {topListKeys.map((key) => (
+          <SwiperSlide key={key}>
+            <TopListTab tab={key} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </Stack>
+  )
+}
+
+const TopListTab = ({ tab }: { tab: TopListKey }) => {
   const cachedData = useTopList()
   const [list, setList] = useState<TopListThread[]>()
   const [isEnded, setEnded] = useState(false)
@@ -28,9 +79,10 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
   const [isError, setError] = useState(false)
   const [page, setPage] = useState(1)
   useEffect(() => {
-    setList(cachedData ? cachedData[activeTab] : undefined)
+    setList(cachedData ? cachedData[tab] : undefined)
     setPage(1)
-  }, [activeTab])
+  }, [tab])
+
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: async ({ unobserve }) => {
@@ -39,7 +91,7 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
         setFetching(true)
         setError(false)
         try {
-          const newData = (await getTopLists(activeTab, page + 1))[activeTab]
+          const newData = (await getTopLists(tab, page + 1))[tab]
           if (newData?.length) {
             setPage(page + 1)
           } else {
@@ -72,52 +124,34 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
   })
 
   return (
-    <Stack height="100%">
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        pr={1}
-      >
-        <Tabs value={activeTab}>
-          {topListKeys.map((key) => (
-            <Tab
-              key={key}
-              label={topListTitleMap[key]}
-              value={key}
-              onClick={() => setActiveTab(key)}
-            ></Tab>
+    <Box
+      flexShrink={1}
+      overflow="auto"
+      p={1}
+      maxHeight="100%"
+      boxSizing="border-box"
+    >
+      <ResponsiveMasonry columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}>
+        <Masonry gutter="12px">
+          {list?.map((item) => (
+            <ThreadItemGrid key={item.thread_id} item={item} />
           ))}
-        </Tabs>
-        <IconButton onClick={() => onClose()}>
-          <Close />
-        </IconButton>
-      </Stack>
-      <Box flexShrink={1} overflow="auto" p={1}>
-        <ResponsiveMasonry
-          columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}
+        </Masonry>
+      </ResponsiveMasonry>
+      {!isEnded && !(isFetching && page == 1) && (
+        <Stack
+          direction="row"
+          justifyContent="center"
+          ref={isFetching ? undefined : observe}
         >
-          <Masonry gutter="12px">
-            {list?.map((item) => (
-              <ThreadItemGrid key={item.thread_id} item={item} />
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-        {!isEnded && !(isFetching && page == 1) && (
-          <Stack
-            direction="row"
-            justifyContent="center"
-            ref={isFetching ? undefined : observe}
-          >
-            {isError ? (
-              <Typography>加载失败</Typography>
-            ) : (
-              <Skeleton width="100%" height={40} />
-            )}
-          </Stack>
-        )}
-      </Box>
-    </Stack>
+          {isError ? (
+            <Typography>加载失败</Typography>
+          ) : (
+            <Skeleton width="100%" height={40} />
+          )}
+        </Stack>
+      )}
+    </Box>
   )
 }
 
