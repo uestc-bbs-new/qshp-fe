@@ -1,6 +1,7 @@
 // TODO: How to take the @ user information to request?
 import { uploadAttachment } from '@/apis/common'
 import { getAtList } from '@/apis/thread'
+import defaultAvatar from '@/assets/avatar-default.png'
 import { Attachment, UploadResponse } from '@/common/interfaces/base'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
@@ -75,6 +76,7 @@ function options({
                   <img
                     src="${middleLink(item.uid)}"
                     class="editor-at-list-avatar"
+                    onerror="this.src='${defaultAvatar}'"
                   />
                   <span class="editor-at-list-username">${item.username}</span>
                 </div>`,
