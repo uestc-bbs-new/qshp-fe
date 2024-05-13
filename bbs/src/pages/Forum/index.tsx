@@ -215,7 +215,6 @@ function Forum() {
   const [query, setQuery] = useState(initQuery())
   const threadListTop = useRef<HTMLElement>()
 
-  const pageSize = 20
   const {
     data: threadList,
     isLoading,
@@ -230,7 +229,7 @@ function Forum() {
 
   useEffect(() => {
     if (threadList && threadList.total) {
-      setTotal(Math.ceil(threadList.total / pageSize))
+      setTotal(Math.ceil(threadList.total / threadList.page_size))
     }
     if (threadList && threadList.forum) {
       setForumDetails(threadList.forum)

@@ -122,9 +122,7 @@ export type UserInfo = {
   last_login_at: number
 }
 
-export type ThreadList = {
-  total: number
-  rows?: Array<Thread>
+export type ThreadList = GenericList<Thread> & {
   forum?: ForumDetails
 }
 
