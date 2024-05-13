@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify'
+
 import { customRenderers } from './renderer'
 import { RenderMode, VditorContext } from './types'
 
@@ -28,4 +30,5 @@ export const getPreviewOptions = (
   ...previewCommon(mode),
   ...commonEmojiPath,
   renderers: customRenderers('Preview', context),
+  transform: (html) => DOMPurify.sanitize(html),
 })
