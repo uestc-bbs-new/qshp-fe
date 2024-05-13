@@ -26,7 +26,7 @@ import Link from '../Link'
 import Separated from '../Separated'
 import ForumSmall from '../icons/ForumSmall'
 import ReplySmall from '../icons/ReplySmall'
-import Summary from './Summary'
+import { SummaryAttachments, SummaryText } from './Summary'
 
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
@@ -84,101 +84,124 @@ const ThreadItem = ({
               </Link>
             </Box>
           )}
-          <Box className="flex-1" mr={1.5}>
-            <Stack
-              justifyContent="space-between"
-              direction="column"
-              sx={{ minWidth: 350 }}
-            >
-              <Stack direction="row" alignItems="center" mb={0.5}>
-                {!!data.type_id &&
-                  forumDetails?.thread_types_map &&
-                  forumDetails?.thread_types_map[data.type_id] && (
-                    <Chip
-                      text={forumDetails?.thread_types_map[data.type_id].name}
-                    />
-                  )}
-                <Link
-                  to={pages.thread(data.thread_id)}
-                  color="inherit"
-                  underline="hover"
-                  className="line-clamp-2"
+          <Box flexGrow={1}>
+            <Box className="flex-1" mr={1.5}>
+              <Stack direction="row" justifyContent="space-between">
+                <Stack
+                  justifyContent="space-between"
+                  direction="column"
+                  sx={{ minWidth: 350 }}
                 >
-                  <Typography
-                    textAlign="justify"
-                    variant="threadItemSubject"
-                    color={ignoreThreadHighlight ? 'primary' : undefined}
-                    style={
-                      ignoreThreadHighlight
-                        ? undefined
-                        : {
-                            color: data.highlight_color,
-                            backgroundColor: data.highlight_bgcolor,
-                            fontWeight: data.highlight_bold
-                              ? 'bold'
-                              : undefined,
-                            fontStyle: data.highlight_italic
-                              ? 'italic'
-                              : undefined,
-                            textDecoration: data.highlight_underline
-                              ? 'underline'
-                              : undefined,
+                  <Stack direction="row" alignItems="center" mb={0.5}>
+                    {!!data.type_id &&
+                      forumDetails?.thread_types_map &&
+                      forumDetails?.thread_types_map[data.type_id] && (
+                        <Chip
+                          text={
+                            forumDetails?.thread_types_map[data.type_id].name
                           }
-                    }
-                  >
-                    {data.subject}
-                  </Typography>
-                </Link>
-                <ThreadExtraLabels thread={data} />
-              </Stack>
-              <ThreadRepliesOrComments
-                threadId={data.thread_id}
-                replies={replies}
-              />
-              {showSummary && <Summary item={data} />}
-              <ThreadAuthor thread={data} hideThreadAuthor={hideThreadAuthor} />
-            </Stack>
-          </Box>
-          <Stack justifyContent="space-between">
-            <Stack direction="row" alignItems="center">
-              {data.forum_name && (
-                <>
-                  <Box flexGrow={1} />
-                  <Link
-                    to={pages.forum(data.forum_id)}
-                    underline="hover"
-                    color=""
-                    variant="threadItemForum"
-                    sx={{
-                      '&:hover': {
-                        color: '#2175F3',
-                        'svg path.fill': {
-                          fill: '#2175F3',
-                        },
-                        'svg path.stroke': {
-                          stroke: '#2175F3',
-                        },
-                      },
-                    }}
-                  >
-                    <Stack direction="row" alignItems="center">
-                      <ForumSmall
-                        color={theme.typography.threadItemForum.color}
-                      />
-                      <Typography ml={0.5} mr={2}>
-                        {data.forum_name}
+                        />
+                      )}
+                    <Link
+                      to={pages.thread(data.thread_id)}
+                      color="inherit"
+                      underline="hover"
+                      className="line-clamp-2"
+                    >
+                      <Typography
+                        textAlign="justify"
+                        variant="threadItemSubject"
+                        color={ignoreThreadHighlight ? 'primary' : undefined}
+                        style={
+                          ignoreThreadHighlight
+                            ? undefined
+                            : {
+                                color: data.highlight_color,
+                                backgroundColor: data.highlight_bgcolor,
+                                fontWeight: data.highlight_bold
+                                  ? 'bold'
+                                  : undefined,
+                                fontStyle: data.highlight_italic
+                                  ? 'italic'
+                                  : undefined,
+                                textDecoration: data.highlight_underline
+                                  ? 'underline'
+                                  : undefined,
+                              }
+                        }
+                      >
+                        {data.subject}
+                      </Typography>
+                    </Link>
+                    <ThreadExtraLabels thread={data} />
+                  </Stack>
+                  <ThreadRepliesOrComments
+                    threadId={data.thread_id}
+                    replies={replies}
+                  />
+                  {showSummary && <SummaryText item={data} />}
+                </Stack>
+                <Stack justifyContent="space-between" flexShrink={0} ml={0.5}>
+                  <Stack direction="row" alignItems="center">
+                    {data.forum_name && (
+                      <>
+                        <Box flexGrow={1} />
+                        <Link
+                          to={pages.forum(data.forum_id)}
+                          underline="hover"
+                          color=""
+                          variant="threadItemForum"
+                          sx={{
+                            '&:hover': {
+                              color: '#2175F3',
+                              'svg path.fill': {
+                                fill: '#2175F3',
+                              },
+                              'svg path.stroke': {
+                                stroke: '#2175F3',
+                              },
+                            },
+                          }}
+                        >
+                          <Stack direction="row" alignItems="center">
+                            <ForumSmall
+                              color={theme.typography.threadItemForum.color}
+                            />
+                            <Typography ml={0.5} mr={2}>
+                              {data.forum_name}
+                            </Typography>
+                          </Stack>
+                        </Link>
+                      </>
+                    )}
+                    <Stack
+                      direction="row"
+                      justifyContent="flex-end"
+                      flexGrow={1}
+                      minWidth={data.forum_name ? '14em' : undefined}
+                    >
+                      <Typography variant="threadItemStat">
+                        <Separated
+                          separator={
+                            <Typography component="span" mx={0.75}>
+                              ·
+                            </Typography>
+                          }
+                        >
+                          <>查看：{formatNumber(data.views)}</>
+                          <>回复：{formatNumber(data.replies)}</>
+                        </Separated>
                       </Typography>
                     </Stack>
-                  </Link>
-                </>
-              )}
-              <Stack
-                direction="row"
-                justifyContent="flex-end"
-                flexGrow={1}
-                minWidth={data.forum_name ? '14em' : undefined}
-              >
-                <Typography variant="threadItemStat">
+                  </Stack>
+                </Stack>
+              </Stack>
+              {showSummary && <SummaryAttachments item={data} />}
+            </Box>
+            <Stack direction="row" justifyContent="space-between">
+              <ThreadAuthor thread={data} hideThreadAuthor={hideThreadAuthor} />
+              <Stack direction="row" justifyContent="flex-end">
+                <Typography variant="threadItemAuthor">
                   <Separated
                     separator={
                       <Typography component="span" mx={0.75}>
@@ -186,40 +209,26 @@ const ThreadItem = ({
                       </Typography>
                     }
                   >
-                    <>查看：{formatNumber(data.views)}</>
-                    <>回复：{formatNumber(data.replies)}</>
+                    <>
+                      {`最新回复：`}
+                      <Link
+                        color="inherit"
+                        underline={data.last_poster ? 'hover' : 'none'}
+                        to={
+                          data.last_poster
+                            ? pages.user({ username: data.last_poster })
+                            : undefined
+                        }
+                      >
+                        {data.last_poster || '匿名'}
+                      </Link>
+                    </>
+                    <>{chineseTime(data.last_post * 1000)}</>
                   </Separated>
                 </Typography>
               </Stack>
             </Stack>
-            <Stack direction="row" justifyContent="flex-end">
-              <Typography variant="threadItemAuthor">
-                <Separated
-                  separator={
-                    <Typography component="span" mx={0.75}>
-                      ·
-                    </Typography>
-                  }
-                >
-                  <>
-                    {`最新回复：`}
-                    <Link
-                      color="inherit"
-                      underline={data.last_poster ? 'hover' : 'none'}
-                      to={
-                        data.last_poster
-                          ? pages.user({ username: data.last_poster })
-                          : undefined
-                      }
-                    >
-                      {data.last_poster || '匿名'}
-                    </Link>
-                  </>
-                  <>{chineseTime(data.last_post * 1000)}</>
-                </Separated>
-              </Typography>
-            </Stack>
-          </Stack>
+          </Box>
         </Stack>
       </Box>
       <Divider variant="fullWidth" style={{ backgroundColor: '#CAC4D0' }} />

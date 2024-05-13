@@ -77,19 +77,25 @@ export const SummaryAttachmentGrid = ({
   </Grid>
 )
 
-const Summary = ({
-  item,
-}: {
-  item: Pick<ThreadBasics, 'thread_id' | 'summary' | 'summary_attachments'>
-}) => {
+type SummaryItem = Pick<
+  ThreadBasics,
+  'thread_id' | 'summary' | 'summary_attachments'
+>
+
+export const SummaryText = ({ item }: { item: SummaryItem }) => (
+  <>
+    {item.summary && (
+      <Typography variant="threadItemSummary" mb={0.5}>
+        {item.summary}
+      </Typography>
+    )}
+  </>
+)
+
+export const SummaryAttachments = ({ item }: { item: SummaryItem }) => {
   const { dispatch } = useAppState()
   return (
     <>
-      {item.summary && (
-        <Typography variant="threadItemSummary" mb={0.5}>
-          {item.summary}
-        </Typography>
-      )}
       {!!item.summary_attachments?.length && (
         <Grid container>
           {item.summary_attachments
@@ -115,6 +121,15 @@ const Summary = ({
           )}
         </Grid>
       )}
+    </>
+  )
+}
+
+const Summary = ({ item }: { item: SummaryItem }) => {
+  return (
+    <>
+      <SummaryText item={item} />
+      <SummaryAttachments item={item} />
     </>
   )
 }
