@@ -36,11 +36,11 @@ type NavData<T extends boolean> = {
 }
 
 const listServiceItems: NavLink[] = [
-  {
-    link: `${siteRoot}/graduate_bind/frontend/index.html`,
-    name: '学号换绑',
-    external: true,
-  },
+  // {
+  //   link: `${siteRoot}/graduate_bind/frontend/index.html`,
+  //   name: '学号换绑',
+  //   external: true,
+  // },
   {
     link: `${siteRoot}/member.php?mod=relevance`,
     name: '实名关联',
@@ -234,7 +234,7 @@ const Sections = () => {
         link={pages.thread(1812091)}
         name="客户端下载"
       ></ListItemLink>
-      <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink>
+      {/* <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink> */}
     </List>
   )
 }

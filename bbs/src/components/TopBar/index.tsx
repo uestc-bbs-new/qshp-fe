@@ -127,19 +127,12 @@ const TopBar = () => {
           {!narrowTopBar && (
             <>
               <Link
-                to={pages.thread(1812091)}
-                className="text-white"
-                underline="none"
-                sx={{ ml: 2, mr: 1 }}
-              >
-                <Typography sx={{ fontSize: 12 }}>客户端下载</Typography>
-              </Link>
-              <Link
                 to={legacyUrl}
                 external
                 target="_blank"
                 className="text-white"
                 underline="none"
+                ml={2}
               >
                 <Stack direction="row" alignItems="center">
                   <MeetingRoomTwoTone fontSize="small" />

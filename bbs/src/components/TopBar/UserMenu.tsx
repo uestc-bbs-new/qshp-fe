@@ -22,7 +22,7 @@ import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
-import { isIdasRelease } from '@/utils/releaseMode'
+import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
@@ -94,15 +94,23 @@ const MenuContent = () => {
         </ListItemIcon>
         {getTextFromThemeSetting(themeSetting)}
       </MenuItem>
+      {!isPreviewRelease && (
+        <>
+          <Divider variant="middle" flexItem></Divider>
+          <MenuItem>
+            <ListItemIcon>
+              <TransferWithinAStation fontSize="small" />
+            </ListItemIcon>
+            切换账号
+          </MenuItem>
+        </>
+      )}
       <Divider variant="middle" flexItem></Divider>
-      <MenuItem>
-        <ListItemIcon>
-          <TransferWithinAStation fontSize="small" />
-        </ListItemIcon>
-        切换账号
-      </MenuItem>
-      <Divider variant="middle" flexItem></Divider>
-      <MenuItem component={MenuItemLink} to={pages.settings()}>
+      <MenuItem
+        component={MenuItemLink}
+        to={isPreviewRelease ? '/home.php?mod=spacecp' : pages.settings()}
+        external={isPreviewRelease}
+      >
         <ListItemIcon>
           <Settings fontSize="small" />
         </ListItemIcon>
@@ -113,7 +121,7 @@ const MenuContent = () => {
         <ListItemIcon>
           <Logout fontSize="small" />
         </ListItemIcon>
-        登出
+        退出登录
       </MenuItem>
     </Box>
   )

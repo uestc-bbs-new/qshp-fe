@@ -10,8 +10,9 @@ import Tooltip from '@/components/Tooltip'
 import ConversationItem from '@/pages/Messages/Chat/ConversationItem'
 import NotificationItem from '@/pages/Messages/Notifications/NotificationItem'
 import { useAppState } from '@/states'
-import { isIdasRelease } from '@/utils/releaseMode'
+import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 import { MenuItemLink } from '../Link'
 
@@ -38,7 +39,13 @@ const MessageTabs = () => {
     >
       <MenuItem
         component={MenuItemLink}
-        to={pages.messages('chat')}
+        to={
+          isPreviewRelease
+            ? `${siteRoot}/home.php?mod=space&do=pm`
+            : pages.messages('chat')
+        }
+        external={isPreviewRelease}
+        target={isPreviewRelease ? '_blank' : undefined}
         className="flex justify-between"
       >
         站内信{' '}
