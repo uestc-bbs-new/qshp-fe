@@ -73,19 +73,37 @@ const EditDialog = ({
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>编辑公告</DialogTitle>
       <DialogContent>
-        <TextField label="标题" fullWidth sx={{ my: 1 }} inputRef={titleRef} />
+        <TextField
+          label="标题"
+          fullWidth
+          sx={{ my: 1 }}
+          defaultValue={item?.title}
+          inputRef={titleRef}
+        />
         <TextField
           label="摘要"
           fullWidth
           sx={{ my: 1 }}
+          defaultValue={item?.summary}
           inputRef={summaryRef}
         />
-        <TextField label="链接" fullWidth sx={{ my: 1 }} inputRef={hrefRef} />
+        <TextField
+          label="链接"
+          fullWidth
+          sx={{ my: 1 }}
+          defaultValue={item?.href}
+          inputRef={hrefRef}
+        />
         <Stack direction="row" justifyContent="space-between" my={1}>
           <TextField
             type="datetime-local"
             label="开始时间"
             InputLabelProps={{ shrink: true }}
+            defaultValue={
+              item?.start_time
+                ? toInputDateTimeLocal(new Date(item.start_time))
+                : undefined
+            }
             inputRef={startTimeRef}
             sx={{ width: '46%' }}
           />
@@ -93,6 +111,11 @@ const EditDialog = ({
             type="datetime-local"
             label="结束时间"
             InputLabelProps={{ shrink: true }}
+            defaultValue={
+              item?.end_time
+                ? toInputDateTimeLocal(new Date(item.end_time))
+                : undefined
+            }
             inputRef={endTimeRef}
             sx={{ width: '46%' }}
           />
@@ -102,6 +125,7 @@ const EditDialog = ({
             type="color"
             label="高亮颜色"
             InputLabelProps={{ shrink: true }}
+            defaultValue={item?.highlight_color}
             inputRef={highlightColorRef}
             InputProps={{ sx: { width: '6em' } }}
             variant="standard"
@@ -111,6 +135,7 @@ const EditDialog = ({
             type="color"
             label="高亮颜色（暗）"
             InputLabelProps={{ shrink: true }}
+            defaultValue={item?.dark_highlight_color}
             inputRef={darkHighlightColorRef}
             InputProps={{ sx: { width: '6em' } }}
             variant="standard"
@@ -194,4 +219,12 @@ const Announcement = () => {
     </Box>
   )
 }
+
+const padDateTime = (value: number | string) =>
+  value.toString().padStart(2, '0')
+const toInputDateTimeLocal = (date: Date) =>
+  `${date.getFullYear()}-${padDateTime(date.getMonth() + 1)}-${padDateTime(
+    date.getDate()
+  )}T${padDateTime(date.getHours())}:${padDateTime(date.getMinutes())}`
+
 export default Announcement

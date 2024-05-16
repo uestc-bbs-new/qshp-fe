@@ -69,6 +69,11 @@ export const AnnouncementBody = ({
   sx?: SxProps
 }) => {
   const theme = useTheme()
+  const highlightColor = !item.highlight_color
+    ? undefined
+    : theme.palette.mode == 'dark'
+      ? item.dark_highlight_color ?? item.highlight_color
+      : item.highlight_color
   return (
     <Stack
       sx={{
@@ -79,8 +84,17 @@ export const AnnouncementBody = ({
       direction="row"
     >
       <Box className="p-4 flex-1 overflow-hidden">
-        <Typography className="line-clamp-2">
-          {item.title}
+        <Link to={item.href} underline="none" color="inherit">
+          <Typography
+            fontSize={18}
+            fontWeight="bold"
+            sx={{ color: highlightColor }}
+          >
+            {item.title}
+          </Typography>
+        </Link>
+        <Typography className="line-clamp-2" variant="threadItemSummary">
+          {item.summary}
           <Link to={item.href} underline="none">
             【点我查看】
           </Link>
