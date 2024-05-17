@@ -30,7 +30,7 @@ import routes from './routes'
 const pages: RouteObject[] = [
   { path: '/', loader: () => redirect('/new') },
   { path: '/new', id: 'index', element: <Home /> },
-  { path: '/search', id: 'search', element: <Search /> },
+  { path: '/search/:type?', id: 'search', element: <Search /> },
   { path: '/post/:fid?', id: 'post', element: <Edit /> },
   { path: '/forum/:id', id: 'forum', element: <Forum /> },
   {

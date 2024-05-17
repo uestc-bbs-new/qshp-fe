@@ -136,8 +136,13 @@ export const pages = {
         ...(params?.keyword && { q: params.keyword }),
         ...(params?.author && { author: params.author }),
         ...(params?.digest && { digest: '1' }),
-        type: 'post',
       })
+    ),
+
+  searchUsers: (params: { keyword: string }) =>
+    withSearchAndHash(
+      `/search/user`,
+      new URLSearchParams({ q: params.keyword })
     ),
 }
 

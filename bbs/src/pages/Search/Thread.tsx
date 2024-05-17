@@ -17,7 +17,7 @@ import EmptyList from '@/components/EmptyList'
 import ThreadItem from '@/components/ThreadItem'
 import { searchParamsAssign } from '@/utils/tools'
 
-const ResultForPost = () => {
+const Thread = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const initQuery = () => ({
@@ -51,10 +51,18 @@ const ResultForPost = () => {
     queryPrompt += `（${queryPromptDetails.join('，')}）`
   }
 
+  if (isLoading) {
+    return [...Array(15)].map((_, index) => (
+      <Skeleton key={index} height={85} />
+    ))
+  }
+
+  if (data && !data.total) {
+    return <EmptyList text={'未找到相关帖子。'} />
+  }
+
   return (
     <>
-      {isLoading &&
-        [...Array(15)].map((_, index) => <Skeleton key={index} height={85} />)}
       {!!data?.rows?.length && (
         <>
           <Typography variant="h5" sx={{ mb: 1 }}>
@@ -87,9 +95,8 @@ const ResultForPost = () => {
           </Stack>
         </>
       )}
-      {data && !data.total && <EmptyList text={'未找到相关帖子'} />}
     </>
   )
 }
 
-export default ResultForPost
+export default Thread

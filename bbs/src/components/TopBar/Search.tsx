@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Search } from '@mui/icons-material'
 import {
@@ -117,13 +117,7 @@ const SearchBar = () => {
               } else if (option.user) {
                 navigate(pages.user({ uid: option.user.uid }))
               } else if (option.moreUsers) {
-                navigate({
-                  pathname: '/search',
-                  search: createSearchParams({
-                    type: 'username',
-                    name: value,
-                  }).toString(),
-                })
+                navigate(pages.searchUsers({ keyword: value }))
               }
             }}
           >
