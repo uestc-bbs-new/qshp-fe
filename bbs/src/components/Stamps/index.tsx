@@ -61,10 +61,16 @@ export const InternalStamp = () => (
     zIndex={1}
     color="red"
     border="5px solid red"
-    p={1}
-    fontSize={32}
+    px={1}
+    py={0.25}
+    fontSize={26}
     fontWeight={700}
-    sx={{ pointerEvents: 'none', transform: 'translate(0, -50%)' }}
+    boxShadow="0 0 16px rgba(255, 0, 0, 0.5), inset 0 0 16px rgba(255, 0, 0, 0.5)"
+    sx={{
+      pointerEvents: 'none',
+      transform: 'translate(0, -50%)',
+      opacity: 0.7,
+    }}
   >
     内部交流，严禁外传
   </Box>

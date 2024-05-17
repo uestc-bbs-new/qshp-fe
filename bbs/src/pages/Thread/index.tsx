@@ -19,7 +19,7 @@ import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
-import { ThreadStamp } from '@/components/Stamps'
+import { InternalStamp, ThreadStamp } from '@/components/Stamps'
 import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
@@ -28,6 +28,14 @@ import { searchParamsAssign } from '@/utils/tools'
 import Floor from './Floor'
 import ActionDialog from './dialogs/index'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
+
+const kEnforceInternalFids = [
+  174, // 就业创业
+  395, // 藏经阁
+  263, // 职场交流
+  267, // 非技术
+  378, // 晾晒专栏
+]
 
 const ForumPagination = (props: {
   count: number
@@ -60,6 +68,9 @@ function Thread() {
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] =
     useState<ActionDialogType>(undefined)
+  const isInternalEnforced =
+    !!threadDetails?.forum_id &&
+    kEnforceInternalFids.includes(threadDetails?.forum_id)
 
   const initQuery = (threadChanged?: boolean) => {
     const authorId = searchParams.get('authorid')
@@ -249,10 +260,16 @@ function Thread() {
                       <section
                         id={`post-${item.post_id}`}
                         css={{ ...scrollAnchorCss, position: 'relative' }}
+                        onCopy={
+                          isInternalEnforced
+                            ? (e) => e.preventDefault() // Maybe show some prompt on copy
+                            : undefined
+                        }
                       >
                         {!!item.is_first && item.position == 1 && (
                           <ThreadStamp stamp={threadDetails?.stamp} />
                         )}
+                        {index == 0 && isInternalEnforced && <InternalStamp />}
                         <Floor
                           post={item}
                           postDetails={postDetails[item.post_id]}
