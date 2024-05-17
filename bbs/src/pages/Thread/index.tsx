@@ -26,6 +26,7 @@ import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
+import { useWatermark } from './Watermark'
 import ActionDialog from './dialogs/index'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
 
@@ -50,7 +51,7 @@ const ForumPagination = (props: {
 )
 
 function Thread() {
-  const { dispatch } = useAppState()
+  const { state, dispatch } = useAppState()
   const navigate = useNavigate()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -235,6 +236,7 @@ function Thread() {
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) =>
     setSearchParams(searchParamsAssign(searchParams, { page }))
 
+  useWatermark({ text: state.user.uid.toString() })
   return (
     <Stack direction="row">
       <Box className="flex-1" minWidth="1em">
