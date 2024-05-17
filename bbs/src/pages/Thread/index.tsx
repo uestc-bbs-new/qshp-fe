@@ -238,7 +238,7 @@ function Thread() {
 
   useWatermark({ text: state.user.uid.toString() })
   return (
-    <Stack direction="row">
+    <Stack direction="row" alignItems="flex-start">
       <Box className="flex-1" minWidth="1em">
         {isError ? (
           <Error error={error} onRefresh={refetch} />

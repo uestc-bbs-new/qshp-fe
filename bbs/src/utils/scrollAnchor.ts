@@ -1,7 +1,9 @@
 import { Theme } from '@mui/material'
 
+export const kAppBarTop = 80
+
 export const scrollAnchorCss = {
-  scrollMarginTop: '80px',
+  scrollMarginTop: `${kAppBarTop}px`,
 }
 
 export const scrollAnchorSx = {
