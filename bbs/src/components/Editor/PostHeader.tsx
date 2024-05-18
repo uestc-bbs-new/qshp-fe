@@ -8,6 +8,7 @@ import {
   Select,
   Stack,
   TextField,
+  useMediaQuery,
 } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
@@ -46,20 +47,38 @@ export const ThreadPostHeader = ({
     return <></>
   }
 
+  const narrowView = useMediaQuery('(max-width: 800px)')
+
   return (
     <>
-      <Stack direction="row" pb={1.5}>
+      <Stack
+        direction="row"
+        pb={1.5}
+        flexWrap={narrowView ? 'wrap' : undefined}
+      >
         {renderForumSelect && (
           <TextField
             value={selectedForum?.name || '请选择版块'}
-            sx={{ minWidth: '12em', mr: 1 }}
+            sx={{
+              flexBasis: narrowView ? '40%' : undefined,
+              minWidth: narrowView ? undefined : `12em`,
+              mr: 1,
+              flexGrow: narrowView ? 1 : undefined,
+            }}
             onClick={() => setOpenForumSelect(true)}
           />
         )}
         {renderThreadType && (
           <>
             {threadTypes.length > 0 && (
-              <FormControl sx={{ minWidth: `12em`, mr: 1 }}>
+              <FormControl
+                sx={{
+                  flexBasis: narrowView ? '40%' : undefined,
+                  minWidth: narrowView ? undefined : `12em`,
+                  mr: narrowView ? 0 : 1,
+                  flexGrow: narrowView ? 1 : undefined,
+                }}
+              >
                 <InputLabel id="post-typeid-label">请选择分类</InputLabel>
                 <Select
                   value={typeId ?? ''}
@@ -97,6 +116,7 @@ export const ThreadPostHeader = ({
               valueRef?.current && (valueRef.current.subject = subject)
             }}
             onKeyDown={handleCtrlEnter(onSubmit)}
+            sx={narrowView ? { mt: 1 } : undefined}
           />
         )}
       </Stack>
