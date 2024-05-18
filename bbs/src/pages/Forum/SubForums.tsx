@@ -9,6 +9,7 @@ import {
   ListItemText,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -23,6 +24,7 @@ import { pages } from '@/utils/routes'
 const SubForums = ({ children }: { children: ForumStat[] }) => {
   const [collapsed, setCollapsed] = useState(false)
   const theme = useTheme()
+  const narrowView = useMediaQuery('(max-width: 640px)')
 
   return (
     <Card className="mt-8">
@@ -41,11 +43,15 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
               {children.map((child) => (
                 <Box key={child.fid} className="p-4">
                   <Stack
-                    direction="row"
+                    direction={narrowView ? 'column' : 'row'}
                     justifyContent="space-between"
-                    alignItems="center"
+                    alignItems={narrowView ? 'flex-start' : 'center'}
                   >
-                    <Stack direction="row" alignItems="center">
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      mb={narrowView ? 1 : undefined}
+                    >
                       <Link to={pages.forum(child.fid)}>
                         <Stack direction="row" alignItems="center">
                           <ForumOutlined fontSize="large" className="mr-4" />
@@ -58,7 +64,7 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
                         </Typography>
                       )}
                     </Stack>
-                    <Stack className="w-1/4">
+                    <Stack width={narrowView ? undefined : 280}>
                       {child.latest_thread ? (
                         <>
                           <Link
