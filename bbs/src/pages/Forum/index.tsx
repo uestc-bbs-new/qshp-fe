@@ -17,6 +17,7 @@ import {
   Select,
   Skeleton,
   Stack,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
@@ -259,6 +260,8 @@ function Forum() {
     threadListTop.current?.scrollIntoView()
   }
 
+  const hideSidebar = useMediaQuery('(max-width: 1000px)')
+
   return (
     <Stack direction="row">
       <Box className="flex-1" style={{ marginTop: '20px' }}>
@@ -380,7 +383,7 @@ function Forum() {
           </>
         )}
       </Box>
-      <Aside />
+      {!hideSidebar && <Aside />}
     </Stack>
   )
 }
