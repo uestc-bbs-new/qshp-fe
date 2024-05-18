@@ -126,7 +126,18 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
   )
   return (
     <>
-      <div ref={vditorRef} className="vditor flex-1" onKeyDown={onKeyDown} />
+      <div
+        ref={vditorRef}
+        className="vditor flex-1"
+        css={{
+          '@media (max-width: 520px)': {
+            '.vditor-toolbar__item': {
+              padding: 0,
+            },
+          },
+        }}
+        onKeyDown={onKeyDown}
+      />
       <Menu
         anchorEl={smilyAnchor.current}
         open={smilyOpen}
