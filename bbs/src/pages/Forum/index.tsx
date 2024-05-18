@@ -137,13 +137,14 @@ const ForumPagination = forwardRef(function ForumPagination(
   },
   ref
 ) {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return count > 1 ? (
     <Pagination
       size="small"
       count={count}
       page={page}
       onChange={onChange}
-      boundaryCount={3}
+      boundaryCount={thinView ? 1 : 3}
       siblingCount={1}
       variant="outlined"
       shape="rounded"
@@ -261,6 +262,7 @@ function Forum() {
   }
 
   const hideSidebar = useMediaQuery('(max-width: 1000px)')
+  const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <Stack direction="row">
@@ -308,7 +310,7 @@ function Forum() {
                     />
                   ))}
                 </Stack>
-                <Card>
+                <Card tiny={thinView}>
                   <>
                     {threadList?.rows?.some(
                       (item: any) => item.display_order > 0
