@@ -82,10 +82,16 @@ type SummaryItem = Pick<
   'thread_id' | 'summary' | 'summary_attachments'
 >
 
-export const SummaryText = ({ item }: { item: SummaryItem }) => (
+export const SummaryText = ({
+  item,
+  sx,
+}: {
+  item: SummaryItem
+  sx?: SxProps<Theme>
+}) => (
   <>
     {item.summary && (
-      <Typography variant="threadItemSummary" mb={0.5}>
+      <Typography variant="threadItemSummary" mb={0.5} sx={sx}>
         {item.summary}
       </Typography>
     )}

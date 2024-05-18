@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, SxProps, Theme, Typography } from '@mui/material'
 
 import chipColor from './color'
 
@@ -7,9 +7,10 @@ interface Props {
   size?: 'small' | 'medium' | 'large'
   type?: string
   className?: string
+  sx?: SxProps<Theme>
 }
 
-const Chip = ({ text, size, type = 'threadType', className }: Props) => {
+const Chip = ({ text, size, type = 'threadType', className, sx }: Props) => {
   const size2 = size || 'medium'
   const typographyFontSize = size == 'large' ? 13 : 11
   return (
@@ -19,6 +20,7 @@ const Chip = ({ text, size, type = 'threadType', className }: Props) => {
       sx={{
         display: 'inline-block',
         backgroundColor: chipColor('background', type),
+        ...sx,
       }}
     >
       <Typography
