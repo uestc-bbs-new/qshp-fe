@@ -9,15 +9,23 @@ import {
 
 const kSmilyBasePath = siteRoot + '/static/image/smiley/'
 
-const mapLegacyFontSize = (size: string | number) => {
+export type FontSizeVariant = 'default' | 'small'
+
+export const mapLegacyFontSize = (
+  size: string | number,
+  variant?: FontSizeVariant
+) => {
+  variant = variant || 'default'
   const kFontSizeMap: { [size: string]: number } = {
     '1': 10,
     '2': 13,
     '3': 16,
     '4': 18,
-    '5': 24,
-    '6': 32,
-    '7': 48,
+    '5': variant == 'small' ? 22 : 24,
+    '6': variant == 'small' ? 26 : 32,
+    '7': variant == 'small' ? 30 : 48,
+    '8': variant == 'small' ? 30 : 48, // Not standard.
+    '9': variant == 'small' ? 30 : 48, // Not standard but used somewhere.
   }
   const px = kFontSizeMap[size.toString()]
   return px ? `${px}px` : '1em'
@@ -200,6 +208,7 @@ export type BbcodeOptions = {
   smileyoff?: boolean
   legacyPhpwindAt?: boolean
   legacyPhpwindCode?: boolean
+  sizeVariant?: FontSizeVariant
   mode?: 'post' | 'postcomment' | 'chat'
 }
 
@@ -306,7 +315,10 @@ function parseNonCodeBbcode(
       str = str.replace(
         /\[size=(\d+?)\]/gi,
         (_, legacyFontSize) =>
-          `<span style="font-size:${mapLegacyFontSize(legacyFontSize)}">`
+          `<span style="font-size:${mapLegacyFontSize(
+            legacyFontSize,
+            options.sizeVariant
+          )}">`
       )
       str = str.replace(
         /\[size=(\d+(\.\d+)?(px|pt)+?)\]/gi,

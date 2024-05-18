@@ -7,12 +7,13 @@ import {
   getContrastRatio,
   getLuminance,
   lighten,
+  useMediaQuery,
 } from '@mui/material'
 
 import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
-import bbcode2html from '@/utils/bbcode/bbcode'
+import bbcode2html, { FontSizeVariant } from '@/utils/bbcode/bbcode'
 
 import '../../../../markdown-renderer/src/renderer/richtext.css'
 import { getPreviewOptions } from '../../../../markdown-renderer/src/renderer/vditorConfig'
@@ -28,11 +29,13 @@ export const UserHtmlRenderer = ({
   // TODO: Maybe render orphan attachment with React?
   orphanAttachments,
   style,
+  normalizeLegacyFontSize,
   Component,
 }: {
   html: string
   orphanAttachments?: Attachment[]
   style?: React.CSSProperties
+  normalizeLegacyFontSize?: boolean
   Component?: React.ElementType
 }) => {
   const Container = Component ?? 'div'
@@ -120,7 +123,11 @@ export const UserHtmlRenderer = ({
     }
   }, [state.theme])
 
-  const processedHtml = useMemo(() => transformUserHtml(html), [html])
+  const sizeVariant = useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
+  const processedHtml = useMemo(
+    () => transformUserHtml(html, normalizeLegacyFontSize, sizeVariant),
+    [html, sizeVariant]
+  )
   const navigate = useNavigate()
   const { dispatch } = useAppState()
   return (
@@ -145,7 +152,8 @@ type PickedPost = Pick<
 
 export const renderLegacyPostToDangerousHtml = (
   post: PickedPost,
-  orphanAttachments?: Attachment[]
+  orphanAttachments?: Attachment[],
+  sizeVariant?: FontSizeVariant
 ) =>
   bbcode2html(
     post.message,
@@ -155,6 +163,7 @@ export const renderLegacyPostToDangerousHtml = (
       // TODO: legacyPhpwindAt: post.post_id >= ???
       legacyPhpwindAt: post.post_id <= 24681051,
       legacyPhpwindCode: post.post_id <= 24681051,
+      sizeVariant,
     },
     post.attachments,
     orphanAttachments
@@ -162,7 +171,11 @@ export const renderLegacyPostToDangerousHtml = (
 
 export const LegacyPostRenderer = ({ post }: { post: PickedPost }) => {
   const orphanAttachments: Attachment[] = []
-  const html = renderLegacyPostToDangerousHtml(post, orphanAttachments)
+  const html = renderLegacyPostToDangerousHtml(
+    post,
+    orphanAttachments,
+    useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
+  )
   return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
 

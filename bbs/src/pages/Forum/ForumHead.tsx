@@ -79,7 +79,10 @@ const Head = ({ data }: HeadProps) => {
         </AccordionSummary>
         {!!data?.announcement && (
           <AccordionDetails>
-            <UserHtmlRenderer html={data?.announcement} />
+            <UserHtmlRenderer
+              html={data?.announcement}
+              normalizeLegacyFontSize
+            />
           </AccordionDetails>
         )}
       </Accordion>

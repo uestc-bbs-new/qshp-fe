@@ -268,10 +268,14 @@ const PostEditor = ({
     if (!legacyHtml && !legacy && legacyPost) {
       console.log(convertLegacySimple(legacyPost.message))
       setLegacyHtml(
-        renderLegacyPostToDangerousHtml({
-          ...legacyPost,
-          message: convertLegacySimple(legacyPost.message),
-        })
+        renderLegacyPostToDangerousHtml(
+          {
+            ...legacyPost,
+            message: convertLegacySimple(legacyPost.message),
+          },
+          undefined,
+          useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
+        )
       )
     }
     setEditLegacy(legacy)
