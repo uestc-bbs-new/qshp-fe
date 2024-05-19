@@ -181,7 +181,7 @@ export const ForumGroup = ({ data }: ForumData) => {
           {data?.children
             ?.filter((item) => item.name)
             .map((item, index) => (
-              <Grid item md={6} xl={4} key={index} style={{ width: '100%' }}>
+              <Grid item sm={6} lg={4} key={index} style={{ width: '100%' }}>
                 <ForumCover data={item} />
               </Grid>
             ))}
