@@ -7,6 +7,7 @@ let uniqueKey = 0
 const newUniqueKey = () => ++uniqueKey
 
 export type UserState = {
+  uninitialized?: boolean
   uid: number
   username: string
   new_pm?: number // This field is not yet available while Discuz! is still running

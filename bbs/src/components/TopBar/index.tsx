@@ -4,6 +4,7 @@ import {
   AppBar,
   Button,
   IconButton,
+  Skeleton,
   Stack,
   Toolbar,
   Typography,
@@ -123,7 +124,13 @@ const TopBar = () => {
           <SearchBar />
         </Stack>
         <Stack direction="row" alignItems="center" flexGrow={0} flexShrink={0}>
-          {state.user.uid != 0 ? <Options state={state} /> : <LoginComponent />}
+          {state.user.uninitialized ? (
+            <Skeleton width={160} height={32} />
+          ) : state.user.uid ? (
+            <Options state={state} />
+          ) : (
+            <LoginComponent />
+          )}
           {!narrowTopBar && (
             <>
               <Link

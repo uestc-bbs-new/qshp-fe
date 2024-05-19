@@ -42,13 +42,13 @@ export const setForumListCache = (forumList: Forum[]) => {
   globalCache.forumList = forumList
 }
 
-const guestUser = {
+export const guestUser = {
   uid: 0,
   username: '游客',
 }
 const initialState: State = {
   drawer: false, //侧边栏是否打开
-  user: guestUser,
+  user: { ...guestUser, uninitialized: true },
   forumBreadcumbs: [],
   theme: getRenderedTheme(),
 }
@@ -132,4 +132,3 @@ export const useSignInChange = (callback: () => void) => {
 }
 
 export default useAppStateContext
-export { guestUser }
