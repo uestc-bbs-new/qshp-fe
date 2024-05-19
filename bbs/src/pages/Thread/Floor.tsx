@@ -61,6 +61,7 @@ function PostSubject({
                 new URLSearchParams({ typeid: type.type_id.toString() })
               )
             }
+            sx={{ flexShrink: 0 }}
           >
             <Chip text={type.name} size="large" />
           </Link>

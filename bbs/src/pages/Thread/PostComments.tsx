@@ -3,7 +3,13 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
 import { Sms } from '@mui/icons-material'
-import { Box, Pagination, Skeleton, Typography } from '@mui/material'
+import {
+  Box,
+  Pagination,
+  Skeleton,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 
 import { getPostDetails } from '@/apis/thread'
 import { PostFloor } from '@/common/interfaces/response'
@@ -55,6 +61,9 @@ const PostComments = ({
       return result
     },
   })
+
+  const thinView = useMediaQuery('(max-width: 560px)')
+
   return (
     <PostExtraDetailsAccordian Icon={Sms} title="点评">
       {(isLoading || isPlaceholderData) &&
@@ -66,7 +75,7 @@ const PostComments = ({
               time = ' ' + time
             }
             return (
-              <Box key={comment.id} my={2}>
+              <Box key={comment.id} my={thinView ? 1 : 2}>
                 <Link
                   to={pages.user({ uid: comment.author_id })}
                   underline="hover"
@@ -86,7 +95,7 @@ const PostComments = ({
                       verticalAlign: 'middle',
                       fontWeight: 'bold',
                       display: 'inline-block',
-                      minWidth: '8em',
+                      minWidth: thinView ? undefined : '8em',
                       textDecoration: 'inherit',
                     }}
                   >
