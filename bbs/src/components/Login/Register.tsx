@@ -16,7 +16,7 @@ export const RegisterContent = ({ small }: { small?: boolean }) => (
     <Stack direction="row" justifyContent="center">
       <Button
         variant="contained"
-        sx={{ fontSize: small ? 18 : 20, px: 5, py: 1.5 }}
+        sx={{ fontSize: small ? 18 : 20, px: small ? 4 : 5, py: 1.5 }}
         onClick={() => gotoIdas({ mode: 'register' })}
       >
         进入统一身份认证平台

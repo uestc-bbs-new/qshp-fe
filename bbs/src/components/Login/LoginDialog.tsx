@@ -24,6 +24,7 @@ import {
   Tabs,
   TextField,
   TextFieldProps,
+  useMediaQuery,
 } from '@mui/material'
 
 import { signIn } from '@/apis/auth'
@@ -251,42 +252,46 @@ export const TransparentBackdropBlurDialog = ({
   children,
   onClose,
   ...props
-}: DialogProps & { children: React.ReactNode }) => (
-  <Dialog
-    onClose={onClose}
-    {...props}
-    PaperProps={{
-      ...props.PaperProps,
-      sx: (theme) => ({
-        borderRadius: '8px',
-        backgroundColor:
-          theme.palette.mode == 'light'
-            ? 'rgba(243, 245, 247, 0.87)'
-            : 'rgba(49, 55, 66, 0.75)',
-      }),
-    }}
-    sx={{
-      backdropFilter: 'blur(3px)',
-      backgroundColor: 'rgba(189, 189, 189, 0.35)',
-      ...props.sx,
-    }}
-  >
-    {onClose && (
-      <DialogTitle sx={{ p: 1 }}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
-          <IconButton onClick={(e) => onClose && onClose(e, 'escapeKeyDown')}>
-            <Close />
-          </IconButton>
+}: DialogProps & { children: React.ReactNode }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
+  return (
+    <Dialog
+      onClose={onClose}
+      {...props}
+      PaperProps={{
+        ...props.PaperProps,
+        sx: (theme) => ({
+          borderRadius: '8px',
+          backgroundColor:
+            theme.palette.mode == 'light'
+              ? 'rgba(243, 245, 247, 0.87)'
+              : 'rgba(49, 55, 66, 0.75)',
+          ...(thinView && { m: 2 }),
+        }),
+      }}
+      sx={{
+        backdropFilter: 'blur(3px)',
+        backgroundColor: 'rgba(189, 189, 189, 0.35)',
+        ...props.sx,
+      }}
+    >
+      {onClose && (
+        <DialogTitle sx={{ p: 1 }}>
+          <Stack direction="row" justifyContent="flex-end" alignItems="center">
+            <IconButton onClick={(e) => onClose && onClose(e, 'escapeKeyDown')}>
+              <Close />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+      )}
+      <DialogContent sx={{ px: thinView ? 3 : 5 }}>
+        <Stack alignItems="center" mb={3} minWidth={thinView ? undefined : 352}>
+          <img src={logo} css={css({ maxWidth: '100%' })} />
         </Stack>
-      </DialogTitle>
-    )}
-    <DialogContent sx={{ px: 5 }}>
-      <Stack alignItems="center" mb={3} minWidth={352}>
-        <img src={logo} css={css({ maxWidth: '100%' })} />
-      </Stack>
-      {children}
-    </DialogContent>
-  </Dialog>
-)
+        {children}
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export default LoginDialog
