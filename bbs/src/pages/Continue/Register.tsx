@@ -10,9 +10,8 @@ import {
   register,
 } from '@/apis/auth'
 import Error from '@/components/Error'
-import Link from '@/components/Link'
+import { RegisterContent } from '@/components/Login/Register'
 import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
-import { gotoIdas } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import CommonLayout from './CommonLayout'
@@ -203,32 +202,7 @@ export const RegisterHome = () => (
     <DialogContent sx={{ p: 0 }}>
       <CommonLayout>
         <Stack pl={2} pr={4}>
-          <Typography variant="signinTitle">欢迎来到清水河畔！</Typography>
-          <Typography variant="h6" textAlign="justify" my={3}>
-            清水河畔属于高校官方论坛，账号注册时必须进行实名关联。
-            <br />
-            点击以下按钮，使用学号与网上服务大厅密码登录与授权后继续注册：
-          </Typography>
-          <Stack direction="row" justifyContent="center">
-            <Button
-              variant="contained"
-              sx={{ fontSize: 20, px: 5, py: 1.5 }}
-              onClick={() => gotoIdas({ mode: 'register' })}
-            >
-              进入统一身份认证平台
-            </Button>
-          </Stack>
-          <Stack direction="row" justifyContent="flex-end" mt={3}>
-            <Link
-              external
-              to="/member.php?mod=register&forceold=1"
-              target="_blank"
-              underline="hover"
-              sx={{ color: '#ccc' }}
-            >
-              返回旧版
-            </Link>
-          </Stack>
+          <RegisterContent />
         </Stack>
       </CommonLayout>
     </DialogContent>
