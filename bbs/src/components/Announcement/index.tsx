@@ -8,7 +8,14 @@ import React, { useEffect } from 'react'
 import { useMatches } from 'react-router-dom'
 
 import { Campaign } from '@mui/icons-material'
-import { Box, Stack, SxProps, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Skeleton,
+  Stack,
+  SxProps,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import { getIndexData } from '@/apis/common'
 import { Announcement as AnnouncementItem } from '@/common/interfaces/response'
@@ -83,7 +90,7 @@ export const AnnouncementBody = ({
       }}
       direction="row"
     >
-      <Box className="p-4 flex-1 overflow-hidden">
+      <Box px={2} py={1} className="flex-1 overflow-hidden">
         <Link to={item.href} underline="none" color="inherit">
           <Typography
             fontSize={18}
@@ -93,7 +100,7 @@ export const AnnouncementBody = ({
             {item.title}
           </Typography>
         </Link>
-        <Typography className="line-clamp-2" variant="threadItemSummary">
+        <Typography className="line-clamp-1" variant="threadItemSummary">
           {item.summary}
           <Link to={item.href} underline="none">
             【点我查看】
@@ -122,6 +129,9 @@ const Announcement = () => {
     }
   }, [])
 
+  if (!state.announcement) {
+    return <Skeleton height={74} sx={{ mb: 1.75 }} />
+  }
   if (state.announcement?.length) {
     return (
       <AnnouncementBox
