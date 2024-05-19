@@ -4,24 +4,21 @@ import { useAppState } from '@/states'
 
 import NavLinks from './NavLinks'
 
-// use different drawer variant due to the media
-const LeftDrawer = ({ width }: { width: number }) => {
+const LeftDrawer = () => {
   const { state } = useAppState()
   const theme = useTheme()
 
-  // change drawer variant based on screen size
-  const matchesMobile = useMediaQuery('(max-width:640px)')
+  const keepMounted = useMediaQuery('(max-width:640px)')
   const open = state.drawer
 
   return (
     <>
       <Drawer
-        variant={matchesMobile ? 'temporary' : 'persistent'}
-        // open={matchesMobile ? !state.drawer : state.drawer}
+        variant={'temporary'}
         open={open}
         ModalProps={{
           // Better open performance on mobile.
-          keepMounted: matchesMobile,
+          keepMounted: keepMounted,
         }}
         PaperProps={{
           sx: {
@@ -30,7 +27,7 @@ const LeftDrawer = ({ width }: { width: number }) => {
           },
         }}
         sx={{
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: width },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 210 },
         }}
       >
         {open && <NavLinks />}

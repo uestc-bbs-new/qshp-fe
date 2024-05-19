@@ -20,9 +20,6 @@ import { useAppState } from '@/states'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
-  // 1720 comes from the content width 1280 plus 2 * drawer width 210
-  const matches = useMediaQuery('(min-width: 1720px)')
-  const drawerWidth = 210
   const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
@@ -32,15 +29,10 @@ const Layout = () => {
         // style={{ backgroundColor: '#f7f9fe' }}
       >
         <TopBar />
-        <Drawer width={drawerWidth} />
+        <Drawer />
         <Box
           component="main"
           className={`flex w-full flex-col items-center align-middle transition-all`}
-          sx={{
-            marginLeft: {
-              sm: `${state.drawer && !matches ? drawerWidth : 0}px`,
-            },
-          }}
         >
           <Toolbar id="back-to-top-anchor" />
           <Box
