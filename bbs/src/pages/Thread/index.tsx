@@ -255,6 +255,7 @@ function Thread() {
 
   const hideSidebar = useMediaQuery('(max-width: 1000px)')
   const narrowView = useMediaQuery('(max-width: 800px)')
+  const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <Stack direction="row" alignItems="flex-start">
@@ -272,7 +273,8 @@ function Thread() {
               ? info?.rows.map((item, index) => {
                   return (
                     <Box
-                      className="mb-4 rounded-lg shadow-lg"
+                      className="rounded-lg shadow-lg"
+                      mb={thinView ? 1 : 1.75}
                       sx={(theme) => ({
                         backgroundColor: theme.palette.background.paper,
                       })}
@@ -349,7 +351,7 @@ function Thread() {
                             </>
                           }
                         >
-                          <Box paddingRight="1.5em">
+                          <Box pr={narrowView ? undefined : '1.5em'}>
                             <PostRenderer post={item} />
                           </Box>
                         </Floor>

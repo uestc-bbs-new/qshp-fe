@@ -108,6 +108,7 @@ const Floor = ({
   } = useSnackbar()
 
   const narrowView = useMediaQuery('(max-width: 800px)')
+  const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <Box>
@@ -139,7 +140,12 @@ const Floor = ({
             </>
           )}
           {narrowView && <PostAuthorLandscape post={post} />}
-          <Stack className="flex-1" px={2} pt={1.5} pb={0.5}>
+          <Stack
+            className="flex-1"
+            px={thinView ? 1 : 2}
+            pt={thinView ? 0 : 1.5}
+            pb={0.5}
+          >
             {post.position == 1 && !!post.is_first && (
               <PostSubject
                 post={post}
@@ -286,8 +292,9 @@ const PostAuthor = ({ post }: { post: PostFloor }) => {
 }
 
 const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return (
-    <Box px={2} py={1}>
+    <Box px={thinView ? 1 : 2} py={1}>
       <UserCard item={post}>
         <Stack direction="row">
           <AuthorLink post={post}>

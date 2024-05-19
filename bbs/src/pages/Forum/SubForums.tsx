@@ -27,7 +27,7 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
   const narrowView = useMediaQuery('(max-width: 640px)')
 
   return (
-    <Card className="mt-8">
+    <Card sx={{ mt: narrowView ? 1.5 : 3.5, ...(narrowView && { px: 1 }) }}>
       <>
         <ListItemButton onClick={() => setCollapsed(!collapsed)}>
           <ListItemText>子版块</ListItemText>
@@ -41,7 +41,7 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
           {!collapsed && (
             <Separated separator={<Divider />}>
               {children.map((child) => (
-                <Box key={child.fid} className="p-4">
+                <Box key={child.fid} p={narrowView ? 1 : 1.75}>
                   <Stack
                     direction={narrowView ? 'column' : 'row'}
                     justifyContent="space-between"

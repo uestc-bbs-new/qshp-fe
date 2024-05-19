@@ -7,6 +7,7 @@ import {
   Divider,
   Stack,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
@@ -20,6 +21,7 @@ type HeadProps = {
 }
 
 const Head = ({ data }: HeadProps) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <>
       <Accordion defaultExpanded disableGutters>
@@ -78,7 +80,7 @@ const Head = ({ data }: HeadProps) => {
           </Box>
         </AccordionSummary>
         {!!data?.announcement && (
-          <AccordionDetails>
+          <AccordionDetails sx={thinView ? { px: 1 } : undefined}>
             <UserHtmlRenderer
               html={data?.announcement}
               normalizeLegacyFontSize

@@ -378,7 +378,7 @@ function Forum() {
               </>
             )}
             {forumDetails?.can_post_thread && (
-              <Card py={1.5}>
+              <Card sx={{ px: thinView ? 1 : 2, py: 1.5 }}>
                 <PostEditor forum={forumDetails} />
               </Card>
             )}

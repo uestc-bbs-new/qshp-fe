@@ -23,6 +23,7 @@ const Layout = () => {
   // 1720 comes from the content width 1280 plus 2 * drawer width 210
   const matches = useMediaQuery('(min-width: 1720px)')
   const drawerWidth = 210
+  const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <>
@@ -42,7 +43,12 @@ const Layout = () => {
           }}
         >
           <Toolbar id="back-to-top-anchor" />
-          <Box id="detail" className="h-full w-full max-w-screen-xl flex-1 p-4">
+          <Box
+            id="detail"
+            className="h-full w-full max-w-screen-xl flex-1"
+            px={thinView ? 1 : 1.75}
+            py={1.75}
+          >
             <Announcement />
             <Header />
             <Outlet />
