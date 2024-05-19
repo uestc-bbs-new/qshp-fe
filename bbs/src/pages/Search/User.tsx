@@ -10,6 +10,7 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -71,6 +72,8 @@ const User = () => {
     setQuery(initQuery())
   }, [searchParams])
 
+  const thinView = useMediaQuery('(max-width: 560px)')
+
   if (isLoading) {
     return [...Array(10)].map((_, index) => <Skeleton key={index} />)
   }
@@ -89,7 +92,7 @@ const User = () => {
       <Box>
         <Grid container spacing={2}>
           {data?.rows.map((item, index) => (
-            <Grid item md={6} xl={4} key={index}>
+            <Grid item xs={12} sm={6} lg={4} key={index}>
               <UserItem data={item} key={item.uid} />
             </Grid>
           ))}
@@ -97,7 +100,7 @@ const User = () => {
       </Box>
       <Stack alignItems="center">
         <Pagination
-          boundaryCount={3}
+          boundaryCount={thinView ? 1 : 3}
           siblingCount={1}
           page={data.page}
           count={Math.ceil(data.total / (data.page_size || 1))}
