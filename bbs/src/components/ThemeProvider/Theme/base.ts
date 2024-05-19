@@ -221,6 +221,11 @@ export const baseColors = {
 }
 
 export const baseTheme: ThemeOptions = {
+  mixins: {
+    toolbar: {
+      minHeight: 64,
+    },
+  },
   typography: {
     signinTitle: {
       fontSize: 36,

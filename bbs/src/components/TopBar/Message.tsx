@@ -15,11 +15,12 @@ import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
 import { MenuItemLink } from '../Link'
+import { getTotalMessages } from './messages'
 
 const kChatCount = 3
 const kNotificationCount = 5
 
-const MessageTabs = () => {
+export const MessageTabs = () => {
   const { state } = useAppState()
 
   const { data } = useQuery({
@@ -96,17 +97,17 @@ const MessageTabs = () => {
 
 const MessagePopover = () => {
   const { state } = useAppState()
-  const totalMessages =
-    (state.user.new_notification ?? 0) +
-    (state.user.new_pm_legacy ? 1 : 0) +
-    (state.user.new_grouppm_legacy ? 1 : 0)
   return (
     <>
       <Tooltip
         title={<MessageTabs />}
         slotProps={{ tooltip: { sx: { fontSize: '1em' } } }}
       >
-        <Badge badgeContent={totalMessages} className="mx-3" color="warning">
+        <Badge
+          badgeContent={getTotalMessages(state.user)}
+          className="mx-3"
+          color="warning"
+        >
           <MarkunreadOutlined className="text-white" />
         </Badge>
       </Tooltip>

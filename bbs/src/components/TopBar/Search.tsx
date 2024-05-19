@@ -38,7 +38,7 @@ type Option = {
 const kThreadPreviewCount = 5
 const kUserPreviewCount = 3
 
-const SearchBar = () => {
+const SearchBar = ({ autoFocus }: { autoFocus?: boolean }) => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
@@ -90,7 +90,15 @@ const SearchBar = () => {
     <Stack
       direction="row"
       alignItems="center"
-      className="rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
+      className="rounded-lg transition-colors"
+      sx={{
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        color: 'white',
+        '&:focus-within': {
+          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+          color: 'black',
+        },
+      }}
       flexShrink={1}
       width={420}
       ref={searchAnchorRef}
@@ -99,7 +107,7 @@ const SearchBar = () => {
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => {
-          setOpen(false)
+          // setOpen(false)
           highlightItem.current = null
         }}
         onKeyDownCapture={(e) => {
@@ -112,11 +120,21 @@ const SearchBar = () => {
         fullWidth
         size="small"
         freeSolo
-        ListboxProps={{ sx: { maxHeight: '640px' } }}
+        ListboxProps={{
+          sx: {
+            maxHeight: 'min(640px, calc(100vh - 110px))',
+            '.MuiAutocomplete-option': { minHeight: 'auto' },
+          },
+        }}
+        slotProps={{
+          paper: { elevation: 3 },
+          popper: { sx: { minWidth: 346 } },
+        }}
         filterOptions={(x) => x}
         renderInput={(params) => (
           <TextField
             {...params}
+            autoFocus={autoFocus}
             InputProps={{
               ...params?.InputProps,
               disableUnderline: true,

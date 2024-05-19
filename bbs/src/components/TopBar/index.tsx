@@ -1,9 +1,14 @@
-import { Add, Menu } from '@mui/icons-material'
+import { useRef, useState } from 'react'
+
+import { Add, Menu, PostAdd, Search } from '@mui/icons-material'
 import { MeetingRoomTwoTone } from '@mui/icons-material'
 import {
   AppBar,
   Button,
+  ButtonProps,
   IconButton,
+  Paper,
+  Popover,
   Skeleton,
   Stack,
   Toolbar,
@@ -11,7 +16,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import Link from '@/components/Link'
+import Link, { LinkProps } from '@/components/Link'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
 import { useDiscuzLink } from '@/utils/discuzLinkMap'
@@ -19,9 +24,31 @@ import { pages, useActiveRoute } from '@/utils/routes'
 
 import Message from './Message'
 import SearchBar from './Search'
-import UserMenu from './UserMenu'
+import UserMenu, { MiniUserMenu } from './UserMenu'
 
-const Options = ({ state }: { state: State }) => {
+const MiniButton = (props: ButtonProps & LinkProps) => (
+  <Button
+    variant="contained"
+    {...props}
+    sx={{
+      width: 32,
+      height: 32,
+      minWidth: 0,
+      boxSizing: 'border-box',
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+      '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.3)' },
+      ...props.sx,
+    }}
+  />
+)
+
+const Options = ({
+  state,
+  onSearchClick,
+}: {
+  state: State
+  onSearchClick: () => void
+}) => {
   const activeRoute = useActiveRoute()
   const fid =
     (activeRoute?.id == 'forum' || activeRoute?.id == 'thread') &&
@@ -29,22 +56,41 @@ const Options = ({ state }: { state: State }) => {
       ? state.activeForum?.fid
       : undefined
   const postLink = pages.post(fid)
+  const miniView = useMediaQuery('(max-width: 800px)')
 
   return (
     <>
-      <UserMenu user={state.user} />
-      <Message />
-      {/* <AboutMe unread={state.messages.unread_count}/> */}
-      <Button
-        className="ml-3 bg-white bg-opacity-40"
-        variant="contained"
-        startIcon={<Add />}
-        component={Link}
-        to={postLink}
-        state={fid && state.activeForum}
-      >
-        发帖
-      </Button>
+      {miniView ? (
+        <>
+          <MiniButton sx={{ mr: 1 }} onClick={onSearchClick}>
+            <Search />
+          </MiniButton>
+          <MiniButton
+            component={Link}
+            to={postLink}
+            state={fid && state.activeForum}
+            sx={{ mr: 1 }}
+          >
+            <PostAdd />
+          </MiniButton>
+          <MiniUserMenu user={state.user} />
+        </>
+      ) : (
+        <>
+          <UserMenu user={state.user} />
+          <Message />
+          <Button
+            className="ml-3 bg-white bg-opacity-40"
+            variant="contained"
+            startIcon={<Add />}
+            component={Link}
+            to={postLink}
+            state={fid && state.activeForum}
+          >
+            发帖
+          </Button>
+        </>
+      )}
     </>
   )
 }
@@ -89,12 +135,17 @@ const TopBar = () => {
     import.meta.url
   ).href.toString()
 
-  const narrowTopBar = useMediaQuery('(max-width: 850px')
+  const narrowTopBar = useMediaQuery('(max-width: 850px)')
+  const miniSearch = useMediaQuery('(max-width: 800px)')
+  const smallLogo = useMediaQuery('(max-width: 400px)')
+  const appbarRef = useRef<HTMLElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   return (
     <AppBar
       position="fixed"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, px: 2.5 }}
+      ref={appbarRef}
     >
       <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
         <Stack
@@ -109,7 +160,7 @@ const TopBar = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ mr: smallLogo ? 0 : 2 }}
             onClick={changeMenu}
           >
             <Menu />
@@ -118,16 +169,22 @@ const TopBar = () => {
             <img
               src={logoImg}
               alt="logo"
-              style={{ height: '50px', width: 'auto', marginRight: '30px' }}
+              css={{
+                width: smallLogo ? 150 : 175,
+                marginRight: smallLogo ? 10 : 30,
+              }}
             />
           </Link>
-          <SearchBar />
+          {!miniSearch && !!state.user.uid && <SearchBar />}
         </Stack>
         <Stack direction="row" alignItems="center" flexGrow={0} flexShrink={0}>
           {state.user.uninitialized ? (
             <Skeleton width={160} height={32} />
           ) : state.user.uid ? (
-            <Options state={state} />
+            <Options
+              state={state}
+              onSearchClick={() => setSearchOpen(!searchOpen)}
+            />
           ) : (
             <LoginComponent />
           )}
@@ -150,6 +207,25 @@ const TopBar = () => {
           )}
         </Stack>
       </Toolbar>
+      <Popover
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        anchorEl={appbarRef.current}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        marginThreshold={0}
+        sx={{ zIndex: 1 }}
+        slotProps={{ paper: { sx: { maxWidth: '100%' } } }}
+        disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
+      >
+        <Paper
+          elevation={1}
+          sx={(theme) => ({
+            backgroundColor: theme.palette.primary.main,
+          })}
+        >
+          <SearchBar autoFocus />
+        </Paper>
+      </Popover>
     </AppBar>
   )
 }

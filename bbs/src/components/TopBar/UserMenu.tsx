@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
   DarkMode,
@@ -10,10 +10,12 @@ import {
   TransferWithinAStation,
 } from '@mui/icons-material'
 import {
+  Badge,
   Box,
   Divider,
   ListItemIcon,
   MenuItem,
+  Popover,
   Stack,
   Typography,
 } from '@mui/material'
@@ -34,6 +36,8 @@ import {
 
 import Avatar from '../Avatar'
 import Link, { MenuItemLink } from '../Link'
+import { MessageTabs } from './Message'
+import { getTotalMessages } from './messages'
 
 const MenuContent = () => {
   if (isIdasRelease) {
@@ -139,6 +143,31 @@ const UserMenu = ({ user }: { user: UserState }) => {
         </Link>
       </Tooltip>
     </>
+  )
+}
+
+export const MiniUserMenu = ({ user }: { user: UserState }) => {
+  const kMax = 99
+  const total = getTotalMessages(user)
+  const [open, setOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  return (
+    <Box onClick={() => setOpen(!open)} ref={menuRef}>
+      <Badge badgeContent={total > kMax ? `${kMax}+` : total} color="warning">
+        <Avatar uid={user.uid} size={32} />
+      </Badge>
+      <Popover
+        open={open}
+        onClose={() => setOpen(false)}
+        anchorEl={menuRef.current}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        elevation={4}
+        sx={{ maxHeight: 'calc(100vh - 64px)' }}
+      >
+        <MessageTabs />
+        <MenuContent />
+      </Popover>
+    </Box>
   )
 }
 
