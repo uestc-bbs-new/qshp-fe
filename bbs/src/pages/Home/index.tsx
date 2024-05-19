@@ -11,6 +11,7 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -28,6 +29,7 @@ import { ForumGroup } from './ForumCover'
 import TopListView from './TopListView'
 
 const Home = () => {
+  const tabbedTopView = useMediaQuery('(max-width: 1080px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
@@ -112,7 +114,7 @@ const Home = () => {
             </List>
           )}
         </Box>
-        <Aside topList={indexData?.top_list} homepage />
+        {!tabbedTopView && <Aside topList={indexData?.top_list} homepage />}
       </Stack>
 
       {topListOpen && <TopListDialog onClose={() => setTopListOpen(false)} />}
