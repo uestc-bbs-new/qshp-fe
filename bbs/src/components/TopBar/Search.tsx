@@ -9,7 +9,9 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  SxProps,
   TextField,
+  Theme,
   Typography,
   debounce,
 } from '@mui/material'
@@ -38,7 +40,13 @@ type Option = {
 const kThreadPreviewCount = 5
 const kUserPreviewCount = 3
 
-const SearchBar = ({ autoFocus }: { autoFocus?: boolean }) => {
+const SearchBar = ({
+  autoFocus,
+  sx,
+}: {
+  autoFocus?: boolean
+  sx?: SxProps<Theme>
+}) => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
@@ -98,9 +106,9 @@ const SearchBar = ({ autoFocus }: { autoFocus?: boolean }) => {
           backgroundColor: 'rgba(255, 255, 255, 0.6)',
           color: 'black',
         },
+        ...sx,
       }}
-      flexShrink={1}
-      width={420}
+      flexGrow={1}
       ref={searchAnchorRef}
     >
       <Autocomplete
