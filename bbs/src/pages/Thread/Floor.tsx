@@ -304,6 +304,7 @@ const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
             alignItems="flex-start"
             justifyContent="space-between"
             flexGrow={1}
+            flexShrink={0}
           >
             <Stack direction="row">
               <AuthorLink post={post}>
