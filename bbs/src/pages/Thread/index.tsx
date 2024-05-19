@@ -8,7 +8,15 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 
-import { Box, List, ListItem, Pagination, Skeleton, Stack } from '@mui/material'
+import {
+  Box,
+  List,
+  ListItem,
+  Pagination,
+  Skeleton,
+  Stack,
+  useMediaQuery,
+} from '@mui/material'
 
 import { getPostDetails, getThreadsInfo, kPostPageSize } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
@@ -42,13 +50,20 @@ const ForumPagination = (props: {
   count: number
   page: number
   onChange: (e: React.ChangeEvent<unknown>, page: number) => void
-}) => (
-  <Stack direction="row" justifyContent="center" my={1.5}>
-    {props.count > 1 && (
-      <Pagination boundaryCount={3} siblingCount={1} {...props} />
-    )}
-  </Stack>
-)
+}) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
+  return (
+    <Stack direction="row" justifyContent="center" my={1.5}>
+      {props.count > 1 && (
+        <Pagination
+          boundaryCount={thinView ? 1 : 3}
+          siblingCount={1}
+          {...props}
+        />
+      )}
+    </Stack>
+  )
+}
 
 function Thread() {
   const { state, dispatch } = useAppState()
@@ -237,6 +252,10 @@ function Thread() {
     setSearchParams(searchParamsAssign(searchParams, { page }))
 
   useWatermark({ text: state.user.uid.toString() })
+
+  const hideSidebar = useMediaQuery('(max-width: 1000px)')
+  const narrowView = useMediaQuery('(max-width: 800px)')
+
   return (
     <Stack direction="row" alignItems="flex-start">
       <Box className="flex-1" minWidth="1em">
@@ -385,7 +404,7 @@ function Thread() {
           />
         )}
       </Box>
-      <Aside />
+      {!hideSidebar && <Aside />}
     </Stack>
   )
 }

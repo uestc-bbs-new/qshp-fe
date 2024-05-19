@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography, useMediaQuery } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 import {
@@ -72,19 +72,6 @@ function PostSubject({
   return <Typography fontWeight="bold">{post.subject}</Typography>
 }
 
-type props = {
-  children: React.ReactNode
-  threadControls?: React.ReactNode
-  post: PostFloor
-  postDetails?: PostExtraDetailsEx
-  threadDetails?: Thread
-  forumDetails?: ForumDetails
-  firstInPage?: boolean
-  onReply: (post: PostFloor) => void
-  onComment: (post: PostFloor) => void
-  onEdit: (post: PostFloor) => void
-}
-
 const Floor = ({
   children,
   threadControls,
@@ -96,7 +83,18 @@ const Floor = ({
   onReply,
   onComment,
   onEdit,
-}: props) => {
+}: {
+  children: React.ReactNode
+  threadControls?: React.ReactNode
+  post: PostFloor
+  postDetails?: PostExtraDetailsEx
+  threadDetails?: Thread
+  forumDetails?: ForumDetails
+  firstInPage?: boolean
+  onReply: (post: PostFloor) => void
+  onComment: (post: PostFloor) => void
+  onEdit: (post: PostFloor) => void
+}) => {
   const gotoLink =
     post.position == 1 && post.is_first
       ? pages.thread(post.thread_id)
@@ -107,51 +105,39 @@ const Floor = ({
     props: { open, onClose },
     show,
   } = useSnackbar()
+
+  const narrowView = useMediaQuery('(max-width: 800px)')
+
   return (
     <Box>
       <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
         <Alert severity="success">链接复制成功</Alert>
       </CenteredSnackbar>
       <Stack direction="row">
-        <Stack
-          sx={(theme) => ({
-            backgroundColor:
-              theme.palette.mode == 'light' ? '#D2E2FD' : '#42516d',
-          })}
-          width={192}
-        >
-          {firstInPage && threadDetails?.reply_credit && (
-            <ReplyCreditFloorLeft threadDetails={threadDetails} />
-          )}
-          <Box px={2} py={2}>
-            <UserCard item={post}>
-              <AuthorLink post={post}>
-                <Avatar
-                  className="m-auto"
-                  uid={
-                    post.is_anonymous || !post.author_details
-                      ? 0
-                      : post.author_id
-                  }
-                  size={48}
-                />
-                <Typography variant="authorName" mt={0.5} component="p">
-                  {post.is_anonymous ? '匿名' : post.author}
-                </Typography>
-              </AuthorLink>
-            </UserCard>
-            {!!post.author_id && (
-              <AuthorDetails
-                author={post.author}
-                authorDetails={post.author_details}
-              />
+        {!narrowView && (
+          <Stack
+            sx={(theme) => ({
+              backgroundColor:
+                theme.palette.mode == 'light' ? '#D2E2FD' : '#42516d',
+            })}
+            width={192}
+          >
+            {firstInPage && threadDetails?.reply_credit && (
+              <ReplyCreditFloorLeft threadDetails={threadDetails} />
             )}
-          </Box>
-        </Stack>
+            <PostAuthor post={post} />
+          </Stack>
+        )}
         <Stack className="flex-1" minWidth="1em">
           {firstInPage && threadDetails?.reply_credit && (
-            <ReplyCreditFloorRight threadDetails={threadDetails} />
+            <>
+              {narrowView && (
+                <ReplyCreditFloorLeft threadDetails={threadDetails} topBottom />
+              )}
+              <ReplyCreditFloorRight threadDetails={threadDetails} />
+            </>
           )}
+          {narrowView && <PostAuthorLandscape post={post} />}
           <Stack className="flex-1" px={2} pt={1.5} pb={0.5}>
             {post.position == 1 && !!post.is_first && (
               <PostSubject
@@ -273,6 +259,90 @@ const Floor = ({
   )
 }
 
+const PostAuthor = ({ post }: { post: PostFloor }) => {
+  return (
+    <Box px={2} py={2}>
+      <UserCard item={post}>
+        <AuthorLink post={post}>
+          <Avatar
+            className="m-auto"
+            uid={post.is_anonymous || !post.author_details ? 0 : post.author_id}
+            size={48}
+          />
+          <Typography variant="authorName" mt={0.5} component="p">
+            {post.is_anonymous ? '匿名' : post.author}
+          </Typography>
+        </AuthorLink>
+      </UserCard>
+      {!!post.author_id && (
+        <AuthorDetails
+          author={post.author}
+          authorDetails={post.author_details}
+        />
+      )}
+    </Box>
+  )
+}
+
+const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
+  return (
+    <Box px={2} py={1}>
+      <UserCard item={post}>
+        <Stack direction="row">
+          <AuthorLink post={post}>
+            <Avatar
+              className="m-auto"
+              uid={
+                post.is_anonymous || !post.author_details ? 0 : post.author_id
+              }
+              size={44}
+            />
+          </AuthorLink>
+          <Stack
+            ml={1}
+            alignItems="flex-start"
+            justifyContent="space-between"
+            flexGrow={1}
+          >
+            <Stack direction="row">
+              <AuthorLink post={post}>
+                <Typography variant="authorName" component="p">
+                  {post.is_anonymous ? '匿名' : post.author}
+                </Typography>
+              </AuthorLink>
+              {!!post.author_details?.digests && (
+                <Stack alignItems="flex-start" ml={0.5}>
+                  <DigestAuthor username={post.author} sx={{ p: 0 }} />
+                </Stack>
+              )}
+            </Stack>
+            {!!post.author_id &&
+              (post.author_details ? (
+                <Stack direction="row">
+                  <Chip text={post.author_details.group_title} />
+                  {post.author_details.group_subtitle && (
+                    <Typography variant="authorGroupSubtitle">
+                      ({post.author_details.group_subtitle})
+                    </Typography>
+                  )}
+                </Stack>
+              ) : (
+                <Typography variant="authorGroupSubtitle">
+                  ( 该用户已删除 )
+                </Typography>
+              ))}
+          </Stack>
+          {!!post.author_details?.medals?.length && (
+            <Stack ml={1} flexShrink={1} overflow="hidden">
+              <Medals medals={post.author_details.medals} nowrap />
+            </Stack>
+          )}
+        </Stack>
+      </UserCard>
+    </Box>
+  )
+}
+
 const AuthorLink = ({
   post,
   children,
@@ -335,22 +405,34 @@ const AuthorDetails = ({
     </Typography>
   )
 
-const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) =>
-  authorDetails.signature && authorDetails.signature_format == 'html' ? (
-    <Stack>
-      <Stack direction="row" alignItems="center" fontSize={12} pt={2} pb={0.25}>
-        <Typography color="#7fcce5" fontSize={10} mr={0.5}>
-          SIGNATURE
-        </Typography>
-        <Box sx={{ borderTop: '1px dashed #cccccc' }} flexGrow={1} />
-        <Box flexGrow={1} />
+const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
+  if (authorDetails.signature && authorDetails.signature_format == 'html')
+    return (
+      <Stack>
+        <Stack
+          direction="row"
+          alignItems="center"
+          fontSize={12}
+          pt={thinView ? 1 : 2}
+          pb={0.25}
+        >
+          <Typography color="#7fcce5" fontSize={thinView ? 8 : 10} mr={0.5}>
+            SIGNATURE
+          </Typography>
+          <Box sx={{ borderTop: '1px dashed #cccccc' }} flexGrow={1} />
+          <Box flexGrow={1} />
+        </Stack>
+        <Box
+          maxHeight={thinView ? 60 : 120}
+          overflow="hidden"
+          className="post-signature"
+        >
+          <UserHtmlRenderer html={authorDetails.signature} />
+        </Box>
       </Stack>
-      <Box maxHeight={120} overflow="hidden" className="post-signature">
-        <UserHtmlRenderer html={authorDetails.signature} />
-      </Box>
-    </Stack>
-  ) : (
-    <></>
-  )
+    )
+  return <></>
+}
 
 export default Floor

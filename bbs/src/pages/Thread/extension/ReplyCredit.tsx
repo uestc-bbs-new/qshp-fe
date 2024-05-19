@@ -57,15 +57,18 @@ const kReplyCreditHeight = 56
 
 export const ReplyCreditFloorLeft = ({
   threadDetails,
+  topBottom,
 }: {
   threadDetails: Thread
+  topBottom?: boolean
 }) => (
   <Stack
     direction="row"
     justifyContent="center"
     alignItems="center"
-    borderBottom="5px solid #A3B8DC"
-    height={kReplyCreditHeight}
+    borderBottom={topBottom ? undefined : '5px solid #A3B8DC'}
+    height={topBottom ? undefined : kReplyCreditHeight}
+    pt={topBottom ? 1.5 : undefined}
   >
     <div
       css={css({
