@@ -11,7 +11,7 @@ export const RegisterContent = ({ small }: { small?: boolean }) => (
     <Typography variant="h6" textAlign="justify" my={3}>
       清水河畔属于高校官方论坛，账号注册时必须进行实名关联。
       <br />
-      点击以下按钮，使用学号与网上服务大厅密码登录与授权后继续注册：
+      点击以下按钮，使用学号与网上服务大厅密码登录后继续注册：
     </Typography>
     <Stack direction="row" justifyContent="center">
       <Button
