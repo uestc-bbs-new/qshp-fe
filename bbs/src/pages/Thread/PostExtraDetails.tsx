@@ -44,7 +44,7 @@ export const PostExtraDetailsAccordian = ({
   children,
 }: {
   Icon: SvgIconComponent
-  title: string
+  title: React.ReactNode
   children: React.ReactNode
 }) => {
   const color = '#2175F3'
