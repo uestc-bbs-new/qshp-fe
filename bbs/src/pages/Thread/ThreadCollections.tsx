@@ -42,8 +42,8 @@ const ThreadCollections = ({ collections }: { collections: Collection[] }) => (
       title="收藏本帖的淘专辑"
     >
       <Grid container>
-        {collections.map((item, index) => (
-          <Grid key={item.collection_id} item xs={6} py={1} pr={1}>
+        {collections.map((item) => (
+          <Grid key={item.collection_id} item xs={12} sm={6} py={1} pr={1}>
             <Item item={item} />
           </Grid>
         ))}
