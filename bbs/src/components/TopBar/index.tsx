@@ -207,25 +207,27 @@ const TopBar = () => {
           )}
         </Stack>
       </Toolbar>
-      <Popover
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        anchorEl={appbarRef.current}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        marginThreshold={0}
-        sx={{ zIndex: 1 }}
-        slotProps={{ paper: { sx: { maxWidth: '100%' } } }}
-        disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
-      >
-        <Paper
-          elevation={1}
-          sx={(theme) => ({
-            backgroundColor: theme.palette.primary.main,
-          })}
+      {miniSearch && (
+        <Popover
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          anchorEl={appbarRef.current}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          marginThreshold={0}
+          sx={{ zIndex: 1 }}
+          slotProps={{ paper: { sx: { maxWidth: '100%' } } }}
+          disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
         >
-          <SearchBar autoFocus />
-        </Paper>
-      </Popover>
+          <Paper
+            elevation={1}
+            sx={(theme) => ({
+              backgroundColor: theme.palette.primary.main,
+            })}
+          >
+            <SearchBar autoFocus />
+          </Paper>
+        </Popover>
+      )}
     </AppBar>
   )
 }
