@@ -111,7 +111,7 @@ export const AnnouncementBody = ({
   )
 }
 
-const Announcement = () => {
+const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
   const theme = useTheme()
   const { state, dispatch } = useAppState()
   const matches = useMatches()
@@ -150,6 +150,7 @@ const Announcement = () => {
           pagination={{ clickable: true }}
           slidesPerView={1}
           loop={state.announcement.length > 1}
+          nested={inSwiper}
         >
           {state.announcement.map((item, index) => (
             <SwiperSlide key={index}>

@@ -21,6 +21,7 @@ import {
 
 import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
+import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
@@ -154,15 +155,14 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
           let newList: TopListThread[] | undefined
           newData?.forEach((item) => {
             if (
-              list?.every(
+              (list || []).every(
                 (existingItem) => existingItem.thread_id != item.thread_id
               )
             ) {
-              if (newList) {
-                newList.push(item)
-              } else {
+              if (!newList) {
                 newList = list?.slice() || []
               }
+              newList.push(item)
             }
           })
           if (newList) {
@@ -199,13 +199,18 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
       onScroll={() => saveCacheDebounced({ list, page })}
       ref={scrollRef}
     >
-      <ResponsiveMasonry columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}>
-        <Masonry gutter="12px">
-          {list?.map((item) => (
-            <ThreadItemGrid key={item.thread_id} item={item} />
-          ))}
-        </Masonry>
-      </ResponsiveMasonry>
+      {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
+      {!!list?.length && (
+        <ResponsiveMasonry
+          columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}
+        >
+          <Masonry gutter="12px">
+            {list?.map((item) => (
+              <ThreadItemGrid key={item.thread_id} item={item} />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
+      )}
       {!isEnded && !(isFetching && page == 1) && (
         <Stack
           direction="row"
