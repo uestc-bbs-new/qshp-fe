@@ -36,10 +36,11 @@ import {
 
 import Avatar from '../Avatar'
 import Link, { MenuItemLink } from '../Link'
+import Separated from '../Separated'
 import { MessageTabs } from './Message'
 import { getTotalMessages } from './messages'
 
-const MenuContent = () => {
+const MenuContent = ({ small }: { small?: boolean }) => {
   if (isIdasRelease) {
     return <></>
   }
@@ -69,64 +70,67 @@ const MenuContent = () => {
   }
   return (
     <Box className="py-2">
-      <MenuItem component={MenuItemLink} to={pages.user()}>
-        <ListItemIcon>
-          <Person fontSize="small" />
-        </ListItemIcon>
-        个人空间
-      </MenuItem>
-      <Divider variant="middle" flexItem></Divider>
-      <MenuItem
-        component={MenuItemLink}
-        to={`${siteRoot}/forum.php?mod=collection`}
-        external
-        target="_blank"
+      <Separated
+        separator={
+          <Divider
+            variant="middle"
+            flexItem
+            sx={{ '.MuiMenuItem-root+&': { my: 0 } }}
+          />
+        }
       >
-        <ListItemIcon>
-          <SavedSearch fontSize="small" />
-        </ListItemIcon>
-        淘帖
-      </MenuItem>
-      <Divider variant="middle" flexItem></Divider>
-      <MenuItem onClick={toggleTheme}>
-        <ListItemIcon>
-          {state.theme === 'light' ? (
-            <LightMode fontSize="small" />
-          ) : (
-            <DarkMode fontSize="small" />
-          )}
-        </ListItemIcon>
-        {getTextFromThemeSetting(themeSetting)}
-      </MenuItem>
-      {!isPreviewRelease && (
-        <>
-          <Divider variant="middle" flexItem></Divider>
+        <MenuItem component={MenuItemLink} to={pages.user()}>
+          <ListItemIcon>
+            <Person fontSize="small" />
+          </ListItemIcon>
+          个人空间
+        </MenuItem>
+        <MenuItem
+          component={MenuItemLink}
+          to={`${siteRoot}/forum.php?mod=collection`}
+          external
+          target="_blank"
+        >
+          <ListItemIcon>
+            <SavedSearch fontSize="small" />
+          </ListItemIcon>
+          淘帖
+        </MenuItem>
+        <MenuItem onClick={toggleTheme}>
+          <ListItemIcon>
+            {state.theme === 'light' ? (
+              <LightMode fontSize="small" />
+            ) : (
+              <DarkMode fontSize="small" />
+            )}
+          </ListItemIcon>
+          {getTextFromThemeSetting(themeSetting)}
+        </MenuItem>
+        {!isPreviewRelease && (
           <MenuItem>
             <ListItemIcon>
               <TransferWithinAStation fontSize="small" />
             </ListItemIcon>
             切换账号
           </MenuItem>
-        </>
-      )}
-      <Divider variant="middle" flexItem></Divider>
-      <MenuItem
-        component={MenuItemLink}
-        to={isPreviewRelease ? '/home.php?mod=spacecp' : pages.settings()}
-        external={isPreviewRelease}
-      >
-        <ListItemIcon>
-          <Settings fontSize="small" />
-        </ListItemIcon>
-        设置
-      </MenuItem>
-      <Divider variant="middle" flexItem></Divider>
-      <MenuItem onClick={logout}>
-        <ListItemIcon>
-          <Logout fontSize="small" />
-        </ListItemIcon>
-        退出登录
-      </MenuItem>
+        )}
+        <MenuItem
+          component={MenuItemLink}
+          to={isPreviewRelease ? '/home.php?mod=spacecp' : pages.settings()}
+          external={isPreviewRelease}
+        >
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          设置
+        </MenuItem>
+        <MenuItem onClick={logout}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          退出登录
+        </MenuItem>
+      </Separated>
     </Box>
   )
 }
@@ -162,10 +166,12 @@ export const MiniUserMenu = ({ user }: { user: UserState }) => {
         anchorEl={menuRef.current}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         elevation={4}
-        sx={{ maxHeight: 'calc(100vh - 64px)' }}
+        style={{ maxHeight: `${window.innerHeight - 64}px` }}
+        // We have to use !important to override Popover's left attribute in inline style.
+        slotProps={{ paper: { sx: { left: 'auto !important', right: 0 } } }}
       >
-        <MessageTabs />
-        <MenuContent />
+        <MessageTabs small />
+        <MenuContent small />
       </Popover>
     </Box>
   )

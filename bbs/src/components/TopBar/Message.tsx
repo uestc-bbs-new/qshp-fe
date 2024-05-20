@@ -17,12 +17,11 @@ import siteRoot from '@/utils/siteRoot'
 import { MenuItemLink } from '../Link'
 import { getTotalMessages } from './messages'
 
-const kChatCount = 3
-const kNotificationCount = 5
+export const MessageTabs = ({ small }: { small?: boolean }) => {
+  const kChatCount = small ? 1 : 3
+  const kNotificationCount = small ? 3 : 5
 
-export const MessageTabs = () => {
   const { state } = useAppState()
-
   const { data } = useQuery({
     queryKey: ['messagesSummary'],
     queryFn: () => getMessagesSummary(),
@@ -34,7 +33,8 @@ export const MessageTabs = () => {
   return (
     <Box
       sx={{ borderBottom: 1, borderColor: 'divider' }}
-      p={1}
+      px={0}
+      py={1}
       minWidth="140px"
       maxWidth="300px"
     >
@@ -63,11 +63,17 @@ export const MessageTabs = () => {
           {data?.new_chats
             ?.slice(0, kChatCount)
             .map((item, index) => (
-              <ConversationItem key={index} chat={item} lite summary />
+              <ConversationItem
+                key={index}
+                chat={item}
+                lite
+                summary
+                small={small}
+              />
             ))}
         </List>
       )}
-      <Divider />
+      <Divider variant="middle" />
       <MenuItem
         component={MenuItemLink}
         to={pages.messages('posts')}
@@ -83,11 +89,11 @@ export const MessageTabs = () => {
         />
       </MenuItem>
       {!!data?.new_notifications?.length && (
-        <List>
+        <List disablePadding={small}>
           {data?.new_notifications
             ?.slice(0, kNotificationCount)
             .map((item, index) => (
-              <NotificationItem key={index} item={item} summary />
+              <NotificationItem key={index} item={item} summary small={small} />
             ))}
         </List>
       )}

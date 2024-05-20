@@ -24,13 +24,14 @@ type ConversationItemProps = {
   selected?: boolean
   lite?: boolean
   summary?: boolean
+  small?: boolean
 }
 
 const ConversationItem = forwardRef<
   HTMLLIElement | null,
   ConversationItemProps
 >(function ConversationItem(
-  { chat, selected, lite, summary }: ConversationItemProps,
+  { chat, selected, lite, summary, small }: ConversationItemProps,
   ref?
 ) {
   const liteProps = lite
@@ -60,6 +61,7 @@ const ConversationItem = forwardRef<
         }
         external={isPreviewRelease}
         target={isPreviewRelease ? '_blank' : undefined}
+        sx={small ? { px: 1.25 } : undefined}
       >
         <Stack direction="row" {...liteProps}>
           <ChatAvatar chat={chat} summary={summary} />
