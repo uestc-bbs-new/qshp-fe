@@ -9,7 +9,7 @@ import Separated from '../Separated'
 
 const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
   return (
-    <Stack direction="row" alignItems="center" my={2} flexWrap="wrap">
+    <Stack direction="row" alignItems="center" flexWrap="wrap">
       <InsertChart sx={{ color: '#74EAE9', mr: 1 }} />
       {data ? (
         <Separated

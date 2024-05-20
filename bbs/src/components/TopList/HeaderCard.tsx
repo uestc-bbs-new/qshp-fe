@@ -27,7 +27,7 @@ const HeaderCardBase = ({
   header: React.ReactNode
   list: React.ReactNode
 }) => (
-  <Box className="relative overflow-hidden mb-5 p-1" style={{ width: '100%' }}>
+  <Box className="relative overflow-hidden p-1" style={{ width: '100%' }}>
     <Paper elevation={3}>
       {header}
       {list}

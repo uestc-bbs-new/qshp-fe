@@ -13,7 +13,7 @@ const HeaderCards = ({
   const tabbedTopView = useMediaQuery('(max-width: 1080px)')
   return (
     <>
-      <Grid container spacing={tabbedTopView ? 1 : 3}>
+      <Grid container spacing={tabbedTopView ? 1 : 2} mb={2}>
         {tabbedTopView ? (
           <>
             <Grid item xs={6}>

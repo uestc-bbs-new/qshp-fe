@@ -74,7 +74,12 @@ const Home = () => {
           </Typography>
         </Box>
       </Banner>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        my={1}
+      >
         <OverviewInfo data={indexData?.global_stat} />
         {isDeveloper() && (
           <Button onClick={() => setTopListOpen(true)}>更多</Button>
@@ -86,7 +91,7 @@ const Home = () => {
         indexData?.top_list &&
         state.user.uid && <HeaderCards topLists={indexData?.top_list} />
       )}
-      <CampusService />
+      {!tabbedTopView && <CampusService />}
 
       <Stack direction="row">
         <Box className="flex-1">
