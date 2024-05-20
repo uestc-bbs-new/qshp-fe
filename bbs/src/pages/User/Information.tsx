@@ -11,7 +11,9 @@ import { UserSummary } from '@/common/interfaces/user'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { chineseTime } from '@/utils/dayjs'
+import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 import { SubPageCommonProps } from './types'
 
@@ -85,7 +87,15 @@ const Information = ({
       {self && (
         <>
           <Stack alignItems="flex-end" pb={1}>
-            <Link to={pages.settings('profile')}>
+            <Link
+              to={
+                isPreviewRelease
+                  ? `${siteRoot}/home.php?mod=spacecp&ac=profile`
+                  : pages.settings('profile')
+              }
+              external={isPreviewRelease}
+              target={isPreviewRelease ? '_blank' : undefined}
+            >
               <Stack direction="row" alignItems="center">
                 <Typography fontSize={12} align="right" className="m-1">
                   编辑
