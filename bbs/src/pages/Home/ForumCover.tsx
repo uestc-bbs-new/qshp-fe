@@ -44,7 +44,7 @@ const ForumCover = ({ data }: ForumData) => {
         }}
       ></Box>
       <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
-      <Box className="relative z-10 p-4">
+      <Box className="relative p-4">
         <Stack
           direction="row"
           justifyContent="space-between"
