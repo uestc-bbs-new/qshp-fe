@@ -3,7 +3,7 @@ import 'swiper/css/autoplay'
 import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
@@ -16,6 +16,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  debounce,
 } from '@mui/material'
 
 import { getTopLists } from '@/apis/common'
@@ -35,8 +36,11 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
         justifyContent="space-between"
         alignItems="center"
         pr={1}
+        sx={(theme) => ({
+          backgroundColor: theme.palette.mode == 'dark' ? '#666' : '#eee',
+        })}
       >
-        <Tabs value={activeTab}>
+        <Tabs value={activeTab} variant="scrollable">
           {topListKeys.map((key) => (
             <Tab
               key={key}
@@ -54,14 +58,14 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
         </IconButton>
       </Stack>
 
-      <Box flexShrink={1} overflow="auto" boxSizing="border-box">
+      <Box flexShrink={1} minHeight="1px" boxSizing="border-box">
         <Swiper
           ref={swiperRef}
           slidesPerView={1}
-          autoHeight
+          autoHeight={false}
           loop
           initialSlide={1}
-          css={{ maxWidth: '100%' }}
+          css={{ maxWidth: '100%', height: '100%' }}
           onSlideChange={(swiper) =>
             setActiveTab(topListKeys[swiper.realIndex])
           }
@@ -77,16 +81,57 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
+type TopListCacheEntry = {
+  list: TopListThread[]
+  page: number
+  scrollOffset: number
+}
+
+const toplistCache: {
+  [key in TopListKey]?: TopListCacheEntry
+} = {}
+
 const TopListTab = ({ tab }: { tab: TopListKey }) => {
-  const cachedData = useTopList()
-  const [list, setList] = useState<TopListThread[]>()
+  const homeCachedData = useTopList()
+  const getCache = () => {
+    const cachedData = toplistCache[tab]
+    if (cachedData) {
+      return cachedData
+    }
+    return {
+      list: homeCachedData && homeCachedData[tab],
+      page: 1,
+      scrollOffset: 0,
+    }
+  }
+  const initData = getCache()
+  const [list, setList] = useState<TopListThread[] | undefined>(initData.list)
   const [isEnded, setEnded] = useState(false)
   const [isFetching, setFetching] = useState(false)
   const [isError, setError] = useState(false)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(initData.page)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const saveCache = (newData: Partial<TopListCacheEntry>) => {
+    const newList = newData.list || list
+    if (newList) {
+      toplistCache[tab] = {
+        page,
+        ...newData,
+        list: newList,
+        scrollOffset: scrollRef.current?.scrollTop ?? 0,
+      }
+    }
+  }
   useEffect(() => {
-    setList(cachedData ? cachedData[tab] : undefined)
-    setPage(1)
+    const initData = getCache()
+    setList(initData.list)
+    setPage(initData.page)
+  }, [tab])
+  useLayoutEffect(() => {
+    const initData = getCache()
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = initData.scrollOffset
+    }
   }, [tab])
 
   const { observe } = useInView({
@@ -95,10 +140,12 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
       if (!isEnded && !isFetching) {
         setFetching(true)
         setError(false)
+        let newPage = page
         try {
           const newData = (await getTopLists(tab, page + 1))[tab]
           if (newData?.length) {
-            setPage(page + 1)
+            ++newPage
+            setPage(newPage)
           } else {
             setEnded(true)
           }
@@ -119,6 +166,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
           if (newList) {
             setList(newList)
           }
+          saveCache({ list: newList, page: newPage })
         } catch (_) {
           setError(true)
         } finally {
@@ -128,8 +176,27 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
     },
   })
 
+  const saveCacheDebounced = useMemo(() => debounce(saveCache), [])
+
   return (
-    <Box p={2}>
+    <Box
+      p={2}
+      overflow="auto"
+      height="100%"
+      boxSizing="border-box"
+      sx={{
+        '&::-webkit-scrollbar': {
+          backgroundColor: 'rgba(128, 128, 128, 0.5)',
+          width: '3px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#999',
+          width: '3px',
+        },
+      }}
+      onScroll={() => saveCacheDebounced({ list, page })}
+      ref={scrollRef}
+    >
       <ResponsiveMasonry columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}>
         <Masonry gutter="12px">
           {list?.map((item) => (
