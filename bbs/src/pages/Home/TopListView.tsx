@@ -25,7 +25,7 @@ import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 
-const TopListView = ({ onClose }: { onClose: () => void }) => {
+const TopListView = ({ onClose }: { onClose?: () => void }) => {
   const [activeTab, setActiveTab] = useState<TopListKey>('newthread')
   const swiperRef = useRef<SwiperRef>(null)
 
@@ -53,9 +53,11 @@ const TopListView = ({ onClose }: { onClose: () => void }) => {
             ></Tab>
           ))}
         </Tabs>
-        <IconButton onClick={() => onClose()}>
-          <Close />
-        </IconButton>
+        {onClose && (
+          <IconButton onClick={() => onClose()}>
+            <Close />
+          </IconButton>
+        )}
       </Stack>
 
       <Box flexShrink={1} minHeight="1px" boxSizing="border-box">

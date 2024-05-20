@@ -6,9 +6,10 @@ import { useLocation } from 'react-router-dom'
 import {
   Box,
   Button,
-  Dialog,
   List,
+  Paper,
   Skeleton,
+  Slide,
   Stack,
   Typography,
   useMediaQuery,
@@ -30,6 +31,7 @@ import TopListView from './TopListView'
 
 const Home = () => {
   const tabbedTopView = useMediaQuery('(max-width: 1080px)')
+  const mobileView = useMediaQuery('(max-width: 800px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
@@ -72,65 +74,70 @@ const Home = () => {
   }, [state.user.uid, location.key])
   return (
     <>
-      <Banner src={headerImg}>
-        <Box className="text-white text-center">
-          <Typography variant="h4">清水河畔</Typography>
-          <Typography color={theme.palette.grey[400]}>
-            说你想说，做你想做
-          </Typography>
-        </Box>
-      </Banner>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        my={1}
-      >
-        <OverviewInfo data={indexData?.global_stat} />
-        {isDeveloper() && !!state.user.uid && (
-          <Button onClick={() => setTopListOpen(true)}>更多</Button>
-        )}
-      </Stack>
-      {!indexData?.top_list && isLoading ? (
-        <Skeleton height={480} />
-      ) : (
-        indexData?.top_list &&
-        state.user.uid && <HeaderCards topLists={indexData?.top_list} />
-      )}
-      {!tabbedTopView && <CampusService />}
+      {!mobileView && (
+        <>
+          <Banner src={headerImg}>
+            <Box className="text-white text-center">
+              <Typography variant="h4">清水河畔</Typography>
+              <Typography color={theme.palette.grey[400]}>
+                说你想说，做你想做
+              </Typography>
+            </Box>
+          </Banner>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            my={1}
+          >
+            <OverviewInfo data={indexData?.global_stat} />
+            {isDeveloper() && !!state.user.uid && (
+              <Button onClick={() => setTopListOpen(true)}>更多</Button>
+            )}
+          </Stack>
+          {!indexData?.top_list && isLoading ? (
+            <Skeleton height={480} />
+          ) : (
+            indexData?.top_list &&
+            state.user.uid && <HeaderCards topLists={indexData?.top_list} />
+          )}
+          {!tabbedTopView && <CampusService />}
 
-      <Stack direction="row">
-        <Box className="flex-1">
-          {!indexData?.forum_list?.length ? (
-            <>
-              <Skeleton variant="rounded" height={40} sx={{ my: 1 }} />
-              {Array.from(new Array(2)).map((_, index) => (
-                <Box key={index} className="flex-1" display="flex">
+          <Stack direction="row">
+            <Box className="flex-1">
+              {!indexData?.forum_list?.length ? (
+                <>
+                  <Skeleton variant="rounded" height={40} sx={{ my: 1 }} />
                   {Array.from(new Array(2)).map((_, index) => (
-                    <Box
-                      key={index}
-                      sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
-                    >
-                      <Skeleton variant="rectangular" height={118} />
+                    <Box key={index} className="flex-1" display="flex">
+                      {Array.from(new Array(2)).map((_, index) => (
+                        <Box
+                          key={index}
+                          sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
+                        >
+                          <Skeleton variant="rectangular" height={118} />
+                        </Box>
+                      ))}
                     </Box>
                   ))}
-                </Box>
-              ))}
-            </>
-          ) : (
-            <List>
-              {indexData.forum_list.map((item) => (
-                <ForumGroup data={item} key={item.name} />
-              ))}
-            </List>
-          )}
-        </Box>
-        {!tabbedTopView && <Aside topList={indexData?.top_list} homepage />}
-      </Stack>
+                </>
+              ) : (
+                <List>
+                  {indexData.forum_list.map((item) => (
+                    <ForumGroup data={item} key={item.name} />
+                  ))}
+                </List>
+              )}
+            </Box>
+            {!tabbedTopView && <Aside topList={indexData?.top_list} homepage />}
+          </Stack>
+        </>
+      )}
 
-      {(topListMounted || topListOpen) && (
+      {(topListMounted || topListOpen || mobileView) && (
         <TopListDialog
-          open={topListOpen}
+          open={topListOpen || mobileView}
+          alwaysOpen={mobileView}
           onClose={() => setTopListOpen(false)}
         />
       )}
@@ -140,19 +147,41 @@ const Home = () => {
 
 const TopListDialog = ({
   open,
+  alwaysOpen,
   onClose,
 }: {
   open: boolean
+  alwaysOpen?: boolean
   onClose: () => void
 }) => {
   useEffect(() => {
+    if (alwaysOpen) {
+      return
+    }
     document.body.style.overflow = 'hidden'
     return () => void (document.body.style.overflow = '')
   }, [])
-  return (
-    <Dialog open={open} onClose={onClose} fullScreen keepMounted>
-      <TopListView onClose={onClose} />
-    </Dialog>
+
+  const body = (
+    <Paper
+      sx={{
+        left: 0,
+        right: 0,
+        bottom: 0,
+        top: 64,
+        position: 'fixed',
+        zIndex: 1,
+      }}
+    >
+      <TopListView onClose={alwaysOpen ? undefined : onClose} />
+    </Paper>
+  )
+  return alwaysOpen ? (
+    body
+  ) : (
+    <Slide in={open} direction="up">
+      {body}
+    </Slide>
   )
 }
 export default Home
