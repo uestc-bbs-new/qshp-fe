@@ -87,7 +87,7 @@ const Home = () => {
         my={1}
       >
         <OverviewInfo data={indexData?.global_stat} />
-        {isDeveloper() && (
+        {isDeveloper() && !!state.user.uid && (
           <Button onClick={() => setTopListOpen(true)}>更多</Button>
         )}
       </Stack>
