@@ -12,8 +12,8 @@ import {
 } from '@mui/material'
 
 import Announcement from '@/components/Announcement'
+import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
-import Header from '@/components/Header'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { useAppState } from '@/states'
@@ -42,7 +42,7 @@ const Layout = () => {
             py={1.75}
           >
             <Announcement />
-            <Header />
+            <Breadcrumbs />
             <Outlet />
           </Box>
         </Box>
