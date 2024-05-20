@@ -175,7 +175,9 @@ const TopBar = () => {
               }}
             />
           </Link>
-          {!miniSearch && !!state.user.uid && <SearchBar />}
+          {!miniSearch && !!state.user.uid && (
+            <SearchBar sx={{ flexShrink: 1, width: 420 }} />
+          )}
         </Stack>
         <Stack direction="row" alignItems="center" flexGrow={0} flexShrink={0}>
           {state.user.uninitialized ? (
@@ -212,19 +214,22 @@ const TopBar = () => {
           open={searchOpen}
           onClose={() => setSearchOpen(false)}
           anchorEl={appbarRef.current}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           marginThreshold={0}
           sx={{ zIndex: 1 }}
-          slotProps={{ paper: { sx: { maxWidth: '100%' } } }}
+          slotProps={{ paper: { sx: { maxWidth: '100%', width: 440 } } }}
           disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
         >
           <Paper
             elevation={1}
             sx={(theme) => ({
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor:
+                theme.palette.mode == 'dark'
+                  ? theme.palette.background.default
+                  : theme.palette.primary.main,
             })}
           >
-            <SearchBar autoFocus />
+            <SearchBar autoFocus sx={{ pr: 2 }} />
           </Paper>
         </Popover>
       )}
