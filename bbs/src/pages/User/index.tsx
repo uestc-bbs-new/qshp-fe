@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 import { Box, Stack, Tab, Tabs } from '@mui/material'
@@ -41,12 +41,14 @@ function User() {
   const { state } = useAppState()
   const [commonUserData, setCommonUserData] =
     useState<CommonUserQueryRpsoense>()
+  const removeVisitLog = searchParams.get('additional') == 'removevlog'
+  const removeVisitLogRef = useRef(removeVisitLog)
   const user = {
     ...(params.uid && parseInt(params.uid)
       ? { uid: parseInt(params.uid) }
       : undefined),
     ...(params.username && { username: params.username }),
-    ...(searchParams.get('additional') == 'removevlog' && {
+    ...(removeVisitLog && {
       removeVisitLog: true,
     }),
     ...(searchParams.get('a') && {
@@ -64,11 +66,15 @@ function User() {
     (self && state.user.uid != commonUserData?.user_summary?.uid)
   const queryOptions = {
     getUserSummary: !commonUserData?.user_summary || userChanged,
-    getRecentVisitors: !commonUserData?.recent_visitors || userChanged,
+    getRecentVisitors:
+      !commonUserData?.recent_visitors ||
+      userChanged ||
+      removeVisitLog != removeVisitLogRef.current,
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
   const onLoad = (data: CommonUserQueryRpsoense) => {
-    ;(data.user_summary || data.user_summary) &&
+    removeVisitLogRef.current = removeVisitLog
+    ;(data.user_summary || data.recent_visitors) &&
       setCommonUserData({
         ...commonUserData,
         ...data,
@@ -79,7 +85,7 @@ function User() {
   return (
     <Box>
       <Stack direction="row">
-        <Box mr={4} flexGrow={1} flexShrink={1} minWidth="1em">
+        <Box mr={2} flexGrow={1} flexShrink={1} minWidth="1em">
           <UserCard
             userSummary={commonUserData?.user_summary}
             key={commonUserData?.user_summary?.uid}
