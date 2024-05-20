@@ -33,6 +33,12 @@ const Home = () => {
   const { state, dispatch } = useAppState()
   const location = useLocation()
   const [topListOpen, setTopListOpen] = useState(false)
+  const [topListMounted, setTopListMounted] = useState(false)
+  useEffect(() => {
+    if (topListOpen) {
+      setTopListMounted(true)
+    }
+  }, [topListOpen])
 
   const theme = useTheme()
   const {
@@ -122,18 +128,29 @@ const Home = () => {
         {!tabbedTopView && <Aside topList={indexData?.top_list} homepage />}
       </Stack>
 
-      {topListOpen && <TopListDialog onClose={() => setTopListOpen(false)} />}
+      {(topListMounted || topListOpen) && (
+        <TopListDialog
+          open={topListOpen}
+          onClose={() => setTopListOpen(false)}
+        />
+      )}
     </>
   )
 }
 
-const TopListDialog = ({ onClose }: { onClose: () => void }) => {
+const TopListDialog = ({
+  open,
+  onClose,
+}: {
+  open: boolean
+  onClose: () => void
+}) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => void (document.body.style.overflow = '')
   }, [])
   return (
-    <Dialog open onClose={onClose} fullScreen>
+    <Dialog open={open} onClose={onClose} fullScreen keepMounted>
       <TopListView onClose={onClose} />
     </Dialog>
   )
