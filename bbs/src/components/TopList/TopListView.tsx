@@ -240,12 +240,13 @@ export const TopListDialog = ({
   onClose: () => void
 }) => {
   useEffect(() => {
-    if (alwaysOpen) {
-      return
+    if (open && !alwaysOpen) {
+      document.body.style.overflow = 'hidden'
+    } else if (!open) {
+      document.body.style.overflow = ''
     }
-    document.body.style.overflow = 'hidden'
     return () => void (document.body.style.overflow = '')
-  }, [])
+  }, [open])
 
   const body = (
     <Paper
@@ -259,7 +260,16 @@ export const TopListDialog = ({
       }}
       hidden={alwaysOpen && !open}
     >
-      <TopListView onClose={alwaysOpen ? undefined : onClose} />
+      <TopListView
+        onClose={
+          alwaysOpen
+            ? undefined
+            : () => {
+                document.body.style.overflow = ''
+                onClose()
+              }
+        }
+      />
     </Paper>
   )
   return alwaysOpen ? (
