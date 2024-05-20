@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 
-import { Box, Stack, Tab, Tabs } from '@mui/material'
+import { Box, Stack, Tab, Tabs, useMediaQuery } from '@mui/material'
 
 import { CommonUserQueryRpsoense } from '@/common/interfaces/user'
 import Card from '@/components/Card'
@@ -16,11 +16,13 @@ import MessageBoard from './MessageBoard'
 import Side from './Side'
 import UserCard from './UserCard'
 import UserThreads from './UserThreads'
+import Visitors from './Visitors'
 
 const tabs = [
   { id: 'profile', title: '个人资料' },
   { id: 'threads', title: '帖子' },
   { id: 'friends', title: '好友' },
+  { id: 'visitors', title: '最近访客' },
   { id: 'favorites', title: '收藏' },
   { id: 'comments', title: '留言板' },
 ]
@@ -82,6 +84,8 @@ function User() {
       })
   }
 
+  const hideSidebar = useMediaQuery('(max-width: 1080px)')
+
   return (
     <Box>
       <Stack direction="row">
@@ -105,7 +109,8 @@ function User() {
                   !(
                     commonUserData?.user_summary?.favorites_unavailable &&
                     tab.id == 'favorites'
-                  )
+                  ) &&
+                  !(tab.id == 'visitors' && !hideSidebar)
               )
               .map((tab) => (
                 <Tab
@@ -144,6 +149,15 @@ function User() {
                   userSummary={commonUserData?.user_summary}
                 />
               )}
+              {activeTab == 'visitors' && (
+                <Visitors
+                  userQuery={user}
+                  queryOptions={queryOptions}
+                  onLoad={onLoad}
+                  visitors={commonUserData?.recent_visitors}
+                  visits={commonUserData?.user_summary?.views}
+                />
+              )}
               {activeTab == 'favorites' && (
                 <Favorites
                   userQuery={user}
@@ -164,11 +178,13 @@ function User() {
             </>
           </Card>
         </Box>
-        <Side
-          key={commonUserData?.user_summary?.uid}
-          visitors={commonUserData?.recent_visitors}
-          visits={commonUserData?.user_summary?.views}
-        />
+        {!hideSidebar && (
+          <Side
+            key={commonUserData?.user_summary?.uid}
+            visitors={commonUserData?.recent_visitors}
+            visits={commonUserData?.user_summary?.views}
+          />
+        )}
       </Stack>
     </Box>
   )
