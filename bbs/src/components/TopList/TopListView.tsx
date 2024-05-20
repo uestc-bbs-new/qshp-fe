@@ -19,7 +19,6 @@ import {
   Stack,
   Tab,
   Tabs,
-  Typography,
   debounce,
 } from '@mui/material'
 
@@ -181,7 +180,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
   const { observe } = useInView({
     rootMargin: '50px 0px',
     onEnter: () => {
-      if (!isEnded && !isFetching) {
+      if (!isEnded && !isFetching && !isError) {
         fetch()
       }
     },
@@ -189,6 +188,16 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
 
   const saveCacheDebounced = useMemo(() => debounce(saveCache), [])
 
+  if (state.user.uninitialized) {
+    return (
+      <Box p={2}>
+        <Skeleton height={74} />
+        {[...Array(6)].map((_, index) => (
+          <Skeleton key={index} height={40} />
+        ))}
+      </Box>
+    )
+  }
   if (!state.user.uid) {
     return (
       <Box px={1} py={3}>
@@ -243,15 +252,23 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
         </ResponsiveMasonry>
       )}
       {!isEnded && !(isFetching && page == 1) && (
-        <Stack
-          direction="row"
-          justifyContent="center"
-          ref={isFetching ? undefined : observe}
-        >
+        <Stack ref={isFetching ? undefined : observe}>
           {isError ? (
-            <Typography>加载失败</Typography>
+            <Alert
+              severity="error"
+              action={
+                <Button color="inherit" size="small" onClick={() => fetch()}>
+                  重试
+                </Button>
+              }
+              sx={{ mt: 2 }}
+            >
+              加载失败
+            </Alert>
           ) : (
-            <Skeleton width="100%" height={40} />
+            [...Array(6)].map((_, index) => (
+              <Skeleton key={index} height={40} />
+            ))
           )}
         </Stack>
       )}
