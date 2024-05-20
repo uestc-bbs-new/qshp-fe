@@ -16,6 +16,7 @@ import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
+import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
 
 const Layout = () => {
@@ -77,6 +78,13 @@ const Layout = () => {
           </Snackbar>
         )}
       </Box>
+      {state.toplistViewMounted && (
+        <TopListDialog
+          open={!!state.toplistViewOpen}
+          alwaysOpen={!!state.toplistViewAlwaysOpen}
+          onClose={() => dispatch({ type: 'close toplist' })}
+        />
+      )}
     </>
   )
 }

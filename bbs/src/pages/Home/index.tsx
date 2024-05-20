@@ -1,15 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import {
   Box,
   Button,
   List,
-  Paper,
   Skeleton,
-  Slide,
   Stack,
   Typography,
   useMediaQuery,
@@ -27,20 +25,21 @@ import { globalCache, setForumListCache, useAppState } from '@/states'
 import { isDeveloper } from '@/states/settings'
 
 import { ForumGroup } from './ForumCover'
-import TopListView from './TopListView'
 
 const Home = () => {
   const tabbedTopView = useMediaQuery('(max-width: 1080px)')
   const mobileView = useMediaQuery('(max-width: 800px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
-  const [topListOpen, setTopListOpen] = useState(false)
-  const [topListMounted, setTopListMounted] = useState(false)
   useEffect(() => {
-    if (topListOpen) {
-      setTopListMounted(true)
+    if (mobileView) {
+      dispatch({ type: 'open toplist', payload: { alwaysOpen: true } })
     }
-  }, [topListOpen])
+    return () => {
+      console.log('exit')
+      dispatch({ type: 'close toplist' })
+    }
+  }, [mobileView])
 
   const theme = useTheme()
   const {
@@ -92,7 +91,9 @@ const Home = () => {
           >
             <OverviewInfo data={indexData?.global_stat} />
             {isDeveloper() && !!state.user.uid && (
-              <Button onClick={() => setTopListOpen(true)}>更多</Button>
+              <Button onClick={() => dispatch({ type: 'open toplist' })}>
+                更多
+              </Button>
             )}
           </Stack>
           {!indexData?.top_list && isLoading ? (
@@ -133,55 +134,8 @@ const Home = () => {
           </Stack>
         </>
       )}
-
-      {(topListMounted || topListOpen || mobileView) && (
-        <TopListDialog
-          open={topListOpen || mobileView}
-          alwaysOpen={mobileView}
-          onClose={() => setTopListOpen(false)}
-        />
-      )}
     </>
   )
 }
 
-const TopListDialog = ({
-  open,
-  alwaysOpen,
-  onClose,
-}: {
-  open: boolean
-  alwaysOpen?: boolean
-  onClose: () => void
-}) => {
-  useEffect(() => {
-    if (alwaysOpen) {
-      return
-    }
-    document.body.style.overflow = 'hidden'
-    return () => void (document.body.style.overflow = '')
-  }, [])
-
-  const body = (
-    <Paper
-      sx={{
-        left: 0,
-        right: 0,
-        bottom: 0,
-        top: 64,
-        position: 'fixed',
-        zIndex: 1,
-      }}
-    >
-      <TopListView onClose={alwaysOpen ? undefined : onClose} />
-    </Paper>
-  )
-  return alwaysOpen ? (
-    body
-  ) : (
-    <Slide in={open} direction="up">
-      {body}
-    </Slide>
-  )
-}
 export default Home

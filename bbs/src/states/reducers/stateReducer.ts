@@ -47,6 +47,9 @@ export type State = {
   activeThread?: ThreadBreadcumbEntry
   globalDialog?: GlobalDialogState
   globalSnackbar?: GlobalSnackbarState
+  toplistViewOpen?: boolean
+  toplistViewMounted?: boolean
+  toplistViewAlwaysOpen?: boolean
   theme: 'light' | 'dark'
   announcement?: Announcement[]
 }
@@ -123,6 +126,18 @@ export const stateReducer = (state: State, action: StateAction): State => {
       return {
         ...state,
         globalDialog: undefined,
+      }
+    case 'open toplist':
+      return {
+        ...state,
+        toplistViewOpen: true,
+        toplistViewMounted: true,
+        toplistViewAlwaysOpen: action.payload?.alwaysOpen,
+      }
+    case 'close toplist':
+      return {
+        ...state,
+        toplistViewOpen: false,
       }
     case 'open snackbar':
       return {

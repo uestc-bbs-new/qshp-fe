@@ -11,7 +11,9 @@ import { Close } from '@mui/icons-material'
 import {
   Box,
   IconButton,
+  Paper,
   Skeleton,
+  Slide,
   Stack,
   Tab,
   Tabs,
@@ -225,6 +227,47 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
         </Stack>
       )}
     </Box>
+  )
+}
+
+export const TopListDialog = ({
+  open,
+  alwaysOpen,
+  onClose,
+}: {
+  open: boolean
+  alwaysOpen?: boolean
+  onClose: () => void
+}) => {
+  useEffect(() => {
+    if (alwaysOpen) {
+      return
+    }
+    document.body.style.overflow = 'hidden'
+    return () => void (document.body.style.overflow = '')
+  }, [])
+
+  const body = (
+    <Paper
+      sx={{
+        left: 0,
+        right: 0,
+        bottom: 0,
+        top: 64,
+        position: 'fixed',
+        zIndex: 1,
+      }}
+      hidden={alwaysOpen && !open}
+    >
+      <TopListView onClose={alwaysOpen ? undefined : onClose} />
+    </Paper>
+  )
+  return alwaysOpen ? (
+    body
+  ) : (
+    <Slide in={open} direction="up">
+      {body}
+    </Slide>
   )
 }
 
