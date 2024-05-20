@@ -9,7 +9,9 @@ import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
 import { Close } from '@mui/icons-material'
 import {
+  Alert,
   Box,
+  Button,
   IconButton,
   Paper,
   Skeleton,
@@ -25,7 +27,7 @@ import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
 import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
-import { useTopList } from '@/states'
+import { useAppState, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 
 const TopListView = ({ onClose }: { onClose?: () => void }) => {
@@ -97,6 +99,7 @@ const toplistCache: {
 } = {}
 
 const TopListTab = ({ tab }: { tab: TopListKey }) => {
+  const { state, dispatch } = useAppState()
   const homeCachedData = useTopList()
   const getCache = () => {
     const cachedData = toplistCache[tab]
@@ -139,49 +142,75 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
     }
   }, [tab])
 
+  const fetch = async () => {
+    setFetching(true)
+    setError(false)
+    let newPage = page
+    try {
+      const newData = (await getTopLists(tab, page + 1))[tab]
+      if (newData?.length) {
+        ++newPage
+        setPage(newPage)
+      } else {
+        setEnded(true)
+      }
+      let newList: TopListThread[] | undefined
+      newData?.forEach((item) => {
+        if (
+          (list || []).every(
+            (existingItem) => existingItem.thread_id != item.thread_id
+          )
+        ) {
+          if (!newList) {
+            newList = list?.slice() || []
+          }
+          newList.push(item)
+        }
+      })
+      if (newList) {
+        setList(newList)
+      }
+      saveCache({ list: newList, page: newPage })
+    } catch (_) {
+      setError(true)
+    } finally {
+      setFetching(false)
+    }
+  }
+
   const { observe } = useInView({
     rootMargin: '50px 0px',
-    onEnter: async () => {
+    onEnter: () => {
       if (!isEnded && !isFetching) {
-        setFetching(true)
-        setError(false)
-        let newPage = page
-        try {
-          const newData = (await getTopLists(tab, page + 1))[tab]
-          if (newData?.length) {
-            ++newPage
-            setPage(newPage)
-          } else {
-            setEnded(true)
-          }
-          let newList: TopListThread[] | undefined
-          newData?.forEach((item) => {
-            if (
-              (list || []).every(
-                (existingItem) => existingItem.thread_id != item.thread_id
-              )
-            ) {
-              if (!newList) {
-                newList = list?.slice() || []
-              }
-              newList.push(item)
-            }
-          })
-          if (newList) {
-            setList(newList)
-          }
-          saveCache({ list: newList, page: newPage })
-        } catch (_) {
-          setError(true)
-        } finally {
-          setFetching(false)
-        }
+        fetch()
       }
     },
   })
 
   const saveCacheDebounced = useMemo(() => debounce(saveCache), [])
 
+  if (!state.user.uid) {
+    return (
+      <Box px={1} py={3}>
+        <Alert
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() =>
+                dispatch({ type: 'open dialog', payload: { kind: 'login' } })
+              }
+            >
+              登录
+            </Button>
+          }
+        >
+          请您登录后继续浏览。
+        </Alert>
+      </Box>
+    )
+  }
   return (
     <Box
       p={2}
