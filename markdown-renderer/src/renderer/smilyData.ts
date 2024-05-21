@@ -4272,10 +4272,13 @@ function fillSmilyMap(
   entry: SmilyEntry,
   kind: SmilyKindItem,
   item: SmilyItem,
-  offset?: number
+  offset?: number,
+  customCode?: number
 ) {
   let code = item.code ?? item.id
-  if (offset !== undefined) {
+  if (customCode !== undefined) {
+    code = customCode
+  } else if (offset !== undefined) {
     code = (code as number) + offset
   }
   entry[code.toString()] = `${kind.path}/${item.path}`
@@ -4305,7 +4308,8 @@ if (蛋黄脸) {
       legacySmilyMaps[kDefaultPrefix],
       蛋黄脸 as SmilyKindItem,
       item,
-      -460
+      -460,
+      item.code == 634 ? 208 : undefined
     )
   )
 }
