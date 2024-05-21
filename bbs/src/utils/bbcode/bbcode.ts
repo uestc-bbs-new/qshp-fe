@@ -454,7 +454,7 @@ function parseNonCodeBbcode(
     if (options.mode != 'postcomment') {
       str = str.replace(
         /\[img\]\s*([^["<\r\n]+?)\s*\[\/img\]/gi,
-        '<img src="$1" style="max-width:400px">'
+        '<img src="$1" style="max-width:400px;max-width:min(400px,100%)">'
       )
       str = parseAttachments(str, options, attachments, orphanAttachments)
       str = str.replace(
