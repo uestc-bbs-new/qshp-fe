@@ -130,8 +130,10 @@ const SearchBar = ({
         freeSolo
         ListboxProps={{
           sx: {
-            maxHeight: 'min(640px, calc(100vh - 110px))',
             '.MuiAutocomplete-option': { minHeight: 'auto' },
+          },
+          style: {
+            maxHeight: `${Math.min(640, window.innerHeight - 110)}px`,
           },
         }}
         slotProps={{
