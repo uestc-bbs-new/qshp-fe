@@ -100,7 +100,11 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
           },
           context: vditorContext.current,
         }),
-        preview: getPreviewThemeOptions(state.theme),
+        preview: {
+          ...getPreviewThemeOptions(state.theme),
+          // Disable preview action buttons which are useless in our bbs.
+          actions: [],
+        },
         ...other,
         theme: theme(),
       })
