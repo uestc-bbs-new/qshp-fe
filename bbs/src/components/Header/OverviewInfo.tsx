@@ -9,7 +9,13 @@ import Separated from '../Separated'
 
 const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
   return (
-    <Stack direction="row" alignItems="center" flexWrap="wrap">
+    <Stack
+      direction="row"
+      alignItems="center"
+      flexWrap="wrap"
+      flexGrow={1}
+      flexShrink={1}
+    >
       <InsertChart sx={{ color: '#74EAE9', mr: 1 }} />
       {data ? (
         <Separated
@@ -57,7 +63,7 @@ const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
           )}
         </Separated>
       ) : (
-        <Skeleton sx={{ flexGrow: 1 }} />
+        <Skeleton width="60%" />
       )}
     </Stack>
   )

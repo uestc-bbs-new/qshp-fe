@@ -90,25 +90,25 @@ const Home = () => {
             my={1}
           >
             <OverviewInfo data={indexData?.global_stat} />
-            {isDeveloper() && !!state.user.uid && (
-              <Button onClick={() => dispatch({ type: 'open toplist' })}>
-                更多
-              </Button>
-            )}
+            <Button
+              style={
+                !isDeveloper() || !state.user.uid
+                  ? { visibility: 'hidden' }
+                  : undefined
+              }
+              onClick={() => dispatch({ type: 'open toplist' })}
+            >
+              更多
+            </Button>
           </Stack>
-          {!indexData?.top_list && isLoading ? (
-            <Skeleton height={480} />
-          ) : (
-            indexData?.top_list &&
-            state.user.uid && <HeaderCards topLists={indexData?.top_list} />
-          )}
+          <HeaderCards topLists={indexData?.top_list} loading={isLoading} />
           {!tabbedTopView && <CampusService />}
 
           <Stack direction="row">
             <Box className="flex-1">
               {!indexData?.forum_list?.length ? (
                 <>
-                  <Skeleton variant="rounded" height={40} sx={{ my: 1 }} />
+                  <Skeleton variant="rounded" height={40} sx={{ my: 2 }} />
                   {Array.from(new Array(2)).map((_, index) => (
                     <Box key={index} className="flex-1" display="flex">
                       {Array.from(new Array(2)).map((_, index) => (
@@ -130,7 +130,13 @@ const Home = () => {
                 </List>
               )}
             </Box>
-            {!tabbedTopView && <Aside topList={indexData?.top_list} homepage />}
+            {!tabbedTopView && (
+              <Aside
+                topList={indexData?.top_list}
+                homepage
+                loading={isLoading}
+              />
+            )}
           </Stack>
         </>
       )}

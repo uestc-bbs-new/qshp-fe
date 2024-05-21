@@ -71,74 +71,82 @@ const SideTabs = ({
   const closeMenu = () => setMenuOpenSide('')
   return (
     <>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Tabs
-          ref={tabsRef}
-          value={value}
-          onChange={handleChange}
-          variant={homepage ? undefined : 'scrollable'}
-          scrollButtons={homepage ? undefined : 'auto'}
-          sx={{
-            pt: 1,
-            mb: 1,
-            borderBottom: 1,
-            borderColor: 'divider',
-            ...(!homepage && {
-              '.MuiTabs-flexContainer': { justifyContent: 'space-between' },
-            }),
-          }}
+      {loading ? (
+        <Skeleton height={56} />
+      ) : (
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          {tabs
-            .filter((key) => (homepage ? true : key == value))
-            .map((key) => (
-              <Tab
-                key={key}
-                label={topListTitleMap[key]}
-                value={key}
-                sx={{ minHeight: 32, ...(!homepage && { minWidth: 0 }) }}
-                onClick={homepage ? undefined : () => setMenuOpenSide('left')}
-              />
-            ))}
-        </Tabs>
-        {!homepage && (
-          <>
-            <IconButton
-              key="_dropdown"
-              ref={expandRef}
-              onClick={() => setMenuOpenSide('right')}
-            >
-              <ArrowDropDown />
-            </IconButton>
-            <Menu
-              key="_menu"
-              anchorEl={tabsRef.current}
-              anchorOrigin={{
-                horizontal: menuOpenSide || 'left',
-                vertical: 'bottom',
-              }}
-              transformOrigin={{
-                horizontal: menuOpenSide || 'left',
-                vertical: 'top',
-              }}
-              open={!!menuOpenSide}
-              onClose={closeMenu}
-            >
-              {tabs.map((key) => (
-                <MenuItem
+          <Tabs
+            ref={tabsRef}
+            value={value}
+            onChange={handleChange}
+            variant={homepage ? undefined : 'scrollable'}
+            scrollButtons={homepage ? undefined : 'auto'}
+            sx={{
+              pt: 1,
+              mb: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+              ...(!homepage && {
+                '.MuiTabs-flexContainer': { justifyContent: 'space-between' },
+              }),
+            }}
+          >
+            {tabs
+              .filter((key) => (homepage ? true : key == value))
+              .map((key) => (
+                <Tab
                   key={key}
-                  selected={key == value}
-                  onClick={() => {
-                    setValue(key)
-                    closeMenu()
-                  }}
-                >
-                  {topListTitleMap[key]}
-                </MenuItem>
+                  label={topListTitleMap[key]}
+                  value={key}
+                  sx={{ minHeight: 32, ...(!homepage && { minWidth: 0 }) }}
+                  onClick={homepage ? undefined : () => setMenuOpenSide('left')}
+                />
               ))}
-            </Menu>
-          </>
-        )}
-      </Stack>
+          </Tabs>
+          {!homepage && (
+            <>
+              <IconButton
+                key="_dropdown"
+                ref={expandRef}
+                onClick={() => setMenuOpenSide('right')}
+              >
+                <ArrowDropDown />
+              </IconButton>
+              <Menu
+                key="_menu"
+                anchorEl={tabsRef.current}
+                anchorOrigin={{
+                  horizontal: menuOpenSide || 'left',
+                  vertical: 'bottom',
+                }}
+                transformOrigin={{
+                  horizontal: menuOpenSide || 'left',
+                  vertical: 'top',
+                }}
+                open={!!menuOpenSide}
+                onClose={closeMenu}
+              >
+                {tabs.map((key) => (
+                  <MenuItem
+                    key={key}
+                    selected={key == value}
+                    onClick={() => {
+                      setValue(key)
+                      closeMenu()
+                    }}
+                  >
+                    {topListTitleMap[key]}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          )}
+        </Stack>
+      )}
       <Card tiny>
         {loading ? (
           <>
