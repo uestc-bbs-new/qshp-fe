@@ -10,6 +10,7 @@ import {
   Switch,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { PostThreadPollDetails } from '@/apis/thread'
@@ -39,6 +40,7 @@ export const VoteSelection = ({
         ? '允许选择的数目超过了选项数目'
         : undefined
 
+  const narrowView = useMediaQuery('(max-width: 750px)')
   return (
     <Box>
       <FormGroup row>
@@ -73,7 +75,7 @@ export const VoteSelection = ({
 
       {isVote && (
         <PostOptionsBlock>
-          <Stack direction="row">
+          <Stack direction={narrowView ? 'column' : 'row'}>
             <Stack mr={4}>
               <Typography mt={1} mb={3}>
                 选项：最多可以填写 100 个选项
