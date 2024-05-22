@@ -32,11 +32,7 @@ const Home = () => {
   const { state, dispatch } = useAppState()
   const location = useLocation()
   useEffect(() => {
-    if (mobileView) {
-      dispatch({ type: 'open toplist', payload: { alwaysOpen: true } })
-    }
     return () => {
-      console.log('exit')
       dispatch({ type: 'close toplist' })
     }
   }, [mobileView])
@@ -67,79 +63,79 @@ const Home = () => {
     if (indexData?.top_list) {
       globalCache.topList = indexData.top_list
     }
-  }, [indexData])
+    if (mobileView && indexData) {
+      dispatch({ type: 'open toplist', payload: { alwaysOpen: true } })
+    }
+  }, [indexData, mobileView])
   useEffect(() => {
     refetch()
   }, [state.user.uid, location.key])
+  if (mobileView) {
+    return [...Array(10)].map((_, index) => (
+      <Skeleton key={index} height={70} />
+    ))
+  }
   return (
     <>
-      {!mobileView && (
-        <>
-          <Banner src={headerImg}>
-            <Box className="text-white text-center">
-              <Typography variant="h4">清水河畔</Typography>
-              <Typography color={theme.palette.grey[400]}>
-                说你想说，做你想做
-              </Typography>
-            </Box>
-          </Banner>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            my={1}
-          >
-            <OverviewInfo data={indexData?.global_stat} />
-            <Button
-              style={
-                !isDeveloper() || !state.user.uid
-                  ? { visibility: 'hidden' }
-                  : undefined
-              }
-              onClick={() => dispatch({ type: 'open toplist' })}
-            >
-              更多
-            </Button>
-          </Stack>
-          <HeaderCards topLists={indexData?.top_list} loading={isLoading} />
-          {!tabbedTopView && <CampusService />}
+      <Banner src={headerImg}>
+        <Box className="text-white text-center">
+          <Typography variant="h4">清水河畔</Typography>
+          <Typography color={theme.palette.grey[400]}>
+            说你想说，做你想做
+          </Typography>
+        </Box>
+      </Banner>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        my={1}
+      >
+        <OverviewInfo data={indexData?.global_stat} />
+        <Button
+          style={
+            !isDeveloper() || !state.user.uid
+              ? { visibility: 'hidden' }
+              : undefined
+          }
+          onClick={() => dispatch({ type: 'open toplist' })}
+        >
+          更多
+        </Button>
+      </Stack>
+      <HeaderCards topLists={indexData?.top_list} loading={isLoading} />
+      {!tabbedTopView && <CampusService />}
 
-          <Stack direction="row">
-            <Box className="flex-1">
-              {!indexData?.forum_list?.length ? (
-                <>
-                  <Skeleton variant="rounded" height={40} sx={{ my: 2 }} />
+      <Stack direction="row">
+        <Box className="flex-1">
+          {!indexData?.forum_list?.length ? (
+            <>
+              <Skeleton variant="rounded" height={40} sx={{ my: 2 }} />
+              {Array.from(new Array(2)).map((_, index) => (
+                <Box key={index} className="flex-1" display="flex">
                   {Array.from(new Array(2)).map((_, index) => (
-                    <Box key={index} className="flex-1" display="flex">
-                      {Array.from(new Array(2)).map((_, index) => (
-                        <Box
-                          key={index}
-                          sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
-                        >
-                          <Skeleton variant="rectangular" height={118} />
-                        </Box>
-                      ))}
+                    <Box
+                      key={index}
+                      sx={{ flexGrow: 1, marginRight: 1.1, my: 2 }}
+                    >
+                      <Skeleton variant="rectangular" height={118} />
                     </Box>
                   ))}
-                </>
-              ) : (
-                <List>
-                  {indexData.forum_list.map((item) => (
-                    <ForumGroup data={item} key={item.name} />
-                  ))}
-                </List>
-              )}
-            </Box>
-            {!tabbedTopView && (
-              <Aside
-                topList={indexData?.top_list}
-                homepage
-                loading={isLoading}
-              />
-            )}
-          </Stack>
-        </>
-      )}
+                </Box>
+              ))}
+            </>
+          ) : (
+            <List>
+              {indexData.forum_list.map((item) => (
+                <ForumGroup data={item} key={item.name} />
+              ))}
+            </List>
+          )}
+        </Box>
+        {!tabbedTopView && (
+          <Aside topList={indexData?.top_list} homepage loading={isLoading} />
+        )}
+      </Stack>
     </>
   )
 }
