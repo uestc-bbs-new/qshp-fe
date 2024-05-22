@@ -68,8 +68,8 @@ export const useMedals = () => {
   const { data, refetch } = useQuery({
     queryKey: ['medalList'],
     queryFn: async () => {
-      console.log('fetch')
       const medalList = await getMedals()
+      previousVersion.current = currentVersion
       if (medalList) {
         globalCache.medalMap = Object.fromEntries(
           medalList.map((medal) => [medal.id, medal])
@@ -89,7 +89,9 @@ export const useMedals = () => {
     enabled: !globalCache.medalList,
   })
   useEffect(() => {
-    refetch()
+    if (previousVersion.current != currentVersion || !globalCache.medalList) {
+      refetch()
+    }
   }, [currentVersion])
   return data
 }
