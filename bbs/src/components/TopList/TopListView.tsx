@@ -97,7 +97,9 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
-              <TopListTab tab={key} />
+              <TabContent tab={key} requireSignIn>
+                <TopListTab tab={key} />
+              </TabContent>
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
@@ -118,13 +120,10 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
 type TopListCacheEntry = {
   list: TopListThread[]
   page: number
-  scrollOffset: number
 }
-
 const toplistCache: {
   [key in TopListKey]?: TopListCacheEntry
 } = {}
-
 const toplistScrollOffset: {
   [key in TabKey]?: number
 } = {}
@@ -217,7 +216,6 @@ const TabContent = ({
 }
 
 const TopListTab = ({ tab }: { tab: TopListKey }) => {
-  const { state, dispatch } = useAppState()
   const homeCachedData = useTopList()
   const getCache = () => {
     const cachedData = toplistCache[tab]
@@ -236,7 +234,6 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
   const [isFetching, setFetching] = useState(false)
   const [isError, setError] = useState(false)
   const [page, setPage] = useState(initData.page)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const saveCache = (newData: Partial<TopListCacheEntry>) => {
     const newList = newData.list || list
     if (newList) {
@@ -244,7 +241,6 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
         page,
         ...newData,
         list: newList,
-        scrollOffset: scrollRef.current?.scrollTop ?? 0,
       }
     }
   }
@@ -252,12 +248,6 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
     const initData = getCache()
     setList(initData.list)
     setPage(initData.page)
-  }, [tab])
-  useLayoutEffect(() => {
-    const initData = getCache()
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = initData.scrollOffset
-    }
   }, [tab])
 
   const fetch = async () => {
@@ -305,59 +295,8 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
     },
   })
 
-  const saveCacheDebounced = useMemo(() => debounce(saveCache), [])
-
-  if (state.user.uninitialized) {
-    return (
-      <Box p={2}>
-        <Skeleton height={74} />
-        {[...Array(6)].map((_, index) => (
-          <Skeleton key={index} height={40} />
-        ))}
-      </Box>
-    )
-  }
-  if (!state.user.uid) {
-    return (
-      <Box px={1} py={3}>
-        <Alert
-          severity="info"
-          action={
-            <Button
-              color="inherit"
-              size="small"
-              onClick={() =>
-                dispatch({ type: 'open dialog', payload: { kind: 'login' } })
-              }
-            >
-              登录
-            </Button>
-          }
-        >
-          请您登录后继续浏览。
-        </Alert>
-      </Box>
-    )
-  }
   return (
-    <Box
-      p={2}
-      overflow="auto"
-      height="100%"
-      boxSizing="border-box"
-      sx={{
-        '&::-webkit-scrollbar': {
-          backgroundColor: 'rgba(128, 128, 128, 0.5)',
-          width: '3px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#999',
-          width: '3px',
-        },
-      }}
-      onScroll={() => saveCacheDebounced({ list, page })}
-      ref={scrollRef}
-    >
+    <>
       {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
       {!!list?.length && (
         <ResponsiveMasonry
@@ -391,7 +330,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
           )}
         </Stack>
       )}
-    </Box>
+    </>
   )
 }
 
