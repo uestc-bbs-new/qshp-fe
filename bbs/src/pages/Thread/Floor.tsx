@@ -136,7 +136,10 @@ const Floor = ({
               {narrowView && (
                 <ReplyCreditFloorLeft threadDetails={threadDetails} topBottom />
               )}
-              <ReplyCreditFloorRight threadDetails={threadDetails} />
+              <ReplyCreditFloorRight
+                threadDetails={threadDetails}
+                topBottom={narrowView}
+              />
             </>
           )}
           {narrowView && <PostAuthorLandscape post={post} />}

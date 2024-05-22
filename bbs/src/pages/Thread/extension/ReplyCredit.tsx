@@ -93,18 +93,21 @@ export const ReplyCreditFloorLeft = ({
 
 export const ReplyCreditFloorRight = ({
   threadDetails,
+  topBottom,
 }: {
   threadDetails: Thread
+  topBottom?: boolean
 }) => (
   <Stack
     direction="row"
     alignItems="center"
     justifyContent="space-between"
-    borderBottom="5px solid #E0E0E0"
-    height={kReplyCreditHeight}
+    borderBottom={`${topBottom ? 2 : 5}px solid #E0E0E0`}
+    height={topBottom ? undefined : kReplyCreditHeight}
     px={2}
+    py={topBottom ? 1 : undefined}
   >
-    <Typography variant="replyCreditDetails">
+    <Typography variant="replyCreditDetails" textAlign="justify">
       本帖为
       <span css={css({ fontWeight: 'bold' })}>散水帖</span>
       ，回复本帖可获得 {threadDetails.reply_credit?.credit_amount}{' '}
@@ -116,14 +119,12 @@ export const ReplyCreditFloorRight = ({
       ) && (
         <>
           <Separated separator={<>，</>}>
-            {[
-              ...(threadDetails.reply_credit?.limit_per_user
-                ? [<>每人限 {threadDetails.reply_credit.limit_per_user} 次</>]
-                : []),
-              ...(threadDetails.reply_credit?.probability
-                ? [<>中奖概率 {threadDetails.reply_credit.probability}%</>]
-                : []),
-            ]}
+            {!!threadDetails.reply_credit?.limit_per_user && (
+              <>每人限 {threadDetails.reply_credit.limit_per_user} 次</>
+            )}
+            {!!threadDetails.reply_credit?.probability && (
+              <>中奖概率 {threadDetails.reply_credit.probability}%</>
+            )}
           </Separated>
           。
         </>
@@ -133,6 +134,8 @@ export const ReplyCreditFloorRight = ({
       <Stack
         direction="row"
         alignItems="center"
+        flexShrink={0}
+        ml={1.5}
         sx={{
           borderRadius: '4px',
           backgroundColor: 'rgba(33, 117, 243, 0.8)',
