@@ -337,10 +337,12 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
 export const TopListDialog = ({
   open,
   alwaysOpen,
+  noTransition,
   onClose,
 }: {
   open: boolean
   alwaysOpen?: boolean
+  noTransition?: boolean
   onClose: () => void
 }) => {
   useEffect(() => {
@@ -362,7 +364,7 @@ export const TopListDialog = ({
         position: 'fixed',
         zIndex: 1,
       }}
-      hidden={alwaysOpen && !open}
+      hidden={(alwaysOpen || noTransition) && !open}
     >
       <TopListView
         onClose={
@@ -376,7 +378,7 @@ export const TopListDialog = ({
       />
     </Paper>
   )
-  return alwaysOpen ? (
+  return alwaysOpen || noTransition ? (
     body
   ) : (
     <Slide in={open} direction="up">

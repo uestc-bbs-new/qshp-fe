@@ -39,6 +39,14 @@ type GlobalSnackbarState = {
   key: number
 }
 
+type TopListViewState = {
+  open?: boolean
+  mounted?: boolean
+  alwaysOpen?: boolean
+  noTransition?: boolean
+  manuallyOpened?: boolean
+}
+
 export type State = {
   drawer: boolean
   user: UserState
@@ -47,9 +55,7 @@ export type State = {
   activeThread?: ThreadBreadcumbEntry
   globalDialog?: GlobalDialogState
   globalSnackbar?: GlobalSnackbarState
-  toplistViewOpen?: boolean
-  toplistViewMounted?: boolean
-  toplistViewAlwaysOpen?: boolean
+  toplistView?: TopListViewState
   theme: 'light' | 'dark'
   announcement?: Announcement[]
 }
@@ -130,14 +136,20 @@ export const stateReducer = (state: State, action: StateAction): State => {
     case 'open toplist':
       return {
         ...state,
-        toplistViewOpen: true,
-        toplistViewMounted: true,
-        toplistViewAlwaysOpen: action.payload?.alwaysOpen,
+        toplistView: {
+          ...action.payload,
+          open: true,
+          mounted: true,
+        },
       }
     case 'close toplist':
       return {
         ...state,
-        toplistViewOpen: false,
+        toplistView: {
+          ...state.toplistView,
+          ...action.payload,
+          open: false,
+        },
       }
     case 'open snackbar':
       return {

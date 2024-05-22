@@ -78,11 +78,17 @@ const Layout = () => {
           </Snackbar>
         )}
       </Box>
-      {state.toplistViewMounted && (
+      {state.toplistView?.mounted && (
         <TopListDialog
-          open={!!state.toplistViewOpen}
-          alwaysOpen={!!state.toplistViewAlwaysOpen}
-          onClose={() => dispatch({ type: 'close toplist' })}
+          open={!!state.toplistView?.open}
+          alwaysOpen={!!state.toplistView?.alwaysOpen}
+          noTransition={!!state.toplistView?.noTransition}
+          onClose={() =>
+            dispatch({
+              type: 'close toplist',
+              payload: { manuallyOpened: false },
+            })
+          }
         />
       )}
     </>

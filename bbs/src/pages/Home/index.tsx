@@ -33,7 +33,7 @@ const Home = () => {
   const location = useLocation()
   useEffect(() => {
     return () => {
-      dispatch({ type: 'close toplist' })
+      dispatch({ type: 'close toplist', payload: { noTransition: true } })
     }
   }, [mobileView])
 
@@ -63,8 +63,17 @@ const Home = () => {
     if (indexData?.top_list) {
       globalCache.topList = indexData.top_list
     }
-    if (mobileView && indexData) {
-      dispatch({ type: 'open toplist', payload: { alwaysOpen: true } })
+    if ((mobileView && indexData) || state.toplistView?.manuallyOpened) {
+      dispatch({
+        type: 'open toplist',
+        payload: {
+          alwaysOpen: mobileView,
+          noTransition: true,
+          ...(state.toplistView?.manuallyOpened && {
+            manuallyOpened: true,
+          }),
+        },
+      })
     }
   }, [indexData, mobileView])
   useEffect(() => {
@@ -98,7 +107,12 @@ const Home = () => {
               ? { visibility: 'hidden' }
               : undefined
           }
-          onClick={() => dispatch({ type: 'open toplist' })}
+          onClick={() => {
+            dispatch({
+              type: 'open toplist',
+              payload: { manuallyOpened: true },
+            })
+          }}
         >
           更多
         </Button>
