@@ -3,7 +3,13 @@ import 'swiper/css/autoplay'
 import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
@@ -13,6 +19,7 @@ import {
   Box,
   Button,
   IconButton,
+  List,
   Paper,
   Skeleton,
   Slide,
@@ -26,12 +33,24 @@ import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
 import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
-import { useAppState, useTopList } from '@/states'
+import { ForumGroup } from '@/pages/Home/ForumCover'
+import { useAppState, useForumList, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 
+const kAllForums = 'allforums'
+type TabKey = TopListKey | 'allforums'
+const tabKeys: TabKey[] = [...topListKeys, kAllForums]
+
 const TopListView = ({ onClose }: { onClose?: () => void }) => {
-  const [activeTab, setActiveTab] = useState<TopListKey>('newthread')
+  const [activeTab, setActiveTab] = useState<TabKey>('newthread')
   const swiperRef = useRef<SwiperRef>(null)
+
+  const switchTab = (key: TabKey) => {
+    setActiveTab(key)
+    swiperRef.current?.swiper?.slideTo(tabKeys.indexOf(key))
+  }
+
+  const forumList = useForumList()
 
   return (
     <Stack height="100%">
@@ -48,14 +67,16 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
           {topListKeys.map((key) => (
             <Tab
               key={key}
-              label={topListTitleMap[key]}
               value={key}
-              onClick={() => {
-                setActiveTab(key)
-                swiperRef.current?.swiper?.slideTo(topListKeys.indexOf(key))
-              }}
-            ></Tab>
+              label={topListTitleMap[key]}
+              onClick={() => switchTab(key)}
+            />
           ))}
+          <Tab
+            value="allforums"
+            label="所有板块"
+            onClick={() => switchTab('allforums')}
+          />
         </Tabs>
         {onClose && (
           <IconButton onClick={() => onClose()}>
@@ -72,15 +93,22 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
           loop
           initialSlide={1}
           css={{ maxWidth: '100%', height: '100%' }}
-          onSlideChange={(swiper) =>
-            setActiveTab(topListKeys[swiper.realIndex])
-          }
+          onSlideChange={(swiper) => setActiveTab(tabKeys[swiper.realIndex])}
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
               <TopListTab tab={key} />
             </SwiperSlide>
           ))}
+          <SwiperSlide key={kAllForums}>
+            <TabContent tab={kAllForums}>
+              <List>
+                {forumList?.map((item) => (
+                  <ForumGroup data={item} key={item.name} />
+                ))}
+              </List>
+            </TabContent>
+          </SwiperSlide>
         </Swiper>
       </Box>
     </Stack>
@@ -96,6 +124,97 @@ type TopListCacheEntry = {
 const toplistCache: {
   [key in TopListKey]?: TopListCacheEntry
 } = {}
+
+const toplistScrollOffset: {
+  [key in TabKey]?: number
+} = {}
+
+const TabContent = ({
+  tab,
+  children,
+  requireSignIn,
+  skeleton,
+}: {
+  tab: TabKey
+  children?: React.ReactNode
+  requireSignIn?: boolean
+  skeleton?: React.ReactNode
+}) => {
+  const { state, dispatch } = useAppState()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = toplistScrollOffset[tab] ?? 0
+    }
+  }, [tab])
+
+  const saveScrollffsetDebounced = useMemo(
+    () =>
+      debounce(() => {
+        toplistScrollOffset[tab] = scrollRef.current?.scrollTop ?? 0
+      }),
+    []
+  )
+
+  if (state.user.uninitialized) {
+    return (
+      <Box p={2}>
+        {skeleton ?? (
+          <>
+            <Skeleton height={74} />
+            {[...Array(6)].map((_, index) => (
+              <Skeleton key={index} height={40} />
+            ))}
+          </>
+        )}
+      </Box>
+    )
+  }
+  if (requireSignIn && !state.user.uid) {
+    return (
+      <Box px={1} py={3}>
+        <Alert
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() =>
+                dispatch({ type: 'open dialog', payload: { kind: 'login' } })
+              }
+            >
+              登录
+            </Button>
+          }
+        >
+          请您登录后继续浏览。
+        </Alert>
+      </Box>
+    )
+  }
+  return (
+    <Box
+      p={2}
+      overflow="auto"
+      height="100%"
+      boxSizing="border-box"
+      sx={{
+        '&::-webkit-scrollbar': {
+          backgroundColor: 'rgba(128, 128, 128, 0.5)',
+          width: '3px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#999',
+          width: '3px',
+        },
+      }}
+      onScroll={() => saveScrollffsetDebounced()}
+      ref={scrollRef}
+    >
+      {children}
+    </Box>
+  )
+}
 
 const TopListTab = ({ tab }: { tab: TopListKey }) => {
   const { state, dispatch } = useAppState()
