@@ -5,6 +5,18 @@ import { previewOptions } from '../../markdown-renderer/src/main'
 import { Attachment } from '../../markdown-renderer/src/renderer/types'
 import './extra.css'
 
+declare global {
+  interface Window {
+    zoom: (
+      img: HTMLImageElement,
+      zimg: string,
+      nocover: number,
+      pn: number,
+      showexif: string
+    ) => void
+  }
+}
+
 const kThumbPrefix = '/thumb'
 const kForumAttachmentPrefix = '/data/attachment/forum/'
 
@@ -50,11 +62,31 @@ const kForumAttachmentPrefix = '/data/attachment/forum/'
         )
       }
       content.innerHTML = ''
+      const inlineAttachments = new Set<number>()
       Vditor.preview(
         content,
         markdown,
-        previewOptions({ mode: 'light', attachments })
-      )
+        previewOptions({ mode: 'light', attachments, inlineAttachments })
+      ).then(() => {
+        inlineAttachments.forEach(
+          (aid) => post.querySelector(`dl.tattl[data-aid="${aid}"]`)?.remove()
+        )
+        ;[].forEach.call(
+          post.querySelectorAll('img.post_attachment_image'),
+          (img: HTMLImageElement) => {
+            img.classList.add('zoom')
+            img.addEventListener('click', () =>
+              window.zoom(
+                img,
+                img.getAttribute('data-x-fullsize-path') || img.src,
+                0,
+                0,
+                '0'
+              )
+            )
+          }
+        )
+      })
     }
   }
 )

@@ -46,6 +46,7 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
       (item) => item.attachment_id == id
     )
     if (attachment) {
+      context?.inlineAttachments?.add(attachment.attachment_id)
       return renderAttachmentImage(
         attachment,
         html`alt="${alt}" data-x-special-kind="attachment"
@@ -72,6 +73,7 @@ const renderLink = (href: string, text: string, context?: VditorContext) => {
       (item) => item.attachment_id == id
     )
     if (attach) {
+      context?.inlineAttachments?.add(attach.attachment_id)
       return html`<a
         class="post_attachment post_attachment_file"
         href="${attach.download_url || 'javascript:void(0)'}"

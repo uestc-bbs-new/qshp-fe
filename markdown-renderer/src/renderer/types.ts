@@ -18,6 +18,7 @@ export type Attachment = FileInfo & {
 export type VditorContext = {
   vditor?: Vditor
   attachments: Attachment[]
+  inlineAttachments?: Set<number>
 }
 
 export type RenderMode = 'light' | 'dark'
