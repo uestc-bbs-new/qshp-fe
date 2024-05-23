@@ -54,8 +54,11 @@ const Home = () => {
     },
   })
   useEffect(() => {
-    if (indexData?.announcement) {
-      dispatch({ type: 'set announcement', payload: indexData.announcement })
+    if (indexData) {
+      dispatch({
+        type: 'set announcement',
+        payload: indexData.announcement || [],
+      })
     }
     if (indexData?.forum_list) {
       setForumListCache(indexData.forum_list)

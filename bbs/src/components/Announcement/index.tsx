@@ -121,10 +121,11 @@ const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
       matches[matches.length - 1].id != 'index' &&
       !state.announcement
     ) {
-      getIndexData({ announcement: true }).then(
-        (data) =>
-          data.announcement &&
-          dispatch({ type: 'set announcement', payload: data.announcement })
+      getIndexData({ announcement: true }).then((data) =>
+        dispatch({
+          type: 'set announcement',
+          payload: data.announcement || [],
+        })
       )
     }
   }, [])
