@@ -115,7 +115,11 @@ export const RegisterForm = ({
     }
     if (result) {
       persistedStates.authorizationHeader = result.authorization
-      navigate(idasResult.continue, { replace: true })
+      if (window.innerWidth < 750) {
+        navigate(idasResult.continue, { replace: true })
+      } else {
+        location.href = '/'
+      }
     }
   }
   return (
