@@ -22,7 +22,6 @@ import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
-import { isDeveloper } from '@/states/settings'
 
 import { ForumGroup } from './ForumCover'
 
@@ -105,11 +104,7 @@ const Home = () => {
       >
         <OverviewInfo data={indexData?.global_stat} />
         <Button
-          style={
-            !isDeveloper() || !state.user.uid
-              ? { visibility: 'hidden' }
-              : undefined
-          }
+          style={!state.user.uid ? { visibility: 'hidden' } : undefined}
           onClick={() => {
             dispatch({
               type: 'open toplist',
