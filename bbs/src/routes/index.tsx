@@ -23,69 +23,34 @@ import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
-import { isIdasRelease } from '@/utils/releaseMode'
+import { isPreviewRelease } from '@/utils/releaseMode'
 
 import routes from './routes'
 
-const pages: RouteObject[] = [
-  { path: '/', loader: () => redirect('/new') },
-  { path: '/new', id: 'index', element: <Home /> },
-  { path: '/search/:type?', id: 'search', element: <Search /> },
-  { path: '/post/:fid?', id: 'post', element: <Edit /> },
-  { path: '/forum/:id', id: 'forum', element: <Forum /> },
-  {
-    path: '/thread/:id',
-    id: 'thread',
-    element: <Thread />,
-  },
-  { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
-  {
-    path: '/messages',
-    element: <Messages />,
-    children: [
-      {
-        id: 'messages',
-        index: true,
-        element: <Chat />,
-      },
-      {
-        id: 'chat',
-        path: 'chat/:plid?',
-        element: <Chat />,
-      },
-      {
-        id: 'chat_user',
-        path: 'chat/user/:uid?',
-        element: <Chat />,
-      },
-      {
-        id: 'posts',
-        path: 'posts/:kind?',
-        element: <Notifications />,
-      },
-      {
-        id: 'system',
-        path: 'system/:kind?',
-        element: <Notifications />,
-      },
-    ],
-  },
+const devPages: RouteObject[] = [
   {
     path: '/settings/:id?',
     id: 'settings',
     element: <Settings />,
   },
-  { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
   {
-    path: '/user/name/:username/:subPage?',
-    id: 'userByName',
-    element: <User />,
+    path: '/renew',
+    id: 'renew',
+    element: <Renew />,
   },
-  ...adminRoutes,
 ]
 
-const idasPreviewPages = [
-  { path: '/', loader: () => (location.href = '/forum.php') },
+const devMessagesPages: RouteObject[] = [
+  {
+    id: 'chat',
+    path: 'chat/:plid?',
+    element: <Chat />,
+  },
+  {
+    id: 'chat_user',
+    path: 'chat/user/:uid?',
+    element: <Chat />,
+  },
 ]
 
 routes.current = [
@@ -99,12 +64,47 @@ routes.current = [
     ),
     children: [
       { path: '*', id: '404', element: <NotFound /> },
-      ...(isIdasRelease ? idasPreviewPages : pages),
+      { path: '/', loader: () => redirect('/new') },
+      { path: '/new', id: 'index', element: <Home /> },
+      { path: '/search/:type?', id: 'search', element: <Search /> },
+      { path: '/post/:fid?', id: 'post', element: <Edit /> },
+      { path: '/forum/:id', id: 'forum', element: <Forum /> },
       {
-        path: '/renew',
-        id: 'renew',
-        element: <Renew />,
+        path: '/thread/:id',
+        id: 'thread',
+        element: <Thread />,
       },
+      { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
+      {
+        path: '/messages',
+        element: <Messages />,
+        children: [
+          {
+            id: 'messages',
+            index: true,
+            element: isPreviewRelease ? <Notifications /> : <Chat />,
+          },
+          {
+            id: 'posts',
+            path: 'posts/:kind?',
+            element: <Notifications />,
+          },
+          {
+            id: 'system',
+            path: 'system/:kind?',
+            element: <Notifications />,
+          },
+          ...(isPreviewRelease ? devMessagesPages : []),
+        ],
+      },
+      { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
+      {
+        path: '/user/name/:username/:subPage?',
+        id: 'userByName',
+        element: <User />,
+      },
+      ...adminRoutes,
+      ...(isPreviewRelease ? devPages : []),
     ],
   },
   {
