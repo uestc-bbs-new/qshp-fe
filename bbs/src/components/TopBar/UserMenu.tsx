@@ -7,7 +7,6 @@ import {
   Person,
   SavedSearch,
   Settings,
-  TransferWithinAStation,
 } from '@mui/icons-material'
 import {
   Badge,
@@ -106,18 +105,19 @@ const MenuContent = ({ small }: { small?: boolean }) => {
           </ListItemIcon>
           {getTextFromThemeSetting(themeSetting)}
         </MenuItem>
-        {!isPreviewRelease && (
+        {/* {!isPreviewRelease && (
           <MenuItem>
             <ListItemIcon>
               <TransferWithinAStation fontSize="small" />
             </ListItemIcon>
             切换账号
           </MenuItem>
-        )}
+        )} */}
         <MenuItem
           component={MenuItemLink}
           to={isPreviewRelease ? '/home.php?mod=spacecp' : pages.settings()}
           external={isPreviewRelease}
+          target={isPreviewRelease ? '_blank' : undefined}
         >
           <ListItemIcon>
             <Settings fontSize="small" />
