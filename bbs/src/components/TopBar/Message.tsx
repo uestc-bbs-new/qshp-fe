@@ -107,7 +107,10 @@ const MessagePopover = () => {
     <>
       <Tooltip
         title={<MessageTabs />}
-        slotProps={{ tooltip: { sx: { fontSize: '1em' } } }}
+        slotProps={{
+          tooltip: { sx: { fontSize: '1em' } },
+          popper: { placement: 'bottom-end' },
+        }}
       >
         <Badge
           badgeContent={getTotalMessages(state.user)}
