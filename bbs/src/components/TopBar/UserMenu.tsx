@@ -75,7 +75,7 @@ const MenuContent = ({ small }: { small?: boolean }) => {
           <Divider
             variant="middle"
             flexItem
-            sx={{ '.MuiMenuItem-root+&': { my: 0 } }}
+            sx={small ? { '.MuiMenuItem-root+&': { my: 0 } } : undefined}
           />
         }
       >
