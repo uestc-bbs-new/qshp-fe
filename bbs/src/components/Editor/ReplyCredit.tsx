@@ -124,7 +124,7 @@ const ReplyCredit = ({
             <TextField
               value={details.count || ''}
               onChange={(e) => {
-                setDetails({
+                updateValueRef({
                   ...details,
                   count: parseInt(e.target.value) || 0,
                 })
