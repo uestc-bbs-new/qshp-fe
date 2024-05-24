@@ -63,30 +63,36 @@ export const ReplyCreditFloorLeft = ({
 }) => (
   <Stack
     direction="row"
-    justifyContent="center"
+    justifyContent={
+      threadDetails.can_reply && topBottom ? 'space-between' : 'center'
+    }
     alignItems="center"
     borderBottom={topBottom ? undefined : '5px solid #A3B8DC'}
     height={topBottom ? undefined : kReplyCreditHeight}
+    px={topBottom ? 2 : undefined}
     pt={topBottom ? 1.5 : undefined}
   >
-    <div
-      css={css({
-        backgroundColor: '#679EF8',
-        border: '2px solid #196BE7',
-        color: 'white',
-        fontSize: '14px',
-        textAlign: 'center',
-        width: '20px',
-        lineHeight: '20px',
-        boxSizing: 'content-box',
-      })}
-    >
-      奖
-    </div>
-    <Typography ml={3} mr={1} fontSize={16}>
-      {threadDetails.reply_credit?.remaining_amount}
-    </Typography>
-    <Typography>{threadDetails.reply_credit?.credit_name}</Typography>
+    <Stack direction="row" justifyContent="center" alignItems="center">
+      <div
+        css={css({
+          backgroundColor: '#679EF8',
+          border: '2px solid #196BE7',
+          color: 'white',
+          fontSize: '14px',
+          textAlign: 'center',
+          width: '20px',
+          lineHeight: '20px',
+          boxSizing: 'content-box',
+        })}
+      >
+        奖
+      </div>
+      <Typography ml={3} mr={1} fontSize={16}>
+        {threadDetails.reply_credit?.remaining_amount}
+      </Typography>
+      <Typography>{threadDetails.reply_credit?.credit_name}</Typography>
+    </Stack>
+    {threadDetails.can_reply && topBottom && <ReplyCreditInProgress />}
   </Stack>
 )
 
@@ -127,24 +133,26 @@ export const ReplyCreditFloorRight = ({
         threadDetails.reply_credit?.probability
       ) && <>。</>}
     </Typography>
-    {threadDetails.can_reply && (
-      <Stack
-        direction="row"
-        alignItems="center"
-        flexShrink={0}
-        ml={1.5}
-        sx={{
-          borderRadius: '4px',
-          backgroundColor: 'rgba(33, 117, 243, 0.8)',
-          color: 'white',
-          fontSize: 16,
-          px: 1.25,
-          py: 0.75,
-        }}
-      >
-        <Timer />
-        <Typography ml={1}>散水进行中</Typography>
-      </Stack>
-    )}
+    {threadDetails.can_reply && !topBottom && <ReplyCreditInProgress />}
+  </Stack>
+)
+
+const ReplyCreditInProgress = () => (
+  <Stack
+    direction="row"
+    alignItems="center"
+    flexShrink={0}
+    ml={1.5}
+    sx={{
+      borderRadius: '4px',
+      backgroundColor: 'rgba(33, 117, 243, 0.8)',
+      color: 'white',
+      fontSize: 16,
+      px: 1.25,
+      py: 0.75,
+    }}
+  >
+    <Timer />
+    <Typography ml={1}>散水进行中</Typography>
   </Stack>
 )
