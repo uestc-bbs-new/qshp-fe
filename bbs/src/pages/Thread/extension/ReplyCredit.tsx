@@ -3,7 +3,6 @@ import { css } from '@emotion/react'
 import { Box, Stack, Typography } from '@mui/material'
 
 import { PostFloor, Thread } from '@/common/interfaces/response'
-import Separated from '@/components/Separated'
 import { ReplyCredit } from '@/components/icons/ReplyCredit'
 import Timer from '@/components/icons/Timer'
 
@@ -113,22 +112,20 @@ export const ReplyCreditFloorRight = ({
       ，回复本帖可获得 {threadDetails.reply_credit?.credit_amount}{' '}
       {threadDetails.reply_credit?.credit_name}
       奖励！
+      {!!threadDetails.reply_credit?.limit_per_user && (
+        <>每人限 {threadDetails.reply_credit.limit_per_user} 次</>
+      )}
+      {!!(
+        threadDetails.reply_credit?.limit_per_user &&
+        threadDetails.reply_credit?.probability
+      ) && <>，</>}
+      {!!threadDetails.reply_credit?.probability && (
+        <>中奖概率 {threadDetails.reply_credit.probability}%</>
+      )}
       {!!(
         threadDetails.reply_credit?.limit_per_user ||
         threadDetails.reply_credit?.probability
-      ) && (
-        <>
-          <Separated separator={<>，</>}>
-            {!!threadDetails.reply_credit?.limit_per_user && (
-              <>每人限 {threadDetails.reply_credit.limit_per_user} 次</>
-            )}
-            {!!threadDetails.reply_credit?.probability && (
-              <>中奖概率 {threadDetails.reply_credit.probability}%</>
-            )}
-          </Separated>
-          。
-        </>
-      )}
+      ) && <>。</>}
     </Typography>
     {threadDetails.can_reply && (
       <Stack
