@@ -191,6 +191,9 @@ export interface PostFloor {
   reply_credit_amount?: number
   reply_credit_name?: string
   lastedit_id?: number
+  last_edit_time?: number
+  last_editor?: string
+  last_editor_uid?: number
   attachments?: Attachment[]
   invisible: number
 }

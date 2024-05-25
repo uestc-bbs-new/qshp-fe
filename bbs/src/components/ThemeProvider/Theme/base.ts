@@ -120,6 +120,7 @@ declare module '@mui/material/styles' {
     dialogTitle: React.CSSProperties
     replyCredit: React.CSSProperties
     replyCreditDetails: React.CSSProperties
+    postEditPrompt: React.CSSProperties
     drawerItemText: React.CSSProperties
     drawerHeading: React.CSSProperties
   }
@@ -147,6 +148,7 @@ declare module '@mui/material/styles' {
     dialogTitle?: React.CSSProperties
     replyCredit?: React.CSSProperties
     replyCreditDetails?: React.CSSProperties
+    postEditPrompt?: React.CSSProperties
     drawerItemText?: React.CSSProperties
     drawerHeading?: React.CSSProperties
   }
@@ -176,6 +178,7 @@ declare module '@mui/material/Typography' {
     dialogTitle: true
     replyCredit: true
     replyCreditDetails: true
+    postEditPrompt: true
     drawerItemText: true
     drawerHeading: true
   }
@@ -325,6 +328,11 @@ export const baseTheme: ThemeOptions = {
     replyCreditDetails: {
       fontSize: 16,
       color: '#F26B4E',
+    },
+    postEditPrompt: {
+      color: '#999',
+      fontSize: 14,
+      fontStyle: 'italic',
     },
     drawerItemText: {
       color: '#000000',

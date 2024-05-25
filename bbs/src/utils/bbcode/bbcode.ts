@@ -386,7 +386,7 @@ function parseNonCodeBbcode(
       options.mode == 'postcomment'
         ? []
         : [
-            '<i class="post-edit-status">',
+            '<i style="color:#999">',
             '</span>',
             '</span>',
             '</span>',
