@@ -130,9 +130,14 @@ const parseTableWidth = (width?: string) => {
   return ''
 }
 
-const parseTable = (width?: string, bgcolor?: string, str?: string) => {
+const parseTable = (
+  width?: string,
+  bgcolor?: string,
+  str?: string,
+  narrowView?: boolean
+) => {
   let simpleTable = false
-  width = parseTableWidth(width)
+  width = narrowView ? '' : parseTableWidth(width)
 
   if (str === undefined) {
     return ''
@@ -210,6 +215,7 @@ export type BbcodeOptions = {
   legacyPhpwindCode?: boolean
   sizeVariant?: FontSizeVariant
   mode?: 'post' | 'postcomment' | 'chat'
+  narrowView?: boolean
 }
 
 const kDefaultMode = 'post'
@@ -356,7 +362,7 @@ function parseNonCodeBbcode(
         /\[table(?:=(\d{1,4}%?)(?:,([()%,#\w ]+))?)?\]\s*([\s\S]+?)\s*\[\/table\]/gi
       for (let i = 0; i < 4; i++) {
         str = str.replace(kTableRegEx, (_, width, bgcolor, children) =>
-          parseTable(width, bgcolor, children)
+          parseTable(width, bgcolor, children, options.narrowView)
         )
       }
     }

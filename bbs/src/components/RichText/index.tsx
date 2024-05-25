@@ -155,7 +155,8 @@ export const renderLegacyPostToDangerousHtml = (
   post: PickedPost,
   orphanAttachments?: Attachment[],
   sizeVariant?: FontSizeVariant,
-  removeEditPrompt?: boolean
+  removeEditPrompt?: boolean,
+  narrowView?: boolean
 ) =>
   bbcode2html(
     removeEditPrompt
@@ -171,6 +172,7 @@ export const renderLegacyPostToDangerousHtml = (
       legacyPhpwindAt: post.post_id <= 24681051,
       legacyPhpwindCode: post.post_id <= 24681051,
       sizeVariant,
+      narrowView,
     },
     post.attachments,
     orphanAttachments
@@ -184,11 +186,13 @@ export const LegacyPostRenderer = ({
   removeEditPrompt?: boolean
 }) => {
   const orphanAttachments: Attachment[] = []
+  const narrowView = useMediaQuery('(max-width: 640px)')
   const html = renderLegacyPostToDangerousHtml(
     post,
     orphanAttachments,
     useMediaQuery('(max-width: 640px)') ? 'small' : 'default',
-    removeEditPrompt
+    removeEditPrompt,
+    narrowView
   )
   return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
