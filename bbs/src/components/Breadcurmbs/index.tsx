@@ -6,7 +6,11 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 
-import { Breadcrumbs as MuiBreadcrumbs, Typography } from '@mui/material'
+import {
+  Breadcrumbs as MuiBreadcrumbs,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 import routes from '@/routes/routes'
@@ -55,6 +59,31 @@ const search = (routeParams: Params<string>, searchParams: URLSearchParams) => {
   ]
 }
 
+const user = (state: State) => {
+  return [
+    <StyledRouterLink key="1" to={pages.user()}>
+      用户空间
+    </StyledRouterLink>,
+    ...(state.userBreadcumbs?.username && !state.userBreadcumbs?.self
+      ? [
+          <StyledRouterLink
+            key="2"
+            to={pages.user({ uid: state.userBreadcumbs?.uid })}
+          >
+            {state.userBreadcumbs.username}
+          </StyledRouterLink>,
+        ]
+      : []),
+    <Typography key="3">
+      {state.userBreadcumbs?.username ? (
+        <>{state.userBreadcumbs.subPageTitle}</>
+      ) : (
+        <Skeleton width={160} />
+      )}
+    </Typography>,
+  ]
+}
+
 const Breadcrumbs = () => {
   const [searchParams] = useSearchParams()
   const { state } = useAppState()
@@ -80,6 +109,8 @@ const Breadcrumbs = () => {
       {activeRoute?.id == 'search' &&
         activeMatch &&
         search(activeMatch.params, searchParams)}
+      {(activeRoute?.id == 'user' || activeRoute?.id == 'userByName') &&
+        user(state)}
     </MuiBreadcrumbs>
   )
 }

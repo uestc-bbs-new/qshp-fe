@@ -51,6 +51,13 @@ export type State = {
   drawer: boolean
   user: UserState
   forumBreadcumbs: ForumBreadcumbEntry[]
+  userBreadcumbs?: {
+    uid?: number
+    username?: string
+    self?: boolean
+    subPage?: string
+    subPageTitle?: string
+  }
   activeForum?: ForumDetails
   activeThread?: ThreadBreadcumbEntry
   globalDialog?: GlobalDialogState
@@ -121,6 +128,8 @@ export const stateReducer = (state: State, action: StateAction): State => {
           forumBreadcumbs: newForums,
         }
       }
+    case 'set breadcumbs/user':
+      return { ...state, userBreadcumbs: action.payload }
     case 'set thread':
       return { ...state, activeThread: action.payload }
     case 'open dialog':
