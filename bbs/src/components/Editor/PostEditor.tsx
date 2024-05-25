@@ -298,7 +298,7 @@ const PostEditor = ({
       )}
       <Stack direction="row" flexShrink={1} minHeight="1em">
         {!smallAuthor && <Author anonymous={anonymous} />}
-        <Stack flexGrow={1}>
+        <Stack flexGrow={1} flexShrink={1} maxWidth="100%">
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}

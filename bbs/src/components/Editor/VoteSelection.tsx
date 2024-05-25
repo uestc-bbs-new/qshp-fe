@@ -90,7 +90,7 @@ export const VoteSelection = ({
       {isVote && (
         <PostOptionsBlock>
           <Stack direction={narrowView ? 'column' : 'row'}>
-            <Stack mr={4}>
+            <Stack mr={narrowView ? undefined : 4}>
               <Typography mt={1} mb={3}>
                 选项：最多可以填写 100 个选项
               </Typography>
@@ -106,7 +106,7 @@ export const VoteSelection = ({
                       label={`选项 ${index + 1}`}
                       variant="outlined"
                       size="small"
-                      sx={{ width: '20em' }}
+                      sx={{ width: '20em', flexShrink: 1, minWidth: '1em' }}
                       value={item}
                       onChange={(e) => {
                         const newOptions = [...options]
