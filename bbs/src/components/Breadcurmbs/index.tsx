@@ -26,6 +26,25 @@ const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   color: theme.palette.primary.main,
 }))
 
+const TextSkeleton = ({ width }: { width: number }) => {
+  const kUnitSize = 16
+  return (
+    <span>
+      {[
+        [...Array(Math.floor(width / kUnitSize))].map((_, index) => (
+          <Skeleton
+            key={index}
+            variant="rectangular"
+            width={kUnitSize}
+            height="1em"
+            sx={{ display: 'inline-block', verticalAlign: 'middle' }}
+          />
+        )),
+      ]}
+    </span>
+  )
+}
+
 const thread = (state: State) => {
   if (state.activeThread) {
     return (
@@ -34,20 +53,30 @@ const thread = (state: State) => {
       </StyledRouterLink>
     )
   }
-  return []
+  return <TextSkeleton width={225} />
 }
 
-const forum = (state: State) => [
-  state.forumBreadcumbs.map((forum, index) =>
-    forum.top ? (
-      <Typography key={index}>{forum.name}</Typography>
-    ) : (
-      <StyledRouterLink key={index} to={pages.forum(forum.forum_id)}>
-        {forum.name}
-      </StyledRouterLink>
+const forum = (state: State) => {
+  if (!state.activeForum) {
+    return <TextSkeleton width={120} />
+  }
+  return state.activeForum.parents
+    .slice()
+    .reverse()
+    .map((forum) => ({ fid: forum.fid, name: forum.name }))
+    .concat([{ fid: state.activeForum.fid, name: state.activeForum.name }])
+    .map((forum, index) =>
+      index == 0 ? (
+        <Typography key={index} component="span">
+          {forum.name}
+        </Typography>
+      ) : (
+        <StyledRouterLink key={index} to={pages.forum(forum.fid)}>
+          {forum.name}
+        </StyledRouterLink>
+      )
     )
-  ),
-]
+}
 const search = (routeParams: Params<string>, searchParams: URLSearchParams) => {
   const typeText = { thread: '帖子', user: '用户' }[
     routeParams['type'] || 'thread'
@@ -78,7 +107,7 @@ const user = (state: State) => {
       {state.userBreadcumbs?.username ? (
         <>{state.userBreadcumbs.subPageTitle}</>
       ) : (
-        <Skeleton width={160} />
+        <TextSkeleton width={160} />
       )}
     </Typography>,
   ]
@@ -98,7 +127,18 @@ const Breadcrumbs = () => {
   }
 
   return (
-    <MuiBreadcrumbs>
+    <MuiBreadcrumbs
+      sx={{
+        '.MuiBreadcrumbs-ol, .MuiBreadcrumbs-li': {
+          display: 'inline',
+          verticalAlign: 'middle',
+        },
+        '.MuiBreadcrumbs-separator': {
+          display: 'inline-block',
+          verticalAlign: 'middle',
+        },
+      }}
+    >
       <StyledRouterLink color="inherit" to={pages.index()}>
         首页
       </StyledRouterLink>

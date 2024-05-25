@@ -16,12 +16,6 @@ export type UserState = {
   new_notification?: number
 }
 
-type ForumBreadcumbEntry = {
-  forum_id: number
-  name: string
-  top: boolean
-}
-
 type ThreadBreadcumbEntry = {
   thread_id: number
   subject: string
@@ -50,7 +44,6 @@ type TopListViewState = {
 export type State = {
   drawer: boolean
   user: UserState
-  forumBreadcumbs: ForumBreadcumbEntry[]
   userBreadcumbs?: {
     uid?: number
     username?: string
@@ -105,28 +98,9 @@ export const stateReducer = (state: State, action: StateAction): State => {
       if (state.activeForum?.fid == action.payload?.fid) {
         return state
       }
-      {
-        const newForums: ForumBreadcumbEntry[] = []
-        const forum = action.payload as ForumDetails | undefined
-        if (forum?.fid) {
-          console.log(forum.parents)
-          newForums.unshift(
-            ...forum.parents
-              .concat([])
-              .reverse()
-              .map((parent, index) => ({
-                forum_id: parent.fid,
-                name: parent.name,
-                top: index === 0,
-              })),
-            { forum_id: forum.fid, name: forum.name, top: false }
-          )
-        }
-        return {
-          ...state,
-          activeForum: action.payload,
-          forumBreadcumbs: newForums,
-        }
+      return {
+        ...state,
+        activeForum: action.payload,
       }
     case 'set breadcumbs/user':
       return { ...state, userBreadcumbs: action.payload }

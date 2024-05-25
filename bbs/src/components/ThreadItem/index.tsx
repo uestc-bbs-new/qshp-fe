@@ -53,6 +53,7 @@ type ThreadItemProps = {
   replies?: ThreadReplyOrCommentItem[]
   hideThreadAuthor?: boolean
   ignoreThreadHighlight?: boolean
+  fromForum?: boolean
 }
 
 const ThreadItem = ({
@@ -62,6 +63,7 @@ const ThreadItem = ({
   replies,
   hideThreadAuthor,
   ignoreThreadHighlight,
+  fromForum,
 }: ThreadItemProps) => {
   const theme = useTheme()
   const narrowView = useMediaQuery('(max-width: 750px)')
@@ -111,6 +113,11 @@ const ThreadItem = ({
                       )}
                     <Link
                       to={pages.thread(data.thread_id)}
+                      state={
+                        fromForum && forumDetails
+                          ? { fromForumId: forumDetails.fid }
+                          : undefined
+                      }
                       color="inherit"
                       underline="hover"
                     >

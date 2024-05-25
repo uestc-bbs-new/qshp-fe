@@ -100,8 +100,13 @@ function Thread() {
       forum_details: threadChanged || !forumDetails,
     }
   }
-
   const [query, setQuery] = useState(initQuery())
+  useEffect(() => {
+    if (location.state?.fromForumId != state.activeForum?.fid) {
+      dispatch({ type: 'set forum' })
+    }
+    dispatch({ type: 'set thread' })
+  }, [threadId])
 
   const {
     data: info,

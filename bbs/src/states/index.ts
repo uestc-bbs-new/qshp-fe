@@ -49,7 +49,6 @@ export const guestUser = {
 const initialState: State = {
   drawer: false, //侧边栏是否打开
   user: { ...guestUser, uninitialized: true },
-  forumBreadcumbs: [],
   theme: getRenderedTheme(),
 }
 
