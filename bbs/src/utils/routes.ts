@@ -3,6 +3,7 @@ import { Params, useMatches } from 'react-router-dom'
 
 import { ContinueMode } from '@/common/types/idas'
 
+import { isPreviewRelease } from './releaseMode'
 import siteRoot from './siteRoot'
 
 export const useActiveRoute = () => {
@@ -149,3 +150,33 @@ export const legacyPages = {
   collection: (collection_id: number) =>
     `${siteRoot}/forum.php?mod=collection&action=view&ctid=${collection_id}`,
 }
+
+export const mapMessagesRouteToMessageGroup = (
+  route?: { id?: string } | null
+) => {
+  if (route?.id == 'messages_chat' || route?.id == 'messages_chat_user') {
+    return 'chat'
+  }
+  if (route?.id == 'messages_posts') {
+    return 'posts'
+  }
+  if (route?.id == 'messages_system') {
+    return 'system'
+  }
+  return isPreviewRelease ? 'posts' : 'chat'
+}
+
+export const messagesSubPages: { id: MessageGroup; text: string }[] = [
+  {
+    id: 'chat',
+    text: '站内信',
+  },
+  {
+    id: 'posts',
+    text: '我的帖子',
+  },
+  {
+    id: 'system',
+    text: '系统消息',
+  },
+]

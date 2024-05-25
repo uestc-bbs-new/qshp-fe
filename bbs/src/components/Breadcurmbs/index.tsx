@@ -1,5 +1,6 @@
 import {
   Params,
+  RouteObject,
   Link as RouterLink,
   matchRoutes,
   useLocation,
@@ -7,16 +8,28 @@ import {
 } from 'react-router-dom'
 
 import {
+  MenuItem,
   Breadcrumbs as MuiBreadcrumbs,
+  Typography as MuiTypography,
+  Select,
   Skeleton,
-  Typography,
+  TypographyProps,
+  useMediaQuery,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 import routes from '@/routes/routes'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
-import { pages } from '@/utils/routes'
+import { isPreviewRelease } from '@/utils/releaseMode'
+import {
+  mapMessagesRouteToMessageGroup,
+  messagesSubPages,
+  pages,
+} from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
+
+import { MenuItemLink } from '../Link'
 
 const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   textDecoration: 'none',
@@ -45,6 +58,10 @@ const TextSkeleton = ({ width }: { width: number }) => {
   )
 }
 
+const Typography = ({ ...props }: TypographyProps) => (
+  <MuiTypography component="span" {...props} />
+)
+
 const thread = (state: State) => {
   if (state.activeThread) {
     return (
@@ -67,9 +84,7 @@ const forum = (state: State) => {
     .concat([{ fid: state.activeForum.fid, name: state.activeForum.name }])
     .map((forum, index) =>
       index == 0 ? (
-        <Typography key={index} component="span">
-          {forum.name}
-        </Typography>
+        <Typography key={index}>{forum.name}</Typography>
       ) : (
         <StyledRouterLink key={index} to={pages.forum(forum.fid)}>
           {forum.name}
@@ -88,28 +103,64 @@ const search = (routeParams: Params<string>, searchParams: URLSearchParams) => {
   ]
 }
 
-const user = (state: State) => {
+const user = (state: State) => [
+  <StyledRouterLink key="1" to={pages.user()}>
+    个人空间
+  </StyledRouterLink>,
+  ...(state.userBreadcumbs?.username && !state.userBreadcumbs?.self
+    ? [
+        <StyledRouterLink
+          key="2"
+          to={pages.user({ uid: state.userBreadcumbs?.uid })}
+        >
+          {state.userBreadcumbs.username}
+        </StyledRouterLink>,
+      ]
+    : []),
+  <Typography key="3">
+    {state.userBreadcumbs?.username ? (
+      <>{state.userBreadcumbs.subPageTitle}</>
+    ) : (
+      <TextSkeleton width={160} />
+    )}
+  </Typography>,
+]
+
+const messages = (route?: RouteObject, narrowView?: boolean) => {
+  const pageId = mapMessagesRouteToMessageGroup(route)
   return [
-    <StyledRouterLink key="1" to={pages.user()}>
-      用户空间
-    </StyledRouterLink>,
-    ...(state.userBreadcumbs?.username && !state.userBreadcumbs?.self
-      ? [
-          <StyledRouterLink
-            key="2"
-            to={pages.user({ uid: state.userBreadcumbs?.uid })}
+    <Typography key="1">消息</Typography>,
+    narrowView ? (
+      <Select
+        key="2"
+        size="small"
+        sx={{ '.MuiSelect-select': { minHeight: 0, py: 0.5 } }}
+        value={pageId}
+      >
+        {messagesSubPages.map((item) => (
+          <MenuItem
+            key={item.id}
+            component={MenuItemLink}
+            to={
+              isPreviewRelease && item.id == 'chat'
+                ? `${siteRoot}/home.php?mod=space&do=pm`
+                : pages.messages(item.id)
+            }
+            external={isPreviewRelease && item.id == 'chat'}
+            target={
+              isPreviewRelease && item.id == 'chat' ? '_blank' : undefined
+            }
+            value={item.id}
           >
-            {state.userBreadcumbs.username}
-          </StyledRouterLink>,
-        ]
-      : []),
-    <Typography key="3">
-      {state.userBreadcumbs?.username ? (
-        <>{state.userBreadcumbs.subPageTitle}</>
-      ) : (
-        <TextSkeleton width={160} />
-      )}
-    </Typography>,
+            {item.text}
+          </MenuItem>
+        ))}
+      </Select>
+    ) : (
+      <Typography key="2">
+        {messagesSubPages.find((item) => item.id == pageId)?.text}
+      </Typography>
+    ),
   ]
 }
 
@@ -121,6 +172,7 @@ const Breadcrumbs = () => {
   const matches = matchRoutes(routes.current, location)
   const activeMatch = matches?.length ? matches[matches.length - 1] : undefined
   const activeRoute = activeMatch?.route
+  const narrowView = useMediaQuery('(max-width: 800px)')
 
   if (activeRoute?.id == 'index' || activeRoute?.id == '404') {
     return <></>
@@ -151,6 +203,12 @@ const Breadcrumbs = () => {
         search(activeMatch.params, searchParams)}
       {(activeRoute?.id == 'user' || activeRoute?.id == 'userByName') &&
         user(state)}
+      {[
+        'messages_chat',
+        'messages_chat_user',
+        'messages_posts',
+        'messages_system',
+      ].includes(activeRoute?.id ?? '') && messages(activeRoute, narrowView)}
     </MuiBreadcrumbs>
   )
 }

@@ -42,12 +42,12 @@ const devPages: RouteObject[] = [
 
 const devMessagesPages: RouteObject[] = [
   {
-    id: 'chat',
+    id: 'messages_chat',
     path: 'chat/:plid?',
     element: <Chat />,
   },
   {
-    id: 'chat_user',
+    id: 'messages_chat_user',
     path: 'chat/user/:uid?',
     element: <Chat />,
   },
@@ -85,12 +85,12 @@ routes.current = [
             element: isPreviewRelease ? <Notifications /> : <Chat />,
           },
           {
-            id: 'posts',
+            id: 'messages_posts',
             path: 'posts/:kind?',
             element: <Notifications />,
           },
           {
-            id: 'system',
+            id: 'messages_system',
             path: 'system/:kind?',
             element: <Notifications />,
           },
