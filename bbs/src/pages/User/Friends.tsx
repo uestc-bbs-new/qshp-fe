@@ -17,6 +17,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { deleteFriend, editFriend, getUserFriends } from '@/apis/user'
@@ -105,34 +106,31 @@ function Friends({
     topRef.current?.scrollIntoView()
   }
 
+  const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <>
       <Box pb={1}>
         <div ref={topRef} css={scrollAnchorCss} />
         {self && (
           <>
-            <Stack
-              direction="row"
-              justifyContent={'space-between'}
-              sx={{ p: 1.5 }}
-            >
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Typography variant="userAction">查找好友</Typography>
-                <TextField
-                  size="small"
-                  placeholder="用户名或备注"
-                  defaultValue={query.query}
-                  sx={{ width: 600 }}
-                  inputRef={queryRef}
-                  inputProps={{ type: 'search' }}
-                  onKeyDown={handleEnter(handleSearch)}
-                />
-                <Button variant="contained" onClick={handleSearch}>
-                  搜索
-                </Button>
-              </Stack>
-
-              <Typography color="rgb(33, 117, 243)" className="mt-3">
+            <Stack direction="row" alignItems="center" sx={{ p: 1.5 }}>
+              <Typography variant="userAction" flexShrink={0}>
+                查找好友
+              </Typography>
+              <TextField
+                size="small"
+                placeholder="用户名或备注"
+                defaultValue={query.query}
+                sx={{ mx: 2, width: 600, flexShrink: 1, minWidth: '1em' }}
+                inputRef={queryRef}
+                inputProps={{ type: 'search' }}
+                onKeyDown={handleEnter(handleSearch)}
+              />
+              <Button variant="contained" onClick={handleSearch}>
+                搜索
+              </Button>
+              <Box flexGrow={1} />
+              <Typography color="rgb(33, 117, 243)" ml={2} flexShrink={0}>
                 邀请好友
               </Typography>
             </Stack>
@@ -225,7 +223,7 @@ const FriendItem = ({
     }
   >
     <Typography variant="userItemSummary">
-      <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center" flexWrap="wrap">
         {item.group_title}
         {item.group_subtitle && (
           <Typography variant="userItemDetails" ml={0.25}>
@@ -247,7 +245,7 @@ const FriendItem = ({
       </Stack>
     </Typography>
     <Typography variant="userItemDetails" mt={0.5}>
-      <Stack direction="row" spacing={0.75}>
+      <Stack direction="row" spacing={0.75} flexWrap="wrap">
         <Separated separator={<span>·</span>}>
           <span>积分：{item.credits}</span>
           <span>威望：{item.ext_credits['威望'] || 0}</span>

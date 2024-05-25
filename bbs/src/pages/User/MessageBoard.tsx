@@ -17,6 +17,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import {
@@ -103,26 +104,38 @@ function MessageBoard({
     }
   }
 
+  const narrowView = useMediaQuery('(max-width: 720px)')
+
   return (
     <>
       <Box pb={1}>
         <div ref={topRef} css={scrollAnchorCss} />
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ p: 2 }}>
-          <Typography variant="userAction">留言板</Typography>
-          <TextField
-            size="small"
-            placeholder="请输入留言"
-            inputRef={inputRef}
-            sx={{ width: 624 }}
-            multiline
-          />
-          <Button
-            variant="contained"
-            sx={{ whiteSpace: 'nowrap' }}
-            onClick={handleComment}
+        <Stack py={2}>
+          <Typography variant="userAction" sx={{ flexShrink: 0 }}>
+            留言板
+          </Typography>
+          <Stack
+            direction={narrowView ? 'column' : 'row'}
+            alignItems={narrowView ? 'flex-start' : 'flex-end'}
+            mt={1}
+            spacing={narrowView ? 1 : 2}
           >
-            留言
-          </Button>
+            <TextField
+              size="small"
+              placeholder="请输入留言"
+              inputRef={inputRef}
+              minRows={narrowView ? 3 : 2}
+              sx={{ width: narrowView ? '100%' : 624 }}
+              multiline
+            />
+            <Button
+              variant="contained"
+              sx={{ whiteSpace: 'nowrap' }}
+              onClick={handleComment}
+            >
+              留言
+            </Button>
+          </Stack>
         </Stack>
 
         <Divider style={{ backgroundColor: '#eae8ed' }} />

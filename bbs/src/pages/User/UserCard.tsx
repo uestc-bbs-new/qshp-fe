@@ -52,7 +52,9 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
       <Paper
         sx={(theme) => ({
           position: 'relative',
-          minHeight: `calc(${avatarSize}px + ${theme.spacing(avatarM * 2)})`,
+          minHeight: narrowView
+            ? undefined
+            : `calc(${avatarSize}px + ${theme.spacing(avatarM * 2)})`,
         })}
       >
         {!narrowView && (
@@ -174,76 +176,81 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
                 <UserStatEntry title="回复" value={userSummary?.replies} />
               </Stack>
             </Box>
-            <Divider />
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              pl={narrowView ? 1 : undefined}
-              pr={2}
-              py={1.5}
-            >
-              {!narrowView && <UserHonors userSummary={userSummary} />}
-              <Stack
-                direction="row"
-                alignItems="center"
-                ml={narrowView ? undefined : 2}
-                spacing={1.5}
-                flexShrink={0}
-              >
-                {userSummary && state.user.uid != userSummary.uid && (
-                  <Button
-                    style={{
-                      color: 'black',
-                      backgroundColor: 'rgb(255, 255, 255)',
-                      height: 32,
-                      borderRadius: 8,
-                    }}
-                    variant="contained"
-                    disabled={
-                      userSummary?.blocked || !!userSummary?.friend_status
-                    }
-                    onClick={() => setAddFriendOpen(true)}
+            {(!narrowView ||
+              (userSummary && state.user.uid != userSummary.uid)) && (
+              <>
+                <Divider />
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  pl={narrowView ? 1 : undefined}
+                  pr={2}
+                  py={1.5}
+                >
+                  {!narrowView && <UserHonors userSummary={userSummary} />}
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    ml={narrowView ? undefined : 2}
+                    spacing={1.5}
+                    flexShrink={0}
                   >
-                    {userSummary.blocked
-                      ? '已屏蔽'
-                      : userSummary.friend_status == 'friend'
-                        ? '已成为好友'
-                        : userSummary.friend_status == 'requested'
-                          ? '已发送好友请求'
-                          : '加为好友'}
-                  </Button>
-                )}
-                {userSummary &&
-                  !userSummary.blocked &&
-                  state.user.uid != userSummary.uid && (
-                    <Button
-                      component={Link}
-                      variant="contained"
-                      to={`${siteRoot}/home.php?mod=space&do=pm&subop=view&touid=${userSummary.uid}#last`}
-                      external
-                      target="_blank"
-                    >
-                      开始私信
-                    </Button>
-                  )}
-                {narrowView &&
-                  userSummary &&
-                  userSummary.uid != state.user.uid && (
-                    <Button
-                      style={{
-                        color: 'black',
-                        backgroundColor: 'white',
-                      }}
-                      component={Link}
-                      to={pages.user()}
-                      variant="contained"
-                    >
-                      访问我的空间
-                    </Button>
-                  )}
-              </Stack>
-            </Stack>
+                    {userSummary && state.user.uid != userSummary.uid && (
+                      <Button
+                        style={{
+                          color: 'black',
+                          backgroundColor: 'rgb(255, 255, 255)',
+                          height: 32,
+                          borderRadius: 8,
+                        }}
+                        variant="contained"
+                        disabled={
+                          userSummary?.blocked || !!userSummary?.friend_status
+                        }
+                        onClick={() => setAddFriendOpen(true)}
+                      >
+                        {userSummary.blocked
+                          ? '已屏蔽'
+                          : userSummary.friend_status == 'friend'
+                            ? '已成为好友'
+                            : userSummary.friend_status == 'requested'
+                              ? '已发送好友请求'
+                              : '加为好友'}
+                      </Button>
+                    )}
+                    {userSummary &&
+                      !userSummary.blocked &&
+                      state.user.uid != userSummary.uid && (
+                        <Button
+                          component={Link}
+                          variant="contained"
+                          to={`${siteRoot}/home.php?mod=space&do=pm&subop=view&touid=${userSummary.uid}#last`}
+                          external
+                          target="_blank"
+                        >
+                          开始私信
+                        </Button>
+                      )}
+                    {narrowView &&
+                      userSummary &&
+                      userSummary.uid != state.user.uid && (
+                        <Button
+                          style={{
+                            color: 'black',
+                            backgroundColor: 'white',
+                          }}
+                          component={Link}
+                          to={pages.user()}
+                          variant="contained"
+                        >
+                          访问我的空间
+                        </Button>
+                      )}
+                  </Stack>
+                </Stack>
+              </>
+            )}
           </Stack>
         </Stack>
       </Paper>
