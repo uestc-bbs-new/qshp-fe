@@ -211,6 +211,22 @@ const Floor = ({
             {post.position == 1 && !!post.is_first && (
               <PollExtension threadDetails={threadDetails} />
             )}
+            {threadDetails?.last_moderation &&
+              post.position == 1 &&
+              post.is_first == 1 && (
+                <Stack alignItems="center">
+                  <Alert severity="info" sx={{ mt: 1 }}>
+                    本主题由 {threadDetails.last_moderation.username} 于{' '}
+                    {chineseTime(threadDetails.last_moderation.dateline * 1000)}{' '}
+                    {threadDetails.last_moderation.action}
+                    <>
+                      {threadDetails.last_moderation.magic_name && (
+                        <>（{threadDetails.last_moderation.magic_name}）</>
+                      )}
+                    </>
+                  </Alert>
+                </Stack>
+              )}
             {threadDetails && post.position == 1 && post.is_first == 1 && (
               <ThreadLikes
                 tid={threadDetails.thread_id}

@@ -61,7 +61,17 @@ export type Thread = ThreadBasics &
     poll?: ThreadPollDetails
     reply_credit?: ThreadReplyCredit
     collections?: Collection[]
+    last_moderation?: ModerateAction
   }
+
+export type ModerateAction = {
+  uid: number
+  username: string
+  dateline: number
+  expiration?: number
+  action: string
+  magic_name?: string
+}
 
 export type ThreadPollDetails = {
   /** 投票选项 */
