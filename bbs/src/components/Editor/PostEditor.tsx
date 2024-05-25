@@ -36,6 +36,7 @@ import {
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
+import { getValidThreadTypes } from './common'
 import { PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
@@ -136,7 +137,7 @@ const PostEditor = ({
       return false
     }
     if (
-      forum?.thread_types?.length &&
+      getValidThreadTypes(forum)?.length &&
       !forum?.optional_thread_type &&
       !valueRef.current.type_id
     ) {

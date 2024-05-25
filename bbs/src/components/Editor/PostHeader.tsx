@@ -16,6 +16,7 @@ import { pages } from '@/utils/routes'
 import { handleCtrlEnter } from '@/utils/tools'
 
 import { ForumSelect } from './ForumSelect'
+import { getValidThreadTypes } from './common'
 import { PostEditorKind, PostEditorValue } from './types'
 
 export const ThreadPostHeader = ({
@@ -33,7 +34,7 @@ export const ThreadPostHeader = ({
 }) => {
   const navigate = useNavigate()
 
-  const threadTypes = selectedForum?.thread_types || []
+  const threadTypes = getValidThreadTypes(selectedForum)
   const [openForumSelect, setOpenForumSelect] = useState(false)
   const [subject, setSubject] = useState(initialValue?.subject || '')
   const [typeId, setTypeId] = useState(initialValue?.type_id)
@@ -97,7 +98,7 @@ export const ThreadPostHeader = ({
                 valueRef?.current && (valueRef.current.type_id = typeId)
               }}
             >
-              {selectedForum?.thread_types.map((item) => (
+              {threadTypes.map((item) => (
                 <MenuItem key={item.name} value={item.type_id}>
                   {item.name}
                 </MenuItem>

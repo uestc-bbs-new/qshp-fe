@@ -210,7 +210,8 @@ function Forum() {
       forum_id: forumId,
       page: parseInt(searchParams.get('page') || '1') || 1,
       sort_by: parseInt(sortBy) || 1,
-      type_id: (typeId && parseInt(typeId)) || undefined,
+      type_id:
+        typeId && !isNaN(parseInt(typeId)) ? parseInt(typeId) : undefined,
       forum_details: forumChanged || !forumDetails,
     }
   }
