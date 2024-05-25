@@ -179,7 +179,10 @@ const ThreadItem = ({
                             <ForumSmall
                               color={theme.typography.threadItemForum.color}
                             />
-                            <Typography ml={0.5} mr={2}>
+                            <Typography
+                              ml={0.5}
+                              mr={narrowView ? undefined : 2}
+                            >
                               {data.forum_name}
                             </Typography>
                           </Stack>
@@ -234,6 +237,9 @@ const ThreadItem = ({
                 </Stack>
               </Stack>
             </Stack>
+            {narrowView && hideThreadAuthor && (
+              <ThreadStatSmall thread={data} bottomView />
+            )}
           </Box>
         </Stack>
       </Box>
@@ -341,24 +347,34 @@ const ThreadStat = ({
 
 const ThreadStatSmall = ({
   thread,
-  sx,
+  bottomView,
 }: {
   thread: Pick<Thread, 'views' | 'replies'>
-  sx?: SxProps<Theme>
-}) => (
-  <Typography variant="threadItemAuthor">
-    <Stack alignItems="flex-end">
-      <Stack direction="row" alignItems="center">
-        {thread.views}
-        <Face5 sx={{ ml: 0.5, fontSize: '0.95em' }} />
+  bottomView?: boolean
+}) => {
+  const iconSx = {
+    fontSize: '0.95rem',
+    ...(bottomView ? { mr: 0.5 } : { ml: 0.5, order: 1 }),
+  }
+  return (
+    <Typography variant="threadItemAuthor">
+      <Stack
+        alignItems={bottomView ? 'center' : 'flex-end'}
+        direction={bottomView ? 'row' : 'column'}
+        spacing={bottomView ? 1 : undefined}
+      >
+        <Stack direction="row" alignItems="center">
+          <Face5 sx={iconSx} />
+          {thread.views}
+        </Stack>
+        <Stack direction="row" alignItems="center">
+          <Textsms sx={iconSx} />
+          {thread.replies}
+        </Stack>
       </Stack>
-      <Stack direction="row" alignItems="center">
-        {thread.replies}
-        <Textsms sx={{ ml: 0.5, fontSize: '0.95em' }} />
-      </Stack>
-    </Stack>
-  </Typography>
-)
+    </Typography>
+  )
+}
 
 const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
   <>

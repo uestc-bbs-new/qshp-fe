@@ -276,6 +276,7 @@ export const baseTheme: ThemeOptions = {
     threadItemSummary: {
       color: '#606266',
       fontSize: 14,
+      textAlign: 'justify',
       wordBreak: 'break-word',
       overflowWrap: 'anywhere',
     },
