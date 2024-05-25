@@ -89,12 +89,17 @@ function User() {
   return (
     <Box>
       <Stack direction="row">
-        <Box mr={2} flexGrow={1} flexShrink={1} minWidth="1em">
+        <Box
+          mr={hideSidebar ? undefined : 2}
+          flexGrow={1}
+          flexShrink={1}
+          minWidth="1em"
+        >
           <UserCard
             userSummary={commonUserData?.user_summary}
             key={commonUserData?.user_summary?.uid}
           />
-          <Tabs value={activeTab} sx={{ my: 1.5 }}>
+          <Tabs variant="scrollable" value={activeTab} sx={{ my: 1.5 }}>
             {tabs
               .filter(
                 (tab) =>

@@ -9,6 +9,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { addFriend } from '@/apis/user'
@@ -42,6 +43,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
   const { state } = useAppState()
   const avatarSize = 200
   const avatarM = 2
+  const narrowView = useMediaQuery('(max-width: 800px)')
 
   const [addFriendOpen, setAddFriendOpen] = useState(false)
 
@@ -53,21 +55,23 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
           minHeight: `calc(${avatarSize}px + ${theme.spacing(avatarM * 2)})`,
         })}
       >
-        <Box m={avatarM} position="absolute" left={0} top={0}>
-          {userSummary && (
-            <Avatar
-              alt={userSummary?.username}
-              uid={userSummary?.uid}
-              size={avatarSize}
-              imageSize="large"
-              variant="rounded"
-              sx={{
-                boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.25)',
-                backgroundColor: '#eee',
-              }}
-            />
-          )}
-        </Box>
+        {!narrowView && (
+          <Box m={avatarM} position="absolute" left={0} top={0}>
+            {userSummary && (
+              <Avatar
+                alt={userSummary?.username}
+                uid={userSummary?.uid}
+                size={avatarSize}
+                imageSize="large"
+                variant="rounded"
+                sx={{
+                  boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.25)',
+                  backgroundColor: '#eee',
+                }}
+              />
+            )}
+          </Box>
+        )}
         <Stack
           direction="row"
           py={1}
@@ -78,14 +82,41 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
                 : 'rgb(12, 78, 174)',
           })}
         >
-          <Box width={avatarSize} m={avatarM} flexShrink={0} />
-          <Box sx={{ height: 70, margin: '6px' }} flexGrow={1}>
-            <Stack direction="row" alignItems="baseline">
-              <Typography fontSize={24} fontWeight="bold">
+          {narrowView ? (
+            userSummary && (
+              <Avatar
+                alt={userSummary?.username}
+                uid={userSummary?.uid}
+                size={112}
+                imageSize="large"
+                variant="rounded"
+                sx={{
+                  boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.25)',
+                  backgroundColor: '#eee',
+                  mx: 1,
+                }}
+              />
+            )
+          ) : (
+            <Box width={avatarSize} m={avatarM} flexShrink={0} />
+          )}
+          <Box
+            flexGrow={1}
+            sx={
+              narrowView ? { mx: 1, flexShrink: 1, minWidth: '1px' } : { mt: 1 }
+            }
+          >
+            <Stack
+              direction={narrowView ? 'column' : 'row'}
+              alignItems={narrowView ? 'flex-start' : 'baseline'}
+            >
+              <Typography fontSize={narrowView ? 22 : 24} fontWeight="bold">
                 {userSummary?.username}
               </Typography>
               {userSummary?.friend_note && (
-                <Typography ml={1}>({userSummary.friend_note})</Typography>
+                <Typography ml={narrowView ? undefined : 1}>
+                  ({userSummary.friend_note})
+                </Typography>
               )}
             </Stack>
             <Stack
@@ -98,10 +129,11 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               {userSummary?.group_subtitle && (
                 <Typography> ({userSummary.group_subtitle})</Typography>
               )}
-              <UserGroupIcon user={userSummary} />
+              <UserGroupIcon user={userSummary} maxHeight={36} />
             </Stack>
+            {narrowView && <UserHonors userSummary={userSummary} />}
           </Box>
-          {userSummary && userSummary.uid != state.user.uid && (
+          {!narrowView && userSummary && userSummary.uid != state.user.uid && (
             <Button
               style={{
                 color: 'black',
@@ -120,7 +152,7 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
           )}
         </Stack>
         <Stack direction="row">
-          <Box width={avatarSize} m={avatarM} flexShrink={0} />
+          {!narrowView && <Box width={avatarSize} m={avatarM} flexShrink={0} />}
           <Stack flexGrow={1} flexShrink={1} minWidth="1em">
             <Box py={1.5}>
               <Stack direction="row" justifyContent="space-around">
@@ -147,31 +179,15 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
               direction="row"
               justifyContent="space-between"
               alignItems="center"
+              pl={narrowView ? 1 : undefined}
               pr={2}
               py={1.5}
             >
+              {!narrowView && <UserHonors userSummary={userSummary} />}
               <Stack
                 direction="row"
                 alignItems="center"
-                mr={2}
-                flexShrink={1}
-                minWidth="1px"
-                overflow="hidden"
-                position="relative"
-              >
-                {!!userSummary?.digests && (
-                  <DigestAuthor
-                    username={userSummary.username}
-                    sx={{ mr: 1 }}
-                  />
-                )}
-                {!!userSummary?.medals?.length && (
-                  <Medals medals={userSummary.medals} nowrap />
-                )}
-              </Stack>
-              <Stack
-                direction="row"
-                alignItems="center"
+                ml={narrowView ? undefined : 2}
                 spacing={1.5}
                 flexShrink={0}
               >
@@ -211,6 +227,21 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
                       开始私信
                     </Button>
                   )}
+                {narrowView &&
+                  userSummary &&
+                  userSummary.uid != state.user.uid && (
+                    <Button
+                      style={{
+                        color: 'black',
+                        backgroundColor: 'white',
+                      }}
+                      component={Link}
+                      to={pages.user()}
+                      variant="contained"
+                    >
+                      访问我的空间
+                    </Button>
+                  )}
               </Stack>
             </Stack>
           </Stack>
@@ -226,6 +257,25 @@ const UserCard = ({ userSummary }: { userSummary?: UserSummary }) => {
     </>
   )
 }
+
+const UserHonors = ({ userSummary }: { userSummary?: UserSummary }) => (
+  <Stack
+    direction="row"
+    alignItems="center"
+    flexShrink={1}
+    minWidth="1px"
+    overflow="hidden"
+    position="relative"
+    my={0.25}
+  >
+    {!!userSummary?.digests && (
+      <DigestAuthor username={userSummary.username} sx={{ mr: 1 }} />
+    )}
+    {!!userSummary?.medals?.length && (
+      <Medals medals={userSummary.medals} nowrap dense />
+    )}
+  </Stack>
+)
 
 const AddFriendDialog = ({
   user,
