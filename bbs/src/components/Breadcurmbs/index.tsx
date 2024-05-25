@@ -73,9 +73,9 @@ const thread = (state: State) => {
   return <TextSkeleton width={225} />
 }
 
-const forum = (state: State) => {
+const forum = (state: State, isPost: boolean) => {
   if (!state.activeForum) {
-    return <TextSkeleton width={120} />
+    return isPost ? [] : <TextSkeleton width={120} />
   }
   return state.activeForum.parents
     .slice()
@@ -195,7 +195,7 @@ const Breadcrumbs = () => {
         首页
       </StyledRouterLink>
       {['forum', 'thread', 'post'].includes(activeRoute?.id || '') &&
-        forum(state)}
+        forum(state, activeRoute?.id == 'post')}
       {activeRoute?.id == 'post' && <Typography>发帖</Typography>}
       {activeRoute?.id == 'thread' && thread(state)}
       {activeRoute?.id == 'search' &&
