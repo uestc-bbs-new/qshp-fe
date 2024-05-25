@@ -106,8 +106,14 @@ const PostEditor = ({
     if (initialValue.format == 1 || initialValue.format == -1) {
       initialValue.format = 2
     }
+    if (initialValue.format == 0 && initialValue.message) {
+      initialValue.message = initialValue.message.replace(
+        /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s{0,2}/,
+        ''
+      )
+    }
     if (
-      initialValue.format == 2 &&
+      initialValue.format == 0 &&
       initialValue.smileyoff == 0 &&
       initialValue.message
     ) {
@@ -338,7 +344,13 @@ const PostEditor = ({
               />
               <Card
                 elevation={3}
-                sx={{ maxHeight: '35vh', overflow: 'auto', mt: 1 }}
+                sx={{
+                  maxHeight: '35vh',
+                  overflow: 'auto',
+                  p: 2,
+                  mt: 1,
+                  boxSizing: 'border-box',
+                }}
               >
                 <LegacyPostRenderer post={legacyPost} />
               </Card>
