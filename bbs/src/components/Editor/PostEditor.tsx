@@ -204,6 +204,7 @@ const PostEditor = ({
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
           notifyCreditsUpdate(result.ext_credits_update)
           navigate(pages.thread(result.thread_id))
         })
@@ -219,6 +220,7 @@ const PostEditor = ({
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
           notifyCreditsUpdate(result.ext_credits_update)
           setPostPending(false)
           onSubmitted && onSubmitted()

@@ -32,7 +32,7 @@ const EditOrReply = ({
       ...(threadDetails?.poll && {
         poll: threadDetails.poll,
       }),
-      attachments: post.attachments,
+      attachments: post.attachments ? post.attachments.slice() : undefined,
       editingThread: post.position == 1 && post.is_first == 1,
     }
   }
