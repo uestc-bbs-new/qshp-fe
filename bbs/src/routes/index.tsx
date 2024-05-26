@@ -94,7 +94,7 @@ routes.current = [
             path: 'system/:kind?',
             element: <Notifications />,
           },
-          ...(isPreviewRelease ? devMessagesPages : []),
+          ...(isPreviewRelease ? [] : devMessagesPages),
         ],
       },
       { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
@@ -104,7 +104,7 @@ routes.current = [
         element: <User />,
       },
       ...adminRoutes,
-      ...(isPreviewRelease ? devPages : []),
+      ...(isPreviewRelease ? [] : devPages),
     ],
   },
   {
