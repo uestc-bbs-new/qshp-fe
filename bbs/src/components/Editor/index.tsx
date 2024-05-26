@@ -35,6 +35,7 @@ type EditorProps = IOptions & {
   initialValue?: string
   initialHtml?: string
   initialAttachments?: Attachment[]
+  onUpdateAttachments?: (newAttachments?: Attachment[]) => void
   onKeyDown?: React.KeyboardEventHandler
   autoFocus?: boolean
 }
@@ -49,6 +50,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
     initialValue,
     initialHtml,
     initialAttachments,
+    onUpdateAttachments,
     onKeyDown,
     autoFocus,
     ...other
@@ -59,6 +61,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
   const vditorRef = useRef<HTMLDivElement>(null)
   const vditorContext = useRef<VditorContext>({
     attachments: initialAttachments || [],
+    onUpdateAttachments,
   })
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')

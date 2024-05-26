@@ -158,6 +158,11 @@ function options({
         const response = data as UploadResponse
         if (response.uploaded?.length) {
           context?.attachments?.push(...response.uploaded)
+          if (context?.onUpdateAttachments) {
+            context.onUpdateAttachments(
+              context.attachments ? [...context.attachments] : undefined
+            )
+          }
           context?.vditor?.insertValue(
             response.uploaded
               .map((item) => getMarkdownFromAttachment(item))

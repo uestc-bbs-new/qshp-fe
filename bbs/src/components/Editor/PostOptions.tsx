@@ -4,21 +4,26 @@ import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 
+import AttachmentManager from './AttachmentManager'
 import ReplyCredit from './ReplyCredit'
 import { VoteSelection } from './VoteSelection'
-import { PostEditorKind, PostEditorValue } from './types'
+import { EditorAttachment, PostEditorKind, PostEditorValue } from './types'
 
 const PostOptions = ({
   kind,
   forum,
   initialValue,
   valueRef,
+  attachments,
+  onUpdateAttachments,
   onAnonymousChanged,
 }: {
   kind?: PostEditorKind
   forum?: ForumDetails
   initialValue?: PostEditorValue
   valueRef: MutableRefObject<PostEditorValue>
+  attachments: EditorAttachment[]
+  onUpdateAttachments: (newAttachments: EditorAttachment[]) => void
   onAnonymousChanged?: () => void
 }) => {
   const [anonymous, setAnonymous] = useState(
@@ -47,6 +52,13 @@ const PostOptions = ({
       {kind === 'newthread' && <VoteSelection valueRef={valueRef} />}
       {kind === 'newthread' && forum?.reply_credit && (
         <ReplyCredit status={forum.reply_credit} valueRef={valueRef} />
+      )}
+      {!!attachments?.length && (
+        <AttachmentManager
+          attachments={attachments}
+          onUpdateAttachments={onUpdateAttachments}
+          valueRef={valueRef}
+        />
       )}
     </Box>
   )

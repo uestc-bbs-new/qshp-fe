@@ -17,7 +17,11 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { ExtCreditMap, extCreditNames } from '@/common/interfaces/base'
+import {
+  Attachment,
+  ExtCreditMap,
+  extCreditNames,
+} from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
@@ -37,7 +41,7 @@ import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
 import { getValidThreadTypes } from './common'
-import { PostEditorKind, PostEditorValue } from './types'
+import { EditorAttachment, PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
   small,
@@ -136,6 +140,9 @@ const PostEditor = ({
   const valueRef = useRef<PostEditorValue>({ ...initialValue })
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
+  const [attachments, setAttachments] = useState<EditorAttachment[]>(
+    initialValue?.attachments ? [...initialValue.attachments] : []
+  )
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -365,6 +372,18 @@ const PostEditor = ({
               }
               initialHtml={legacyHtml}
               initialAttachments={initialValue?.attachments}
+              onUpdateAttachments={(value?: Attachment[]) => {
+                const existingAids = new Set(
+                  attachments.map((item) => item.attachment_id)
+                )
+                const newAttachments = [...attachments]
+                value?.forEach(
+                  (item) =>
+                    !existingAids.has(item.attachment_id) &&
+                    newAttachments.push(item)
+                )
+                setAttachments(newAttachments)
+              }}
               onKeyDown={handleCtrlEnter(handleSubmit)}
               ref={editor}
             />
@@ -376,6 +395,10 @@ const PostEditor = ({
             valueRef={valueRef}
             onAnonymousChanged={() =>
               setAnonymous(!!valueRef.current.is_anonymous)
+            }
+            attachments={attachments}
+            onUpdateAttachments={(newAttachments) =>
+              setAttachments(newAttachments)
             }
           />
         </Stack>
