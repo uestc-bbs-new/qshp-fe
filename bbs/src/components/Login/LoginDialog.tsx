@@ -31,6 +31,7 @@ import { signIn } from '@/apis/auth'
 import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
 import { gotoIdas } from '@/utils/routes'
+import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 
 import Captcha, {
@@ -153,7 +154,14 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           }
         | undefined
       if (e?.type == 'api' && e?.code == 1) {
-        setCaptcha(e.details.data[0])
+        setCaptcha(
+          isVpnProxy
+            ? {
+                name: 'hcaptcha',
+                site: '52100d97-0777-4497-8852-e380d5b3430b',
+              }
+            : e.details.data[0]
+        )
       } else {
         showError(e?.message || '登录失败！')
       }
