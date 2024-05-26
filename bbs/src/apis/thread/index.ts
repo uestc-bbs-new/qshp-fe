@@ -60,6 +60,7 @@ export type PostCommonDetails = {
   subject?: string
   message: string
   format?: number
+  usesig?: number
   is_anonymous?: boolean
   attachments?: Attachment[]
   smileyoff?: number

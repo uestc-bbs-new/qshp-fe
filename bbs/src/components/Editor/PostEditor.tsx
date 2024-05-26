@@ -199,6 +199,7 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        usesig: valueRef.current.usesig ?? 1,
         attachments: editor.current?.attachments,
       })
         .then((result) => {
@@ -214,6 +215,7 @@ const PostEditor = ({
         thread_id: threadId,
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
+        usesig: valueRef.current.usesig ?? 1,
         is_anonymous: valueRef.current.is_anonymous,
         attachments: editor.current?.attachments,
       })
