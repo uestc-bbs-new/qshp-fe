@@ -12,7 +12,7 @@ import Renew from '@/pages/Continue/Renew'
 import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
-import Goto from '@/pages/Goto'
+import Goto, { GotoError } from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
@@ -74,7 +74,12 @@ routes.current = [
         id: 'thread',
         element: <Thread />,
       },
-      { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
+      {
+        path: '/goto/:tidOrPid/:pid?',
+        id: 'goto',
+        loader: Goto,
+        errorElement: <GotoError />,
+      },
       {
         path: '/messages',
         element: <Messages />,
