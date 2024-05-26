@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // import {  } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -29,10 +30,13 @@ type ForumData = {
 }
 
 const ForumCover = ({ data }: ForumData) => {
+  const navigate = useNavigate()
+  const to = pages.forum(data.fid)
   return (
     <Box
       className="relative rounded text-white overflow-hidden"
-      style={{ width: '100%' }}
+      sx={{ width: '100%', cursor: 'pointer' }}
+      onClick={() => navigate(to)}
     >
       <Box
         className="absolute top-0 left-0 h-full w-full"
@@ -54,7 +58,8 @@ const ForumCover = ({ data }: ForumData) => {
             className="font-bold"
             color="inherit"
             underline="hover"
-            to={pages.forum(data.fid)}
+            to={to}
+            onClick={(e) => e.stopPropagation()}
           >
             <Typography variant="h6" fontWeight="bold">
               {data.name}
@@ -78,6 +83,7 @@ const ForumCover = ({ data }: ForumData) => {
                     : undefined
                 }
                 color="inherit"
+                onClick={(e) => e.stopPropagation()}
               >
                 <Avatar
                   alt={data.latest_thread?.lastpost_author}
@@ -98,6 +104,7 @@ const ForumCover = ({ data }: ForumData) => {
                       ? pages.thread(data.latest_thread?.thread_id)
                       : undefined
                   }
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <Box className="line-clamp-1">
                     {unescapeSubject(
@@ -126,6 +133,7 @@ const ForumCover = ({ data }: ForumData) => {
                           : undefined
                       }
                       color="inherit"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {data.latest_thread?.lastpost_author}
                     </Link>
