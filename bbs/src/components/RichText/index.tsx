@@ -218,7 +218,7 @@ const MarkdownPostRenderer = ({
           })
         )
     })()
-  }, [message])
+  }, [message, attachments])
   const navigate = useNavigate()
   const { dispatch } = useAppState()
   return (
