@@ -99,6 +99,7 @@ const AttachmentManager = ({
                         delete newAttach['deleted']
                         valueRef.current.attachments.push({ ...newAttach })
                         newAttachments[index] = { ...newAttach }
+                        onUpdateAttachments(newAttachments)
                       } else {
                         if (vIndex == -1) {
                           return
