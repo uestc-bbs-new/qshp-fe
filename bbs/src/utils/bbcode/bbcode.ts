@@ -508,8 +508,8 @@ const renderAttachment = (attach: Attachment) => {
   if (attach.is_image) {
     return renderAttachmentImage(attach)
   }
-  return `<span class="attach-file"><a href="/attachment/${
-    attach.attachment_id
+  return `<span class="attach-file"><a href="${
+    attach.download_url
   }">${htmlspecialchars(attach.filename)}</a></span>` // TODO: attach file
 }
 
