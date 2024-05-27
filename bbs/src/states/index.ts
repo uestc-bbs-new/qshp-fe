@@ -120,7 +120,7 @@ export const useTopList = (initialData?: TopList) => {
       previousUid.current = state.user.uid
     }
   }, [state.user.uid])
-  return topList
+  return globalCache.topList || topList || initialData
 }
 
 export const useSignInChange = (callback: () => void) => {

@@ -43,13 +43,15 @@ const Home = () => {
     refetch,
   } = useQuery({
     queryKey: ['index'],
-    queryFn: () => {
-      return getIndexData({
+    queryFn: async () => {
+      const result = await getIndexData({
         globalStat: true,
         announcement: true,
         forumList: true,
         topList: ['newreply', 'newthread', 'digest', 'life', 'hotlist'],
       })
+      globalCache.topList = result.top_list
+      return result
     },
   })
   useEffect(() => {
