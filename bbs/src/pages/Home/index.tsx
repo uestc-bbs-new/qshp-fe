@@ -16,6 +16,7 @@ import {
 
 import { getIndexData } from '@/apis/common'
 import headerImg from '@/assets/header.jpg'
+import headerImgDark from '@/assets/header_dark.jpg'
 import Aside from '@/components/Aside'
 import Banner from '@/components/Banner'
 import CampusService from '@/components/Header/CampusService'
@@ -90,11 +91,27 @@ const Home = () => {
   }
   return (
     <>
-      <Banner src={headerImg}>
+      <Banner src={theme.palette.mode == 'dark' ? headerImgDark : headerImg}>
         <Box className="text-white text-center">
-          <Typography variant="h4">清水河畔</Typography>
-          <Typography color={theme.palette.grey[400]}>
-            求实求真、大气大为
+          <Typography
+            variant="h4"
+            sx={(theme) =>
+              theme.palette.mode == 'dark'
+                ? { textShadow: 'black 0 0 8px' }
+                : {}
+            }
+          >
+            清水河畔
+          </Typography>
+          <Typography
+            color="#a5b99e"
+            sx={(theme) =>
+              theme.palette.mode == 'dark'
+                ? { textShadow: 'black 0 0 8px' }
+                : {}
+            }
+          >
+            求实求真{'　'}大气大为
           </Typography>
         </Box>
       </Banner>
