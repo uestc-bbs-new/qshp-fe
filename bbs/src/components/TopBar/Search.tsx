@@ -115,7 +115,7 @@ const SearchBar = ({
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => {
-          // setOpen(false)
+          setOpen(false)
           highlightItem.current = null
         }}
         onKeyDownCapture={(e) => {
