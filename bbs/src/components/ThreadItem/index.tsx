@@ -120,18 +120,24 @@ const ThreadItem = ({
                       }
                       color="inherit"
                       underline="hover"
+                      style={
+                        ignoreThreadHighlight
+                          ? undefined
+                          : {
+                              color: data.highlight_color,
+                              backgroundColor: data.highlight_bgcolor,
+                            }
+                      }
                     >
                       <Typography
                         textAlign="justify"
                         variant="threadItemSubject"
-                        color={ignoreThreadHighlight ? 'primary' : undefined}
+                        color="inherit"
                         sx={{ verticalAlign: 'middle' }}
                         style={
                           ignoreThreadHighlight
                             ? undefined
                             : {
-                                color: data.highlight_color,
-                                backgroundColor: data.highlight_bgcolor,
                                 fontWeight: data.highlight_bold
                                   ? 'bold'
                                   : undefined,
