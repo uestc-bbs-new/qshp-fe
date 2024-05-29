@@ -137,12 +137,18 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const valueRef = useRef<PostEditorValue>({ ...initialValue })
+  const initialAttachments = initialValue?.attachments
+    ? [...initialValue.attachments]
+    : []
+  const valueRef = useRef<PostEditorValue>({
+    ...initialValue,
+    attachments: initialAttachments,
+  })
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
-  const [attachments, setAttachments] = useState<EditorAttachment[]>(
-    initialValue?.attachments ? [...initialValue.attachments] : []
-  )
+  const [attachments, setAttachments] = useState<EditorAttachment[]>([
+    ...initialAttachments,
+  ])
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -375,7 +381,7 @@ const PostEditor = ({
                 initialValue?.format == 0 ? undefined : initialValue?.message
               }
               initialHtml={legacyHtml}
-              initialAttachments={initialValue?.attachments}
+              initialAttachments={initialAttachments}
               onUpdateAttachments={(value?: Attachment[]) => {
                 const existingAids = new Set(
                   attachments.map((item) => item.attachment_id)

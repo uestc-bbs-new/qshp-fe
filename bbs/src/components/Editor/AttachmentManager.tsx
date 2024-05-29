@@ -27,6 +27,10 @@ const imgStyle: Interpolation<Theme> = {
   objectFit: 'cover',
 }
 
+// TODO: Pass deleted attachments to valueRef and submit to backend so that
+// newly uploaded and then deleted attachments will not remain in unused
+// attachments.
+
 const AttachmentManager = ({
   attachments,
   onUpdateAttachments,
