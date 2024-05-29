@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import { Face5, Poll, Textsms } from '@mui/icons-material'
 import {
   Box,
@@ -68,6 +70,8 @@ const ThreadItem = ({
   const theme = useTheme()
   const narrowView = useMediaQuery('(max-width: 750px)')
   const thinView = useMediaQuery('(max-width: 560px)')
+  const to = pages.thread(data.thread_id)
+  const navigate = useNavigate()
 
   return (
     <Box className="p-0.5">
@@ -76,6 +80,7 @@ const ThreadItem = ({
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
+        onClick={narrowView ? () => navigate(to) : undefined}
       >
         {narrowView && !hideThreadAuthor && (
           <Stack direction="row" justifyContent="space-between">
@@ -112,7 +117,7 @@ const ThreadItem = ({
                         />
                       )}
                     <Link
-                      to={pages.thread(data.thread_id)}
+                      to={to}
                       state={
                         fromForum && forumDetails
                           ? { fromForumId: forumDetails.fid }
@@ -128,6 +133,7 @@ const ThreadItem = ({
                               backgroundColor: data.highlight_bgcolor,
                             }
                       }
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <Typography
                         textAlign="justify"
@@ -187,6 +193,7 @@ const ThreadItem = ({
                               },
                             },
                           }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Stack direction="row" alignItems="center">
                             <ForumSmall
@@ -240,6 +247,7 @@ const ThreadItem = ({
                               ? pages.user({ username: data.last_poster })
                               : undefined
                           }
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {data.last_poster || '匿名'}
                         </Link>
@@ -248,6 +256,7 @@ const ThreadItem = ({
                         color="inherit"
                         underline="hover"
                         to={pages.threadLastpost(data.thread_id)}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {chineseTime(data.last_post * 1000)}
                       </Link>
@@ -330,7 +339,10 @@ const ThreadAvatar = ({
   }
   return (
     <Box sx={{ mr: 2 }}>
-      <Link to={thread.author_id ? `/user/${thread.author_id}` : undefined}>
+      <Link
+        to={thread.author_id ? `/user/${thread.author_id}` : undefined}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Avatar
           alt={thread.author}
           uid={thread.author_id}
@@ -484,6 +496,7 @@ const ThreadAuthor = ({
                   : undefined
               }
               variant="threadItemAuthorLink"
+              onClick={(e) => e.stopPropagation()}
             >
               {thread.author}
             </Link>
@@ -513,6 +526,7 @@ const ThreadRepliesOrComments = ({
               underline="hover"
               ml={0.5}
               my={0.25}
+              onClick={(e) => e.stopPropagation()}
             >
               <Typography variant="threadItemSummary">
                 {item.summary}
