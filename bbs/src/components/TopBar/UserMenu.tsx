@@ -33,11 +33,11 @@ import {
   useSystemThemeChange,
 } from '@/utils/theme'
 
+import { getTotalMessages } from '../../utils/messages'
 import Avatar from '../Avatar'
 import Link, { MenuItemLink } from '../Link'
 import Separated from '../Separated'
 import { MessageTabs } from './Message'
-import { getTotalMessages } from './messages'
 
 const MenuContent = ({ small }: { small?: boolean }) => {
   if (isIdasRelease) {

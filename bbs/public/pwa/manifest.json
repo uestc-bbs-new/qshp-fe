@@ -1,0 +1,34 @@
+{
+  "name": "清水河畔 - 电子科技大学官方论坛",
+  "short_name": "清水河畔",
+  "description": "电子科技大学论坛——清水河畔是教育部直属全国重点大学电子科技大学随清水河校区兴建而发展起来的学生论坛，面向内网和公网开放，逐步成为成为电子科技大学最火爆的学生论坛，每一个在学校学子生活学习不可或缺的一部分。截至 2024 年 5 月 29 日，注册人数 217389，主题 2077035，帖子数 35337747。清水河畔，与你的大学一路同行！",
+  "icons": [
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-desktop.webp",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "sizes": "2560x1440"
+    },
+    {
+      "src": "screenshot-mobile.webp",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "sizes": "1082x2402"
+    }
+  ],
+  "start_url": "/new",
+  "display": "fullscreen",
+  "display_overrides": [
+    "window-controls-overlay",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "theme_color": "#2174f1"
+}

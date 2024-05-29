@@ -1,5 +1,6 @@
 import { ForumDetails } from '@/common/interfaces/forum'
 import { Announcement } from '@/common/interfaces/response'
+import { getTotalMessages } from '@/utils/messages'
 
 import { guestUser } from '..'
 
@@ -69,6 +70,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
   switch (action.type) {
     case 'set user': {
       if (!action.payload && state.user != guestUser) {
+        navigator.setAppBadge && navigator.setAppBadge()
         return {
           ...state,
           user: guestUser,
@@ -82,6 +84,8 @@ export const stateReducer = (state: State, action: StateAction): State => {
           action.payload.new_grouppm_legacy != state.user.new_grouppm_legacy ||
           action.payload.new_notification != state.user.new_notification)
       ) {
+        const total = getTotalMessages(action.payload)
+        navigator.setAppBadge && navigator.setAppBadge(total || undefined)
         return {
           ...state,
           user: action.payload,
