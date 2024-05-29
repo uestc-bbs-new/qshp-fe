@@ -13,6 +13,7 @@ export type SubPageCommonProps = {
   userQuery: UserQuery
   queryOptions: AdditionalQueryOptions
   onLoad?: (data: CommonUserQueryRpsoense) => void
+  onError?: (e: any) => void
 }
 
 export type FriendUser = User & {

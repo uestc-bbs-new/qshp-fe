@@ -71,6 +71,7 @@ const Information = ({
   queryOptions,
   userSummary,
   onLoad,
+  onError,
   self,
 }: SubPageCommonProps & { userSummary?: UserSummary; self: boolean }) => {
   const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
@@ -78,9 +79,14 @@ const Information = ({
   const { data } = useQuery({
     queryKey: ['user', 'profile', query],
     queryFn: async () => {
-      const data = await getUserProfile(query.common)
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserProfile(query.common)
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
   const [searchParams] = useSearchParams()

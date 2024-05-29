@@ -42,6 +42,7 @@ function MessageBoard({
   userQuery,
   queryOptions,
   onLoad,
+  onError,
   self,
   userSummary,
 }: SubPageCommonProps & {
@@ -57,9 +58,14 @@ function MessageBoard({
   const { data, refetch } = useQuery({
     queryKey: ['user', 'profile', query],
     queryFn: async () => {
-      const data = await getUserComments(query.common, query.page)
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserComments(query.common, query.page)
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
   useEffect(() => {

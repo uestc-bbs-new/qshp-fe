@@ -39,6 +39,7 @@ function Friends({
   userQuery,
   queryOptions,
   onLoad,
+  onError,
   self,
   userSummary,
 }: SubPageCommonProps & {
@@ -64,9 +65,14 @@ function Friends({
   const { data, refetch } = useQuery({
     queryKey: ['user', 'friends', query],
     queryFn: async () => {
-      const data = await getUserFriends(query.common, query.page, query.query)
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserFriends(query.common, query.page, query.query)
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
 

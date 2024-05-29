@@ -3,8 +3,11 @@ import { useParams, useSearchParams } from 'react-router-dom'
 
 import { Box, Stack, Tab, Tabs, useMediaQuery } from '@mui/material'
 
+import { ApiError } from '@/common/interfaces/error'
 import { CommonUserQueryRpsoense } from '@/common/interfaces/user'
 import Card from '@/components/Card'
+import EmptyList from '@/components/EmptyList'
+import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
@@ -74,6 +77,7 @@ function User() {
       removeVisitLog != removeVisitLogRef.current,
   }
   const activeTab = mapSubPageToTabId(params.subPage) || tabs[0].id
+  const [error, setError] = useState<any>()
   const onLoad = (data: CommonUserQueryRpsoense) => {
     removeVisitLogRef.current = removeVisitLog
     ;(data.user_summary || data.recent_visitors) &&
@@ -82,6 +86,7 @@ function User() {
         ...data,
         recent_visitors: data.recent_visitors ?? [],
       })
+    setError(null)
   }
   useEffect(() => {
     dispatch({
@@ -103,6 +108,17 @@ function User() {
 
   const hideSidebar = useMediaQuery('(max-width: 1080px)')
 
+  if (error) {
+    const err = error as ApiError
+    if (err.type == 'http' && err.status == 404) {
+      return (
+        <Card mt={2}>
+          <EmptyList text="该用户不存在。" />
+        </Card>
+      )
+    }
+    return <Error error={error} />
+  }
   return (
     <Stack direction="row" mt={1}>
       <Box
@@ -150,6 +166,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
                 userSummary={commonUserData?.user_summary}
                 self={self}
               />
@@ -159,6 +176,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
               />
             )}
             {activeTab == 'friends' && (
@@ -166,6 +184,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
                 self={self}
                 userSummary={commonUserData?.user_summary}
               />
@@ -175,6 +194,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
                 visitors={commonUserData?.recent_visitors}
                 visits={commonUserData?.user_summary?.views}
               />
@@ -184,6 +204,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
                 self={self}
               />
             )}
@@ -192,6 +213,7 @@ function User() {
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}
+                onError={setError}
                 self={self}
                 userSummary={commonUserData?.user_summary}
               />

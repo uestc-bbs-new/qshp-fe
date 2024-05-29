@@ -92,6 +92,7 @@ function ThreadList<T extends PaginationParams>({
   queryOptions,
   subPage,
   onLoad,
+  onError,
   onPageChange,
   tab,
 }: {
@@ -99,6 +100,7 @@ function ThreadList<T extends PaginationParams>({
   queryOptions: AdditionalQueryOptions
   subPage: string
   onLoad?: (data: T) => void
+  onError?: (e: any) => void
   onPageChange?: () => void
   tab: TabProps<T>
 }) {
@@ -124,22 +126,27 @@ function ThreadList<T extends PaginationParams>({
   const { data, isLoading } = useQuery({
     queryKey: ['user', tab.id, query],
     queryFn: async () => {
-      const data = await tab.fetcher(
-        query.common,
-        query.page,
-        query.fid
-          ? {
-              fid: query.fid,
-            }
-          : undefined
-      )
-      setPagination({
-        page: data.page,
-        page_size: data.page_size,
-        total: data.total,
-      })
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await tab.fetcher(
+          query.common,
+          query.page,
+          query.fid
+            ? {
+                fid: query.fid,
+              }
+            : undefined
+        )
+        setPagination({
+          page: data.page,
+          page_size: data.page_size,
+          total: data.total,
+        })
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
   const navigate = useNavigate()
@@ -238,6 +245,7 @@ const UserThreads = ({
   userQuery,
   queryOptions,
   onLoad,
+  onError,
 }: SubPageCommonProps) => {
   const subPage = useParams().subPage
   const activeTab = tabs.find((item) => item.id == subPage) || tabs[0]
@@ -270,6 +278,7 @@ const UserThreads = ({
         queryOptions={queryOptions}
         subPage={activeTab.id}
         onLoad={(data) => onLoad && onLoad(data)}
+        onError={onError}
         onPageChange={() => topRef.current?.scrollIntoView()}
       />
     </Box>
