@@ -107,8 +107,15 @@ const Thread = () => {
     if (location.state?.fromForumId != state.activeForum?.fid) {
       dispatch({ type: 'set forum' })
     }
-    dispatch({ type: 'set thread' })
+    if (state.activeThread?.thread_id != threadId) {
+      dispatch({ type: 'set thread' })
+    }
   }, [threadId])
+  useEffect(() => {
+    return () => {
+      dispatch({ type: 'set thread' })
+    }
+  }, [])
 
   const {
     data: info,

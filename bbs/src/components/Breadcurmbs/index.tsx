@@ -189,24 +189,23 @@ const Breadcrumbs = () => {
     const title = '清水河畔 - 电子科技大学官方论坛'
     const suffix = ` - ${title}`
     const shortSuffix = ' - 清水河畔'
-    if (activeRoute?.id == 'forum' && state.activeForum) {
-      document.title = `${state.activeForum.name} - ${title}`
-    } else if (
-      activeRoute?.id == 'thread' &&
-      state.activeForum &&
-      state.activeThread
-    ) {
-      document.title = `${state.activeThread?.subject} - ${state.activeForum.name} - 清水河畔`
-    } else if (
-      (activeRoute?.id == 'user' || activeRoute?.id == 'userByName') &&
-      state.userBreadcumbs
-    ) {
-      const name = state.userBreadcumbs.self
-        ? '我的'
-        : state.userBreadcumbs.username
-          ? maybeJoinWithSpace(state.userBreadcumbs.username, '的')
-          : ''
-      document.title = `${name}个人空间 ${suffix}`
+    if (activeRoute?.id == 'forum') {
+      if (state.activeForum) {
+        document.title = `${state.activeForum.name} - ${title}`
+      }
+    } else if (activeRoute?.id == 'thread') {
+      if (state.activeForum && state.activeThread) {
+        document.title = `${state.activeThread?.subject} - ${state.activeForum.name}${shortSuffix}`
+      }
+    } else if (activeRoute?.id == 'user' || activeRoute?.id == 'userByName') {
+      if (state.userBreadcumbs) {
+        const name = state.userBreadcumbs.self
+          ? '我的'
+          : state.userBreadcumbs.username
+            ? maybeJoinWithSpace(state.userBreadcumbs.username, '的')
+            : ''
+        document.title = `${name}个人空间 ${suffix}`
+      }
     } else {
       document.title = title
     }
