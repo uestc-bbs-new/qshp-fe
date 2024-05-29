@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   Params,
   RouteObject,
@@ -164,6 +165,16 @@ const messages = (route?: RouteObject, narrowView?: boolean) => {
   ]
 }
 
+const maybeJoinWithSpace = (a: string, b: string) => {
+  if (a == '' || b == '') {
+    return a + b
+  }
+  if (a.slice(-1).charCodeAt(0) < 128 || b.slice(0, 1).charCodeAt(0) < 128) {
+    return `${a} ${b}`
+  }
+  return `${a}${b}`
+}
+
 const Breadcrumbs = () => {
   const [searchParams] = useSearchParams()
   const { state } = useAppState()
@@ -174,10 +185,36 @@ const Breadcrumbs = () => {
   const activeRoute = activeMatch?.route
   const narrowView = useMediaQuery('(max-width: 800px)')
 
+  useEffect(() => {
+    const title = '清水河畔 - 电子科技大学官方论坛'
+    const suffix = ` - ${title}`
+    const shortSuffix = ' - 清水河畔'
+    if (activeRoute?.id == 'forum' && state.activeForum) {
+      document.title = `${state.activeForum.name} - ${title}`
+    } else if (
+      activeRoute?.id == 'thread' &&
+      state.activeForum &&
+      state.activeThread
+    ) {
+      document.title = `${state.activeThread?.subject} - ${state.activeForum.name} - 清水河畔`
+    } else if (
+      (activeRoute?.id == 'user' || activeRoute?.id == 'userByName') &&
+      state.userBreadcumbs
+    ) {
+      const name = state.userBreadcumbs.self
+        ? '我的'
+        : state.userBreadcumbs.username
+          ? maybeJoinWithSpace(state.userBreadcumbs.username, '的')
+          : ''
+      document.title = `${name}个人空间 ${suffix}`
+    } else {
+      document.title = title
+    }
+  }, [activeRoute, state.activeThread, state.activeForum, state.userBreadcumbs])
+
   if (activeRoute?.id == 'index' || activeRoute?.id == '404') {
     return <></>
   }
-
   return (
     <MuiBreadcrumbs
       sx={{
