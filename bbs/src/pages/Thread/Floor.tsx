@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
 import { Alert, Box, Stack, Typography, useMediaQuery } from '@mui/material'
@@ -101,20 +101,11 @@ const Floor = ({
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
 
-  // 弹出框
-  const {
-    props: { open, onClose },
-    show,
-  } = useSnackbar()
-
   const narrowView = useMediaQuery('(max-width: 800px)')
   const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <Box>
-      <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
-        <Alert severity="success">链接复制成功</Alert>
-      </CenteredSnackbar>
       <Stack direction="row">
         {!narrowView && (
           <Stack
@@ -170,33 +161,11 @@ const Floor = ({
                 </Link>
                 {threadControls}
               </Stack>
-              <Stack direction="row" alignItems="center">
-                <Link
-                  color="inherit"
-                  className="hover:text-blue-500"
-                  mr={1}
-                  to={gotoLink}
-                  underline="hover"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    navigator.clipboard.writeText(
-                      `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-                    )
-                    show('')
-                  }}
-                >
-                  分享
-                </Link>
-                <Typography>
-                  {post.pinned && (
-                    <PublishIcon
-                      htmlColor="#ff785b"
-                      sx={{ verticalAlign: 'middle' }}
-                    />
-                  )}
-                  #{post.position}
-                </Typography>
-              </Stack>
+              <PostPosition
+                post={post}
+                threadDetails={threadDetails}
+                gotoLink={gotoLink}
+              />
             </Stack>
             {(post.position > 1 || !post.is_first) && (
               <PostSubject
@@ -432,6 +401,98 @@ const AuthorDetails = ({
       （该用户已删除）
     </Typography>
   )
+
+const PostPosition = ({
+  post,
+  threadDetails,
+  gotoLink,
+}: {
+  post: PostFloor
+  threadDetails?: Thread
+  gotoLink: string
+}) => {
+  const specialText = [undefined, '楼主', '沙发', '板凳', '地板', '地下'][
+    post.position
+  ]
+  const positionText = `#${post.position}`
+  const [hover, setHover] = useState(false)
+  const { props: snackbarProps, message, show } = useSnackbar()
+
+  return (
+    <>
+      <Stack
+        direction="row"
+        alignItems="center"
+        onClick={(e) => {
+          navigator.clipboard.writeText(
+            `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+          )
+          show('链接复制成功')
+        }}
+      >
+        <Link
+          color="inherit"
+          className="hover:text-blue-500"
+          to={gotoLink}
+          underline="hover"
+          onClick={(e) => e.preventDefault()}
+        >
+          分享
+        </Link>
+        <Link
+          to={gotoLink}
+          underline="none"
+          color="inherit"
+          pl={1}
+          onMouseOver={() => setHover(true)}
+          onMouseOut={() => setHover(false)}
+          onClick={(e) => e.preventDefault()}
+        >
+          {post.pinned && (
+            <PublishIcon htmlColor="#ff785b" sx={{ verticalAlign: 'middle' }} />
+          )}
+          <span
+            css={{
+              position: 'relative',
+              minWidth: '2em',
+              display: 'inline-block',
+              textAlign: 'center',
+            }}
+          >
+            <span
+              style={
+                specialText && hover ? { visibility: 'hidden' } : undefined
+              }
+            >
+              {specialText ?? positionText}
+            </span>
+            {specialText && (
+              <span
+                css={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  display: 'none',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                style={hover ? { display: 'flex' } : undefined}
+              >
+                {positionText}
+              </span>
+            )}
+          </span>
+        </Link>
+      </Stack>
+
+      <CenteredSnackbar {...snackbarProps} autoHideDuration={3000}>
+        <Alert severity="success">{message}</Alert>
+      </CenteredSnackbar>
+    </>
+  )
+}
 
 const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) => {
   const thinView = useMediaQuery('(max-width: 560px)')
