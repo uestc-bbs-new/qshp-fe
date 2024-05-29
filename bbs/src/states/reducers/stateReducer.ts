@@ -70,7 +70,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
   switch (action.type) {
     case 'set user': {
       if (!action.payload && state.user != guestUser) {
-        navigator.setAppBadge && navigator.setAppBadge()
+        navigator.clearAppBadge && navigator.clearAppBadge()
         return {
           ...state,
           user: guestUser,
@@ -85,7 +85,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
           action.payload.new_notification != state.user.new_notification)
       ) {
         const total = getTotalMessages(action.payload)
-        navigator.setAppBadge && navigator.setAppBadge(total || undefined)
+        navigator.setAppBadge && navigator.setAppBadge(total)
         return {
           ...state,
           user: action.payload,
