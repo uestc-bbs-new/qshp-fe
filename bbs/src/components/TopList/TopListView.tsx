@@ -22,7 +22,6 @@ import {
   List,
   Paper,
   Skeleton,
-  Slide,
   Stack,
   Tab,
   Tabs,
@@ -354,7 +353,7 @@ export const TopListDialog = ({
     return () => void (document.body.style.overflow = '')
   }, [open])
 
-  const body = (
+  return (
     <Paper
       sx={{
         left: 0,
@@ -364,26 +363,15 @@ export const TopListDialog = ({
         position: 'fixed',
         zIndex: 1,
       }}
-      hidden={(alwaysOpen || noTransition) && !open}
+      hidden={!open}
     >
       <TopListView
-        onClose={
-          alwaysOpen
-            ? undefined
-            : () => {
-                document.body.style.overflow = ''
-                onClose()
-              }
-        }
+        onClose={() => {
+          document.body.style.overflow = ''
+          onClose()
+        }}
       />
     </Paper>
-  )
-  return alwaysOpen || noTransition ? (
-    body
-  ) : (
-    <Slide in={open} direction="up">
-      {body}
-    </Slide>
   )
 }
 
