@@ -1,7 +1,14 @@
 import React, { ReactNode, useState } from 'react'
 
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography, useMediaQuery } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Stack,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 import {
@@ -156,9 +163,7 @@ const Floor = ({
               mb={1}
             >
               <Stack direction="row">
-                <Link color="inherit" underline="none" to={gotoLink}>
-                  {chineseTime(post.dateline * 1000)}
-                </Link>
+                <PostTime post={post} gotoLink={gotoLink} />
                 {threadControls}
               </Stack>
               <PostPosition
@@ -402,6 +407,33 @@ const AuthorDetails = ({
     </Typography>
   )
 
+const PostTime = ({
+  post,
+  gotoLink,
+}: {
+  post: PostFloor
+  gotoLink: string
+}) => {
+  const timestamp = post.dateline * 1000
+  const simplifiedTime = chineseTime(timestamp)
+  const fullTime = chineseTime(timestamp, { full: true })
+  const content = (
+    <Link color="inherit" underline="none" to={gotoLink}>
+      {simplifiedTime}
+    </Link>
+  )
+  if (simplifiedTime == fullTime) {
+    return content
+  }
+  return (
+    <Tooltip
+      title={<Typography variant="body2">{fullTime}</Typography>}
+      placement="top"
+    >
+      {content}
+    </Tooltip>
+  )
+}
 const PostPosition = ({
   post,
   threadDetails,
