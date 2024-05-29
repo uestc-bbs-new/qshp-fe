@@ -18,7 +18,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import { getPostDetails, getThreadsInfo, kPostPageSize } from '@/apis/thread'
+import { getPostDetails, getThreadsInfo } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
 import Aside from '@/components/Aside'
@@ -131,7 +131,7 @@ function Thread() {
         dispatch({ type: 'set forum', payload: info.forum })
       }
       if (info && info.total) {
-        setTotalPages(Math.ceil(info.total / kPostPageSize))
+        setTotalPages(Math.ceil(info.total / info.page_size))
       }
       if (info && info.rows) {
         const commentPids: number[] = []
@@ -171,9 +171,9 @@ function Thread() {
       } else {
         // total + 1 because a new reply was posted just now and info is not yet refreshed.
         const newPage = info?.total
-          ? Math.ceil((info?.total + 1) / kPostPageSize)
+          ? Math.ceil((info.total + 1) / info.page_size)
           : 1
-        if (newPage != query.page) {
+        if (newPage != (info?.page ?? query.page)) {
           navigate(
             `${location.pathname}?${searchParamsAssign(searchParams, {
               page: newPage,
@@ -271,7 +271,7 @@ function Thread() {
           <>
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {info?.rows
@@ -376,7 +376,7 @@ function Thread() {
 
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {forumDetails?.can_post_reply && threadDetails?.can_reply && (

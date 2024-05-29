@@ -86,6 +86,8 @@ export const pages = {
 
   thread: (thread_id: number, query?: URLSearchParams, hashValue?: string) =>
     withSearchAndHash(`/thread/${thread_id}`, query, hashValue),
+  threadLastpost: (thread_id: number) =>
+    pages.thread(thread_id, new URLSearchParams({ page: '-1' }), 'lastpost'),
   forum: (forum_id: number, query?: URLSearchParams) =>
     withSearchAndHash(`/forum/${forum_id}`, query),
   goto: (post_id: number) => `/goto/${post_id}`,

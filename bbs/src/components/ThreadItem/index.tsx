@@ -244,7 +244,13 @@ const ThreadItem = ({
                           {data.last_poster || '匿名'}
                         </Link>
                       </>
-                      <>{chineseTime(data.last_post * 1000)}</>
+                      <Link
+                        color="inherit"
+                        underline="hover"
+                        to={pages.threadLastpost(data.thread_id)}
+                      >
+                        {chineseTime(data.last_post * 1000)}
+                      </Link>
                     </Separated>
                   </Typography>
                 </Stack>

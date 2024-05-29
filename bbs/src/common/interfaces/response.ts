@@ -2,6 +2,16 @@ import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
 import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
+export type PaginationParams = {
+  total: number
+  page_size: number
+  page: number
+}
+
+export type GenericList<T> = PaginationParams & {
+  rows: T[]
+}
+
 export type ThreadBasics = {
   thread_id: number
   forum_id: number
@@ -136,13 +146,9 @@ export type ThreadList = GenericList<Thread> & {
   forum?: ForumDetails
 }
 
-export interface PostDetails {
-  page: number
-  pagesize: number
-  total: number
+export type PostDetails = GenericList<PostFloor> & {
   thread?: Thread
   forum?: ForumDetails
-  rows: PostFloor[]
 }
 
 /** 用户组相关信息 */
@@ -244,16 +250,6 @@ export interface PostExtraDetails {
 
 export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
-}
-
-export type PaginationParams = {
-  total: number
-  page_size: number
-  page: number
-}
-
-export type GenericList<T> = PaginationParams & {
-  rows: T[]
 }
 
 export type MessageCounts = {

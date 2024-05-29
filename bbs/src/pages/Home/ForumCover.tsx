@@ -101,7 +101,7 @@ const ForumCover = ({ data }: ForumData) => {
                   underline="hover"
                   to={
                     data.latest_thread?.thread_id
-                      ? pages.thread(data.latest_thread?.thread_id)
+                      ? pages.threadLastpost(data.latest_thread?.thread_id)
                       : undefined
                   }
                   onClick={(e) => e.stopPropagation()}
