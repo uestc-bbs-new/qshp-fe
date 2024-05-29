@@ -1,3 +1,1 @@
-addEventListener('fetch', (e) => {
-  return fetch(e.request)
-})
+addEventListener('fetch', (e) => {})
