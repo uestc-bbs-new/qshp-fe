@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 
+import { AccountBox } from '@mui/icons-material'
 import PublishIcon from '@mui/icons-material/Publish'
 import {
   Alert,
@@ -163,6 +164,7 @@ const Floor = ({
               mb={1}
             >
               <Stack direction="row">
+                <PostAuthorTags post={post} threadDetails={threadDetails} />
                 <PostTime post={post} gotoLink={gotoLink} />
                 {threadControls}
               </Stack>
@@ -406,6 +408,24 @@ const AuthorDetails = ({
       （该用户已删除）
     </Typography>
   )
+
+const PostAuthorTags = ({
+  post,
+  threadDetails,
+}: {
+  post: PostFloor
+  threadDetails?: Thread
+}) => {
+  if (post.author_id && post.author_id == threadDetails?.author_id) {
+    return (
+      <Stack direction="row" alignItems="center" mr={0.75}>
+        <AccountBox fontSize="small" sx={{ mr: 0.25 }} />
+        楼主
+      </Stack>
+    )
+  }
+  return <></>
+}
 
 const PostTime = ({
   post,
