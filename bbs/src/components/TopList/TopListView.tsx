@@ -366,10 +366,14 @@ export const TopListDialog = ({
       hidden={!open}
     >
       <TopListView
-        onClose={() => {
-          document.body.style.overflow = ''
-          onClose()
-        }}
+        onClose={
+          alwaysOpen
+            ? undefined
+            : () => {
+                document.body.style.overflow = ''
+                onClose()
+              }
+        }
       />
     </Paper>
   )
