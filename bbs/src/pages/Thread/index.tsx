@@ -65,7 +65,9 @@ const ForumPagination = (props: {
   )
 }
 
-function Thread() {
+const postElementId = (post_id: number) => `post-${post_id}`
+
+const Thread = () => {
   const { state, dispatch } = useAppState()
   const navigate = useNavigate()
 
@@ -213,8 +215,18 @@ function Thread() {
   useEffect(() => {
     if (location.hash) {
       const hash_position = location.hash.slice(1)
-      const dom = document.getElementById(hash_position)
-      dom?.scrollIntoView()
+      const lastpost = hash_position == 'lastpost' && info?.rows.length
+      const targetId = lastpost
+        ? postElementId(info.rows[info.rows.length - 1].post_id)
+        : hash_position
+      const dom = document.getElementById(targetId)
+      if (!dom) {
+        return
+      }
+      dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      setTimeout(() => {
+        dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      }, 600)
     }
   }, [info])
 
@@ -281,13 +293,20 @@ function Thread() {
                       className="rounded-lg shadow-lg"
                       mb={thinView ? 1 : 1.75}
                       sx={(theme) => ({
-                        backgroundColor: theme.palette.background.paper,
+                        backgroundColor:
+                          '#' + postElementId(item.post_id) == location.hash
+                            ? theme.palette.background.paperHighlighted
+                            : theme.palette.background.paper,
                       })}
                       key={item.post_id}
                     >
                       <section
-                        id={`post-${item.post_id}`}
-                        css={{ ...scrollAnchorCss, position: 'relative' }}
+                        id={postElementId(item.post_id)}
+                        css={{
+                          ...scrollAnchorCss,
+                          scrollMarginBottom: '16px',
+                          position: 'relative',
+                        }}
                         onCopy={
                           isInternalEnforced
                             ? (e) => e.preventDefault() // Maybe show some prompt on copy

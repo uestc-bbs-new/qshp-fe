@@ -1,5 +1,11 @@
 import { SxProps, ThemeOptions } from '@mui/material'
 
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    paperHighlighted?: string
+  }
+}
+
 const rootElement = document.getElementById('root')
 
 const threadItemLabelCommonStyle = {
