@@ -31,6 +31,7 @@ type GlobalDialogState = {
 type GlobalSnackbarState = {
   message: string
   severity?: 'success' | 'warning' | 'error'
+  transition?: 'none' | 'slide-up'
   key: number
 }
 

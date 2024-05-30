@@ -56,7 +56,9 @@ const Layout = () => {
           <Snackbar
             key={state.globalSnackbar.key}
             open
-            TransitionComponent={Slide}
+            TransitionComponent={
+              state.globalSnackbar.transition != 'none' ? Slide : undefined
+            }
             autoHideDuration={3000}
             onClose={() => dispatch({ type: 'close snackbar' })}
             sx={{

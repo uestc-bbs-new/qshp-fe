@@ -23,9 +23,9 @@ import Link from '@/components/Link'
 import Medals from '@/components/Medals'
 import DigestAuthor from '@/components/Medals/DigestAuthor'
 import { UserHtmlRenderer } from '@/components/RichText'
-import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import UserGroupIcon from '@/components/UserGroupIcon'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -463,12 +463,12 @@ const PostPosition = ({
   threadDetails?: Thread
   gotoLink: string
 }) => {
+  const { dispatch } = useAppState()
   const specialText = [undefined, '楼主', '沙发', '板凳', '地板', '地下'][
     post.position
   ]
   const positionText = `#${post.position}`
   const [hover, setHover] = useState(false)
-  const { props: snackbarProps, message, show } = useSnackbar()
 
   return (
     <>
@@ -476,10 +476,30 @@ const PostPosition = ({
         direction="row"
         alignItems="center"
         onClick={(e) => {
-          navigator.clipboard.writeText(
-            `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-          )
-          show('链接复制成功')
+          navigator.clipboard
+            .writeText(
+              `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+            )
+            .then(() =>
+              dispatch({
+                type: 'open snackbar',
+                payload: {
+                  message: '链接复制成功',
+                  severity: 'success',
+                  transition: 'none',
+                },
+              })
+            )
+            .catch((e) =>
+              dispatch({
+                type: 'open snackbar',
+                payload: {
+                  message: `复制失败：${e}`,
+                  severity: 'error',
+                  transition: 'none',
+                },
+              })
+            )
         }}
       >
         <Link
@@ -538,10 +558,6 @@ const PostPosition = ({
           </span>
         </Link>
       </Stack>
-
-      <CenteredSnackbar {...snackbarProps} autoHideDuration={3000}>
-        <Alert severity="success">{message}</Alert>
-      </CenteredSnackbar>
     </>
   )
 }
