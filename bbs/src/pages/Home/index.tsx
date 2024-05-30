@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import {
@@ -43,6 +43,7 @@ const Home = () => {
   } = useQuery({
     queryKey: ['index'],
     queryFn: async () => {
+      console.log('fetch index')
       const result = await getIndexData({
         globalStat: true,
         announcement: true,
@@ -79,9 +80,29 @@ const Home = () => {
       })
     }
   }, [indexData, mobileView])
+
+  const previousLocationKey = useRef(location.key)
+  const previousUid = useRef(state.user.uid)
+  const previousUninitialized = useRef(state.user.uninitialized)
   useEffect(() => {
-    refetch()
-  }, [state.user.uid, location.key])
+    console.log(
+      state.user.uid,
+      location.key,
+      previousLocationKey.current,
+      previousUid.current
+    )
+    if (
+      !previousUninitialized.current &&
+      (previousUid.current != state.user.uid ||
+        previousLocationKey.current != location.key)
+    ) {
+      previousLocationKey.current = location.key
+      previousUid.current = state.user.uid
+      refetch()
+    }
+    previousUninitialized.current = state.user.uninitialized
+  }, [state.user.uid, state.user.uninitialized, location.key])
+
   if (mobileView) {
     return [...Array(10)].map((_, index) => (
       <Skeleton key={index} height={70} />
