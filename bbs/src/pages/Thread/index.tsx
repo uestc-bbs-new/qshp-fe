@@ -220,6 +220,7 @@ const Thread = () => {
   }
 
   useEffect(() => {
+    const pendingTimeout = new Set<number>()
     if (location.hash) {
       const hash_position = location.hash.slice(1)
       const lastpost = hash_position == 'lastpost' && info?.rows.length
@@ -231,9 +232,14 @@ const Thread = () => {
         return
       }
       dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        pendingTimeout.delete(timeoutId)
         dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
       }, 600)
+      pendingTimeout.add(timeoutId)
+    }
+    return () => {
+      pendingTimeout.forEach((id) => clearTimeout(id))
     }
   }, [info])
 
