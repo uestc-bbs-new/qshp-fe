@@ -107,6 +107,10 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
           ...getPreviewThemeOptions(state.theme),
           // Disable preview action buttons which are useless in our bbs.
           actions: [],
+          hljs: {
+            langs: ['c++', 'java', 'js', 'python', 'go', 'matlab', 'rust'],
+            lineNumber: true,
+          },
         },
         ...other,
         theme: theme(),
