@@ -278,14 +278,14 @@ export const baseTheme: ThemeOptions = {
       color: '#303133',
       fontWeight: 500,
       fontSize: 16,
-      wordBreak: 'break-word',
+      wordBreak: 'break-all',
       overflowWrap: 'anywhere',
     },
     threadItemSummary: {
       color: '#606266',
       fontSize: 14,
       textAlign: 'justify',
-      wordBreak: 'break-word',
+      wordBreak: 'break-all',
       overflowWrap: 'anywhere',
     },
     threadItemStat: {
