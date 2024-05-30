@@ -158,21 +158,23 @@ const Floor = ({
             <Stack
               direction="row"
               alignItems="center"
-              justifyContent="space-between"
+              flexWrap="wrap"
               className="text-sm text-slate-300"
               mt={post.position == 1 && post.is_first ? 0.5 : undefined}
               mb={1}
             >
-              <Stack direction="row">
+              <Stack direction="row" flexWrap="wrap">
                 <PostAuthorTags post={post} threadDetails={threadDetails} />
                 <PostTime post={post} gotoLink={gotoLink} />
                 {threadControls}
               </Stack>
-              <PostPosition
-                post={post}
-                threadDetails={threadDetails}
-                gotoLink={gotoLink}
-              />
+              <Stack direction="row" justifyContent="right" pl={1} flexGrow={1}>
+                <PostPosition
+                  post={post}
+                  threadDetails={threadDetails}
+                  gotoLink={gotoLink}
+                />
+              </Stack>
             </Stack>
             {(post.position > 1 || !post.is_first) && (
               <PostSubject
@@ -517,73 +519,69 @@ const PostPosition = ({
   }
 
   return (
-    <>
-      <Stack
-        direction="row"
-        alignItems="center"
-        onClick={(e) =>
-          copyText(
-            `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-          )
-        }
+    <Stack
+      direction="row"
+      alignItems="center"
+      onClick={(e) =>
+        copyText(
+          `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+        )
+      }
+    >
+      <Link
+        color="inherit"
+        className="hover:text-blue-500"
+        to={gotoLink}
+        underline="hover"
+        onClick={(e) => e.preventDefault()}
       >
-        <Link
-          color="inherit"
-          className="hover:text-blue-500"
-          to={gotoLink}
-          underline="hover"
-          onClick={(e) => e.preventDefault()}
+        分享
+      </Link>
+      <Link
+        to={gotoLink}
+        underline="none"
+        color="inherit"
+        pl={1}
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
+        onClick={(e) => e.preventDefault()}
+      >
+        {post.pinned && (
+          <PublishIcon htmlColor="#ff785b" sx={{ verticalAlign: 'middle' }} />
+        )}
+        <span
+          css={{
+            position: 'relative',
+            minWidth: '2em',
+            display: 'inline-block',
+            textAlign: 'center',
+          }}
         >
-          分享
-        </Link>
-        <Link
-          to={gotoLink}
-          underline="none"
-          color="inherit"
-          pl={1}
-          onMouseOver={() => setHover(true)}
-          onMouseOut={() => setHover(false)}
-          onClick={(e) => e.preventDefault()}
-        >
-          {post.pinned && (
-            <PublishIcon htmlColor="#ff785b" sx={{ verticalAlign: 'middle' }} />
-          )}
           <span
-            css={{
-              position: 'relative',
-              minWidth: '2em',
-              display: 'inline-block',
-              textAlign: 'center',
-            }}
+            style={specialText && hover ? { visibility: 'hidden' } : undefined}
           >
-            <span
-              style={
-                specialText && hover ? { visibility: 'hidden' } : undefined
-              }
-            >
-              {specialText ?? positionText}
-            </span>
-            {specialText && (
-              <span
-                css={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  display: 'none',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                style={hover ? { display: 'flex' } : undefined}
-              >
-                {positionText}
-              </span>
-            )}
+            {specialText ?? positionText}
           </span>
-        </Link>
-      </Stack>
-    </>
+          {specialText && (
+            <span
+              css={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                display: 'none',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              style={hover ? { display: 'flex' } : undefined}
+            >
+              {positionText}
+            </span>
+          )}
+        </span>
+      </Link>
+    </Stack>
   )
 }
 
