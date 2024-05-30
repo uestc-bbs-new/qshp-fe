@@ -470,37 +470,62 @@ const PostPosition = ({
   const positionText = `#${post.position}`
   const [hover, setHover] = useState(false)
 
+  const copySuccess = () =>
+    dispatch({
+      type: 'open snackbar',
+      payload: {
+        message: '链接复制成功',
+        severity: 'success',
+        transition: 'none',
+      },
+    })
+  const legacyCopyText = (text: string, previousError?: any) => {
+    const textarea = document.createElement('textarea')
+    textarea.style.position = 'absolute'
+    textarea.style.left = '-9999px'
+    textarea.style.top = '-9999px'
+    textarea.value = text
+    document.body.appendChild(textarea)
+    textarea.focus()
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      copySuccess()
+    } catch (e) {
+      dispatch({
+        type: 'open snackbar',
+        payload: {
+          message: `复制失败：${e}${previousError ? ` ${previousError}` : ''}`,
+          severity: 'error',
+          transition: 'none',
+        },
+      })
+    } finally {
+      document.body.removeChild(textarea)
+    }
+  }
+
+  const copyText = (text: string) => {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      legacyCopyText(text)
+      return
+    }
+    navigator.clipboard
+      .writeText(text)
+      .then(() => copySuccess())
+      .catch((e) => legacyCopyText(text, e))
+  }
+
   return (
     <>
       <Stack
         direction="row"
         alignItems="center"
-        onClick={(e) => {
-          navigator.clipboard
-            .writeText(
-              `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-            )
-            .then(() =>
-              dispatch({
-                type: 'open snackbar',
-                payload: {
-                  message: '链接复制成功',
-                  severity: 'success',
-                  transition: 'none',
-                },
-              })
-            )
-            .catch((e) =>
-              dispatch({
-                type: 'open snackbar',
-                payload: {
-                  message: `复制失败：${e}`,
-                  severity: 'error',
-                  transition: 'none',
-                },
-              })
-            )
-        }}
+        onClick={(e) =>
+          copyText(
+            `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+          )
+        }
       >
         <Link
           color="inherit"
