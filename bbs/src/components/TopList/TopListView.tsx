@@ -26,6 +26,7 @@ import {
   Tab,
   Tabs,
   debounce,
+  useMediaQuery,
 } from '@mui/material'
 
 import { getTopLists } from '@/apis/common'
@@ -299,24 +300,7 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
   return (
     <>
       {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
-      {!!list?.length && (
-        <ResponsiveMasonry
-          columnsCountBreakPoints={{
-            320: 1,
-            720: 2,
-            800: 1,
-            848: 2,
-            1300: 3,
-            1921: 4,
-          }}
-        >
-          <Masonry gutter="12px">
-            {list?.map((item) => (
-              <ThreadItemGrid key={item.thread_id} item={item} />
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-      )}
+      <ListView list={list} />
       {!isEnded && !(isFetching && page == 1) && (
         <Stack ref={isFetching ? undefined : observe}>
           {isError ? (
@@ -339,6 +323,33 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
         </Stack>
       )}
     </>
+  )
+}
+
+const ListView = ({ list }: { list?: TopListThread[] }) => {
+  const singleColumn = useMediaQuery('(max-width: 720px')
+  if (!list?.length) {
+    return <></>
+  }
+  const items = list?.map((item) => (
+    <ThreadItemGrid key={item.thread_id} item={item} />
+  ))
+  if (singleColumn) {
+    return <>{items}</>
+  }
+  return (
+    <ResponsiveMasonry
+      columnsCountBreakPoints={{
+        320: 1,
+        720: 2,
+        800: 1,
+        848: 2,
+        1300: 3,
+        1921: 4,
+      }}
+    >
+      <Masonry gutter="12px">{items}</Masonry>
+    </ResponsiveMasonry>
   )
 }
 
