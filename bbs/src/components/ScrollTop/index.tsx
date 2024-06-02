@@ -2,12 +2,13 @@ import Box from '@mui/material/Box'
 import Fade from '@mui/material/Fade'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 
-interface Props {
+const ScrollTop = ({
+  children,
+  hidden,
+}: {
   children: React.ReactElement
-}
-
-const ScrollTop = (props: Props) => {
-  const { children } = props
+  hidden?: boolean
+}) => {
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 100,
@@ -26,7 +27,7 @@ const ScrollTop = (props: Props) => {
   }
 
   return (
-    <Fade in={trigger}>
+    <Fade in={trigger && !hidden}>
       <Box
         onClick={handleClick}
         role="presentation"

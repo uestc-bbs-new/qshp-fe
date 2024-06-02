@@ -47,7 +47,7 @@ const Layout = () => {
             <Outlet />
           </Box>
         </Box>
-        <ScrollTop>
+        <ScrollTop hidden={state.toplistView?.open}>
           <Fab size="small" aria-label="回到顶部">
             <KeyboardArrowUp />
           </Fab>

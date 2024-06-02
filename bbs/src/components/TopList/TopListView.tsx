@@ -13,15 +13,17 @@ import React, {
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
-import { Close } from '@mui/icons-material'
+import { Close, KeyboardArrowUp } from '@mui/icons-material'
 import {
   Alert,
   Box,
   Button,
+  Fab,
   IconButton,
   List,
   Paper,
   Skeleton,
+  Slide,
   Stack,
   Tab,
   Tabs,
@@ -147,13 +149,17 @@ const TabContent = ({
     }
   }, [tab])
 
-  const saveScrollffsetDebounced = useMemo(
+  const onScroll = useMemo(
     () =>
       debounce(() => {
-        toplistScrollOffset[tab] = scrollRef.current?.scrollTop ?? 0
+        const offset = scrollRef.current?.scrollTop ?? 0
+        toplistScrollOffset[tab] = offset
+        setShowBackTop(offset > 64)
       }),
     []
   )
+
+  const [showBackTop, setShowBackTop] = useState(false)
 
   if (state.user.uninitialized) {
     return (
@@ -209,10 +215,22 @@ const TabContent = ({
         scrollbarGutter: 'stable',
         overscrollBehavior: 'contain',
       }}
-      onScroll={() => saveScrollffsetDebounced()}
+      onScroll={() => onScroll()}
       ref={scrollRef}
     >
       {children}
+      <Stack position="absolute" right={12} bottom={8}>
+        <Slide direction="left" in={showBackTop}>
+          <Fab
+            size="small"
+            onClick={(e) =>
+              scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+          >
+            <KeyboardArrowUp />
+          </Fab>
+        </Slide>
+      </Stack>
     </Box>
   )
 }
