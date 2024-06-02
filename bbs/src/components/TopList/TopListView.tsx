@@ -205,6 +205,8 @@ const TabContent = ({
           backgroundColor: '#999',
           width: '3px',
         },
+        scrollbarGutter: 'stable',
+        overscrollBehavior: 'contain',
       }}
       onScroll={() => saveScrollffsetDebounced()}
       ref={scrollRef}
@@ -299,7 +301,14 @@ const TopListTab = ({ tab }: { tab: TopListKey }) => {
       {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
       {!!list?.length && (
         <ResponsiveMasonry
-          columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}
+          columnsCountBreakPoints={{
+            320: 1,
+            720: 2,
+            800: 1,
+            848: 2,
+            1300: 3,
+            1921: 4,
+          }}
         >
           <Masonry gutter="12px">
             {list?.map((item) => (
@@ -344,38 +353,59 @@ export const TopListDialog = ({
   noTransition?: boolean
   onClose: () => void
 }) => {
-  useEffect(() => {
-    if (open && !alwaysOpen) {
-      document.body.style.overflow = 'hidden'
-    } else if (!open) {
-      document.body.style.overflow = ''
-    }
-    return () => void (document.body.style.overflow = '')
-  }, [open])
-
   return (
-    <Paper
-      sx={{
+    <div
+      css={{
+        position: 'fixed',
         left: 0,
         right: 0,
+        top: 0,
         bottom: 0,
-        top: 64,
-        position: 'fixed',
         zIndex: 1,
+        ...(!alwaysOpen && {
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          backdropFilter: 'blur(2px)',
+        }),
       }}
       hidden={!open}
     >
-      <TopListView
-        onClose={
-          alwaysOpen
-            ? undefined
-            : () => {
-                document.body.style.overflow = ''
-                onClose()
+      <Paper
+        sx={(theme) => ({
+          position: 'absolute',
+          ...(alwaysOpen
+            ? {
+                left: 0,
+                right: 0,
+                top: 64,
+                bottom: 0,
               }
-        }
-      />
-    </Paper>
+            : {
+                left: 64,
+                right: 64,
+                bottom: 16,
+                top: 72,
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: `4px 4px 8px ${
+                  theme.palette.mode == 'dark'
+                    ? 'rgba(255, 255, 255, 0.15)'
+                    : 'rgba(0, 0, 0, 0.2)'
+                }`,
+              }),
+        })}
+      >
+        <TopListView
+          onClose={
+            alwaysOpen
+              ? undefined
+              : () => {
+                  document.body.style.overflow = ''
+                  onClose()
+                }
+          }
+        />
+      </Paper>
+    </div>
   )
 }
 
