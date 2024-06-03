@@ -31,7 +31,9 @@ const Home = () => {
   const location = useLocation()
   useEffect(() => {
     return () => {
-      dispatch({ type: 'close toplist', payload: { noTransition: true } })
+      if (!state.toplistView?.sidebar) {
+        dispatch({ type: 'close toplist', payload: { noTransition: true } })
+      }
     }
   }, [mobileView])
 
@@ -67,7 +69,10 @@ const Home = () => {
     if (indexData?.top_list) {
       globalCache.topList = indexData.top_list
     }
-    if ((mobileView && indexData) || state.toplistView?.manuallyOpened) {
+    if (
+      ((mobileView && indexData) || state.toplistView?.manuallyOpened) &&
+      !state.toplistView?.sidebar
+    ) {
       dispatch({
         type: 'open toplist',
         payload: {
@@ -123,7 +128,10 @@ const Home = () => {
           onClick={() => {
             dispatch({
               type: 'open toplist',
-              payload: { manuallyOpened: true },
+              payload: {
+                manuallyOpened: true,
+                ...(state.toplistView?.sidebar && { sidebar: true }),
+              },
             })
           }}
         >

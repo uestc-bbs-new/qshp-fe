@@ -40,6 +40,7 @@ type TopListViewState = {
   mounted?: boolean
   alwaysOpen?: boolean
   noTransition?: boolean
+  sidebar?: boolean
   manuallyOpened?: boolean
 }
 

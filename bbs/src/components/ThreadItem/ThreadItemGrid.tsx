@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Face5, Textsms } from '@mui/icons-material'
-import { Box, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Stack, SxProps, Theme, Typography, useTheme } from '@mui/material'
 
 import { TopListThread } from '@/common/interfaces/response'
 import { globalCache } from '@/states'
@@ -14,7 +14,13 @@ import Link from '../Link'
 import ForumSmall from '../icons/ForumSmall'
 import Summary from './Summary'
 
-const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
+const ThreadItemGrid = ({
+  item,
+  sx,
+}: {
+  item: TopListThread
+  sx?: SxProps<Theme>
+}) => {
   const theme = useTheme()
   const boxRef = useRef(null)
   const navigate = useNavigate()
@@ -25,6 +31,7 @@ const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
         borderRadius: '9px',
         boxShadow: '0 0 16px rgba(0, 0, 0, 0.2)',
         cursor: 'pointer',
+        ...sx,
       }}
       ref={boxRef}
       onClick={(e) => navigate(pages.thread(item.thread_id))}

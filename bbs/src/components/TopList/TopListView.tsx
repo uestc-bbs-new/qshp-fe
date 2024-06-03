@@ -15,7 +15,13 @@ import React, {
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
-import { Close, KeyboardArrowUp, Refresh } from '@mui/icons-material'
+import {
+  Close,
+  KeyboardArrowUp,
+  KeyboardDoubleArrowLeft,
+  Refresh,
+  Wysiwyg,
+} from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -46,7 +52,14 @@ const kAllForums = 'allforums'
 type TabKey = TopListKey | 'allforums'
 const tabKeys: TabKey[] = [...topListKeys, kAllForums]
 
-const TopListView = ({ onClose }: { onClose?: () => void }) => {
+const TopListView = ({
+  singleColumn,
+  onClose,
+}: {
+  singleColumn?: boolean
+  onClose?: () => void
+}) => {
+  const { state, dispatch } = useAppState()
   const [activeTab, setActiveTab] = useState<TabKey>('newthread')
   const swiperRef = useRef<SwiperRef>(null)
 
@@ -84,9 +97,28 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
           />
         </Tabs>
         {onClose && (
-          <IconButton onClick={() => onClose()}>
-            <Close />
-          </IconButton>
+          <Stack direction="row" alignItems="center">
+            <IconButton
+              onClick={() =>
+                dispatch({
+                  type: 'open toplist',
+                  payload: {
+                    ...state.toplistView,
+                    sidebar: !state.toplistView?.sidebar,
+                  },
+                })
+              }
+            >
+              {state.toplistView?.sidebar ? (
+                <Wysiwyg />
+              ) : (
+                <KeyboardDoubleArrowLeft />
+              )}
+            </IconButton>
+            <IconButton onClick={() => onClose()}>
+              <Close />
+            </IconButton>
+          </Stack>
         )}
       </Stack>
 
@@ -102,7 +134,7 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
-              <ThreadTabContent tab={key} />
+              <ThreadTabContent tab={key} singleColumn={singleColumn} />
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
@@ -120,11 +152,17 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
   )
 }
 
-const ThreadTabContent = ({ tab }: { tab: TopListKey }) => {
+const ThreadTabContent = ({
+  tab,
+  singleColumn,
+}: {
+  tab: TopListKey
+  singleColumn?: boolean
+}) => {
   const tabRef = useRef<TopListTabHandle>(null)
   return (
     <TabContent tab={tab} requireSignIn onRefresh={tabRef.current?.refresh}>
-      <TopListTab tab={tab} ref={tabRef} />
+      <TopListTab tab={tab} ref={tabRef} singleColumn={singleColumn} />
     </TabContent>
   )
 }
@@ -265,9 +303,9 @@ const TabContent = ({
 type TopListTabHandle = {
   refresh: () => Promise<void>
 }
-type TopListTabProps = { tab: TopListKey }
+type TopListTabProps = { tab: TopListKey; singleColumn?: boolean }
 const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
-  function TopListTab({ tab }: TopListTabProps, ref) {
+  function TopListTab({ tab, singleColumn }: TopListTabProps, ref) {
     const homeCachedData = useTopList()
     const getCache = () => {
       const cachedData = toplistCache[tab]
@@ -366,7 +404,7 @@ const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
     return (
       <>
         {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
-        <ListView list={list} />
+        <ListView list={list} singleColumn={singleColumn} />
         {!isEnded && !(isFetching && page == 1) && (
           <Stack ref={isFetching ? undefined : observe}>
             {isError ? (
@@ -393,15 +431,25 @@ const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
   }
 )
 
-const ListView = ({ list }: { list?: TopListThread[] }) => {
-  const singleColumn = useMediaQuery('(max-width: 720px')
+const ListView = ({
+  list,
+  singleColumn,
+}: {
+  list?: TopListThread[]
+  singleColumn?: boolean
+}) => {
+  const single = useMediaQuery('(max-width: 720px') || singleColumn
   if (!list?.length) {
     return <></>
   }
   const items = list?.map((item) => (
-    <ThreadItemGrid key={item.thread_id} item={item} />
+    <ThreadItemGrid
+      key={item.thread_id}
+      item={item}
+      sx={single ? { my: 1.5 } : undefined}
+    />
   ))
-  if (singleColumn) {
+  if (single) {
     return <>{items}</>
   }
   return (
@@ -423,14 +471,59 @@ const ListView = ({ list }: { list?: TopListThread[] }) => {
 export const TopListDialog = ({
   open,
   alwaysOpen,
-  noTransition,
+  sidebar,
   onClose,
 }: {
   open: boolean
   alwaysOpen?: boolean
-  noTransition?: boolean
+  sidebar?: boolean
   onClose: () => void
 }) => {
+  const content = (
+    <Paper
+      sx={(theme) => ({
+        position: 'absolute',
+        ...(alwaysOpen
+          ? {
+              left: 0,
+              right: 0,
+              top: 64,
+              bottom: 0,
+            }
+          : sidebar
+            ? {
+                position: 'fixed',
+                left: 0,
+                top: 64,
+                bottom: 0,
+                width: 480,
+                zIndex: 1,
+              }
+            : {
+                left: 64,
+                right: 64,
+                bottom: 16,
+                top: 72,
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: `4px 4px 8px ${
+                  theme.palette.mode == 'dark'
+                    ? 'rgba(255, 255, 255, 0.15)'
+                    : 'rgba(0, 0, 0, 0.2)'
+                }`,
+              }),
+      })}
+      hidden={!open}
+    >
+      <TopListView
+        singleColumn={sidebar}
+        onClose={alwaysOpen ? undefined : onClose}
+      />
+    </Paper>
+  )
+  if (sidebar) {
+    return content
+  }
   return (
     <div
       css={{
@@ -447,42 +540,7 @@ export const TopListDialog = ({
       }}
       hidden={!open}
     >
-      <Paper
-        sx={(theme) => ({
-          position: 'absolute',
-          ...(alwaysOpen
-            ? {
-                left: 0,
-                right: 0,
-                top: 64,
-                bottom: 0,
-              }
-            : {
-                left: 64,
-                right: 64,
-                bottom: 16,
-                top: 72,
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: `4px 4px 8px ${
-                  theme.palette.mode == 'dark'
-                    ? 'rgba(255, 255, 255, 0.15)'
-                    : 'rgba(0, 0, 0, 0.2)'
-                }`,
-              }),
-        })}
-      >
-        <TopListView
-          onClose={
-            alwaysOpen
-              ? undefined
-              : () => {
-                  document.body.style.overflow = ''
-                  onClose()
-                }
-          }
-        />
-      </Paper>
+      {content}
     </div>
   )
 }

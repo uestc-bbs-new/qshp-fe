@@ -34,6 +34,12 @@ const Layout = () => {
         <Box
           component="main"
           className={`flex w-full flex-col items-center align-middle transition-all`}
+          ml={
+            state.toplistView?.open && state.toplistView?.sidebar
+              ? '480px'
+              : undefined
+          }
+          sx={{ transition: 'marginRight 0.5s ease' }}
         >
           <Toolbar id="back-to-top-anchor" />
           <Box
@@ -84,13 +90,13 @@ const Layout = () => {
         <TopListDialog
           open={!!state.toplistView?.open}
           alwaysOpen={!!state.toplistView?.alwaysOpen}
-          noTransition={!!state.toplistView?.noTransition}
-          onClose={() =>
+          sidebar={!!state.toplistView?.sidebar}
+          onClose={() => {
             dispatch({
               type: 'close toplist',
               payload: { manuallyOpened: false },
             })
-          }
+          }}
         />
       )}
     </>
