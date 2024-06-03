@@ -4,7 +4,9 @@ import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 
 import React, {
+  forwardRef,
   useEffect,
+  useImperativeHandle,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -13,11 +15,12 @@ import React, {
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 
-import { Close, KeyboardArrowUp } from '@mui/icons-material'
+import { Close, KeyboardArrowUp, Refresh } from '@mui/icons-material'
 import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Fab,
   IconButton,
   List,
@@ -99,9 +102,7 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
-              <TabContent tab={key} requireSignIn>
-                <TopListTab tab={key} />
-              </TabContent>
+              <ThreadTabContent tab={key} />
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
@@ -116,6 +117,15 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         </Swiper>
       </Box>
     </Stack>
+  )
+}
+
+const ThreadTabContent = ({ tab }: { tab: TopListKey }) => {
+  const tabRef = useRef<TopListTabHandle>(null)
+  return (
+    <TabContent tab={tab} requireSignIn onRefresh={tabRef.current?.refresh}>
+      <TopListTab tab={tab} ref={tabRef} />
+    </TabContent>
   )
 }
 
@@ -135,11 +145,13 @@ const TabContent = ({
   children,
   requireSignIn,
   skeleton,
+  onRefresh,
 }: {
   tab: TabKey
   children?: React.ReactNode
   requireSignIn?: boolean
   skeleton?: React.ReactNode
+  onRefresh?: () => Promise<void>
 }) => {
   const { state, dispatch } = useAppState()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -158,8 +170,11 @@ const TabContent = ({
       }),
     []
   )
+  const scrollToTop = () =>
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
 
   const [showBackTop, setShowBackTop] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   if (state.user.uninitialized) {
     return (
@@ -219,14 +234,26 @@ const TabContent = ({
       ref={scrollRef}
     >
       {children}
-      <Stack position="absolute" right={12} bottom={8}>
-        <Slide direction="left" in={showBackTop}>
+      <Stack position="absolute" right={12} bottom={8} spacing={1}>
+        {onRefresh && (
           <Fab
             size="small"
-            onClick={(e) =>
-              scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-            }
+            color="primary"
+            onClick={() => {
+              scrollToTop()
+              setRefreshing(true)
+              onRefresh().finally(() => setRefreshing(false))
+            }}
           >
+            {refreshing ? (
+              <CircularProgress sx={{ color: 'black' }} size={24} />
+            ) : (
+              <Refresh />
+            )}
+          </Fab>
+        )}
+        <Slide direction="left" in={showBackTop}>
+          <Fab size="small" onClick={scrollToTop}>
             <KeyboardArrowUp />
           </Fab>
         </Slide>
@@ -235,114 +262,136 @@ const TabContent = ({
   )
 }
 
-const TopListTab = ({ tab }: { tab: TopListKey }) => {
-  const homeCachedData = useTopList()
-  const getCache = () => {
-    const cachedData = toplistCache[tab]
-    if (cachedData) {
-      return cachedData
-    }
-    return {
-      list: homeCachedData && homeCachedData[tab],
-      page: 1,
-      scrollOffset: 0,
-    }
-  }
-  const initData = getCache()
-  const [list, setList] = useState<TopListThread[] | undefined>(initData.list)
-  const [isEnded, setEnded] = useState(false)
-  const [isFetching, setFetching] = useState(false)
-  const [isError, setError] = useState(false)
-  const [page, setPage] = useState(initData.page)
-  const saveCache = (newData: Partial<TopListCacheEntry>) => {
-    const newList = newData.list || list
-    if (newList) {
-      toplistCache[tab] = {
-        page,
-        ...newData,
-        list: newList,
-      }
-    }
-  }
-  useEffect(() => {
-    const initData = getCache()
-    setList(initData.list)
-    setPage(initData.page)
-  }, [tab])
-
-  const fetch = async () => {
-    setFetching(true)
-    setError(false)
-    let newPage = page
-    try {
-      const newData = (await getTopLists(tab, page + 1))[tab]
-      if (newData?.length) {
-        ++newPage
-        setPage(newPage)
-      } else {
-        setEnded(true)
-      }
-      let newList: TopListThread[] | undefined
-      newData?.forEach((item) => {
-        if (
-          (list || []).every(
-            (existingItem) => existingItem.thread_id != item.thread_id
-          )
-        ) {
-          if (!newList) {
-            newList = list?.slice() || []
-          }
-          newList.push(item)
-        }
-      })
-      if (newList) {
-        setList(newList)
-      }
-      saveCache({ list: newList, page: newPage })
-    } catch (_) {
-      setError(true)
-    } finally {
-      setFetching(false)
-    }
-  }
-
-  const { observe } = useInView({
-    rootMargin: '50px 0px',
-    onEnter: () => {
-      if (!isEnded && !isFetching && !isError) {
-        fetch()
-      }
-    },
-  })
-
-  return (
-    <>
-      {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
-      <ListView list={list} />
-      {!isEnded && !(isFetching && page == 1) && (
-        <Stack ref={isFetching ? undefined : observe}>
-          {isError ? (
-            <Alert
-              severity="error"
-              action={
-                <Button color="inherit" size="small" onClick={() => fetch()}>
-                  重试
-                </Button>
-              }
-              sx={{ mt: 2 }}
-            >
-              加载失败
-            </Alert>
-          ) : (
-            [...Array(6)].map((_, index) => (
-              <Skeleton key={index} height={40} />
-            ))
-          )}
-        </Stack>
-      )}
-    </>
-  )
+type TopListTabHandle = {
+  refresh: () => Promise<void>
 }
+type TopListTabProps = { tab: TopListKey }
+const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
+  function TopListTab({ tab }: TopListTabProps, ref) {
+    const homeCachedData = useTopList()
+    const getCache = () => {
+      const cachedData = toplistCache[tab]
+      if (cachedData) {
+        return cachedData
+      }
+      return {
+        list: homeCachedData && homeCachedData[tab],
+        page: 1,
+        scrollOffset: 0,
+      }
+    }
+    const initData = getCache()
+    const [list, setList] = useState<TopListThread[] | undefined>(initData.list)
+    const [isEnded, setEnded] = useState(false)
+    const [isFetching, setFetching] = useState(false)
+    const [isError, setError] = useState(false)
+    const [page, setPage] = useState(initData.page)
+    const saveCache = (newData: Partial<TopListCacheEntry>) => {
+      const newList = newData.list || list
+      if (newList) {
+        toplistCache[tab] = {
+          page,
+          ...newData,
+          list: newList,
+        }
+      }
+    }
+    useEffect(() => {
+      const initData = getCache()
+      setList(initData.list)
+      setPage(initData.page)
+    }, [tab])
+
+    const fetch = async () => {
+      setFetching(true)
+      setError(false)
+      let newPage = page
+      try {
+        const newData = (await getTopLists(tab, page + 1))[tab]
+        if (newData?.length) {
+          ++newPage
+          setPage(newPage)
+        } else {
+          setEnded(true)
+        }
+        let newList: TopListThread[] | undefined
+        newData?.forEach((item) => {
+          if (
+            (list || []).every(
+              (existingItem) => existingItem.thread_id != item.thread_id
+            )
+          ) {
+            if (!newList) {
+              newList = list?.slice() || []
+            }
+            newList.push(item)
+          }
+        })
+        if (newList) {
+          setList(newList)
+        }
+        saveCache({ list: newList, page: newPage })
+      } catch (_) {
+        setError(true)
+      } finally {
+        setFetching(false)
+      }
+    }
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        async refresh() {
+          const data = {
+            list: (await getTopLists(tab, 1))[tab],
+            page: 1,
+          }
+          setList(data.list)
+          setPage(data.page)
+          saveCache(data)
+        },
+      }),
+      []
+    )
+
+    const { observe } = useInView({
+      rootMargin: '50px 0px',
+      onEnter: () => {
+        if (!isEnded && !isFetching && !isError) {
+          fetch()
+        }
+      },
+    })
+
+    return (
+      <>
+        {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
+        <ListView list={list} />
+        {!isEnded && !(isFetching && page == 1) && (
+          <Stack ref={isFetching ? undefined : observe}>
+            {isError ? (
+              <Alert
+                severity="error"
+                action={
+                  <Button color="inherit" size="small" onClick={() => fetch()}>
+                    重试
+                  </Button>
+                }
+                sx={{ mt: 2 }}
+              >
+                加载失败
+              </Alert>
+            ) : (
+              [...Array(6)].map((_, index) => (
+                <Skeleton key={index} height={40} />
+              ))
+            )}
+          </Stack>
+        )}
+      </>
+    )
+  }
+)
 
 const ListView = ({ list }: { list?: TopListThread[] }) => {
   const singleColumn = useMediaQuery('(max-width: 720px')
