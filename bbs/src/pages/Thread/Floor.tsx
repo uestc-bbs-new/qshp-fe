@@ -438,7 +438,7 @@ const PostTime = ({
 }) => {
   const timestamp = post.dateline * 1000
   const simplifiedTime = chineseTime(timestamp)
-  const fullTime = chineseTime(timestamp, { full: true })
+  const fullTime = chineseTime(timestamp, { full: true, seconds: true })
   const content = (
     <Link color="inherit" underline="none" to={gotoLink}>
       {simplifiedTime}
@@ -451,6 +451,15 @@ const PostTime = ({
     <Tooltip
       title={<Typography variant="body2">{fullTime}</Typography>}
       placement="top"
+      slotProps={{
+        tooltip: {
+          sx: {
+            '.MuiTooltip-popper[data-popper-placement*="top"] &': {
+              mb: 0.25,
+            },
+          },
+        },
+      }}
     >
       {content}
     </Tooltip>
