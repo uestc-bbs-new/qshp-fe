@@ -25,11 +25,7 @@ import { pages } from '@/utils/routes'
 
 import { getForumCover } from './forumCoverMap'
 
-type ForumData = {
-  data: Forum
-}
-
-const ForumCover = ({ data }: ForumData) => {
+const ForumCover = ({ data }: { data: Forum }) => {
   const navigate = useNavigate()
   const to = pages.forum(data.fid)
   return (
@@ -148,7 +144,13 @@ const ForumCover = ({ data }: ForumData) => {
   )
 }
 
-export const ForumGroup = ({ data }: ForumData) => {
+export const ForumGroup = ({
+  data,
+  toplistView,
+}: {
+  data: Forum
+  toplistView?: boolean
+}) => {
   const [open, setOpen] = useState(true)
   const theme = useTheme()
 
@@ -189,7 +191,12 @@ export const ForumGroup = ({ data }: ForumData) => {
           {data?.children
             ?.filter((item) => item.name)
             .map((item, index) => (
-              <Grid item sm={6} lg={4} key={index} style={{ width: '100%' }}>
+              <Grid
+                item
+                key={index}
+                style={{ width: '100%' }}
+                {...(toplistView ? { sm: 6, lg: 4, xl: 3 } : { sm: 6, lg: 4 })}
+              >
                 <ForumCover data={item} />
               </Grid>
             ))}

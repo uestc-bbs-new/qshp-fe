@@ -141,7 +141,7 @@ const TopListView = ({
             <TabContent tab={kAllForums}>
               <List>
                 {forumList?.map((item) => (
-                  <ForumGroup data={item} key={item.name} />
+                  <ForumGroup data={item} key={item.name} toplistView />
                 ))}
               </List>
             </TabContent>
