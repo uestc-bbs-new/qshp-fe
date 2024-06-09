@@ -1,7 +1,15 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 
+import { AccountBox } from '@mui/icons-material'
 import PublishIcon from '@mui/icons-material/Publish'
-import { Alert, Box, Stack, Typography, useMediaQuery } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Stack,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 import {
@@ -15,9 +23,9 @@ import Link from '@/components/Link'
 import Medals from '@/components/Medals'
 import DigestAuthor from '@/components/Medals/DigestAuthor'
 import { UserHtmlRenderer } from '@/components/RichText'
-import { CenteredSnackbar, useSnackbar } from '@/components/Snackbar'
 import UserCard from '@/components/UserCard'
 import UserGroupIcon from '@/components/UserGroupIcon'
+import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
@@ -101,20 +109,11 @@ const Floor = ({
       ? pages.thread(post.thread_id)
       : pages.goto(post.post_id)
 
-  // 弹出框
-  const {
-    props: { open, onClose },
-    show,
-  } = useSnackbar()
-
   const narrowView = useMediaQuery('(max-width: 800px)')
   const thinView = useMediaQuery('(max-width: 560px)')
 
   return (
     <Box>
-      <CenteredSnackbar open={open} autoHideDuration={3000} onClose={onClose}>
-        <Alert severity="success">链接复制成功</Alert>
-      </CenteredSnackbar>
       <Stack direction="row">
         {!narrowView && (
           <Stack
@@ -159,43 +158,22 @@ const Floor = ({
             <Stack
               direction="row"
               alignItems="center"
-              justifyContent="space-between"
+              flexWrap="wrap"
               className="text-sm text-slate-300"
               mt={post.position == 1 && post.is_first ? 0.5 : undefined}
               mb={1}
             >
-              <Stack direction="row">
-                <Link color="inherit" underline="none" to={gotoLink}>
-                  {chineseTime(post.dateline * 1000)}
-                </Link>
+              <Stack direction="row" flexWrap="wrap">
+                <PostAuthorTags post={post} threadDetails={threadDetails} />
+                <PostTime post={post} gotoLink={gotoLink} />
                 {threadControls}
               </Stack>
-              <Stack direction="row" alignItems="center">
-                <Link
-                  color="inherit"
-                  className="hover:text-blue-500"
-                  mr={1}
-                  to={gotoLink}
-                  underline="hover"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    navigator.clipboard.writeText(
-                      `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
-                    )
-                    show('')
-                  }}
-                >
-                  分享
-                </Link>
-                <Typography>
-                  {post.pinned && (
-                    <PublishIcon
-                      htmlColor="#ff785b"
-                      sx={{ verticalAlign: 'middle' }}
-                    />
-                  )}
-                  #{post.position}
-                </Typography>
+              <Stack direction="row" justifyContent="right" pl={1} flexGrow={1}>
+                <PostPosition
+                  post={post}
+                  threadDetails={threadDetails}
+                  gotoLink={gotoLink}
+                />
               </Stack>
             </Stack>
             {(post.position > 1 || !post.is_first) && (
@@ -211,6 +189,22 @@ const Floor = ({
             {post.position == 1 && !!post.is_first && (
               <PollExtension threadDetails={threadDetails} />
             )}
+            {threadDetails?.last_moderation &&
+              post.position == 1 &&
+              post.is_first == 1 && (
+                <Stack alignItems="center">
+                  <Alert severity="info" sx={{ mt: 1 }}>
+                    本主题由 {threadDetails.last_moderation.username} 于{' '}
+                    {chineseTime(threadDetails.last_moderation.dateline * 1000)}{' '}
+                    {threadDetails.last_moderation.action}
+                    <>
+                      {threadDetails.last_moderation.magic_name && (
+                        <>（{threadDetails.last_moderation.magic_name}）</>
+                      )}
+                    </>
+                  </Alert>
+                </Stack>
+              )}
             {threadDetails && post.position == 1 && post.is_first == 1 && (
               <ThreadLikes
                 tid={threadDetails.thread_id}
@@ -416,6 +410,180 @@ const AuthorDetails = ({
       （该用户已删除）
     </Typography>
   )
+
+const PostAuthorTags = ({
+  post,
+  threadDetails,
+}: {
+  post: PostFloor
+  threadDetails?: Thread
+}) => {
+  if (post.author_id && post.author_id == threadDetails?.author_id) {
+    return (
+      <Stack direction="row" alignItems="center" mr={0.75}>
+        <AccountBox fontSize="small" sx={{ mr: 0.25 }} />
+        楼主
+      </Stack>
+    )
+  }
+  return <></>
+}
+
+const PostTime = ({
+  post,
+  gotoLink,
+}: {
+  post: PostFloor
+  gotoLink: string
+}) => {
+  const timestamp = post.dateline * 1000
+  const simplifiedTime = chineseTime(timestamp)
+  const fullTime = chineseTime(timestamp, { full: true })
+  const content = (
+    <Link color="inherit" underline="none" to={gotoLink}>
+      {simplifiedTime}
+    </Link>
+  )
+  if (simplifiedTime == fullTime) {
+    return content
+  }
+  return (
+    <Tooltip
+      title={<Typography variant="body2">{fullTime}</Typography>}
+      placement="top"
+    >
+      {content}
+    </Tooltip>
+  )
+}
+const PostPosition = ({
+  post,
+  threadDetails,
+  gotoLink,
+}: {
+  post: PostFloor
+  threadDetails?: Thread
+  gotoLink: string
+}) => {
+  const { dispatch } = useAppState()
+  const specialText = [undefined, '楼主', '沙发', '板凳', '地板', '地下'][
+    post.position
+  ]
+  const positionText = `#${post.position}`
+  const [hover, setHover] = useState(false)
+
+  const copySuccess = () =>
+    dispatch({
+      type: 'open snackbar',
+      payload: {
+        message: '链接复制成功',
+        severity: 'success',
+        transition: 'none',
+      },
+    })
+  const legacyCopyText = (text: string, previousError?: any) => {
+    const textarea = document.createElement('textarea')
+    textarea.style.position = 'absolute'
+    textarea.style.left = '-9999px'
+    textarea.style.top = '-9999px'
+    textarea.value = text
+    document.body.appendChild(textarea)
+    textarea.focus()
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      copySuccess()
+    } catch (e) {
+      dispatch({
+        type: 'open snackbar',
+        payload: {
+          message: `复制失败：${e}${previousError ? ` ${previousError}` : ''}`,
+          severity: 'error',
+          transition: 'none',
+        },
+      })
+    } finally {
+      document.body.removeChild(textarea)
+    }
+  }
+
+  const copyText = (text: string) => {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      legacyCopyText(text)
+      return
+    }
+    navigator.clipboard
+      .writeText(text)
+      .then(() => copySuccess())
+      .catch((e) => legacyCopyText(text, e))
+  }
+
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      onClick={(e) =>
+        copyText(
+          `${threadDetails?.subject} - 清水河畔\n${location.origin}${gotoLink}`
+        )
+      }
+    >
+      <Link
+        color="inherit"
+        className="hover:text-blue-500"
+        to={gotoLink}
+        underline="hover"
+        onClick={(e) => e.preventDefault()}
+      >
+        分享
+      </Link>
+      <Link
+        to={gotoLink}
+        underline="none"
+        color="inherit"
+        pl={1}
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
+        onClick={(e) => e.preventDefault()}
+      >
+        {post.pinned && (
+          <PublishIcon htmlColor="#ff785b" sx={{ verticalAlign: 'middle' }} />
+        )}
+        <span
+          css={{
+            position: 'relative',
+            minWidth: '2em',
+            display: 'inline-block',
+            textAlign: 'center',
+          }}
+        >
+          <span
+            style={specialText && hover ? { visibility: 'hidden' } : undefined}
+          >
+            {specialText ?? positionText}
+          </span>
+          {specialText && (
+            <span
+              css={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                display: 'none',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              style={hover ? { display: 'flex' } : undefined}
+            >
+              {positionText}
+            </span>
+          )}
+        </span>
+      </Link>
+    </Stack>
+  )
+}
 
 const Signature = ({ authorDetails }: { authorDetails: PostAuthorDetails }) => {
   const thinView = useMediaQuery('(max-width: 560px)')

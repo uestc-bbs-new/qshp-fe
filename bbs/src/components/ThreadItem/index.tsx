@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import { Face5, Poll, Textsms } from '@mui/icons-material'
 import {
   Box,
@@ -53,6 +55,7 @@ type ThreadItemProps = {
   replies?: ThreadReplyOrCommentItem[]
   hideThreadAuthor?: boolean
   ignoreThreadHighlight?: boolean
+  fromForum?: boolean
 }
 
 const ThreadItem = ({
@@ -62,10 +65,13 @@ const ThreadItem = ({
   replies,
   hideThreadAuthor,
   ignoreThreadHighlight,
+  fromForum,
 }: ThreadItemProps) => {
   const theme = useTheme()
   const narrowView = useMediaQuery('(max-width: 750px)')
   const thinView = useMediaQuery('(max-width: 560px)')
+  const to = pages.thread(data.thread_id)
+  const navigate = useNavigate()
 
   return (
     <Box className="p-0.5">
@@ -74,6 +80,7 @@ const ThreadItem = ({
         style={{
           backgroundColor: theme.palette.background.paper,
         }}
+        onClick={narrowView ? () => navigate(to) : undefined}
       >
         {narrowView && !hideThreadAuthor && (
           <Stack direction="row" justifyContent="space-between">
@@ -110,21 +117,33 @@ const ThreadItem = ({
                         />
                       )}
                     <Link
-                      to={pages.thread(data.thread_id)}
+                      to={to}
+                      state={
+                        fromForum && forumDetails
+                          ? { fromForumId: forumDetails.fid }
+                          : undefined
+                      }
                       color="inherit"
                       underline="hover"
+                      style={
+                        ignoreThreadHighlight
+                          ? undefined
+                          : {
+                              color: data.highlight_color,
+                              backgroundColor: data.highlight_bgcolor,
+                            }
+                      }
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <Typography
                         textAlign="justify"
                         variant="threadItemSubject"
-                        color={ignoreThreadHighlight ? 'primary' : undefined}
+                        color="inherit"
                         sx={{ verticalAlign: 'middle' }}
                         style={
                           ignoreThreadHighlight
                             ? undefined
                             : {
-                                color: data.highlight_color,
-                                backgroundColor: data.highlight_bgcolor,
                                 fontWeight: data.highlight_bold
                                   ? 'bold'
                                   : undefined,
@@ -174,12 +193,16 @@ const ThreadItem = ({
                               },
                             },
                           }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Stack direction="row" alignItems="center">
                             <ForumSmall
                               color={theme.typography.threadItemForum.color}
                             />
-                            <Typography ml={0.5} mr={2}>
+                            <Typography
+                              ml={0.5}
+                              mr={narrowView ? undefined : 2}
+                            >
                               {data.forum_name}
                             </Typography>
                           </Stack>
@@ -224,16 +247,27 @@ const ThreadItem = ({
                               ? pages.user({ username: data.last_poster })
                               : undefined
                           }
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {data.last_poster || '匿名'}
                         </Link>
                       </>
-                      <>{chineseTime(data.last_post * 1000)}</>
+                      <Link
+                        color="inherit"
+                        underline="hover"
+                        to={pages.threadLastpost(data.thread_id)}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {chineseTime(data.last_post * 1000)}
+                      </Link>
                     </Separated>
                   </Typography>
                 </Stack>
               </Stack>
             </Stack>
+            {narrowView && hideThreadAuthor && (
+              <ThreadStatSmall thread={data} bottomView />
+            )}
           </Box>
         </Stack>
       </Box>
@@ -305,7 +339,10 @@ const ThreadAvatar = ({
   }
   return (
     <Box sx={{ mr: 2 }}>
-      <Link to={thread.author_id ? `/user/${thread.author_id}` : undefined}>
+      <Link
+        to={thread.author_id ? `/user/${thread.author_id}` : undefined}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Avatar
           alt={thread.author}
           uid={thread.author_id}
@@ -341,24 +378,34 @@ const ThreadStat = ({
 
 const ThreadStatSmall = ({
   thread,
-  sx,
+  bottomView,
 }: {
   thread: Pick<Thread, 'views' | 'replies'>
-  sx?: SxProps<Theme>
-}) => (
-  <Typography variant="threadItemAuthor">
-    <Stack alignItems="flex-end">
-      <Stack direction="row" alignItems="center">
-        {thread.views}
-        <Face5 sx={{ ml: 0.5, fontSize: '0.95em' }} />
+  bottomView?: boolean
+}) => {
+  const iconSx = {
+    fontSize: '0.95rem',
+    ...(bottomView ? { mr: 0.5 } : { ml: 0.5, order: 1 }),
+  }
+  return (
+    <Typography variant="threadItemAuthor">
+      <Stack
+        alignItems={bottomView ? 'center' : 'flex-end'}
+        direction={bottomView ? 'row' : 'column'}
+        spacing={bottomView ? 1 : undefined}
+      >
+        <Stack direction="row" alignItems="center">
+          <Face5 sx={iconSx} />
+          {thread.views}
+        </Stack>
+        <Stack direction="row" alignItems="center">
+          <Textsms sx={iconSx} />
+          {thread.replies}
+        </Stack>
       </Stack>
-      <Stack direction="row" alignItems="center">
-        {thread.replies}
-        <Textsms sx={{ ml: 0.5, fontSize: '0.95em' }} />
-      </Stack>
-    </Stack>
-  </Typography>
-)
+    </Typography>
+  )
+}
 
 const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
   <>
@@ -449,6 +496,7 @@ const ThreadAuthor = ({
                   : undefined
               }
               variant="threadItemAuthorLink"
+              onClick={(e) => e.stopPropagation()}
             >
               {thread.author}
             </Link>
@@ -478,6 +526,7 @@ const ThreadRepliesOrComments = ({
               underline="hover"
               ml={0.5}
               my={0.25}
+              onClick={(e) => e.stopPropagation()}
             >
               <Typography variant="threadItemSummary">
                 {item.summary}

@@ -65,7 +65,14 @@ export const SummaryAttachmentGrid = ({
   <Grid
     m={0.5}
     sx={{ cursor: 'pointer', borderRadius: '4px', overflow: 'hidden', ...sx }}
-    onClick={onClick}
+    onClick={
+      onClick
+        ? (e) => {
+            e.stopPropagation()
+            onClick()
+          }
+        : undefined
+    }
   >
     <Stack
       justifyContent="center"

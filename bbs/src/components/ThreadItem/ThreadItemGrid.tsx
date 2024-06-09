@@ -1,3 +1,6 @@
+import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { Face5, Textsms } from '@mui/icons-material'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 
@@ -13,23 +16,32 @@ import Summary from './Summary'
 
 const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
   const theme = useTheme()
+  const boxRef = useRef(null)
+  const navigate = useNavigate()
   return (
     <Box
       p={1}
       sx={{
         borderRadius: '9px',
         boxShadow: '0 0 16px rgba(0, 0, 0, 0.2)',
+        cursor: 'pointer',
       }}
+      ref={boxRef}
+      onClick={(e) => navigate(pages.thread(item.thread_id))}
     >
       <Stack direction="row" alignItems="center">
         <Link
           to={item.author_id ? `/user/${item.author_id}` : undefined}
           mr={1}
+          onClick={(e) => e.stopPropagation()}
         >
           <Avatar alt={item.author} uid={item.author_id} size={48} />
         </Link>
         <Stack>
-          <Link to={item.author_id ? `/user/${item.author_id}` : undefined}>
+          <Link
+            to={item.author_id ? `/user/${item.author_id}` : undefined}
+            onClick={(e) => e.stopPropagation()}
+          >
             {item.author}
           </Link>
           <Typography color="grey">
@@ -44,6 +56,7 @@ const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
         className="line-clamp-2"
         mt={1}
         mb={0.5}
+        onClick={(e) => e.stopPropagation()}
       >
         <Typography textAlign="justify" variant="threadItemSubject">
           {item.subject}
@@ -80,6 +93,7 @@ const ThreadItemGrid = ({ item }: { item: TopListThread }) => {
               },
             },
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <Stack direction="row" alignItems="center">
             <ForumSmall color={theme.typography.threadItemForum.color} />

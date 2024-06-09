@@ -18,7 +18,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import { getPostDetails, getThreadsInfo, kPostPageSize } from '@/apis/thread'
+import { getPostDetails, getThreadsInfo } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
 import Aside from '@/components/Aside'
@@ -65,7 +65,9 @@ const ForumPagination = (props: {
   )
 }
 
-function Thread() {
+const postElementId = (post_id: number) => `post-${post_id}`
+
+const Thread = () => {
   const { state, dispatch } = useAppState()
   const navigate = useNavigate()
 
@@ -100,8 +102,20 @@ function Thread() {
       forum_details: threadChanged || !forumDetails,
     }
   }
-
   const [query, setQuery] = useState(initQuery())
+  useEffect(() => {
+    if (location.state?.fromForumId != state.activeForum?.fid) {
+      dispatch({ type: 'set forum' })
+    }
+    if (state.activeThread?.thread_id != threadId) {
+      dispatch({ type: 'set thread' })
+    }
+  }, [threadId])
+  useEffect(() => {
+    return () => {
+      dispatch({ type: 'set thread' })
+    }
+  }, [])
 
   const {
     data: info,
@@ -126,7 +140,7 @@ function Thread() {
         dispatch({ type: 'set forum', payload: info.forum })
       }
       if (info && info.total) {
-        setTotalPages(Math.ceil(info.total / kPostPageSize))
+        setTotalPages(Math.ceil(info.total / info.page_size))
       }
       if (info && info.rows) {
         const commentPids: number[] = []
@@ -166,9 +180,9 @@ function Thread() {
       } else {
         // total + 1 because a new reply was posted just now and info is not yet refreshed.
         const newPage = info?.total
-          ? Math.ceil((info?.total + 1) / kPostPageSize)
+          ? Math.ceil((info.total + 1) / info.page_size)
           : 1
-        if (newPage != query.page) {
+        if (newPage != (info?.page ?? query.page)) {
           navigate(
             `${location.pathname}?${searchParamsAssign(searchParams, {
               page: newPage,
@@ -206,10 +220,26 @@ function Thread() {
   }
 
   useEffect(() => {
+    const pendingTimeout = new Set<number>()
     if (location.hash) {
       const hash_position = location.hash.slice(1)
-      const dom = document.getElementById(hash_position)
-      dom?.scrollIntoView()
+      const lastpost = hash_position == 'lastpost' && info?.rows.length
+      const targetId = lastpost
+        ? postElementId(info.rows[info.rows.length - 1].post_id)
+        : hash_position
+      const dom = document.getElementById(targetId)
+      if (!dom) {
+        return
+      }
+      dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      const timeoutId = setTimeout(() => {
+        pendingTimeout.delete(timeoutId)
+        dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      }, 600)
+      pendingTimeout.add(timeoutId)
+    }
+    return () => {
+      pendingTimeout.forEach((id) => clearTimeout(id))
     }
   }, [info])
 
@@ -266,7 +296,7 @@ function Thread() {
           <>
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {info?.rows
@@ -276,13 +306,20 @@ function Thread() {
                       className="rounded-lg shadow-lg"
                       mb={thinView ? 1 : 1.75}
                       sx={(theme) => ({
-                        backgroundColor: theme.palette.background.paper,
+                        backgroundColor:
+                          '#' + postElementId(item.post_id) == location.hash
+                            ? theme.palette.background.paperHighlighted
+                            : theme.palette.background.paper,
                       })}
                       key={item.post_id}
                     >
                       <section
-                        id={`post-${item.post_id}`}
-                        css={{ ...scrollAnchorCss, position: 'relative' }}
+                        id={postElementId(item.post_id)}
+                        css={{
+                          ...scrollAnchorCss,
+                          scrollMarginBottom: '16px',
+                          position: 'relative',
+                        }}
                         onCopy={
                           isInternalEnforced
                             ? (e) => e.preventDefault() // Maybe show some prompt on copy
@@ -371,7 +408,7 @@ function Thread() {
 
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {forumDetails?.can_post_reply && threadDetails?.can_reply && (

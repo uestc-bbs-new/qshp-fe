@@ -113,6 +113,7 @@ const Visitors = ({
   userQuery,
   queryOptions,
   onLoad,
+  onError,
   visitors,
   visits,
 }: SubPageCommonProps & {
@@ -125,10 +126,15 @@ const Visitors = ({
   const { refetch } = useQuery({
     queryKey: ['user', 'profile', query],
     queryFn: async () => {
-      const data = await getUserProfile(query.common)
-      removeVisitLogRef.current = query.common.removeVisitLog
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserProfile(query.common)
+        removeVisitLogRef.current = query.common.removeVisitLog
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
     enabled: !visitors,
   })

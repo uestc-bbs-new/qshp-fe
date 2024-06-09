@@ -4,7 +4,15 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import EditNoteIcon from '@mui/icons-material/EditNote'
-import { Box, Divider, Grid, Skeleton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Grid,
+  Skeleton,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 
 import { getUserProfile } from '@/apis/user'
 import { UserSummary } from '@/common/interfaces/user'
@@ -49,17 +57,21 @@ const FieldValue = ({ title, text, children }: FieldValueProps) => (
   </Stack>
 )
 
-const FieldValueGrid = (props: FieldValueProps) => (
-  <Grid item xs={6}>
-    <FieldValue {...props} />
-  </Grid>
-)
+const FieldValueGrid = (props: FieldValueProps) => {
+  const narrowView = useMediaQuery('(max-width: 640px)')
+  return (
+    <Grid item xs={narrowView ? 12 : 6}>
+      <FieldValue {...props} />
+    </Grid>
+  )
+}
 
 const Information = ({
   userQuery,
   queryOptions,
   userSummary,
   onLoad,
+  onError,
   self,
 }: SubPageCommonProps & { userSummary?: UserSummary; self: boolean }) => {
   const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
@@ -67,9 +79,14 @@ const Information = ({
   const { data } = useQuery({
     queryKey: ['user', 'profile', query],
     queryFn: async () => {
-      const data = await getUserProfile(query.common)
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserProfile(query.common)
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
   const [searchParams] = useSearchParams()
@@ -82,6 +99,7 @@ const Information = ({
     userQuery.removeVisitLog,
     userQuery.admin,
   ])
+
   return (
     <Box pt={1}>
       {self && (

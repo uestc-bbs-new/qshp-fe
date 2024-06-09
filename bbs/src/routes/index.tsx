@@ -12,7 +12,7 @@ import Renew from '@/pages/Continue/Renew'
 import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
-import Goto from '@/pages/Goto'
+import Goto, { GotoError } from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
@@ -42,12 +42,12 @@ const devPages: RouteObject[] = [
 
 const devMessagesPages: RouteObject[] = [
   {
-    id: 'chat',
+    id: 'messages_chat',
     path: 'chat/:plid?',
     element: <Chat />,
   },
   {
-    id: 'chat_user',
+    id: 'messages_chat_user',
     path: 'chat/user/:uid?',
     element: <Chat />,
   },
@@ -74,7 +74,12 @@ routes.current = [
         id: 'thread',
         element: <Thread />,
       },
-      { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
+      {
+        path: '/goto/:tidOrPid/:pid?',
+        id: 'goto',
+        loader: Goto,
+        errorElement: <GotoError />,
+      },
       {
         path: '/messages',
         element: <Messages />,
@@ -85,16 +90,16 @@ routes.current = [
             element: isPreviewRelease ? <Notifications /> : <Chat />,
           },
           {
-            id: 'posts',
+            id: 'messages_posts',
             path: 'posts/:kind?',
             element: <Notifications />,
           },
           {
-            id: 'system',
+            id: 'messages_system',
             path: 'system/:kind?',
             element: <Notifications />,
           },
-          ...(isPreviewRelease ? devMessagesPages : []),
+          ...(isPreviewRelease ? [] : devMessagesPages),
         ],
       },
       { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
@@ -104,7 +109,7 @@ routes.current = [
         element: <User />,
       },
       ...adminRoutes,
-      ...(isPreviewRelease ? devPages : []),
+      ...(isPreviewRelease ? [] : devPages),
     ],
   },
   {

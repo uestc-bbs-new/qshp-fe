@@ -105,21 +105,27 @@ const Poll = ({
         </Stack>
       )}
       <PollOptionsContainer poll={poll}>
-        {poll.options.map((option, index) => (
-          <PollOption
-            key={index}
-            option={option}
-            poll={poll}
-            index={index}
-            ended={ended}
-            checked={
-              poll.selected_options?.includes(option.id) ||
-              !!selectedOptions.current.get(option.id)
-            }
-            noMoreChoices={poll.multiple && selectCount >= poll.max_choices}
-            onChange={handleChange}
-          />
-        ))}
+        <Box
+          display="grid"
+          maxWidth="100%"
+          gridTemplateColumns="minmax(0, 1fr) min-content"
+        >
+          {poll.options.map((option, index) => (
+            <PollOption
+              key={index}
+              option={option}
+              poll={poll}
+              index={index}
+              ended={ended}
+              checked={
+                poll.selected_options?.includes(option.id) ||
+                !!selectedOptions.current.get(option.id)
+              }
+              noMoreChoices={poll.multiple && selectCount >= poll.max_choices}
+              onChange={handleChange}
+            />
+          ))}
+        </Box>
       </PollOptionsContainer>
       {!ended && (
         <Stack direction="row" mt={1.5}>
@@ -151,8 +157,24 @@ const PollOptionsContainer = ({
   poll: ThreadPollDetails
   children: React.ReactNode
 }) =>
-  poll.multiple ? <Box>{children}</Box> : <RadioGroup>{children}</RadioGroup>
+  poll.multiple ? (
+    <Box sx={{ maxWidth: '100%' }}>{children}</Box>
+  ) : (
+    <RadioGroup sx={{ maxWidth: '100%' }}>{children}</RadioGroup>
+  )
 
+const kPollOptionBarHeight = 14
+const pollOptionBarBaseStyle = {
+  height: `${kPollOptionBarHeight}px`,
+  borderRadius: `${kPollOptionBarHeight / 2}px`,
+}
+const pollOptionBarStyle = {
+  backgroundColor: '#F5F6F7',
+  width: '500px',
+  maxWidth: '100%',
+  marginBottom: '4px',
+  ...pollOptionBarBaseStyle,
+}
 const PollOption = ({
   poll,
   option,
@@ -171,11 +193,6 @@ const PollOption = ({
   onChange?: (index: number, checked: boolean) => void
 }) => {
   const kPalette = ['#FFA39E', '#FFD591', '#B7EB8F', '#91D5FF']
-  const kBarHeight = 14
-  const barStyle = {
-    height: `${kBarHeight}px`,
-    borderRadius: `${kBarHeight / 2}px`,
-  }
 
   const percentage =
     Math.min(1, (option.votes || 0) / (poll.voter_count || 1)) * 100
@@ -187,36 +204,32 @@ const PollOption = ({
       onChange(option.id, checked))
   return (
     <>
-      {!ended || poll.selected_options ? (
-        <FormControlLabel
-          value={option.id}
-          control={poll.multiple ? <Checkbox /> : <Radio />}
-          checked={poll.selected_options ? checked : undefined}
-          onChange={handleChange}
-          disabled={
-            !!poll.selected_options || ended || (noMoreChoices && !checked)
-          }
-          label={<Typography>{label}</Typography>}
-        />
-      ) : (
-        <Typography my={1}>{label}</Typography>
-      )}
-      <Stack direction="row" alignItems="center">
-        <div
-          style={{
-            ...barStyle,
-            backgroundColor: '#F5F6F7',
-            width: '500px',
-          }}
-        >
+      <Stack>
+        {!ended || poll.selected_options ? (
+          <FormControlLabel
+            value={option.id}
+            control={poll.multiple ? <Checkbox /> : <Radio />}
+            checked={poll.selected_options ? checked : undefined}
+            onChange={handleChange}
+            disabled={
+              !!poll.selected_options || ended || (noMoreChoices && !checked)
+            }
+            label={<Typography>{label}</Typography>}
+          />
+        ) : (
+          <Typography my={1}>{label}</Typography>
+        )}
+        <div css={pollOptionBarStyle}>
           <div
+            css={pollOptionBarBaseStyle}
             style={{
-              ...barStyle,
               backgroundColor: color,
               width: `${percentage}%`,
             }}
           ></div>
         </div>
+      </Stack>
+      <Stack direction="row" alignItems="flex-end">
         <Typography mx={1}>{percentage.toFixed(1)}%</Typography>
         <Typography sx={{ color }}>({option.votes || 0})</Typography>
       </Stack>

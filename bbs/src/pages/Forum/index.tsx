@@ -195,7 +195,7 @@ const ThreadTypeFilter = ({
 }
 
 function Forum() {
-  const { dispatch } = useAppState()
+  const { state, dispatch } = useAppState()
   const navigate = useNavigate()
   const forumId = parseInt(useParams().id || '0')
   const [searchParams] = useSearchParams()
@@ -210,7 +210,8 @@ function Forum() {
       forum_id: forumId,
       page: parseInt(searchParams.get('page') || '1') || 1,
       sort_by: parseInt(sortBy) || 1,
-      type_id: (typeId && parseInt(typeId)) || undefined,
+      type_id:
+        typeId && !isNaN(parseInt(typeId)) ? parseInt(typeId) : undefined,
       forum_details: forumChanged || !forumDetails,
     }
   }
@@ -228,6 +229,11 @@ function Forum() {
     queryKey: ['getThread', query],
     queryFn: () => getThreadList(query),
   })
+  useEffect(() => {
+    if (state.activeForum && state.activeForum.fid != forumId) {
+      dispatch({ type: 'set forum' })
+    }
+  }, [forumId])
 
   useEffect(() => {
     if (threadList && threadList.total) {
@@ -334,6 +340,7 @@ function Forum() {
                                   data={item}
                                   key={item.thread_id}
                                   forumDetails={forumDetails}
+                                  fromForum
                                 />
                               ))}
                           </List>
@@ -363,6 +370,7 @@ function Forum() {
                                 key={item.thread_id}
                                 forumDetails={forumDetails}
                                 showSummary
+                                fromForum
                               />
                             ))}
                         </List>

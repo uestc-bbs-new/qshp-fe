@@ -1,7 +1,14 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import {
   AuthorizationResult,
@@ -31,9 +38,11 @@ export const RegisterForm = ({
   idasResult: IdasResultEx
   onClose: () => void
 }) => {
+  const theme = useTheme()
   const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
   const [userNameError, setUserNameError] = useState('')
+  const [userNamePrompt, setUserNamePrompt] = useState('')
   const [emailError, setEmailError] = useState('')
   const [registerError, setRegisterError] = useState<unknown>()
   const passwordValid = useRef(false)
@@ -75,6 +84,14 @@ export const RegisterForm = ({
       getFormField('username') == username
     ) {
       setUserNameError('该用户名已注册，请重新输入。')
+    }
+  }
+  const suggestUserName = () => {
+    const username = getFormField('username')
+    if (username.match(/^(?:\d{12,13}|\d{10})$/)) {
+      setUserNamePrompt('不建议使用学号作为用户名。')
+    } else {
+      setUserNamePrompt('')
     }
   }
   const validateEmail = () => {
@@ -146,9 +163,16 @@ export const RegisterForm = ({
             autoFocus
             name="username"
             helperText={
-              userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
+              userNamePrompt ? (
+                <span style={{ color: theme.palette.warning.main }}>
+                  {userNamePrompt}
+                </span>
+              ) : (
+                userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
+              )
             }
             error={!!userNameError}
+            onChange={suggestUserName}
             onBlur={validateUserName}
             required
             sx={{ width: '80%' }}

@@ -15,6 +15,9 @@ const previewCommon = (mode: RenderMode) => ({
     current: mode,
     path: `${common.cdn}/dist/css/content-theme`,
   },
+  hljs: {
+    lineNumber: true,
+  },
 })
 
 export const getPreviewThemeOptions = (mode: RenderMode): IPreview => ({

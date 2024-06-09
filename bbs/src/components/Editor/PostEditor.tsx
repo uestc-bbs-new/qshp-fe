@@ -17,7 +17,11 @@ import {
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import { ExtCreditMap, extCreditNames } from '@/common/interfaces/base'
+import {
+  Attachment,
+  ExtCreditMap,
+  extCreditNames,
+} from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
@@ -36,7 +40,8 @@ import {
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
-import { PostEditorKind, PostEditorValue } from './types'
+import { getValidThreadTypes } from './common'
+import { EditorAttachment, PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
   small,
@@ -105,8 +110,14 @@ const PostEditor = ({
     if (initialValue.format == 1 || initialValue.format == -1) {
       initialValue.format = 2
     }
+    if (initialValue.format == 0 && initialValue.message) {
+      initialValue.message = initialValue.message.replace(
+        /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s{0,2}/,
+        ''
+      )
+    }
     if (
-      initialValue.format == 2 &&
+      initialValue.format == 0 &&
       initialValue.smileyoff == 0 &&
       initialValue.message
     ) {
@@ -126,9 +137,18 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const valueRef = useRef<PostEditorValue>({ ...initialValue })
+  const initialAttachments = initialValue?.attachments
+    ? [...initialValue.attachments]
+    : []
+  const valueRef = useRef<PostEditorValue>({
+    ...initialValue,
+    attachments: initialAttachments,
+  })
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
+  const [attachments, setAttachments] = useState<EditorAttachment[]>([
+    ...initialAttachments,
+  ])
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -136,7 +156,7 @@ const PostEditor = ({
       return false
     }
     if (
-      forum?.thread_types?.length &&
+      getValidThreadTypes(forum)?.length &&
       !forum?.optional_thread_type &&
       !valueRef.current.type_id
     ) {
@@ -185,11 +205,13 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        usesig: valueRef.current.usesig ?? 1,
         attachments: editor.current?.attachments,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
           notifyCreditsUpdate(result.ext_credits_update)
           navigate(pages.thread(result.thread_id))
         })
@@ -199,12 +221,14 @@ const PostEditor = ({
         thread_id: threadId,
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
+        usesig: valueRef.current.usesig ?? 1,
         is_anonymous: valueRef.current.is_anonymous,
         attachments: editor.current?.attachments,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
           notifyCreditsUpdate(result.ext_credits_update)
           setPostPending(false)
           onSubmitted && onSubmitted()
@@ -298,7 +322,7 @@ const PostEditor = ({
       )}
       <Stack direction="row" flexShrink={1} minHeight="1em">
         {!smallAuthor && <Author anonymous={anonymous} />}
-        <Stack flexGrow={1}>
+        <Stack flexGrow={1} flexShrink={1} maxWidth="100%">
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}
@@ -337,7 +361,13 @@ const PostEditor = ({
               />
               <Card
                 elevation={3}
-                sx={{ maxHeight: '35vh', overflow: 'auto', mt: 1 }}
+                sx={{
+                  maxHeight: '35vh',
+                  overflow: 'auto',
+                  p: 2,
+                  mt: 1,
+                  boxSizing: 'border-box',
+                }}
               >
                 <LegacyPostRenderer post={legacyPost} />
               </Card>
@@ -351,7 +381,19 @@ const PostEditor = ({
                 initialValue?.format == 0 ? undefined : initialValue?.message
               }
               initialHtml={legacyHtml}
-              initialAttachments={initialValue?.attachments}
+              initialAttachments={initialAttachments}
+              onUpdateAttachments={(value?: Attachment[]) => {
+                const existingAids = new Set(
+                  attachments.map((item) => item.attachment_id)
+                )
+                const newAttachments = [...attachments]
+                value?.forEach(
+                  (item) =>
+                    !existingAids.has(item.attachment_id) &&
+                    newAttachments.push(item)
+                )
+                setAttachments(newAttachments)
+              }}
               onKeyDown={handleCtrlEnter(handleSubmit)}
               ref={editor}
             />
@@ -363,6 +405,10 @@ const PostEditor = ({
             valueRef={valueRef}
             onAnonymousChanged={() =>
               setAnonymous(!!valueRef.current.is_anonymous)
+            }
+            attachments={attachments}
+            onUpdateAttachments={(newAttachments) =>
+              setAttachments(newAttachments)
             }
           />
         </Stack>

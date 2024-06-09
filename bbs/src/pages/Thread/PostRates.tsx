@@ -56,7 +56,8 @@ const PostRates = ({
   }
   initialRates = promotedRates.concat(initialRates).slice(0, maxInitialRates)
   kCreditNamesInOrder.forEach(
-    (name) => rateStat.total_credits[name] && usedCredits.push(name)
+    (name) =>
+      rateStat.total_credits[name] != undefined && usedCredits.push(name)
   )
 
   const [moreOpen, setMoreOpen] = useState(false)
@@ -71,23 +72,22 @@ const PostRates = ({
           {linearView && (
             <>
               <Chip className="ml-2" text={`${rateStat.total_users} 人参与`} />
-              {usedCredits.map((name) => (
-                <Chip
-                  key={name}
-                  className="ml-2"
-                  type={
-                    rateStat.total_credits[name] > 0
-                      ? undefined
-                      : 'rateNegative'
-                  }
-                  text={
-                    name +
-                    ' ' +
-                    (rateStat.total_credits[name] > 0 ? '+' : '') +
-                    rateStat.total_credits[name]
-                  }
-                />
-              ))}
+              {usedCredits
+                .filter((name) => !!rateStat.total_credits[name])
+                .map((name) => (
+                  <Chip
+                    key={name}
+                    className="ml-2"
+                    type={
+                      rateStat.total_credits[name] > 0
+                        ? undefined
+                        : 'rateNegative'
+                    }
+                    text={`${name} ${
+                      rateStat.total_credits[name] > 0 ? '+' : ''
+                    }${rateStat.total_credits[name]}`}
+                  />
+                ))}
             </>
           )}
         </>

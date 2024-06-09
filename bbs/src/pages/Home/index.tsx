@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import {
@@ -9,7 +9,6 @@ import {
   List,
   Skeleton,
   Stack,
-  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -43,13 +42,16 @@ const Home = () => {
     refetch,
   } = useQuery({
     queryKey: ['index'],
-    queryFn: () => {
-      return getIndexData({
+    queryFn: async () => {
+      console.log('fetch index')
+      const result = await getIndexData({
         globalStat: true,
         announcement: true,
         forumList: true,
         topList: ['newreply', 'newthread', 'digest', 'life', 'hotlist'],
       })
+      globalCache.topList = result.top_list
+      return result
     },
   })
   useEffect(() => {
@@ -78,9 +80,29 @@ const Home = () => {
       })
     }
   }, [indexData, mobileView])
+
+  const previousLocationKey = useRef(location.key)
+  const previousUid = useRef(state.user.uid)
+  const previousUninitialized = useRef(state.user.uninitialized)
   useEffect(() => {
-    refetch()
-  }, [state.user.uid, location.key])
+    console.log(
+      state.user.uid,
+      location.key,
+      previousLocationKey.current,
+      previousUid.current
+    )
+    if (
+      !previousUninitialized.current &&
+      (previousUid.current != state.user.uid ||
+        previousLocationKey.current != location.key)
+    ) {
+      previousLocationKey.current = location.key
+      previousUid.current = state.user.uid
+      refetch()
+    }
+    previousUninitialized.current = state.user.uninitialized
+  }, [state.user.uid, state.user.uninitialized, location.key])
+
   if (mobileView) {
     return [...Array(10)].map((_, index) => (
       <Skeleton key={index} height={70} />
@@ -88,14 +110,7 @@ const Home = () => {
   }
   return (
     <>
-      <Banner src={headerImg}>
-        <Box className="text-white text-center">
-          <Typography variant="h4">清水河畔</Typography>
-          <Typography color={theme.palette.grey[400]}>
-            说你想说，做你想做
-          </Typography>
-        </Box>
-      </Banner>
+      <Banner src={headerImg} />
       <Stack
         direction="row"
         justifyContent="space-between"

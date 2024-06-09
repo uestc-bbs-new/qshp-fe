@@ -1,6 +1,7 @@
-import { redirect } from 'react-router-dom'
+import { redirect, useRouteError } from 'react-router-dom'
 
 import { findPost, kPostPageSize } from '@/apis/thread'
+import Error from '@/components/Error'
 import { pages } from '@/utils/routes'
 
 const Goto = async ({ params }: { params: object }) => {
@@ -24,6 +25,11 @@ const Goto = async ({ params }: { params: object }) => {
       `post-${pid}`
     )
   )
+}
+
+export const GotoError = () => {
+  const error = useRouteError()
+  return <Error error={error} />
 }
 
 export default Goto

@@ -20,8 +20,6 @@ import {
 } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
-import StartConversation from './Chat/StartConversation'
-
 const Messages = () => {
   const route = useActiveRoute()
   const [count, setCount] = useState<MessageCounts>()
@@ -40,38 +38,35 @@ const Messages = () => {
 
   return (
     <Stack direction="row" alignItems="flex-start" mt={2}>
-      <Stack direction="column" alignItems="flex-start" spacing={2} mr={4}>
-        {!narrowView && (
-          <Paper sx={{ width: 180, mr: 4, flewGrow: 0, flexShrink: 0 }}>
-            <List disablePadding>
-              {messagesSubPages.map((item, index) => (
-                <Link
-                  underline="none"
-                  color="inherit"
-                  key={index}
-                  to={
-                    isPreviewRelease && item.id == 'chat'
-                      ? `${siteRoot}/home.php?mod=space&do=pm`
-                      : pages.messages(item.id as MessageGroup)
-                  }
-                  external={isPreviewRelease && item.id == 'chat'}
-                  target={
-                    isPreviewRelease && item.id == 'chat' ? '_blank' : undefined
-                  }
+      {!narrowView && (
+        <Paper sx={{ width: 180, mr: 4, flewGrow: 0, flexShrink: 0 }}>
+          <List disablePadding>
+            {messagesSubPages.map((item, index) => (
+              <Link
+                underline="none"
+                color="inherit"
+                key={index}
+                to={
+                  isPreviewRelease && item.id == 'chat'
+                    ? `${siteRoot}/home.php?mod=space&do=pm`
+                    : pages.messages(item.id as MessageGroup)
+                }
+                external={isPreviewRelease && item.id == 'chat'}
+                target={
+                  isPreviewRelease && item.id == 'chat' ? '_blank' : undefined
+                }
+              >
+                <ListItemButton
+                  selected={item.id == mapMessagesRouteToMessageGroup(route)}
                 >
-                  <ListItemButton
-                    selected={item.id == mapMessagesRouteToMessageGroup(route)}
-                  >
-                    {item.text}
-                    {!!counts[item.id] && ` (${counts[item.id]})`}
-                  </ListItemButton>
-                </Link>
-              ))}
-            </List>
-          </Paper>
-        )}
-        <StartConversation />
-      </Stack>
+                  {item.text}
+                  {!!counts[item.id] && ` (${counts[item.id]})`}
+                </ListItemButton>
+              </Link>
+            ))}
+          </List>
+        </Paper>
+      )}
       <Outlet context={{ setCount }} />
     </Stack>
   )

@@ -5,7 +5,7 @@ import { useAppState } from '@/states'
 import NavLinks from './NavLinks'
 
 const LeftDrawer = () => {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   const theme = useTheme()
 
   const keepMounted = useMediaQuery('(max-width:640px)')
@@ -16,6 +16,7 @@ const LeftDrawer = () => {
       <Drawer
         variant={'temporary'}
         open={open}
+        onClose={() => dispatch({ type: 'set drawer' })}
         ModalProps={{
           // Better open performance on mobile.
           keepMounted: keepMounted,

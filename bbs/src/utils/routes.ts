@@ -3,6 +3,7 @@ import { Params, useMatches } from 'react-router-dom'
 
 import { ContinueMode } from '@/common/types/idas'
 
+import { isPreviewRelease } from './releaseMode'
 import siteRoot from './siteRoot'
 
 export const useActiveRoute = () => {
@@ -47,13 +48,7 @@ export type UserPageParams = {
   admin?: boolean
 }
 
-export const kIdasOrigin =
-  // @ts-expect-error preserve code as is
-  window[['L'.toLowerCase(), 'ocation'].join('')].hostname ==
-  `bbs-uestc-edu-cn-s.vpn.uestc.edu.cn`
-    ? // @ts-expect-error preserve code as is
-      window[['L'.toLowerCase(), 'ocation'].join('')].origin
-    : `https://bbs.uestc.edu.cn`
+export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
 const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
 const kIdasClientId = '1191760355037016064'
@@ -72,8 +67,7 @@ export const gotoIdas = (options?: {
       ...(version ? { version: version.toString() } : {}),
     })
   )
-  // @ts-expect-error preserve code as is
-  window[['L'.toLowerCase(), 'ocation'].join('')].href =
+  location.href =
     version == 2
       ? withSearchAndHash(
           idas2UrlBase,
@@ -92,6 +86,8 @@ export const pages = {
 
   thread: (thread_id: number, query?: URLSearchParams, hashValue?: string) =>
     withSearchAndHash(`/thread/${thread_id}`, query, hashValue),
+  threadLastpost: (thread_id: number) =>
+    pages.thread(thread_id, new URLSearchParams({ page: '-1' }), 'lastpost'),
   forum: (forum_id: number, query?: URLSearchParams) =>
     withSearchAndHash(`/forum/${forum_id}`, query),
   goto: (post_id: number) => `/goto/${post_id}`,
@@ -149,3 +145,33 @@ export const legacyPages = {
   collection: (collection_id: number) =>
     `${siteRoot}/forum.php?mod=collection&action=view&ctid=${collection_id}`,
 }
+
+export const mapMessagesRouteToMessageGroup = (
+  route?: { id?: string } | null
+) => {
+  if (route?.id == 'messages_chat' || route?.id == 'messages_chat_user') {
+    return 'chat'
+  }
+  if (route?.id == 'messages_posts') {
+    return 'posts'
+  }
+  if (route?.id == 'messages_system') {
+    return 'system'
+  }
+  return isPreviewRelease ? 'posts' : 'chat'
+}
+
+export const messagesSubPages: { id: MessageGroup; text: string }[] = [
+  {
+    id: 'chat',
+    text: '站内信',
+  },
+  {
+    id: 'posts',
+    text: '我的帖子',
+  },
+  {
+    id: 'system',
+    text: '系统消息',
+  },
+]

@@ -14,8 +14,8 @@ import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
+import { getTotalMessages } from '../../utils/messages'
 import { MenuItemLink } from '../Link'
-import { getTotalMessages } from './messages'
 
 export const MessageTabs = ({ small }: { small?: boolean }) => {
   const kChatCount = small ? 1 : 3

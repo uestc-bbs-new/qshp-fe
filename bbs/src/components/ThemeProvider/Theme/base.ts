@@ -1,5 +1,11 @@
 import { SxProps, ThemeOptions } from '@mui/material'
 
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    paperHighlighted?: string
+  }
+}
+
 const rootElement = document.getElementById('root')
 
 const threadItemLabelCommonStyle = {
@@ -120,6 +126,7 @@ declare module '@mui/material/styles' {
     dialogTitle: React.CSSProperties
     replyCredit: React.CSSProperties
     replyCreditDetails: React.CSSProperties
+    postEditPrompt: React.CSSProperties
     drawerItemText: React.CSSProperties
     drawerHeading: React.CSSProperties
   }
@@ -147,6 +154,7 @@ declare module '@mui/material/styles' {
     dialogTitle?: React.CSSProperties
     replyCredit?: React.CSSProperties
     replyCreditDetails?: React.CSSProperties
+    postEditPrompt?: React.CSSProperties
     drawerItemText?: React.CSSProperties
     drawerHeading?: React.CSSProperties
   }
@@ -176,6 +184,7 @@ declare module '@mui/material/Typography' {
     dialogTitle: true
     replyCredit: true
     replyCreditDetails: true
+    postEditPrompt: true
     drawerItemText: true
     drawerHeading: true
   }
@@ -269,10 +278,15 @@ export const baseTheme: ThemeOptions = {
       color: '#303133',
       fontWeight: 500,
       fontSize: 16,
+      wordBreak: 'break-all',
+      overflowWrap: 'anywhere',
     },
     threadItemSummary: {
       color: '#606266',
       fontSize: 14,
+      textAlign: 'justify',
+      wordBreak: 'break-all',
+      overflowWrap: 'anywhere',
     },
     threadItemStat: {
       color: '#606266',
@@ -325,6 +339,11 @@ export const baseTheme: ThemeOptions = {
     replyCreditDetails: {
       fontSize: 16,
       color: '#F26B4E',
+    },
+    postEditPrompt: {
+      color: '#999',
+      fontSize: 14,
+      fontStyle: 'italic',
     },
     drawerItemText: {
       color: '#000000',

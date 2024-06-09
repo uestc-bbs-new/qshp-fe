@@ -49,7 +49,6 @@ export const guestUser = {
 const initialState: State = {
   drawer: false, //侧边栏是否打开
   user: { ...guestUser, uninitialized: true },
-  forumBreadcumbs: [],
   theme: getRenderedTheme(),
 }
 
@@ -121,7 +120,7 @@ export const useTopList = (initialData?: TopList) => {
       previousUid.current = state.user.uid
     }
   }, [state.user.uid])
-  return topList
+  return globalCache.topList || topList || initialData
 }
 
 export const useSignInChange = (callback: () => void) => {

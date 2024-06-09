@@ -14,6 +14,7 @@ import { Attachment } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 import bbcode2html, { FontSizeVariant } from '@/utils/bbcode/bbcode'
+import { chineseTime } from '@/utils/dayjs'
 
 import '../../../../markdown-renderer/src/renderer/richtext.css'
 import { getPreviewOptions } from '../../../../markdown-renderer/src/renderer/vditorConfig'
@@ -153,10 +154,17 @@ type PickedPost = Pick<
 export const renderLegacyPostToDangerousHtml = (
   post: PickedPost,
   orphanAttachments?: Attachment[],
-  sizeVariant?: FontSizeVariant
+  sizeVariant?: FontSizeVariant,
+  removeEditPrompt?: boolean,
+  narrowView?: boolean
 ) =>
   bbcode2html(
-    post.message,
+    removeEditPrompt
+      ? post.message.replace(
+          /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s*/,
+          ''
+        )
+      : post.message,
     {
       bbcodeoff: post.format != 0,
       smileyoff: !!post.smileyoff,
@@ -164,17 +172,27 @@ export const renderLegacyPostToDangerousHtml = (
       legacyPhpwindAt: post.post_id <= 24681051,
       legacyPhpwindCode: post.post_id <= 24681051,
       sizeVariant,
+      narrowView,
     },
     post.attachments,
     orphanAttachments
   )
 
-export const LegacyPostRenderer = ({ post }: { post: PickedPost }) => {
+export const LegacyPostRenderer = ({
+  post,
+  removeEditPrompt,
+}: {
+  post: PickedPost
+  removeEditPrompt?: boolean
+}) => {
   const orphanAttachments: Attachment[] = []
+  const narrowView = useMediaQuery('(max-width: 640px)')
   const html = renderLegacyPostToDangerousHtml(
     post,
     orphanAttachments,
-    useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
+    useMediaQuery('(max-width: 640px)') ? 'small' : 'default',
+    removeEditPrompt,
+    narrowView
   )
   return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
@@ -200,7 +218,7 @@ const MarkdownPostRenderer = ({
           })
         )
     })()
-  }, [message])
+  }, [message, attachments])
   const navigate = useNavigate()
   const { dispatch } = useAppState()
   return (
@@ -214,13 +232,24 @@ const MarkdownPostRenderer = ({
 }
 
 export const PostRenderer = ({ post }: { post: PostFloor }) => {
-  return post.format == 2 ? (
-    <MarkdownPostRenderer
-      message={post.message}
-      attachments={post.attachments}
-    />
-  ) : (
-    <LegacyPostRenderer post={post} />
+  const hasEditPrompt = !!(post.last_edit_time && post.last_editor)
+  return (
+    <>
+      {hasEditPrompt && !!post.last_edit_time && (
+        <Typography variant="postEditPrompt" paragraph mb={1}>
+          本帖最后由 {post.last_editor} 于{' '}
+          {chineseTime(post.last_edit_time * 1000)} 编辑
+        </Typography>
+      )}
+      {post.format == 2 ? (
+        <MarkdownPostRenderer
+          message={post.message}
+          attachments={post.attachments}
+        />
+      ) : (
+        <LegacyPostRenderer post={post} removeEditPrompt={hasEditPrompt} />
+      )}
+    </>
   )
 }
 

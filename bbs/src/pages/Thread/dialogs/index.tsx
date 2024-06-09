@@ -59,7 +59,7 @@ const ActionDialog = ({
               ]
             }
           </Typography>
-          <IconButton onClick={onClose}>
+          <IconButton onClick={onClose} onTouchEnd={onClose}>
             <Close />
           </IconButton>
         </Stack>
