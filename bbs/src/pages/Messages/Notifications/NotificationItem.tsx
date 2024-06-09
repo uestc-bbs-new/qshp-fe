@@ -31,7 +31,7 @@ const NotificationItem = ({
       ) : (
         <Link to={pages.user({ uid: item.author_id })}>{avatar}</Link>
       )}
-      <Box>
+      <Box sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
         {!summary && (
           <Typography>{chineseTime(item.dateline * 1000)}</Typography>
         )}
