@@ -88,6 +88,7 @@ function options({
       ],
     },
     upload: {
+      max: 40 * 1024 * 1024,
       accept: [
         'png',
         'jpg',
