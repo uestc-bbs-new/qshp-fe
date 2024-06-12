@@ -11,6 +11,11 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import {
+  kSidebarWidth,
+  useSidebarInMarginMediaQuery,
+} from '@/common/ui/TopList'
+import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
@@ -22,6 +27,10 @@ import { useAppState } from '@/states'
 const Layout = () => {
   const { state, dispatch } = useAppState()
   const thinView = useMediaQuery('(max-width: 560px)')
+  const sidebarInMargin = useSidebarInMarginMediaQuery()
+  const sidebarNotFit = useMediaQuery(
+    `(max-width: ${kContentWidth + kSidebarWidth}px)`
+  )
 
   return (
     <>
@@ -36,7 +45,11 @@ const Layout = () => {
           className={`flex w-full flex-col items-center align-middle transition-all`}
           ml={
             state.toplistView?.open && state.toplistView?.sidebar
-              ? '480px'
+              ? sidebarInMargin
+                ? 0
+                : sidebarNotFit
+                  ? `${kSidebarWidth}px`
+                  : `calc(${kSidebarWidth * 2 + kContentWidth}px - 100%)`
               : undefined
           }
           sx={{ transition: 'marginRight 0.5s ease' }}

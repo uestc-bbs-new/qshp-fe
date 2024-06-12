@@ -42,6 +42,11 @@ import {
 
 import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
+import {
+  kSidebarWidth,
+  useSidebarInMarginMediaQuery,
+} from '@/common/ui/TopList'
+import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { ForumGroup } from '@/pages/Home/ForumCover'
@@ -479,6 +484,7 @@ export const TopListDialog = ({
   sidebar?: boolean
   onClose: () => void
 }) => {
+  const sidebarInMargin = useSidebarInMarginMediaQuery()
   const content = (
     <Paper
       sx={(theme) => ({
@@ -493,10 +499,12 @@ export const TopListDialog = ({
           : sidebar
             ? {
                 position: 'fixed',
-                left: 0,
+                left: sidebarInMargin
+                  ? `calc(50% - ${kContentWidth / 2 + kSidebarWidth}px)`
+                  : 0,
                 top: 64,
                 bottom: 0,
-                width: 480,
+                width: kSidebarWidth,
                 zIndex: 1,
               }
             : {
