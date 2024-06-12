@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useUnmount } from 'usehooks-ts'
 
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -10,7 +11,6 @@ import {
   Skeleton,
   Stack,
   useMediaQuery,
-  useTheme,
 } from '@mui/material'
 
 import { getIndexData } from '@/apis/common'
@@ -29,15 +29,12 @@ const Home = () => {
   const mobileView = useMediaQuery('(max-width: 800px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
-  useEffect(() => {
-    return () => {
-      if (!state.toplistView?.sidebar) {
-        dispatch({ type: 'close toplist', payload: { noTransition: true } })
-      }
+  useUnmount(() => {
+    if (!state.toplistView?.sidebar) {
+      dispatch({ type: 'close toplist', payload: { noTransition: true } })
     }
-  }, [mobileView])
+  })
 
-  const theme = useTheme()
   const {
     data: indexData,
     isLoading,
