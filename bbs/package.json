@@ -52,6 +52,7 @@
     "react-router-dom": "^6.21.1",
     "react-zoom-pan-pinch": "^3.4.4",
     "swiper": "^11.1.1",
+    "usehooks-ts": "^3.1.0",
     "vditor": "file:third_party/vditor"
   }
 }
