@@ -169,7 +169,11 @@ const ThreadTabContent = ({
 }) => {
   const tabRef = useRef<TopListTabHandle>(null)
   return (
-    <TabContent tab={tab} requireSignIn onRefresh={tabRef.current?.refresh}>
+    <TabContent
+      tab={tab}
+      requireSignIn
+      onRefresh={() => tabRef.current?.refresh() ?? Promise.resolve()}
+    >
       <TopListTab tab={tab} ref={tabRef} singleColumn={singleColumn} />
     </TabContent>
   )
