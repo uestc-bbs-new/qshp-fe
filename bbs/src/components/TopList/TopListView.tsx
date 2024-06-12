@@ -52,6 +52,7 @@ import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { ForumGroup } from '@/pages/Home/ForumCover'
 import { useAppState, useForumList, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
+import { persistedStates } from '@/utils/storage'
 
 const kAllForums = 'allforums'
 type TabKey = TopListKey | 'allforums'
@@ -104,15 +105,17 @@ const TopListView = ({
         {onClose && (
           <Stack direction="row" alignItems="center">
             <IconButton
-              onClick={() =>
+              onClick={() => {
+                const sidebar = !state.toplistView?.sidebar
+                persistedStates.toplistMode = sidebar ? 'sidebar' : 'full'
                 dispatch({
                   type: 'open toplist',
                   payload: {
                     ...state.toplistView,
-                    sidebar: !state.toplistView?.sidebar,
+                    sidebar,
                   },
                 })
-              }
+              }}
             >
               {state.toplistView?.sidebar ? (
                 <Wysiwyg />

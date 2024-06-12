@@ -21,6 +21,7 @@ import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
+import { persistedStates } from '@/utils/storage'
 
 import { ForumGroup } from './ForumCover'
 
@@ -127,7 +128,10 @@ const Home = () => {
               type: 'open toplist',
               payload: {
                 manuallyOpened: true,
-                ...(state.toplistView?.sidebar && { sidebar: true }),
+                ...((state.toplistView?.sidebar ||
+                  persistedStates.toplistMode == 'sidebar') && {
+                  sidebar: true,
+                }),
               },
             })
           }}
