@@ -109,19 +109,15 @@ const PostEditor = ({
     initialValue = { ...initialValue }
     if (initialValue.format == 1 || initialValue.format == -1) {
       initialValue.format = 2
+      if (initialValue.smileyoff == 0 && initialValue.message) {
+        initialValue.message = convertLegacySmilies(initialValue.message)
+      }
     }
     if (initialValue.format == 0 && initialValue.message) {
       initialValue.message = initialValue.message.replace(
         /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s{0,2}/,
         ''
       )
-    }
-    if (
-      initialValue.format == 0 &&
-      initialValue.smileyoff == 0 &&
-      initialValue.message
-    ) {
-      initialValue.message = convertLegacySmilies(initialValue.message)
     }
   }
 
@@ -292,14 +288,10 @@ const PostEditor = ({
     if (!legacyHtml && !legacy && legacyPost) {
       console.log(convertLegacySimple(legacyPost.message))
       setLegacyHtml(
-        renderLegacyPostToDangerousHtml(
-          {
-            ...legacyPost,
-            message: convertLegacySimple(legacyPost.message),
-          },
-          undefined,
-          useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
-        )
+        renderLegacyPostToDangerousHtml({
+          ...legacyPost,
+          message: convertLegacySimple(legacyPost.message),
+        })
       )
     }
     setEditLegacy(legacy)
