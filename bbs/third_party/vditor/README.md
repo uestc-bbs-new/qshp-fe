@@ -217,6 +217,7 @@ Markdown 输出的 HTML 所展现的外观。内置 ant-design, light，dark，w
 | value | 编辑器初始化值 | '' |
 | theme | 主题：classic, dark | 'classic' |
 | icon | 图标风格：ant, material | 'ant' |
+| customRenders: {language: string, render: (element: HTMLElement, vditor: IVditor) => void}[] | 自定义渲染器 | [] |
 
 #### options.toolbar
 
@@ -308,6 +309,7 @@ new Vditor('vditor', {
 | style | 可选值参见[Chroma](https://xyproto.github.io/splash/docs/longer/all.html) | `github` |
 | lineNumber | 是否启用行号 | false |
 | langs | 自定义指定语言 | [CODE_LANGUAGES](https://github.com/Vanessa219/vditor/blob/53ca8f9a0e511b37b5dae7c6b15eb933e9e02ccd/src/ts/constants.ts#L20) |
+| renderMenu(code: HTMLElement, copy: HTMLElement) | 渲染菜单按钮 | - |
 
 #### options.preview.markdown
 
@@ -356,6 +358,12 @@ new Vditor('vditor', {
 | tooltip | 提示 | - |
 | className | 按钮类名 | - |
 | click(key: string) | 按钮点击回调事件 | - |
+
+#### options.preview.render.media
+
+|        | 说明        | 默认值  |
+|--------|-----------|------|
+| enable | 是否启用多媒体渲染 | true |
 
 #### options.image
 
@@ -573,6 +581,7 @@ options?: IPreviewOptions {
   lazyLoadImage?: string; // 设置为 Loading 图片地址后将启用图片的懒加载
   markdown?: options.preview.markdown;
   theme?: options.preview.theme;
+  render?: options.preview.render;
   renderers?: ILuteRender; // 自定义渲染 https://ld246.com/article/1588412297062
 }
 ```
@@ -584,7 +593,7 @@ options?: IPreviewOptions {
 | previewImage(oldImgElement: HTMLImageElement, lang: keyof II18n = "zh_CN", theme = "classic") | 点击图片预览 |
 | mermaidRender(element: HTMLElement, cdn = options.cdn, theme = options.theme) | 流程图/时序图/甘特图 |
 | flowchartRender(element: HTMLElement, cdn = options.cdn) | flowchart 渲染 |
-| codeRender(element: HTMLElement) | 为 element 中的代码块添加复制按钮 |
+| codeRender(element: HTMLElement, option?: IHljs) | 为 element 中的代码块添加复制按钮 |
 | chartRender(element: (HTMLElement \| Document) = document, cdn = options.cdn, theme = options.theme) | 图表渲染 |
 | mindmapRender(element: (HTMLElement \| Document) = document, cdn = options.cdn, theme = options.theme) | 脑图渲染 |
 | plantumlRender(element: (HTMLElement \| Document) = document, cdn = options.cdn) | plantuml 渲染 |

@@ -1,16 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
   Alert,
   Button,
+  Card,
   Skeleton,
   Snackbar,
   Stack,
+  Tab,
+  Tabs,
+  TextField,
   Typography,
+  debounce,
+  useMediaQuery,
 } from '@mui/material'
 
 import { editPost, postThread, replyThread } from '@/apis/thread'
+import {
+  Attachment,
+  ExtCreditMap,
+  extCreditNames,
+} from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
 import Editor, { EditorHandle } from '@/components/Editor'
@@ -22,10 +33,15 @@ import { handleCtrlEnter } from '@/utils/tools'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
+import {
+  LegacyPostRenderer,
+  renderLegacyPostToDangerousHtml,
+} from '../RichText'
 import { ThreadPostHeader } from './PostHeader'
 import PostOptions from './PostOptions'
 import ReplyQuote from './ReplyQuote'
-import { PostEditorKind, PostEditorValue } from './types'
+import { getValidThreadTypes } from './common'
+import { EditorAttachment, PostEditorKind, PostEditorValue } from './types'
 
 const Author = ({
   small,
@@ -54,6 +70,13 @@ const Author = ({
   )
 }
 
+const convertLegacySmilies = (message: string) =>
+  message.replace(/\[(?:s|a):(\d+)\]/g, '![$1](s)')
+const convertLegacySimple = (message: string) =>
+  convertLegacySmilies(message)
+    .replace(/\[attach(?:img)?\](\d+)\[\/attach(?:img)?\]/g, '![](a:$1)')
+    .replace(/\[url=home\.php\?mod=space&uid=(\d+)\]/g, '[url=/user/$1]')
+
 const PostEditor = ({
   forum,
   forumLoading,
@@ -78,11 +101,32 @@ const PostEditor = ({
   autoFocus?: boolean
 }) => {
   kind = kind || 'newthread'
+  smallAuthor = smallAuthor || useMediaQuery('(max-width: 640px)')
   if (kind == 'reply' && !threadId) {
     return <></>
   }
+  if (kind == 'edit' && initialValue && initialValue.format != 2) {
+    initialValue = { ...initialValue }
+    if (initialValue.format == 1 || initialValue.format == -1) {
+      initialValue.format = 2
+    }
+    if (initialValue.format == 0 && initialValue.message) {
+      initialValue.message = initialValue.message.replace(
+        /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s{0,2}/,
+        ''
+      )
+    }
+    if (
+      initialValue.format == 0 &&
+      initialValue.smileyoff == 0 &&
+      initialValue.message
+    ) {
+      initialValue.message = convertLegacySmilies(initialValue.message)
+    }
+  }
 
   const navigate = useNavigate()
+  const { dispatch } = useAppState()
   const buttonText = { newthread: '发布主题', reply: '发表回复', edit: '保存' }[
     kind
   ]
@@ -93,9 +137,18 @@ const PostEditor = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
-  const valueRef = useRef<PostEditorValue>(initialValue || {})
+  const initialAttachments = initialValue?.attachments
+    ? [...initialValue.attachments]
+    : []
+  const valueRef = useRef<PostEditorValue>({
+    ...initialValue,
+    attachments: initialAttachments,
+  })
   const [postPending, setPostPending] = useState(false)
   const [anonymous, setAnonymous] = useState(!!initialValue?.is_anonymous)
+  const [attachments, setAttachments] = useState<EditorAttachment[]>([
+    ...initialAttachments,
+  ])
 
   const validateBeforeNewThread = () => {
     if (!valueRef.current.forum_id) {
@@ -103,7 +156,7 @@ const PostEditor = ({
       return false
     }
     if (
-      forum?.thread_types?.length &&
+      getValidThreadTypes(forum)?.length &&
       !forum?.optional_thread_type &&
       !valueRef.current.type_id
     ) {
@@ -135,7 +188,10 @@ const PostEditor = ({
       return
     }
 
-    const message = editor.current?.vditor?.getValue() || ''
+    let message = editor.current?.vditor?.getValue() || ''
+    if (valueRef.current.format == 0) {
+      message = valueRef.current.message || ''
+    }
     if (!message.trim()) {
       showError('请输入内容。')
       return
@@ -149,11 +205,14 @@ const PostEditor = ({
         forum_id: valueRef.current.forum_id as number,
         message,
         format: 2,
+        usesig: valueRef.current.usesig ?? 1,
         attachments: editor.current?.attachments,
       })
         .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
+          notifyCreditsUpdate(result.ext_credits_update)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -162,12 +221,15 @@ const PostEditor = ({
         thread_id: threadId,
         post_id: postId,
         message: (valueRef.current.quoteMessagePrepend || '') + message,
+        usesig: valueRef.current.usesig ?? 1,
         is_anonymous: valueRef.current.is_anonymous,
         attachments: editor.current?.attachments,
       })
-        .then(() => {
+        .then((result) => {
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
+          setAttachments([])
+          notifyCreditsUpdate(result.ext_credits_update)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -187,6 +249,70 @@ const PostEditor = ({
     }
   }
 
+  const notifyCreditsUpdate = (updates?: ExtCreditMap) => {
+    if (updates) {
+      let hasNegative = false
+      const message = extCreditNames
+        .map((k) => {
+          const v = updates[k]
+          if (!v) {
+            return ''
+          }
+          if (v < 0) {
+            hasNegative = true
+          }
+          return `${k} ${v > 0 ? `+${v}` : v}`
+        })
+        .filter((text) => !!text)
+        .join('，')
+      if (message) {
+        dispatch({
+          type: 'open snackbar',
+          payload: {
+            severity: hasNegative ? 'warning' : 'success',
+            message,
+          },
+        })
+      }
+    }
+  }
+
+  const [editLegacy, setEditLegacy] = useState(initialValue?.format == 0)
+  const [legacyMessage, setLegacyMessage] = useState(initialValue?.message)
+  const [legacyHtml, setLegacyHtml] = useState<string>()
+  const legacyPost = editLegacy &&
+    postId && {
+      post_id: postId,
+      smileyoff: initialValue?.smileyoff || 0,
+      format: 0,
+      message: legacyMessage || '',
+      attachments: initialValue?.attachments,
+    }
+  const switchLegacyEdit = (legacy: boolean) => {
+    if (!legacyHtml && !legacy && legacyPost) {
+      console.log(convertLegacySimple(legacyPost.message))
+      setLegacyHtml(
+        renderLegacyPostToDangerousHtml(
+          {
+            ...legacyPost,
+            message: convertLegacySimple(legacyPost.message),
+          },
+          undefined,
+          useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
+        )
+      )
+    }
+    setEditLegacy(legacy)
+    valueRef.current.format = legacy ? 0 : 2
+  }
+  const updateLegacyPreview = useMemo(
+    () =>
+      debounce(() => {
+        setLegacyMessage(valueRef.current.message)
+      }, 300),
+    []
+  )
+
   return (
     <>
       {forumLoading ? (
@@ -196,7 +322,7 @@ const PostEditor = ({
       )}
       <Stack direction="row" flexShrink={1} minHeight="1em">
         {!smallAuthor && <Author anonymous={anonymous} />}
-        <Stack flexGrow={1}>
+        <Stack flexGrow={1} flexShrink={1} maxWidth="100%">
           <ThreadPostHeader
             kind={kind}
             selectedForum={forum}
@@ -207,14 +333,71 @@ const PostEditor = ({
           {replyPost && (replyPost.position > 1 || !replyPost.is_first) && (
             <ReplyQuote post={replyPost} valueRef={valueRef} />
           )}
-          <Editor
-            autoFocus={autoFocus}
-            minHeight={300}
-            initialValue={initialValue?.message}
-            initialAttachments={initialValue?.attachments}
-            onKeyDown={handleCtrlEnter(handleSubmit)}
-            ref={editor}
-          />
+          {initialValue?.format == 0 && (
+            <>
+              <Alert severity="info">
+                本帖在旧版河畔发表。您可以编辑旧版代码并预览效果，或转换为新版并重新调整格式。
+              </Alert>
+              <Tabs
+                sx={{ my: 0.5 }}
+                value={editLegacy ? 0 : 2}
+                onChange={(_, value) => switchLegacyEdit(value == 0)}
+              >
+                <Tab label="编辑旧版代码" value={0} />
+                <Tab label="转换为新版并调整格式" value={2} />
+              </Tabs>
+            </>
+          )}
+          {editLegacy && legacyPost && (
+            <Stack>
+              <TextField
+                multiline
+                defaultValue={legacyMessage}
+                onChange={(e) => {
+                  valueRef.current.message = e.target.value
+                  updateLegacyPreview()
+                }}
+                maxRows={16}
+              />
+              <Card
+                elevation={3}
+                sx={{
+                  maxHeight: '35vh',
+                  overflow: 'auto',
+                  p: 2,
+                  mt: 1,
+                  boxSizing: 'border-box',
+                }}
+              >
+                <LegacyPostRenderer post={legacyPost} />
+              </Card>
+            </Stack>
+          )}
+          {!editLegacy && (
+            <Editor
+              autoFocus={autoFocus}
+              minHeight={300}
+              initialValue={
+                initialValue?.format == 0 ? undefined : initialValue?.message
+              }
+              initialHtml={legacyHtml}
+              initialAttachments={initialAttachments}
+              onUpdateAttachments={(value?: Attachment[]) => {
+                const existingAids = new Set(
+                  attachments.map((item) => item.attachment_id)
+                )
+                const newAttachments = [...attachments]
+                value?.forEach(
+                  (item) =>
+                    !existingAids.has(item.attachment_id) &&
+                    newAttachments.push(item)
+                )
+                setAttachments(newAttachments)
+              }}
+              onKeyDown={handleCtrlEnter(handleSubmit)}
+              ref={editor}
+            />
+          )}
           <PostOptions
             kind={kind}
             forum={forum}
@@ -222,6 +405,10 @@ const PostEditor = ({
             valueRef={valueRef}
             onAnonymousChanged={() =>
               setAnonymous(!!valueRef.current.is_anonymous)
+            }
+            attachments={attachments}
+            onUpdateAttachments={(newAttachments) =>
+              setAttachments(newAttachments)
             }
           />
         </Stack>

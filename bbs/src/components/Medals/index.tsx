@@ -6,7 +6,13 @@ import { Medal as MedalItem } from '@/common/interfaces/system'
 import { useMedals } from '@/states/settings'
 import siteRoot from '@/utils/siteRoot'
 
-export const Medal = ({ medal }: { medal?: MedalItem }) =>
+export const Medal = ({
+  medal,
+  dense,
+}: {
+  medal?: MedalItem
+  dense?: boolean
+}) =>
   medal ? (
     <Tooltip
       title={
@@ -22,7 +28,7 @@ export const Medal = ({ medal }: { medal?: MedalItem }) =>
       <img
         src={`${siteRoot}/static/image/common/${medal.image_path}`}
         loading="lazy"
-        css={css({ margin: '0.25em 0.15em' })}
+        css={css({ margin: dense ? '0 0.15em' : '0.25em 0.15em' })}
       />
     </Tooltip>
   ) : (
@@ -32,14 +38,18 @@ export const Medal = ({ medal }: { medal?: MedalItem }) =>
 const Medals = ({
   medals,
   nowrap,
+  dense,
 }: {
   medals?: number[]
   nowrap?: boolean
+  dense?: boolean
 }) => {
   const { medalMap } = useMedals()
   return medalMap ? (
     <Stack direction="row" flexWrap={nowrap ? 'nowrap' : 'wrap'}>
-      {medals?.map((id, index) => <Medal key={index} medal={medalMap[id]} />)}
+      {medals?.map((id, index) => (
+        <Medal key={index} medal={medalMap[id]} dense={dense} />
+      ))}
     </Stack>
   ) : (
     <Skeleton />

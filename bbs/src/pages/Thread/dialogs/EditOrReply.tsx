@@ -24,6 +24,8 @@ const EditOrReply = ({
       subject: post.subject,
       message: post.message,
       format: post.format,
+      smileyoff: post.smileyoff,
+      usesig: post.usesig,
       is_anonymous: !!post.is_anonymous,
       ...(threadDetails && {
         type_id: threadDetails.type_id,
@@ -31,7 +33,7 @@ const EditOrReply = ({
       ...(threadDetails?.poll && {
         poll: threadDetails.poll,
       }),
-      attachments: post.attachments,
+      attachments: post.attachments ? post.attachments.slice() : undefined,
       editingThread: post.position == 1 && post.is_first == 1,
     }
   }

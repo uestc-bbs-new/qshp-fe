@@ -1,6 +1,7 @@
-import { IdasAuthResult } from '@/common/interfaces/response'
+import { IdasAuthResult } from '@/apis/auth'
 
 export type IdasResultEx = IdasAuthResult & {
-  ticket: string
+  code: string
   continue: string
+  version?: string
 }

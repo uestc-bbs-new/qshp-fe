@@ -1,3 +1,4 @@
+import request, { commonUrl } from '@/apis/request'
 import { Attachment } from '@/common/interfaces/base'
 import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
@@ -7,8 +8,8 @@ import {
   ThreadPollOption,
   ThreadReplyCredit,
 } from '@/common/interfaces/response'
+import { PostReplyResult, PostThreadResult } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { commonUrl } from '@/utils/request'
 
 import { makeThreadTypesMap } from '../common'
 
@@ -59,8 +60,10 @@ export type PostCommonDetails = {
   subject?: string
   message: string
   format?: number
+  usesig?: number
   is_anonymous?: boolean
   attachments?: Attachment[]
+  smileyoff?: number
 }
 
 export type PostThreadPollDetails = Omit<
@@ -80,7 +83,7 @@ export type PostThreadDetails = PostCommonDetails & {
   reply_credit?: PostThreadReplyCreditDetails
 }
 export const postThread = (details: PostThreadDetails) => {
-  return request.post(`${commonUrl}/thread/new`, {
+  return request.post<PostThreadResult>(`${commonUrl}/thread/new`, {
     ...details,
   })
 }
@@ -91,7 +94,7 @@ export type ReplyThreadDetails = PostCommonDetails & {
 }
 
 export const replyThread = (details: ReplyThreadDetails) => {
-  return request.post<PostDetails>(`${commonUrl}/thread/reply`, {
+  return request.post<PostReplyResult>(`${commonUrl}/thread/reply`, {
     ...details,
     format: 2,
   })

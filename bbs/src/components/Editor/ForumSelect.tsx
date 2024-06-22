@@ -15,6 +15,7 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -73,8 +74,9 @@ export const ForumSelect = ({
   selectedFid?: number
   onCompleted: (forum: number | undefined) => void
 }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return (
-    <Dialog open={open}>
+    <Dialog open={open} PaperProps={thinView ? { sx: { mx: 2 } } : undefined}>
       {open && <ForumSelectDialogChildren {...{ selectedFid, onCompleted }} />}
     </Dialog>
   )
@@ -190,11 +192,25 @@ const ForumButton = ({
       {item.name}
     </Button>
   )
+  const thinView = useMediaQuery('(max-width: 560px)')
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+  const hasSub =
+    item.children?.length &&
+    item.children.some((subForum) => subForum.can_post_thread)
   return (
-    <Grid item rowSpacing={0} xs={3}>
-      {item.children?.length &&
-      item.children.some((subForum) => subForum.can_post_thread) ? (
+    <Grid
+      item
+      rowSpacing={0}
+      xs={thinView ? 6 : 4}
+      sm={3}
+      onTouchStart={() => hasSub && setTimeout(() => setTooltipOpen(true), 300)}
+    >
+      {hasSub ? (
         <Tooltip
+          open={tooltipOpen}
+          onOpen={() => setTooltipOpen(true)}
+          onClose={() => setTooltipOpen(false)}
+          leaveTouchDelay={5000}
           placement="bottom-start"
           TransitionProps={{ timeout: 500 }}
           PopperProps={{
@@ -241,7 +257,7 @@ const ForumButton = ({
                   >
                     {sub.name}
                   </MenuItem>
-                ))
+                )) ?? []
               )}
             </>
           }

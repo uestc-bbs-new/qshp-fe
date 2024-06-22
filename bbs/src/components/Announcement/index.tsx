@@ -1,46 +1,108 @@
-// TODO: this carousel component should be replaced due to long time no maintain
-import { useQuery } from '@tanstack/react-query'
+import 'swiper/css'
+import 'swiper/css/autoplay'
+import 'swiper/css/pagination'
+import { Autoplay, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
-import React, { useState } from 'react'
-import SwipeableViews from 'react-swipeable-views'
-import { autoPlay } from 'react-swipeable-views-utils'
+import React, { useEffect } from 'react'
+import { useMatches } from 'react-router-dom'
 
 import { Campaign } from '@mui/icons-material'
-import { Box, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Skeleton,
+  Stack,
+  SxProps,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
-import { getAnnouncement } from '@/apis/common'
-import { pages } from '@/utils/routes'
+import { getIndexData } from '@/apis/common'
+import { Announcement as AnnouncementItem } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 
 import Link from '../Link'
-import SlidePagination from './SlidePagination'
 
-type SlideProps = {
-  children: React.ReactElement | string
-  tid: number
-}
-
-const Slide = ({ children, tid }: SlideProps) => {
+export const AnnouncementBox = ({
+  children,
+  sx,
+  ...other
+}: {
+  children?: React.ReactNode
+  sx?: SxProps
+  mb?: number
+  m?: number
+  width?: string
+}) => {
+  const leftWidth = 48
   const theme = useTheme()
   return (
-    <Stack
-      style={{
-        backgroundColor: theme.palette.background.paper,
-        minHeight: '70px',
+    <Box
+      position="relative"
+      {...other}
+      sx={{
+        position: 'relative',
+        paddingLeft: `${leftWidth}px`,
+        border: '2px solid black',
+        borderColor: theme.palette.primary.main,
+        ...sx,
       }}
-      direction="row"
     >
-      <Box
-        className="p-2 flex items-center"
-        style={{
+      {children}
+      <Stack
+        position="absolute"
+        justifyContent="center"
+        alignItems="center"
+        width={leftWidth}
+        left={0}
+        top={0}
+        bottom={0}
+        zIndex={1}
+        sx={{
           backgroundColor: theme.palette.primary.main,
         }}
       >
         <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
-      </Box>
-      <Box className="p-4 flex-1 overflow-hidden">
-        <Typography className="line-clamp-2">
-          {children}
-          <Link to={pages.thread(tid)} underline="none">
+      </Stack>
+    </Box>
+  )
+}
+
+export const AnnouncementBody = ({
+  item,
+  sx,
+}: {
+  item: AnnouncementItem
+  sx?: SxProps
+}) => {
+  const theme = useTheme()
+  const highlightColor = !item.highlight_color
+    ? undefined
+    : theme.palette.mode == 'dark'
+      ? item.dark_highlight_color ?? item.highlight_color
+      : item.highlight_color
+  return (
+    <Stack
+      sx={{
+        backgroundColor: theme.palette.background.paper,
+        minHeight: '70px',
+        ...sx,
+      }}
+      direction="row"
+    >
+      <Box px={2} py={1} className="flex-1 overflow-hidden">
+        <Link to={item.href} underline="none" color="inherit">
+          <Typography
+            fontSize={18}
+            fontWeight="bold"
+            sx={{ color: highlightColor }}
+          >
+            {item.title}
+          </Typography>
+        </Link>
+        <Typography className="line-clamp-1" variant="threadItemSummary">
+          {item.summary}
+          <Link to={item.href} underline="none">
             【点我查看】
           </Link>
         </Typography>
@@ -49,46 +111,55 @@ const Slide = ({ children, tid }: SlideProps) => {
   )
 }
 
-const AutoPlay = autoPlay(SwipeableViews)
-
-const Announcement = () => {
+const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
   const theme = useTheme()
-  const [index, setIndex] = useState(0)
-  const { data, refetch } = useQuery({
-    queryKey: ['announcement'],
-    queryFn: () => getAnnouncement(),
-  })
+  const { state, dispatch } = useAppState()
+  const matches = useMatches()
+  useEffect(() => {
+    if (
+      matches.length &&
+      matches[matches.length - 1].id != 'index' &&
+      !state.announcement
+    ) {
+      getIndexData({ announcement: true }).then((data) =>
+        dispatch({
+          type: 'set announcement',
+          payload: data.announcement || [],
+        })
+      )
+    }
+  }, [])
 
-  const handleIndexChange = (index: number) => {
-    setIndex(index)
+  if (!state.announcement) {
+    return <Skeleton height={74} sx={{ mb: 1.75 }} />
   }
-
-  if (data) {
-    console.log(data)
+  if (state.announcement?.length) {
     return (
-      <Box className="relative">
-        <AutoPlay
-          interval={5000}
-          style={{
-            border: '2px solid black',
-            borderColor: theme.palette.primary.main,
-          }}
-          className="mb-4"
-          index={index}
-          onChangeIndex={handleIndexChange}
+      <AnnouncementBox
+        mb={1.75}
+        sx={{
+          '--swiper-pagination-bottom': 0,
+          '--swiper-pagination-bullet-size': '6px',
+          '--swiper-theme-color': theme.palette.primary.main,
+          '--swiper-pagination-bullet-inactive-color': '#ccc',
+          '--swiper-pagination-bullet-inactive-opacity': 1,
+        }}
+      >
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          autoplay={{ delay: 5000 }}
+          pagination={{ clickable: true }}
+          slidesPerView={1}
+          loop={state.announcement.length > 1}
+          nested={inSwiper}
         >
-          {data.map((item) => (
-            <Slide key={item.thread_id} tid={item.thread_id}>
-              {item.subject}
-            </Slide>
+          {state.announcement.map((item, index) => (
+            <SwiperSlide key={index}>
+              <AnnouncementBody item={item} />
+            </SwiperSlide>
           ))}
-        </AutoPlay>
-        <SlidePagination
-          count={data.length}
-          setIndex={handleIndexChange}
-          index={index}
-        />
-      </Box>
+        </Swiper>
+      </AnnouncementBox>
     )
   } else {
     return <></>

@@ -1,15 +1,18 @@
 import { RefObject, useRef, useState } from 'react'
 
+import { Add, RemoveCircle } from '@mui/icons-material'
 import {
   Box,
   Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
+  IconButton,
   Stack,
   Switch,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { PostThreadPollDetails } from '@/apis/thread'
@@ -26,6 +29,18 @@ export const VoteSelection = ({
   const [isVote, setVote] = useState(!!initialPollDetails)
   const savedPollDetails = useRef<PostThreadPollDetails>()
   const [options, setOptions] = useState<string[]>(['', '', ''])
+  const filterValidOptions = (options: string[]) =>
+    options.map((item) => item.trim()).filter((item) => !!item)
+  const updateOptions = (newOptions: string[]) => {
+    setOptions(newOptions)
+    if (valueRef?.current?.poll) {
+      valueRef.current.poll.options = filterValidOptions(newOptions).map(
+        (item) => ({
+          text: item,
+        })
+      )
+    }
+  }
   const [multiple, setMultiple] = useState(
     initialPollDetails && initialPollDetails.max_choices > 1
   )
@@ -35,10 +50,11 @@ export const VoteSelection = ({
   const maxChoicesError =
     multiple && maxChoices <= 1
       ? '多选投票允许选择的数目至少为 2'
-      : maxChoices > options.length
+      : maxChoices > filterValidOptions(options).length
         ? '允许选择的数目超过了选项数目'
         : undefined
 
+  const narrowView = useMediaQuery('(max-width: 750px)')
   return (
     <Box>
       <FormGroup row>
@@ -73,41 +89,55 @@ export const VoteSelection = ({
 
       {isVote && (
         <PostOptionsBlock>
-          <Stack direction="row">
-            <Stack mr={4}>
+          <Stack direction={narrowView ? 'column' : 'row'}>
+            <Stack mr={narrowView ? undefined : 4}>
               <Typography mt={1} mb={3}>
                 选项：最多可以填写 100 个选项
               </Typography>
               {options.map((item, index) => {
                 return (
-                  <TextField
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    mb={1.25}
                     key={index}
-                    label={`选项 ${index + 1}`}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mb: 1.25, width: '20em' }}
-                    onBlur={(e) => {
-                      const newOptions = [...options]
-                      newOptions[index] = e.target.value.trim()
-                      setOptions(newOptions)
-                      if (valueRef?.current?.poll) {
-                        valueRef.current.poll.options = newOptions
-                          .filter((item) => !!item)
-                          .map((item) => ({
-                            text: item,
-                          }))
-                      }
-                    }}
-                  />
+                  >
+                    <TextField
+                      label={`选项 ${index + 1}`}
+                      variant="outlined"
+                      size="small"
+                      sx={{ width: '20em', flexShrink: 1, minWidth: '1em' }}
+                      value={item}
+                      onChange={(e) => {
+                        const newOptions = [...options]
+                        newOptions[index] = e.target.value.trim()
+                        updateOptions(newOptions)
+                      }}
+                    />
+                    <IconButton
+                      sx={{ ml: 1 }}
+                      onClick={() => {
+                        const newOptions = [...options]
+                        newOptions.splice(index, 1)
+                        updateOptions(newOptions)
+                      }}
+                      disabled={options.length <= 1}
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Stack>
                 )
               })}
-              <Button
-                onClick={() => {
-                  setOptions([...options, ''])
-                }}
-              >
-                +
-              </Button>
+              <Box>
+                <Button
+                  onClick={() => {
+                    setOptions([...options, ''])
+                  }}
+                >
+                  <Add />
+                  添加选项
+                </Button>
+              </Box>
             </Stack>
             <Stack>
               <FormGroup row>
@@ -146,6 +176,10 @@ export const VoteSelection = ({
                 sx={{ width: '6em', mt: 1.75, mb: 1 }}
                 defaultValue={initialPollDetails?.expiration || ''} // TODO: Calculate days when editing threads.
                 onChange={(e) => {
+                  const value = parseInt(e.target.value)
+                  if (value < 0 || !value) {
+                    e.target.value = ''
+                  }
                   if (valueRef?.current?.poll) {
                     valueRef.current.poll.expiration =
                       (parseInt(e.target.value) || 0) * 60 * 60 * 24

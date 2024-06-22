@@ -9,6 +9,7 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 export const PostExtraDetailsContainer = ({
@@ -20,10 +21,11 @@ export const PostExtraDetailsContainer = ({
   loading: boolean
   hasContent: boolean
 }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <>
       {(hasContent || loading) && (
-        <Box my={2}>
+        <Box my={thinView ? 1 : 2}>
           {hasContent && children}
           {loading && [
             <Skeleton key={1} height={50} />,
@@ -42,7 +44,7 @@ export const PostExtraDetailsAccordian = ({
   children,
 }: {
   Icon: SvgIconComponent
-  title: string
+  title: React.ReactNode
   children: React.ReactNode
 }) => {
   const color = '#2175F3'

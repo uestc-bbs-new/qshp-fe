@@ -1,14 +1,11 @@
-import { css } from '@emotion/react'
-
-import { useState } from 'react'
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
+import React, { Suspense } from 'react'
 
 import { Close } from '@mui/icons-material'
-import { Dialog, IconButton, Stack } from '@mui/material'
+import { CircularProgress, Dialog, IconButton } from '@mui/material'
 
-type ImageItem = {
-  fullUrl: string
-}
+import { ImageItem } from './types'
+
+const LazyImageView = React.lazy(() => import('./ImageView'))
 
 const ImageViewDialog = ({
   open,
@@ -19,8 +16,6 @@ const ImageViewDialog = ({
   onClose?: () => void
   singleImage?: ImageItem
 }) => {
-  const fullSizeCss = { width: '100%', height: '100%' }
-  const [panning, setPanning] = useState(false)
   return (
     <Dialog
       open={open}
@@ -30,44 +25,24 @@ const ImageViewDialog = ({
         sx: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
       }}
     >
-      <TransformWrapper
-        centerOnInit
-        centerZoomedOut
-        minScale={0.5}
-        onPanningStart={() => setPanning(true)}
-        onPanningStop={() => setPanning(false)}
-      >
-        <TransformComponent
-          wrapperStyle={{ ...fullSizeCss }}
-          contentStyle={{
-            ...fullSizeCss,
-            cursor: panning ? 'grabbing' : 'grab',
-          }}
-        >
-          <Stack
-            justifyContent="center"
-            alignItems="center"
+      <Suspense
+        fallback={
+          <CircularProgress
             sx={{
-              width: '100%',
-              height: '100%',
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              m: 'auto',
             }}
-          >
-            {singleImage && (
-              <img
-                src={singleImage.fullUrl}
-                css={css({
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                })}
-              />
-            )}
-          </Stack>
-        </TransformComponent>
-      </TransformWrapper>
+          />
+        }
+      >
+        <LazyImageView {...{ onClose, singleImage }} />
+      </Suspense>
       <IconButton
-        sx={{
+        sx={(theme) => ({
           position: 'absolute',
           right: 10,
           top: 10,
@@ -76,7 +51,8 @@ const ImageViewDialog = ({
           '&:hover': {
             backgroundColor: 'white',
           },
-        }}
+          color: theme.palette.mode == 'dark' ? '#333' : undefined,
+        })}
         onClick={onClose}
       >
         <Close />

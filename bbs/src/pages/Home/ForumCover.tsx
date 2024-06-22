@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // import {  } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -29,10 +30,13 @@ type ForumData = {
 }
 
 const ForumCover = ({ data }: ForumData) => {
+  const navigate = useNavigate()
+  const to = pages.forum(data.fid)
   return (
     <Box
       className="relative rounded text-white overflow-hidden"
-      style={{ width: '100%' }}
+      sx={{ width: '100%', cursor: 'pointer' }}
+      onClick={() => navigate(to)}
     >
       <Box
         className="absolute top-0 left-0 h-full w-full"
@@ -44,7 +48,7 @@ const ForumCover = ({ data }: ForumData) => {
         }}
       ></Box>
       <Box className="absolute top-0 left-0 h-full w-full bg-black opacity-40"></Box>
-      <Box className="relative z-10 p-4">
+      <Box className="relative p-4">
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -54,7 +58,8 @@ const ForumCover = ({ data }: ForumData) => {
             className="font-bold"
             color="inherit"
             underline="hover"
-            to={`forum/${data.fid}`}
+            to={to}
+            onClick={(e) => e.stopPropagation()}
           >
             <Typography variant="h6" fontWeight="bold">
               {data.name}
@@ -78,6 +83,7 @@ const ForumCover = ({ data }: ForumData) => {
                     : undefined
                 }
                 color="inherit"
+                onClick={(e) => e.stopPropagation()}
               >
                 <Avatar
                   alt={data.latest_thread?.lastpost_author}
@@ -95,9 +101,10 @@ const ForumCover = ({ data }: ForumData) => {
                   underline="hover"
                   to={
                     data.latest_thread?.thread_id
-                      ? pages.thread(data.latest_thread?.thread_id)
+                      ? pages.threadLastpost(data.latest_thread?.thread_id)
                       : undefined
                   }
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <Box className="line-clamp-1">
                     {unescapeSubject(
@@ -126,6 +133,7 @@ const ForumCover = ({ data }: ForumData) => {
                           : undefined
                       }
                       color="inherit"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {data.latest_thread?.lastpost_author}
                     </Link>
@@ -163,7 +171,7 @@ export const ForumGroup = ({ data }: ForumData) => {
                 key={index}
                 color="inherit"
                 variant="subtitle2"
-                to={`/user/name/${moderator}`}
+                to={pages.user({ username: moderator })}
               >
                 {moderator}
               </Link>
@@ -181,7 +189,7 @@ export const ForumGroup = ({ data }: ForumData) => {
           {data?.children
             ?.filter((item) => item.name)
             .map((item, index) => (
-              <Grid item md={6} xl={4} key={index} style={{ width: '100%' }}>
+              <Grid item sm={6} lg={4} key={index} style={{ width: '100%' }}>
                 <ForumCover data={item} />
               </Grid>
             ))}

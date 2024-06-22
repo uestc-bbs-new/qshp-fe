@@ -7,26 +7,24 @@ import {
   Typography,
 } from '@mui/material'
 
+import boatWheelImg from '@/assets/boat-wheel.png'
 import Link from '@/components/Link'
+import { pages } from '@/utils/routes'
 
 type NavLink = {
   link: string
   name: string
   external: boolean
 }
-const boatWheelImg = new URL(
-  `../../assets/boat-wheel.png`,
-  import.meta.url
-).href.toString()
 
 const listServiceItems: NavLink[] = [
   {
-    link: 'thread/1430861',
+    link: pages.thread(1430861),
     name: '校车时刻表',
     external: false,
   },
-  { link: '/forum/305', name: '失物招领', external: false },
-  { link: 'thread/1493930', name: '校历', external: false },
+  { link: pages.forum(305), name: '失物招领', external: false },
+  { link: pages.thread(1493930), name: '校历', external: false },
   {
     link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
     name: '网上报修',

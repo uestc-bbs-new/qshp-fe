@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { User } from '@/common/interfaces/base'
 import Avatar from '@/components/Avatar'
 
 import { IdasResultEx } from './common'
@@ -19,19 +20,19 @@ const UserList = ({
   idasResult,
   disabled,
   showRegister,
-  onSignIn,
+  onClick,
   onRegister,
 }: {
   idasResult: IdasResultEx
   disabled?: boolean
   showRegister?: boolean
-  onSignIn: (uid: number) => void
+  onClick: (user: User) => void
   onRegister: () => void
 }) => (
   <List>
     {idasResult.users?.map((user, index) => (
       <ListItem disableGutters key={index}>
-        <ListItemButton disabled={disabled} onClick={() => onSignIn(user.uid)}>
+        <ListItemButton disabled={disabled} onClick={() => onClick(user)}>
           <ListItemIcon>
             <Avatar uid={user.uid} />
           </ListItemIcon>

@@ -1,9 +1,18 @@
-import { ScrollRestoration, createBrowserRouter } from 'react-router-dom'
+import {
+  RouteObject,
+  ScrollRestoration,
+  createBrowserRouter,
+  redirect,
+} from 'react-router-dom'
 
-import Continue, { ContinueLoader } from '@/pages/Continue'
+import adminRoutes from '@/admin/routes'
+import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
+import { RegisterHome } from '@/pages/Continue/Register'
+import Renew from '@/pages/Continue/Renew'
+import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
-import Goto from '@/pages/Goto'
+import Goto, { GotoError } from '@/pages/Goto'
 import Home from '@/pages/Home'
 import Layout from '@/pages/Layout'
 import Messages from '@/pages/Messages'
@@ -14,8 +23,35 @@ import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
+import { isPreviewRelease } from '@/utils/releaseMode'
 
 import routes from './routes'
+
+const devPages: RouteObject[] = [
+  {
+    path: '/settings/:id?',
+    id: 'settings',
+    element: <Settings />,
+  },
+  {
+    path: '/renew',
+    id: 'renew',
+    element: <Renew />,
+  },
+]
+
+const devMessagesPages: RouteObject[] = [
+  {
+    id: 'messages_chat',
+    path: 'chat/:plid?',
+    element: <Chat />,
+  },
+  {
+    id: 'messages_chat_user',
+    path: 'chat/user/:uid?',
+    element: <Chat />,
+  },
+]
 
 routes.current = [
   {
@@ -28,8 +64,9 @@ routes.current = [
     ),
     children: [
       { path: '*', id: '404', element: <NotFound /> },
-      { path: '/', id: 'index', element: <Home /> },
-      { path: '/search', id: 'search', element: <Search /> },
+      { path: '/', loader: () => redirect('/new') },
+      { path: '/new', id: 'index', element: <Home /> },
+      { path: '/search/:type?', id: 'search', element: <Search /> },
       { path: '/post/:fid?', id: 'post', element: <Edit /> },
       { path: '/forum/:id', id: 'forum', element: <Forum /> },
       {
@@ -37,7 +74,12 @@ routes.current = [
         id: 'thread',
         element: <Thread />,
       },
-      { path: '/goto/:tidOrPid/:pid?', id: 'goto', loader: Goto },
+      {
+        path: '/goto/:tidOrPid/:pid?',
+        id: 'goto',
+        loader: Goto,
+        errorElement: <GotoError />,
+      },
       {
         path: '/messages',
         element: <Messages />,
@@ -45,40 +87,20 @@ routes.current = [
           {
             id: 'messages',
             index: true,
-            element: <Chat />,
+            element: isPreviewRelease ? <Notifications /> : <Chat />,
           },
           {
-            id: 'chat',
-            path: 'chat/:plid?',
-            element: <Chat />,
-          },
-          {
-            id: 'chat_user',
-            path: 'chat/user/:uid?',
-            element: <Chat />,
-          },
-          {
-            id: 'posts',
+            id: 'messages_posts',
             path: 'posts/:kind?',
             element: <Notifications />,
           },
           {
-            id: 'system',
+            id: 'messages_system',
             path: 'system/:kind?',
             element: <Notifications />,
           },
+          ...(isPreviewRelease ? [] : devMessagesPages),
         ],
-      },
-      {
-        path: '/settings/:id?',
-        id: 'settings',
-        element: <Settings />,
-      },
-      {
-        path: '/continue/:mode?',
-        id: 'continue',
-        loader: ContinueLoader,
-        element: <Continue />,
       },
       { path: '/user/:uid/:subPage?', id: 'user', element: <User /> },
       {
@@ -86,7 +108,26 @@ routes.current = [
         id: 'userByName',
         element: <User />,
       },
+      ...adminRoutes,
+      ...(isPreviewRelease ? [] : devPages),
     ],
+  },
+  {
+    path: '/continue/:mode?',
+    id: 'continue',
+    loader: ContinueLoader,
+    element: <Continue />,
+    errorElement: <ContinueError />,
+  },
+  {
+    path: '/register',
+    id: 'register',
+    element: <RegisterHome />,
+  },
+  {
+    path: '/resetpassword',
+    id: 'resetpassword',
+    element: <ResetPasswordHome />,
   },
 ]
 

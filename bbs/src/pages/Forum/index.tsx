@@ -17,6 +17,7 @@ import {
   Select,
   Skeleton,
   Stack,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
@@ -136,13 +137,14 @@ const ForumPagination = forwardRef(function ForumPagination(
   },
   ref
 ) {
+  const thinView = useMediaQuery('(max-width: 560px)')
   return count > 1 ? (
     <Pagination
       size="small"
       count={count}
       page={page}
       onChange={onChange}
-      boundaryCount={3}
+      boundaryCount={thinView ? 1 : 3}
       siblingCount={1}
       variant="outlined"
       shape="rounded"
@@ -193,7 +195,7 @@ const ThreadTypeFilter = ({
 }
 
 function Forum() {
-  const { dispatch } = useAppState()
+  const { state, dispatch } = useAppState()
   const navigate = useNavigate()
   const forumId = parseInt(useParams().id || '0')
   const [searchParams] = useSearchParams()
@@ -208,14 +210,14 @@ function Forum() {
       forum_id: forumId,
       page: parseInt(searchParams.get('page') || '1') || 1,
       sort_by: parseInt(sortBy) || 1,
-      type_id: (typeId && parseInt(typeId)) || undefined,
+      type_id:
+        typeId && !isNaN(parseInt(typeId)) ? parseInt(typeId) : undefined,
       forum_details: forumChanged || !forumDetails,
     }
   }
   const [query, setQuery] = useState(initQuery())
   const threadListTop = useRef<HTMLElement>()
 
-  const pageSize = 20
   const {
     data: threadList,
     isLoading,
@@ -227,10 +229,15 @@ function Forum() {
     queryKey: ['getThread', query],
     queryFn: () => getThreadList(query),
   })
+  useEffect(() => {
+    if (state.activeForum && state.activeForum.fid != forumId) {
+      dispatch({ type: 'set forum' })
+    }
+  }, [forumId])
 
   useEffect(() => {
     if (threadList && threadList.total) {
-      setTotal(Math.ceil(threadList.total / pageSize))
+      setTotal(Math.ceil(threadList.total / threadList.page_size))
     }
     if (threadList && threadList.forum) {
       setForumDetails(threadList.forum)
@@ -260,11 +267,14 @@ function Forum() {
     threadListTop.current?.scrollIntoView()
   }
 
+  const hideSidebar = useMediaQuery('(max-width: 1000px)')
+  const thinView = useMediaQuery('(max-width: 560px)')
+
   return (
     <Stack direction="row">
       <Box className="flex-1" style={{ marginTop: '20px' }}>
         {isError ? (
-          <Error isError={isError} error={error} onRefresh={refetch} />
+          <Error error={error} onRefresh={refetch} />
         ) : (
           <>
             {isFetching && !forumDetails ? (
@@ -306,7 +316,7 @@ function Forum() {
                     />
                   ))}
                 </Stack>
-                <Card>
+                <Card tiny={thinView}>
                   <>
                     {threadList?.rows?.some(
                       (item: any) => item.display_order > 0
@@ -330,6 +340,7 @@ function Forum() {
                                   data={item}
                                   key={item.thread_id}
                                   forumDetails={forumDetails}
+                                  fromForum
                                 />
                               ))}
                           </List>
@@ -359,6 +370,7 @@ function Forum() {
                                 key={item.thread_id}
                                 forumDetails={forumDetails}
                                 showSummary
+                                fromForum
                               />
                             ))}
                         </List>
@@ -374,14 +386,14 @@ function Forum() {
               </>
             )}
             {forumDetails?.can_post_thread && (
-              <Card py={1.5}>
+              <Card sx={{ px: thinView ? 1 : 2, py: 1.5 }}>
                 <PostEditor forum={forumDetails} />
               </Card>
             )}
           </>
         )}
       </Box>
-      <Aside />
+      {!hideSidebar && <Aside />}
     </Stack>
   )
 }

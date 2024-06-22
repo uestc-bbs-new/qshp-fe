@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Search } from '@mui/icons-material'
 import {
@@ -9,7 +9,9 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  SxProps,
   TextField,
+  Theme,
   Typography,
   debounce,
 } from '@mui/material'
@@ -25,25 +27,33 @@ import { pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 
-type Result = {
+type Option = {
   thread?: SearchSummaryThread
   moreThreads?: boolean
   divider?: boolean
   user?: SearchSummaryUser
   moreUsers?: boolean
   idMatch?: boolean
+  empty?: boolean
 }
 
 const kThreadPreviewCount = 5
 const kUserPreviewCount = 3
 
-const SearchBar = () => {
+const SearchBar = ({
+  autoFocus,
+  sx,
+}: {
+  autoFocus?: boolean
+  sx?: SxProps<Theme>
+}) => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
-  const [searchResults, setSeacrhResults] = useState<Result[]>([])
+  const [searchResults, setSeacrhResults] = useState<Option[]>([])
   const searchAnchorRef = useRef<HTMLDivElement>(null)
+  const highlightItem = useRef<Option | null>(null)
 
   const fetch = useMemo(
     () =>
@@ -64,33 +74,77 @@ const SearchBar = () => {
     []
   )
 
-  const handleSubmit = () => {
-    if (value.trim()) {
-      navigate(pages.searchThreads({ keyword: value }))
+  const openOption = (option: Option) => {
+    if (option.divider || option.empty) {
+      return
     }
+    setOpen(false)
+    if (option.thread) {
+      navigate(pages.thread(option.thread.thread_id))
+    } else if (option.moreThreads && value.trim()) {
+      navigate(pages.searchThreads({ keyword: value }))
+    } else if (option.user) {
+      navigate(pages.user({ uid: option.user.uid }))
+    } else if (option.moreUsers) {
+      navigate(pages.searchUsers({ keyword: value }))
+    }
+  }
+
+  const handleSubmit = () => {
+    openOption(highlightItem.current || { moreThreads: true })
   }
 
   return (
     <Stack
       direction="row"
       alignItems="center"
-      className="rounded-lg bg-white/20 text-white transition-colors focus-within:bg-white focus-within:text-black"
-      sx={{ minWidth: 420 }}
+      className="rounded-lg transition-colors"
+      sx={{
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        color: 'white',
+        '&:focus-within': {
+          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+          color: 'black',
+        },
+        ...sx,
+      }}
+      flexGrow={1}
       ref={searchAnchorRef}
     >
       <Autocomplete
         open={open}
         onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false)
+          highlightItem.current = null
+        }}
+        onKeyDownCapture={(e) => {
+          if (e.key == 'Enter') {
+            handleSubmit()
+            e.stopPropagation()
+          }
+        }}
         loading={loading}
         fullWidth
         size="small"
         freeSolo
-        ListboxProps={{ sx: { maxHeight: '640px' } }}
+        ListboxProps={{
+          sx: {
+            '.MuiAutocomplete-option': { minHeight: 'auto' },
+          },
+          style: {
+            maxHeight: `${Math.min(640, window.innerHeight - 110)}px`,
+          },
+        }}
+        slotProps={{
+          paper: { elevation: 3 },
+          popper: { sx: { minWidth: 346 } },
+        }}
         filterOptions={(x) => x}
         renderInput={(params) => (
           <TextField
             {...params}
+            autoFocus={autoFocus}
             InputProps={{
               ...params?.InputProps,
               disableUnderline: true,
@@ -101,30 +155,7 @@ const SearchBar = () => {
           />
         )}
         renderOption={(props, option) => (
-          <li
-            {...props}
-            onClick={() => {
-              if (option.divider) {
-                return
-              }
-              setOpen(false)
-              if (option.thread) {
-                navigate(pages.thread(option.thread.thread_id))
-              } else if (option.moreThreads) {
-                handleSubmit()
-              } else if (option.user) {
-                navigate(pages.user({ uid: option.user.uid }))
-              } else if (option.moreUsers) {
-                navigate({
-                  pathname: '/search',
-                  search: createSearchParams({
-                    type: 'username',
-                    name: value,
-                  }).toString(),
-                })
-              }
-            }}
-          >
+          <li {...props} onClick={() => openOption(option)}>
             {option.thread && (
               <>
                 <ListItemIcon>
@@ -159,6 +190,7 @@ const SearchBar = () => {
               </>
             )}
             {option.divider && <Divider sx={{ width: '100%' }} />}
+            {option.empty && <Typography>暂无结果</Typography>}
             {option.moreThreads && (
               <ListItemText>
                 <Typography>更多帖子...</Typography>
@@ -182,15 +214,20 @@ const SearchBar = () => {
             return option
           }
           if (option.thread) {
-            return (
-              option.thread.thread_id.toString() + (option.idMatch ? '!' : '')
-            )
+            return `tid=${option.thread.thread_id.toString()}${
+              option.idMatch ? '!' : ''
+            }`
           }
           if (option.user) {
-            return option.user.uid.toString() + (option.idMatch ? '!' : '')
+            return `uid=${option.user.uid.toString()}${
+              option.idMatch ? '!' : ''
+            }`
           }
           if (option.divider) {
             return 'divider'
+          }
+          if (option.empty) {
+            return 'empty'
           }
           if (option.moreThreads) {
             return 'moreThreads'
@@ -200,13 +237,13 @@ const SearchBar = () => {
           }
           return ''
         }}
-        getOptionDisabled={(option) => !!option.divider}
+        getOptionDisabled={(option) => !!(option.divider || option.empty)}
         options={searchResults}
         onInputChange={async (_, value) => {
           setValue(value)
           if (value.trim()) {
             fetch(value, (result) => {
-              setSeacrhResults([
+              const threads: Option[] = [
                 ...(result.tid_match
                   ? [{ idMatch: true, thread: result.tid_match }]
                   : []),
@@ -219,17 +256,29 @@ const SearchBar = () => {
                 ...(result.thread_count > kThreadPreviewCount
                   ? [{ moreThreads: true }]
                   : []),
-                { divider: true },
+              ]
+              const users: Option[] = [
                 ...(result.users
                   ?.slice(0, kUserPreviewCount)
                   ?.map((user) => ({ user })) || []),
                 ...(result.user_count > kUserPreviewCount
                   ? [{ moreUsers: true }]
                   : []),
+              ]
+              setSeacrhResults([
+                ...threads,
+                ...(threads.length > 0 && users.length > 0
+                  ? [{ divider: true }]
+                  : []),
+                ...users,
+                ...(threads.length == 0 && users.length == 0
+                  ? [{ empty: true }]
+                  : []),
               ])
             })
           }
         }}
+        onHighlightChange={(_, option) => (highlightItem.current = option)}
       />
 
       <Divider orientation="vertical" variant="middle" flexItem></Divider>

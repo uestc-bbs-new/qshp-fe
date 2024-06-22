@@ -1,30 +1,14 @@
-import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-import ResultForPost from './ResultForPost'
-import ResultForUsers from './ResultForUsers'
+import Thread from './Thread'
+import User from './User'
 
 const Search = () => {
-  const params = new URLSearchParams(window.location.search)
-
-  const [name, setName] = useState(params.get('name') || null)
-  const [type, setType] = useState(params.get('type') || 'post')
-  const [page, setPage] = useState(params.get('page') || 1)
-  const pageSize = 18
-
-  console.log(type)
-  if (type == 'post') {
-    return <ResultForPost />
+  const type = useParams()['type'] || 'thread'
+  if (type == 'thread') {
+    return <Thread />
   } else {
-    return (
-      <ResultForUsers
-        target={name}
-        page={page}
-        pageSize={pageSize}
-        searchType={type}
-        setPage={setPage}
-        setName={setName}
-      />
-    )
+    return <User />
   }
 }
 

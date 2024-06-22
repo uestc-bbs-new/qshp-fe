@@ -1,13 +1,17 @@
 // TODO: How to take the @ user information to request?
 import { uploadAttachment } from '@/apis/common'
 import { getAtList } from '@/apis/thread'
+import defaultAvatar from '@/assets/avatar-default.png'
 import { Attachment, UploadResponse } from '@/common/interfaces/base'
 import { middleLink } from '@/utils/avatarLink'
 import { html } from '@/utils/html'
 
-import { customRenderers } from '../RichText/renderer'
-import { VditorContext } from '../RichText/types'
-import { common, commonEmojiPath } from '../RichText/vditorConfig'
+import { customRenderers } from '../../../../markdown-renderer/src/renderer/renderer'
+import { VditorContext } from '../../../../markdown-renderer/src/renderer/types'
+import {
+  common,
+  commonEmojiPath,
+} from '../../../../markdown-renderer/src/renderer/vditorConfig'
 
 const supportedImageExtensions = [
   'jpg',
@@ -54,6 +58,7 @@ function options({
     cache: { enable: false },
     // change the z-index due to the mui base z-index = 1200
     fullscreen: { index: 1202 },
+    tab: '\t',
     hint: {
       ...commonEmojiPath,
       extend: [
@@ -71,6 +76,7 @@ function options({
                   <img
                     src="${middleLink(item.uid)}"
                     class="editor-at-list-avatar"
+                    onerror="this.src='${defaultAvatar}'"
                   />
                   <span class="editor-at-list-username">${item.username}</span>
                 </div>`,
@@ -152,6 +158,11 @@ function options({
         const response = data as UploadResponse
         if (response.uploaded?.length) {
           context?.attachments?.push(...response.uploaded)
+          if (context?.onUpdateAttachments) {
+            context.onUpdateAttachments(
+              context.attachments ? [...context.attachments] : undefined
+            )
+          }
           context?.vditor?.insertValue(
             response.uploaded
               .map((item) => getMarkdownFromAttachment(item))
@@ -178,38 +189,33 @@ function options({
       type: 'text',
     },
 
-    // toolbar display config
     toolbar: [
-      'edit-mode',
-      'outline',
-      '|',
-      ...(smilyToolbarItem ? [smilyToolbarItem] : ['emoji']),
       'headings',
       'bold',
       'italic',
       'strike',
       '|',
-      'line',
+      ...(smilyToolbarItem ? [smilyToolbarItem] : ['emoji']),
+      'link',
+      'upload',
       'quote',
-      'table',
+      'code',
+      '|',
       'list',
       'ordered-list',
       'check',
+      'table',
+      'line',
       'outdent',
       'indent',
-      'code',
       'inline-code',
       'insert-after',
       'insert-before',
       '|',
-      'link',
-      'upload',
-      // TODO: reveal later
-      // 'record',
-      'preview',
-      '|',
       'undo',
       'redo',
+      'outline',
+      'edit-mode',
       ...(fullscreenToolbarItem ? [fullscreenToolbarItem] : ['fullscreen']),
     ],
   }

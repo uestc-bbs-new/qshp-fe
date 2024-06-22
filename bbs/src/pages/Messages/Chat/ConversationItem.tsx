@@ -15,20 +15,23 @@ import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 type ConversationItemProps = {
   chat: ChatConversation
   selected?: boolean
   lite?: boolean
   summary?: boolean
+  small?: boolean
 }
 
 const ConversationItem = forwardRef<
   HTMLLIElement | null,
   ConversationItemProps
 >(function ConversationItem(
-  { chat, selected, lite, summary }: ConversationItemProps,
+  { chat, selected, lite, summary, small }: ConversationItemProps,
   ref?
 ) {
   const liteProps = lite
@@ -47,7 +50,18 @@ const ConversationItem = forwardRef<
       <ListItemButton
         selected={selected || chat.unread}
         component={Link}
-        to={pages.chat(chat.conversation_id)}
+        to={
+          isPreviewRelease
+            ? `${siteRoot}/home.php?mod=space&do=pm&subop=view&${
+                chat.to_uid
+                  ? `touid=${chat.to_uid}`
+                  : `plid=${chat.conversation_id}&type=1`
+              }`
+            : pages.chat(chat.conversation_id)
+        }
+        external={isPreviewRelease}
+        target={isPreviewRelease ? '_blank' : undefined}
+        sx={small ? { px: 1.25 } : undefined}
       >
         <Stack direction="row" {...liteProps}>
           <ChatAvatar chat={chat} summary={summary} />

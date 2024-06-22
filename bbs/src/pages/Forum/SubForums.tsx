@@ -9,6 +9,7 @@ import {
   ListItemText,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -23,9 +24,10 @@ import { pages } from '@/utils/routes'
 const SubForums = ({ children }: { children: ForumStat[] }) => {
   const [collapsed, setCollapsed] = useState(false)
   const theme = useTheme()
+  const narrowView = useMediaQuery('(max-width: 640px)')
 
   return (
-    <Card className="mt-8">
+    <Card sx={{ mt: narrowView ? 1.5 : 3.5, ...(narrowView && { px: 1 }) }}>
       <>
         <ListItemButton onClick={() => setCollapsed(!collapsed)}>
           <ListItemText>子版块</ListItemText>
@@ -39,13 +41,17 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
           {!collapsed && (
             <Separated separator={<Divider />}>
               {children.map((child) => (
-                <Box key={child.fid} className="p-4">
+                <Box key={child.fid} p={narrowView ? 1 : 1.75}>
                   <Stack
-                    direction="row"
+                    direction={narrowView ? 'column' : 'row'}
                     justifyContent="space-between"
-                    alignItems="center"
+                    alignItems={narrowView ? 'flex-start' : 'center'}
                   >
-                    <Stack direction="row" alignItems="center">
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      mb={narrowView ? 1 : undefined}
+                    >
                       <Link to={pages.forum(child.fid)}>
                         <Stack direction="row" alignItems="center">
                           <ForumOutlined fontSize="large" className="mr-4" />
@@ -58,7 +64,7 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
                         </Typography>
                       )}
                     </Stack>
-                    <Stack className="w-1/4">
+                    <Stack width={narrowView ? undefined : 280}>
                       {child.latest_thread ? (
                         <>
                           <Link
@@ -80,7 +86,9 @@ const SubForums = ({ children }: { children: ForumStat[] }) => {
                             <Link
                               color="inherit"
                               sx={{ textDecoration: 'none' }}
-                              to={`/user/name/${child.latest_thread.lastpost_author}`}
+                              to={pages.user({
+                                username: child.latest_thread.lastpost_author,
+                              })}
                             >
                               {child.latest_thread.lastpost_author}
                             </Link>

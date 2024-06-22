@@ -2,7 +2,8 @@ import { useState } from 'react'
 
 import { Snackbar, SnackbarProps } from '@mui/material'
 
-export const CenteredSnackbar = (props: SnackbarProps) => (
+// Deprecated in favor of global snackbar. Also it has bugs on mobile.
+export const DEPRECATED_CenteredSnackbar = (props: SnackbarProps) => (
   <Snackbar
     {...props}
     anchorOrigin={{ horizontal: 'center', vertical: 'top' }}

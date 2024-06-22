@@ -16,9 +16,11 @@ import NotificationRenderer, {
 const NotificationItem = ({
   item,
   summary,
+  small,
 }: {
   item: Notification
   summary?: boolean
+  small?: boolean
 }) => {
   const navigate = useNavigate()
   const avatar = <Avatar uid={item.author_id} sx={{ mr: 1 }} />
@@ -29,11 +31,11 @@ const NotificationItem = ({
       ) : (
         <Link to={pages.user({ uid: item.author_id })}>{avatar}</Link>
       )}
-      <Box>
+      <Box sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
         {!summary && (
           <Typography>{chineseTime(item.dateline * 1000)}</Typography>
         )}
-        <NotificationRenderer item={item} summary={summary} />
+        <NotificationRenderer item={item} summary={summary} small={small} />
       </Box>
     </Stack>
   )
@@ -49,7 +51,10 @@ const NotificationItem = ({
   return (
     <ListItem disablePadding={summary}>
       {summary ? (
-        <ListItemButton onClick={readAndOpenNotification}>
+        <ListItemButton
+          sx={small ? { px: 1.25 } : undefined}
+          onClick={readAndOpenNotification}
+        >
           {body}
         </ListItemButton>
       ) : (

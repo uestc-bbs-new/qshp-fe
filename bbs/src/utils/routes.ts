@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Params, useLocation, useMatches } from 'react-router-dom'
+import { Params, useMatches } from 'react-router-dom'
 
 import { ContinueMode } from '@/common/types/idas'
 
+import { isPreviewRelease } from './releaseMode'
 import siteRoot from './siteRoot'
 
 export const useActiveRoute = () => {
-  const location = useLocation()
   const matches = useMatches()
   const [activeRoute, setActiveRoute] = useState<{
     id: string
@@ -17,7 +17,7 @@ export const useActiveRoute = () => {
   } | null>(null)
   useEffect(() => {
     setActiveRoute(matches.length > 0 ? matches[matches.length - 1] : null)
-  }, [location])
+  }, [matches])
   return activeRoute
 }
 
@@ -50,23 +50,44 @@ export type UserPageParams = {
 
 export const kIdasOrigin = `https://bbs.uestc.edu.cn`
 const idasUrlBase = `https://idas.uestc.edu.cn/authserver/login`
+const idas2UrlBase = `https://idas.uestc.edu.cn/authserver/oauth2.0/authorize`
+const kIdasClientId = '1191760355037016064'
+export const kIdasVersion2 = 2
 const kIdasContinueBase = `${kIdasOrigin}/continue`
-export const gotoIdas = (options?: { mode?: ContinueMode }) => {
-  location.href = `${idasUrlBase}?service=${encodeURIComponent(
-    withSearchAndHash(
-      `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
-      new URLSearchParams({
-        path: `${location.pathname}${location.search}`,
-      })
-    )
-  )}`
+export const gotoIdas = (options?: {
+  mode?: ContinueMode
+  version?: number
+  continuePath?: string
+}) => {
+  const version = options?.version ?? kIdasVersion2
+  const continueUrl = withSearchAndHash(
+    `${kIdasContinueBase}${options?.mode ? `/${options.mode}` : ''}`,
+    new URLSearchParams({
+      path: options?.continuePath ?? `${location.pathname}${location.search}`,
+      ...(version ? { version: version.toString() } : {}),
+    })
+  )
+  location.href =
+    version == 2
+      ? withSearchAndHash(
+          idas2UrlBase,
+          new URLSearchParams({
+            response_type: 'code',
+            client_id: kIdasClientId,
+            redirect_uri: continueUrl,
+            state: '1',
+          })
+        )
+      : `${idasUrlBase}?service=${encodeURIComponent(continueUrl)}`
 }
 
 export const pages = {
-  index: () => `/`,
+  index: () => `/new`,
 
   thread: (thread_id: number, query?: URLSearchParams, hashValue?: string) =>
     withSearchAndHash(`/thread/${thread_id}`, query, hashValue),
+  threadLastpost: (thread_id: number) =>
+    pages.thread(thread_id, new URLSearchParams({ page: '-1' }), 'lastpost'),
   forum: (forum_id: number, query?: URLSearchParams) =>
     withSearchAndHash(`/forum/${forum_id}`, query),
   goto: (post_id: number) => `/goto/${post_id}`,
@@ -110,8 +131,13 @@ export const pages = {
         ...(params?.keyword && { q: params.keyword }),
         ...(params?.author && { author: params.author }),
         ...(params?.digest && { digest: '1' }),
-        type: 'post',
       })
+    ),
+
+  searchUsers: (params: { keyword: string }) =>
+    withSearchAndHash(
+      `/search/user`,
+      new URLSearchParams({ q: params.keyword })
     ),
 }
 
@@ -119,3 +145,33 @@ export const legacyPages = {
   collection: (collection_id: number) =>
     `${siteRoot}/forum.php?mod=collection&action=view&ctid=${collection_id}`,
 }
+
+export const mapMessagesRouteToMessageGroup = (
+  route?: { id?: string } | null
+) => {
+  if (route?.id == 'messages_chat' || route?.id == 'messages_chat_user') {
+    return 'chat'
+  }
+  if (route?.id == 'messages_posts') {
+    return 'posts'
+  }
+  if (route?.id == 'messages_system') {
+    return 'system'
+  }
+  return isPreviewRelease ? 'posts' : 'chat'
+}
+
+export const messagesSubPages: { id: MessageGroup; text: string }[] = [
+  {
+    id: 'chat',
+    text: '站内信',
+  },
+  {
+    id: 'posts',
+    text: '我的帖子',
+  },
+  {
+    id: 'system',
+    text: '系统消息',
+  },
+]

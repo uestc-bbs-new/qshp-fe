@@ -2,3 +2,4 @@ pnpm-lock.yaml
 dist
 stats.html
 **/third_party
+legacy/index.html

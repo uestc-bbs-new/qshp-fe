@@ -8,9 +8,17 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 
-import { Box, List, ListItem, Pagination, Skeleton, Stack } from '@mui/material'
+import {
+  Box,
+  List,
+  ListItem,
+  Pagination,
+  Skeleton,
+  Stack,
+  useMediaQuery,
+} from '@mui/material'
 
-import { getPostDetails, getThreadsInfo, kPostPageSize } from '@/apis/thread'
+import { getPostDetails, getThreadsInfo } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
 import Aside from '@/components/Aside'
@@ -19,29 +27,48 @@ import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
+import { InternalStamp, ThreadStamp } from '@/components/Stamps'
 import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
 import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
+import { useWatermark } from './Watermark'
 import ActionDialog from './dialogs/index'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
+
+const kEnforceInternalFids = [
+  174, // 就业创业
+  395, // 藏经阁
+  263, // 职场交流
+  267, // 非技术
+  378, // 晾晒专栏
+]
 
 const ForumPagination = (props: {
   count: number
   page: number
   onChange: (e: React.ChangeEvent<unknown>, page: number) => void
-}) => (
-  <Stack direction="row" justifyContent="center" my={1.5}>
-    {props.count > 1 && (
-      <Pagination boundaryCount={3} siblingCount={1} {...props} />
-    )}
-  </Stack>
-)
+}) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
+  return (
+    <Stack direction="row" justifyContent="center" my={1.5}>
+      {props.count > 1 && (
+        <Pagination
+          boundaryCount={thinView ? 1 : 3}
+          siblingCount={1}
+          {...props}
+        />
+      )}
+    </Stack>
+  )
+}
 
-function Thread() {
-  const { dispatch } = useAppState()
+const postElementId = (post_id: number) => `post-${post_id}`
+
+const Thread = () => {
+  const { state, dispatch } = useAppState()
   const navigate = useNavigate()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -59,6 +86,9 @@ function Thread() {
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] =
     useState<ActionDialogType>(undefined)
+  const isInternalEnforced =
+    !!threadDetails?.forum_id &&
+    kEnforceInternalFids.includes(threadDetails?.forum_id)
 
   const initQuery = (threadChanged?: boolean) => {
     const authorId = searchParams.get('authorid')
@@ -72,8 +102,20 @@ function Thread() {
       forum_details: threadChanged || !forumDetails,
     }
   }
-
   const [query, setQuery] = useState(initQuery())
+  useEffect(() => {
+    if (location.state?.fromForumId != state.activeForum?.fid) {
+      dispatch({ type: 'set forum' })
+    }
+    if (state.activeThread?.thread_id != threadId) {
+      dispatch({ type: 'set thread' })
+    }
+  }, [threadId])
+  useEffect(() => {
+    return () => {
+      dispatch({ type: 'set thread' })
+    }
+  }, [])
 
   const {
     data: info,
@@ -98,7 +140,7 @@ function Thread() {
         dispatch({ type: 'set forum', payload: info.forum })
       }
       if (info && info.total) {
-        setTotalPages(Math.ceil(info.total / kPostPageSize))
+        setTotalPages(Math.ceil(info.total / info.page_size))
       }
       if (info && info.rows) {
         const commentPids: number[] = []
@@ -138,9 +180,9 @@ function Thread() {
       } else {
         // total + 1 because a new reply was posted just now and info is not yet refreshed.
         const newPage = info?.total
-          ? Math.ceil((info?.total + 1) / kPostPageSize)
+          ? Math.ceil((info.total + 1) / info.page_size)
           : 1
-        if (newPage != query.page) {
+        if (newPage != (info?.page ?? query.page)) {
           navigate(
             `${location.pathname}?${searchParamsAssign(searchParams, {
               page: newPage,
@@ -178,10 +220,26 @@ function Thread() {
   }
 
   useEffect(() => {
+    const pendingTimeout = new Set<number>()
     if (location.hash) {
       const hash_position = location.hash.slice(1)
-      const dom = document.getElementById(hash_position)
-      dom?.scrollIntoView()
+      const lastpost = hash_position == 'lastpost' && info?.rows.length
+      const targetId = lastpost
+        ? postElementId(info.rows[info.rows.length - 1].post_id)
+        : hash_position
+      const dom = document.getElementById(targetId)
+      if (!dom) {
+        return
+      }
+      dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      const timeoutId = setTimeout(() => {
+        pendingTimeout.delete(timeoutId)
+        dom.scrollIntoView({ block: lastpost ? 'end' : 'start' })
+      }, 600)
+      pendingTimeout.add(timeoutId)
+    }
+    return () => {
+      pendingTimeout.forEach((id) => clearTimeout(id))
     }
   }, [info])
 
@@ -223,32 +281,55 @@ function Thread() {
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) =>
     setSearchParams(searchParamsAssign(searchParams, { page }))
 
+  useWatermark({ text: state.user.uid.toString() })
+
+  const hideSidebar = useMediaQuery('(max-width: 1000px)')
+  const narrowView = useMediaQuery('(max-width: 800px)')
+  const thinView = useMediaQuery('(max-width: 560px)')
+
   return (
-    <Stack direction="row">
+    <Stack direction="row" alignItems="flex-start">
       <Box className="flex-1" minWidth="1em">
         {isError ? (
-          <Error isError={isError} error={error} onRefresh={refetch} />
+          <Error error={error} onRefresh={refetch} />
         ) : (
           <>
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {info?.rows
               ? info?.rows.map((item, index) => {
                   return (
                     <Box
-                      className="mb-4 rounded-lg shadow-lg"
+                      className="rounded-lg shadow-lg"
+                      mb={thinView ? 1 : 1.75}
                       sx={(theme) => ({
-                        backgroundColor: theme.palette.background.paper,
+                        backgroundColor:
+                          '#' + postElementId(item.post_id) == location.hash
+                            ? theme.palette.background.paperHighlighted
+                            : theme.palette.background.paper,
                       })}
                       key={item.post_id}
                     >
                       <section
-                        id={`post-${item.post_id}`}
-                        css={scrollAnchorCss}
+                        id={postElementId(item.post_id)}
+                        css={{
+                          ...scrollAnchorCss,
+                          scrollMarginBottom: '16px',
+                          position: 'relative',
+                        }}
+                        onCopy={
+                          isInternalEnforced
+                            ? (e) => e.preventDefault() // Maybe show some prompt on copy
+                            : undefined
+                        }
                       >
+                        {!!item.is_first && item.position == 1 && (
+                          <ThreadStamp stamp={threadDetails?.stamp} />
+                        )}
+                        {index == 0 && isInternalEnforced && <InternalStamp />}
                         <Floor
                           post={item}
                           postDetails={postDetails[item.post_id]}
@@ -307,7 +388,7 @@ function Thread() {
                             </>
                           }
                         >
-                          <Box paddingRight="1.5em">
+                          <Box pr={narrowView ? undefined : '1.5em'}>
                             <PostRenderer post={item} />
                           </Box>
                         </Floor>
@@ -327,7 +408,7 @@ function Thread() {
 
             <ForumPagination
               count={totalPages}
-              page={query.page}
+              page={info?.page ?? 1}
               onChange={handlePageChange}
             />
             {forumDetails?.can_post_reply && threadDetails?.can_reply && (
@@ -362,7 +443,7 @@ function Thread() {
           />
         )}
       </Box>
-      <Aside />
+      {!hideSidebar && <Aside />}
     </Stack>
   )
 }

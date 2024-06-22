@@ -1,7 +1,16 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 
-import { Component, forwardRef, useImperativeHandle, useRef } from 'react'
+import {
+  Component,
+  Suspense,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react'
+import React from 'react'
 import ReCaptcha from 'react-google-recaptcha'
+
+import { CircularProgress, Stack } from '@mui/material'
 
 import { useAppState } from '@/states'
 
@@ -9,6 +18,8 @@ export type CaptchaConfiguration = {
   name: string
   site: string
 }
+
+export const LazyHCaptcha = React.lazy(() => import('@hcaptcha/react-hcaptcha'))
 
 export default forwardRef(function Captcha(
   {
@@ -35,11 +46,19 @@ export default forwardRef(function Captcha(
   )
   if (captcha.name == 'hcaptcha') {
     return (
-      <HCaptcha
-        sitekey={captcha.site}
-        onVerify={(token: string) => onVerified(token)}
-        ref={hCaptchaRef}
-      />
+      <Suspense
+        fallback={
+          <Stack justifyContent="center">
+            <CircularProgress />
+          </Stack>
+        }
+      >
+        <LazyHCaptcha
+          sitekey={captcha.site}
+          onVerify={(token: string) => onVerified(token)}
+          ref={hCaptchaRef}
+        />
+      </Suspense>
     )
   }
   if (captcha.name == 'recaptcha') {

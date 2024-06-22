@@ -77,7 +77,7 @@ const CommonUserItem = ({
           </Stack>
         </Box>
         {menuItems && (
-          <Box>
+          <Box flexShrink={0}>
             <ListItemButton
               aria-expanded={open ? 'true' : undefined}
               onClick={handleOpenClick}

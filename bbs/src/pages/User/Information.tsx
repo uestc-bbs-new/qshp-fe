@@ -4,14 +4,24 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import EditNoteIcon from '@mui/icons-material/EditNote'
-import { Box, Divider, Grid, Skeleton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Grid,
+  Skeleton,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 
 import { getUserProfile } from '@/apis/user'
 import { UserSummary } from '@/common/interfaces/user'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
 import { chineseTime } from '@/utils/dayjs'
+import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
 
 import { SubPageCommonProps } from './types'
 
@@ -47,17 +57,21 @@ const FieldValue = ({ title, text, children }: FieldValueProps) => (
   </Stack>
 )
 
-const FieldValueGrid = (props: FieldValueProps) => (
-  <Grid item xs={6}>
-    <FieldValue {...props} />
-  </Grid>
-)
+const FieldValueGrid = (props: FieldValueProps) => {
+  const narrowView = useMediaQuery('(max-width: 640px)')
+  return (
+    <Grid item xs={narrowView ? 12 : 6}>
+      <FieldValue {...props} />
+    </Grid>
+  )
+}
 
 const Information = ({
   userQuery,
   queryOptions,
   userSummary,
   onLoad,
+  onError,
   self,
 }: SubPageCommonProps & { userSummary?: UserSummary; self: boolean }) => {
   const initQuery = () => ({ common: { ...userQuery, ...queryOptions } })
@@ -65,9 +79,14 @@ const Information = ({
   const { data } = useQuery({
     queryKey: ['user', 'profile', query],
     queryFn: async () => {
-      const data = await getUserProfile(query.common)
-      onLoad && onLoad(data)
-      return data
+      try {
+        const data = await getUserProfile(query.common)
+        onLoad && onLoad(data)
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
+      }
     },
   })
   const [searchParams] = useSearchParams()
@@ -80,12 +99,21 @@ const Information = ({
     userQuery.removeVisitLog,
     userQuery.admin,
   ])
+
   return (
     <Box pt={1}>
       {self && (
         <>
           <Stack alignItems="flex-end" pb={1}>
-            <Link to={pages.settings('profile')}>
+            <Link
+              to={
+                isPreviewRelease
+                  ? `${siteRoot}/home.php?mod=spacecp&ac=profile`
+                  : pages.settings('profile')
+              }
+              external={isPreviewRelease}
+              target={isPreviewRelease ? '_blank' : undefined}
+            >
               <Stack direction="row" alignItems="center">
                 <Typography fontSize={12} align="right" className="m-1">
                   编辑

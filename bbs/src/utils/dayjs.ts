@@ -49,14 +49,15 @@ export const chineseTime = (
     now.getMonth(),
     now.getDate() - dayOffset - 7
   )
+  const timeSuffix = options?.short ? '' : ' HH:mm'
   if (date.getTime() >= today.getTime()) {
-    format = '[今天] HH:mm'
+    format = 'HH:mm'
   } else if (date.getTime() >= yesterday.getTime()) {
-    format = '[昨天] HH:mm'
+    format = '[昨天]' + timeSuffix
   } else if (date.getTime() >= beginOfWeek.getTime()) {
-    format = 'dddd HH:mm'
+    format = 'dddd' + timeSuffix
   } else if (date.getTime() >= lastWeek.getTime()) {
-    format = '[上]ddd HH:mm'
+    format = '[上]ddd' + timeSuffix
   }
   return dayjs(time).format(format)
 }

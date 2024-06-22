@@ -36,6 +36,7 @@ export type ForumDetails = ForumCommon & {
   thread_types_map?: ThreadTypeMap
   optional_thread_type: boolean
   can_post_anonymously: boolean
+  can_moderate: boolean
   announcement: string
   announcement_format: string
   post_notice_format: 'bbcode' | 'markdown'

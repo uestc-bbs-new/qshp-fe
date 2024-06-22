@@ -35,6 +35,7 @@ function Favorites({
   userQuery,
   queryOptions,
   onLoad,
+  onError,
   self,
 }: SubPageCommonProps & { self: boolean }) {
   const [searchParams] = useSearchParams()
@@ -66,17 +67,22 @@ function Favorites({
   const { data } = useQuery({
     queryKey: ['user', 'favorites', query],
     queryFn: async () => {
-      const getCollections = query.collections
-      const data = await getUserFavorites(
-        query.common,
-        query.page,
-        getCollections
-      )
-      onLoad && onLoad(data)
-      if (getCollections) {
-        setCollections(data.collections || [])
+      try {
+        const getCollections = query.collections
+        const data = await getUserFavorites(
+          query.common,
+          query.page,
+          getCollections
+        )
+        onLoad && onLoad(data)
+        if (getCollections) {
+          setCollections(data.collections || [])
+        }
+        return data
+      } catch (e) {
+        onError && onError(e)
+        throw e
       }
-      return data
     },
   })
 

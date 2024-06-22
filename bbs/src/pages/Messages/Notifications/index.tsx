@@ -18,7 +18,11 @@ import { getNotifications } from '@/apis/messages'
 import { MessageCounts } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { useSignInChange } from '@/states'
-import { pages, useActiveRoute } from '@/utils/routes'
+import {
+  mapMessagesRouteToMessageGroup,
+  pages,
+  useActiveRoute,
+} from '@/utils/routes'
 import { searchParamsAssign } from '@/utils/tools'
 
 import NotificationItem from './NotificationItem'
@@ -48,7 +52,8 @@ const kDefaultGroup = 'posts'
 const Notifications = () => {
   const route = useActiveRoute()
   const [searchParams, setSearchParams] = useSearchParams()
-  const groupName = (route && (route.id as NotificationGroup)) || kDefaultGroup
+  const navId = mapMessagesRouteToMessageGroup(route)
+  const groupName = navId == 'chat' ? kDefaultGroup : navId
   const kindName = useParams()['kind'] || kinds[groupName][0].id
   const initQuery = () => {
     return {
@@ -81,8 +86,8 @@ const Notifications = () => {
   useSignInChange(refetch)
 
   return (
-    <Paper sx={{ flexGrow: 1, p: 1 }}>
-      <Tabs value={kindName}>
+    <Paper sx={{ flexGrow: 1, flexShrink: 1, minWidth: 0, p: 1 }}>
+      <Tabs variant="scrollable" value={kindName}>
         {kinds[groupName].map((kind) => (
           <KindTab
             key={kind.id}
