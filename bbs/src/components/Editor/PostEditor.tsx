@@ -16,6 +16,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import { parseApiError } from '@/apis/error'
 import { editPost, postThread, replyThread } from '@/apis/thread'
 import {
   Attachment,
@@ -171,8 +172,10 @@ const PostEditor = ({
     valueRef.current.forum_id = forum?.fid
   }, [forum?.fid])
 
-  const handleError = () => {
+  const handleError = (e: any) => {
     setPostPending(false)
+    const { message } = parseApiError(e)
+    showError(message)
   }
 
   const handleSubmit = async () => {
