@@ -169,7 +169,10 @@ const PostEditor = ({
   }
 
   useEffect(() => {
-    valueRef.current.forum_id = forum?.fid
+    if (valueRef.current.forum_id != forum?.fid) {
+      valueRef.current.forum_id = forum?.fid
+      valueRef.current.type_id = undefined
+    }
   }, [forum?.fid])
 
   const handleError = (e: any) => {
