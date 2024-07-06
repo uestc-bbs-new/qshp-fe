@@ -22,7 +22,10 @@ const DigestAuthor = ({
   username: string
   sx?: SxProps<Theme>
 }) => (
-  <Link to={pages.searchThreads({ author: username, digest: true })}>
+  <Link
+    underline="none"
+    to={pages.searchThreads({ author: username, digest: true })}
+  >
     <Chip
       label="精华帖作者"
       variant="threadItemDigest"

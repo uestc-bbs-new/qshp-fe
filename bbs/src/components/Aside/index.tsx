@@ -4,6 +4,7 @@ import { Box } from '@mui/material'
 
 import { TopList } from '@/common/interfaces/response'
 import { useTopList } from '@/states'
+import { kAppBarTop } from '@/utils/scrollAnchor'
 
 import SideTabs from '../TopList/SideTabs'
 
@@ -18,7 +19,7 @@ const Aside = ({
 }) => {
   const data = homepage ? topList : useTopList(topList)
   return (
-    <Box className="ml-2 w-60">
+    <Box className="ml-2 w-60" position="sticky" top={kAppBarTop}>
       <SideTabs {...{ loading, topList: data, homepage }} />
     </Box>
   )

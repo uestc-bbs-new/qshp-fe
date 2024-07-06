@@ -19,9 +19,36 @@ if (process.env['UESTC_BBS_DATA_SERVER']) {
     changeOrigin: true,
   }
 }
+if (process.env['UESTC_BBS_STAGING']) {
+  staticProxies['/dev'] = {
+    target: 'https://bbs.uestc.edu.cn/',
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/dev\/star/, '_star'),
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (
+            id.includes('commonjsHelpers.js') ||
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/react-router') ||
+            id.includes('node_modules/@remix-run')
+          ) {
+            return 'vendor-react'
+          }
+          if (id.includes('node_modules/@mui/')) {
+            return 'vendor-mui'
+          }
+        },
+      },
+    },
+  },
   plugins: [
     react({
       jsxImportSource: '@emotion/react',

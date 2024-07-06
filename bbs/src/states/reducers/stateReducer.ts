@@ -1,20 +1,20 @@
 import { ForumDetails } from '@/common/interfaces/forum'
+import { Announcement } from '@/common/interfaces/response'
+import { getTotalMessages } from '@/utils/messages'
 
 import { guestUser } from '..'
 
+let uniqueKey = 0
+const newUniqueKey = () => ++uniqueKey
+
 export type UserState = {
+  uninitialized?: boolean
   uid: number
   username: string
   new_pm?: number // This field is not yet available while Discuz! is still running
   new_pm_legacy?: boolean
   new_grouppm_legacy?: boolean
   new_notification?: number
-}
-
-type ForumBreadcumbEntry = {
-  forum_id: number
-  name: string
-  top: boolean
 }
 
 type ThreadBreadcumbEntry = {
@@ -28,14 +28,38 @@ type GlobalDialogState = {
   imageDetails?: string
 }
 
+type GlobalSnackbarState = {
+  message: string
+  severity?: 'success' | 'warning' | 'error'
+  transition?: 'none' | 'slide-up'
+  key: number
+}
+
+type TopListViewState = {
+  open?: boolean
+  mounted?: boolean
+  alwaysOpen?: boolean
+  noTransition?: boolean
+  manuallyOpened?: boolean
+}
+
 export type State = {
   drawer: boolean
   user: UserState
-  forumBreadcumbs: ForumBreadcumbEntry[]
+  userBreadcumbs?: {
+    uid?: number
+    username?: string
+    self?: boolean
+    subPage?: string
+    subPageTitle?: string
+  }
   activeForum?: ForumDetails
   activeThread?: ThreadBreadcumbEntry
   globalDialog?: GlobalDialogState
+  globalSnackbar?: GlobalSnackbarState
+  toplistView?: TopListViewState
   theme: 'light' | 'dark'
+  announcement?: Announcement[]
 }
 
 export interface StateAction {
@@ -47,6 +71,7 @@ export const stateReducer = (state: State, action: StateAction): State => {
   switch (action.type) {
     case 'set user': {
       if (!action.payload && state.user != guestUser) {
+        navigator.clearAppBadge && navigator.clearAppBadge()
         return {
           ...state,
           user: guestUser,
@@ -60,6 +85,8 @@ export const stateReducer = (state: State, action: StateAction): State => {
           action.payload.new_grouppm_legacy != state.user.new_grouppm_legacy ||
           action.payload.new_notification != state.user.new_notification)
       ) {
+        const total = getTotalMessages(action.payload)
+        navigator.setAppBadge && navigator.setAppBadge(total)
         return {
           ...state,
           user: action.payload,
@@ -76,29 +103,12 @@ export const stateReducer = (state: State, action: StateAction): State => {
       if (state.activeForum?.fid == action.payload?.fid) {
         return state
       }
-      {
-        const newForums: ForumBreadcumbEntry[] = []
-        const forum = action.payload as ForumDetails | undefined
-        if (forum?.fid) {
-          console.log(forum.parents)
-          newForums.unshift(
-            ...forum.parents
-              .concat([])
-              .reverse()
-              .map((parent, index) => ({
-                forum_id: parent.fid,
-                name: parent.name,
-                top: index === 0,
-              })),
-            { forum_id: forum.fid, name: forum.name, top: false }
-          )
-        }
-        return {
-          ...state,
-          activeForum: action.payload,
-          forumBreadcumbs: newForums,
-        }
+      return {
+        ...state,
+        activeForum: action.payload,
       }
+    case 'set breadcumbs/user':
+      return { ...state, userBreadcumbs: action.payload }
     case 'set thread':
       return { ...state, activeThread: action.payload }
     case 'open dialog':
@@ -110,6 +120,39 @@ export const stateReducer = (state: State, action: StateAction): State => {
       return {
         ...state,
         globalDialog: undefined,
+      }
+    case 'open toplist':
+      return {
+        ...state,
+        toplistView: {
+          ...action.payload,
+          open: true,
+          mounted: true,
+        },
+      }
+    case 'close toplist':
+      return {
+        ...state,
+        toplistView: {
+          ...state.toplistView,
+          ...action.payload,
+          open: false,
+        },
+      }
+    case 'open snackbar':
+      return {
+        ...state,
+        globalSnackbar: { ...action.payload, key: newUniqueKey() },
+      }
+    case 'close snackbar':
+      return {
+        ...state,
+        globalSnackbar: undefined,
+      }
+    case 'set announcement':
+      return {
+        ...state,
+        announcement: action.payload,
       }
     default:
       return state

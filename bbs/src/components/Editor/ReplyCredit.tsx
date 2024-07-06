@@ -1,14 +1,18 @@
 import { MutableRefObject, useState } from 'react'
 
 import {
+  Box,
   Checkbox,
   FormControlLabel,
   FormGroup,
   MenuItem,
   Select,
+  SelectProps,
   Stack,
   TextField,
+  TextFieldProps,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { PostThreadReplyCreditDetails } from '@/apis/thread'
@@ -24,6 +28,7 @@ const ReplyCredit = ({
   status: ReplyCreditStatus
   valueRef: MutableRefObject<PostEditorValue>
 }) => {
+  const narrowView = useMediaQuery('(max-width: 930px)')
   const [hasReplyCredit, setReplyCredit] = useState(
     !!valueRef.current?.reply_credit
   )
@@ -65,6 +70,24 @@ const ReplyCredit = ({
   ) {
     errorText = `每次回帖奖励数额太大（不超过 ${settings.max_single_credits}）！`
   }
+
+  const textFieldProps: TextFieldProps = {
+    size: 'small',
+    sx: {
+      width: narrowView ? '4em' : '6em',
+      mx: 1,
+      mb: narrowView ? 0.75 : undefined,
+      verticalAlign: 'middle',
+    },
+    InputProps: narrowView
+      ? { sx: { px: 1, py: 0.25, input: { px: 1, py: 0 } } }
+      : undefined,
+  }
+  const selectProps: SelectProps = {
+    size: 'small',
+    sx: { mx: 1, verticalAlign: 'middle' },
+    inputProps: narrowView ? { sx: { px: 1, py: 0.25 } } : undefined,
+  }
   return (
     <>
       <FormGroup>
@@ -84,8 +107,8 @@ const ReplyCredit = ({
       </FormGroup>
       {hasReplyCredit && (
         <PostOptionsBlock>
-          <Stack direction="row" alignItems="center">
-            <Typography>每次回帖奖励</Typography>
+          <Box>
+            每次回帖奖励
             <TextField
               value={details.credit_amount || ''}
               onChange={(e) => {
@@ -94,21 +117,19 @@ const ReplyCredit = ({
                   credit_amount: parseInt(e.target.value) || 0,
                 })
               }}
-              size="small"
-              sx={{ width: '6em', mx: 1 }}
+              {...textFieldProps}
             />
-            <Typography>{status.allowed_credits[0]}</Typography>
+            {status.allowed_credits[0]}
             ，总计
             <TextField
               value={details.count || ''}
               onChange={(e) => {
-                setDetails({
+                updateValueRef({
                   ...details,
                   count: parseInt(e.target.value) || 0,
                 })
               }}
-              size="small"
-              sx={{ width: '6em', mx: 1 }}
+              {...textFieldProps}
             />
             份。每人最多
             <Select
@@ -119,8 +140,7 @@ const ReplyCredit = ({
                   limit_per_user: Number(e.target.value),
                 })
               }}
-              size="small"
-              sx={{ mx: 1 }}
+              {...selectProps}
             >
               {[...Array(10)].map((_, index) => (
                 <MenuItem value={index + 1} key={index}>
@@ -137,8 +157,7 @@ const ReplyCredit = ({
                   probability: Number(e.target.value),
                 })
               }}
-              size="small"
-              sx={{ mx: 1 }}
+              {...selectProps}
             >
               {[...Array(10)].map((_, index) => (
                 <MenuItem value={(index + 1) * 10} key={index}>
@@ -147,7 +166,7 @@ const ReplyCredit = ({
               ))}
             </Select>
             。
-          </Stack>
+          </Box>
           <Stack direction="row" mt={1}>
             {errorText && (
               <Typography color="red" fontWeight="bold">

@@ -1,11 +1,22 @@
-import { IdasAuthResult } from '@/common/interfaces/response'
-import { authService, authServiceWithUser, commonUrl } from '@/utils/request'
+import { authService, authServiceWithUser, commonUrl } from '@/apis/request'
+import { User } from '@/common/interfaces/base'
 
 const authUrl = `${commonUrl}/auth`
 
 export type EphemeralAuthorization = {
-  ticket: string
+  code: string
   ephemeral_authorization: string
+}
+
+export type AuthorizationResult = {
+  authorization: string
+}
+
+export type IdasAuthResult = Partial<AuthorizationResult> & {
+  new_user?: boolean
+  users?: User[]
+  ephemeral_authorization: string
+  remaining_registers?: number
 }
 
 export const signIn = (params: {
@@ -15,7 +26,7 @@ export const signIn = (params: {
   captcha_value?: string
   captcha_type?: string
 }) => {
-  return authServiceWithUser.post<string>(
+  return authServiceWithUser.post<AuthorizationResult>(
     `${authUrl}/signin`,
     {
       username: params.username,
@@ -37,8 +48,9 @@ export const signIn = (params: {
 
 export const idasAuth = (params: {
   continue: string
-  ticket: string
+  code: string
   signin?: boolean
+  version?: number
 }) => {
   return authServiceWithUser.post<IdasAuthResult>(`${authUrl}/idas`, params)
 }
@@ -48,11 +60,17 @@ export const idasChooseUser = (
     user_id: number
   }
 ) => {
-  return authServiceWithUser.post<string>(`${authUrl}/signin/user`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/signin/user`,
+    params
+  )
 }
 
 export const idasFreshman = (params: EphemeralAuthorization) => {
-  return authServiceWithUser.post<string>(`${authUrl}/signin/freshman`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/signin/freshman`,
+    params
+  )
 }
 
 export const checkUserName = (
@@ -71,7 +89,22 @@ export const register = (
     invitation?: string
   }
 ) => {
-  return authServiceWithUser.post<string>(`${authUrl}/register`, params)
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/register`,
+    params
+  )
+}
+export const resetPassword = (
+  params: EphemeralAuthorization & {
+    user_id: number
+    password: string
+    clear_password_question?: boolean
+  }
+) => {
+  return authServiceWithUser.post<AuthorizationResult>(
+    `${authUrl}/resetpassword`,
+    params
+  )
 }
 
 export const signOut = () => {

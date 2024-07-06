@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 
-import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import {
+  ElderlyWomanOutlined,
+  ExpandLess,
+  ExpandMore,
+} from '@mui/icons-material'
 import KeyboardCommandKeyIcon from '@mui/icons-material/KeyboardCommandKey'
 import OtherHousesIcon from '@mui/icons-material/OtherHouses'
 import {
@@ -14,11 +18,13 @@ import {
   Skeleton,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 
 import { Forum } from '@/common/interfaces/forum'
 import Link from '@/components/Link'
 import { useAppState, useForumList } from '@/states'
+import { useDiscuzLink } from '@/utils/discuzLinkMap'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
@@ -36,11 +42,11 @@ type NavData<T extends boolean> = {
 }
 
 const listServiceItems: NavLink[] = [
-  {
-    link: `${siteRoot}/graduate_bind/frontend/index.html`,
-    name: '学号换绑',
-    external: true,
-  },
+  // {
+  //   link: `${siteRoot}/graduate_bind/frontend/index.html`,
+  //   name: '学号换绑',
+  //   external: true,
+  // },
   {
     link: `${siteRoot}/member.php?mod=relevance`,
     name: '实名关联',
@@ -105,25 +111,29 @@ const renderLink = (
   name: string,
   key: string | number,
   external?: boolean
-) => (
-  <Link
-    to={link}
-    key={key}
-    underline="none"
-    color="inherit"
-    external={external ?? false}
-    target={external ? '_blank' : undefined}
-  >
-    <ListItemButton sx={{}}>
-      <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
-      <ListItemText>
-        <Typography color="inherit" className="font-bold">
-          {name}
-        </Typography>
-      </ListItemText>
-    </ListItemButton>
-  </Link>
-)
+) => {
+  const { dispatch } = useAppState()
+  return (
+    <Link
+      to={link}
+      key={key}
+      underline="none"
+      color="inherit"
+      external={external ?? false}
+      target={external ? '_blank' : undefined}
+      onClick={() => dispatch({ type: 'set drawer' })}
+    >
+      <ListItemButton sx={{}}>
+        <ListItemIcon>{/* <StarBorder /> */}</ListItemIcon>
+        <ListItemText>
+          <Typography color="inherit" className="font-bold">
+            {name}
+          </Typography>
+        </ListItemText>
+      </ListItemButton>
+    </Link>
+  )
+}
 
 const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
   const [open, setOpen] = useState(false)
@@ -135,11 +145,11 @@ const Ordinate = ({ data, isForum, navName, Icon }: NavData<boolean>) => {
   return (
     <>
       <ListItemButton onClick={handleClick}>
-        <ListItemIcon className=" min-w-10 text-[#0268FD]">
+        <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
           {Icon !== undefined ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
-          <Typography color="inherit" className=" font-normal text-black">
+          <Typography variant="drawerItemText">
             {isForum ? (data as Forum).name : navName}
           </Typography>
         </ListItemText>
@@ -170,21 +180,21 @@ const ListItemLink = ({
   link,
   name,
   Icon,
+  onClick,
 }: {
   link: string
   name: string
   Icon?: React.ElementType
+  onClick?: () => void
 }) => {
   return (
-    <Link to={link} underline="none" color="inherit">
+    <Link to={link} underline="none" color="inherit" onClick={onClick}>
       <ListItemButton>
-        <ListItemIcon className=" min-w-10" sx={{ color: '#0268FD' }}>
+        <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
           {Icon ? <Icon /> : <KeyboardCommandKeyIcon />}
         </ListItemIcon>
         <ListItemText>
-          <Typography color="inherit" className=" font-normal text-black">
-            {name}
-          </Typography>
+          <Typography variant="drawerItemText">{name}</Typography>
         </ListItemText>
       </ListItemButton>
     </Link>
@@ -193,21 +203,23 @@ const ListItemLink = ({
 
 const Sections = () => {
   const forumList = useForumList()
+  const { dispatch } = useAppState()
+  const narrowTopBar = useMediaQuery('(max-width: 850px)')
+  const legacyUrl = useDiscuzLink()
   return (
     <List style={{ color: '#7082a7' }} className=" pl-4">
       <ListItemLink
         link={pages.index()}
         name="首页"
+        onClick={() => dispatch({ type: 'set drawer' })}
         Icon={() => <OtherHousesIcon />}
-      ></ListItemLink>
+      />
       <Ordinate data={listServiceItems} isForum={false} navName="论坛服务" />
       <Ordinate data={schoolServiceItems} isForum={false} navName="校园服务" />
       {/* todo: 禁止 hover  */}
       <ListItem>
         <ListItemText>
-          <Typography color="inherit" className="font-bold text-zinc-900">
-            板块
-          </Typography>
+          <Typography variant="drawerHeading">板块</Typography>
         </ListItemText>
       </ListItem>
       <>
@@ -231,29 +243,43 @@ const Sections = () => {
       </>
       <ListItem>
         <ListItemText>
-          <Typography color="inherit" className="font-bold text-zinc-900">
-            其他
-          </Typography>
+          <Typography variant="drawerHeading">其他</Typography>
         </ListItemText>
       </ListItem>
       <ListItemLink
         link={pages.thread(1812091)}
         name="客户端下载"
+        onClick={() => dispatch({ type: 'set drawer' })}
       ></ListItemLink>
-      <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink>
+      {/* <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink> */}
+      {narrowTopBar && (
+        <Link
+          to={legacyUrl}
+          external
+          target="_blank"
+          underline="none"
+          color="inherit"
+          onClick={() => dispatch({ type: 'set drawer' })}
+        >
+          <ListItemButton>
+            <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
+              <ElderlyWomanOutlined sx={{ transform: 'scaleX(-1)' }} />
+            </ListItemIcon>
+            <ListItemText>
+              <Typography variant="drawerItemText">返回旧版</Typography>
+            </ListItemText>
+          </ListItemButton>
+        </Link>
+      )}
     </List>
   )
 }
 
-const NavLinks = () => {
-  const { state } = useAppState()
-
-  return (
-    <Box>
-      <Toolbar />
-      <Sections />
-    </Box>
-  )
-}
+const NavLinks = () => (
+  <Box>
+    <Toolbar />
+    <Sections />
+  </Box>
+)
 
 export default NavLinks

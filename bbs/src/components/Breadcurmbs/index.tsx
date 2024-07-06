@@ -1,11 +1,36 @@
-import { Link as RouterLink, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import {
+  Params,
+  RouteObject,
+  Link as RouterLink,
+  matchRoutes,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom'
 
-import { Breadcrumbs as MuiBreadcrumbs, Typography } from '@mui/material'
+import {
+  MenuItem,
+  Breadcrumbs as MuiBreadcrumbs,
+  Typography as MuiTypography,
+  Select,
+  Skeleton,
+  TypographyProps,
+  useMediaQuery,
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
 
+import routes from '@/routes/routes'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
-import { pages, useActiveRoute } from '@/utils/routes'
+import { isPreviewRelease } from '@/utils/releaseMode'
+import {
+  mapMessagesRouteToMessageGroup,
+  messagesSubPages,
+  pages,
+} from '@/utils/routes'
+import siteRoot from '@/utils/siteRoot'
+
+import { MenuItemLink } from '../Link'
 
 const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   textDecoration: 'none',
@@ -15,6 +40,29 @@ const StyledRouterLink = styled(RouterLink)(({ theme }) => ({
   color: theme.palette.primary.main,
 }))
 
+const TextSkeleton = ({ width }: { width: number }) => {
+  const kUnitSize = 16
+  return (
+    <span>
+      {[
+        [...Array(Math.floor(width / kUnitSize))].map((_, index) => (
+          <Skeleton
+            key={index}
+            variant="rectangular"
+            width={kUnitSize}
+            height="1em"
+            sx={{ display: 'inline-block', verticalAlign: 'middle' }}
+          />
+        )),
+      ]}
+    </span>
+  )
+}
+
+const Typography = ({ ...props }: TypographyProps) => (
+  <MuiTypography component="span" {...props} />
+)
+
 const thread = (state: State) => {
   if (state.activeThread) {
     return (
@@ -23,40 +71,180 @@ const thread = (state: State) => {
       </StyledRouterLink>
     )
   }
-  return []
+  return <TextSkeleton width={225} />
 }
 
-const forum = (state: State) => [
-  state.forumBreadcumbs.map((forum, index) =>
-    forum.top ? (
-      <Typography key={index}>{forum.name}</Typography>
-    ) : (
-      <StyledRouterLink key={index} to={pages.forum(forum.forum_id)}>
-        {forum.name}
-      </StyledRouterLink>
+const forum = (state: State, isPost: boolean) => {
+  if (!state.activeForum) {
+    return isPost ? [] : <TextSkeleton width={120} />
+  }
+  return state.activeForum.parents
+    .slice()
+    .reverse()
+    .map((forum) => ({ fid: forum.fid, name: forum.name }))
+    .concat([{ fid: state.activeForum.fid, name: state.activeForum.name }])
+    .map((forum, index) =>
+      index == 0 ? (
+        <Typography key={index}>{forum.name}</Typography>
+      ) : (
+        <StyledRouterLink key={index} to={pages.forum(forum.fid)}>
+          {forum.name}
+        </StyledRouterLink>
+      )
     )
-  ),
-]
-const search = (searchParams: URLSearchParams) => [
-  <Typography key="1">搜索</Typography>,
-  <Typography key="2">{searchParams.get('name')}</Typography>,
+}
+const search = (routeParams: Params<string>, searchParams: URLSearchParams) => {
+  const typeText = { thread: '帖子', user: '用户' }[
+    routeParams['type'] || 'thread'
+  ]
+  return [
+    <Typography key="1">搜索</Typography>,
+    ...(typeText ? [<Typography key="2">{typeText}</Typography>] : []),
+    <Typography key="3">{searchParams.get('q')}</Typography>,
+  ]
+}
+
+const user = (state: State) => [
+  <StyledRouterLink key="1" to={pages.user()}>
+    个人空间
+  </StyledRouterLink>,
+  ...(state.userBreadcumbs?.username && !state.userBreadcumbs?.self
+    ? [
+        <StyledRouterLink
+          key="2"
+          to={pages.user({ uid: state.userBreadcumbs?.uid })}
+        >
+          {state.userBreadcumbs.username}
+        </StyledRouterLink>,
+      ]
+    : []),
+  <Typography key="3">
+    {state.userBreadcumbs?.username ? (
+      <>{state.userBreadcumbs.subPageTitle}</>
+    ) : (
+      <TextSkeleton width={160} />
+    )}
+  </Typography>,
 ]
 
+const messages = (route?: RouteObject, narrowView?: boolean) => {
+  const pageId = mapMessagesRouteToMessageGroup(route)
+  return [
+    <Typography key="1">消息</Typography>,
+    narrowView ? (
+      <Select
+        key="2"
+        size="small"
+        sx={{ '.MuiSelect-select': { minHeight: 0, py: 0.5 } }}
+        value={pageId}
+      >
+        {messagesSubPages.map((item) => (
+          <MenuItem
+            key={item.id}
+            component={MenuItemLink}
+            to={
+              isPreviewRelease && item.id == 'chat'
+                ? `${siteRoot}/home.php?mod=space&do=pm`
+                : pages.messages(item.id)
+            }
+            external={isPreviewRelease && item.id == 'chat'}
+            target={
+              isPreviewRelease && item.id == 'chat' ? '_blank' : undefined
+            }
+            value={item.id}
+          >
+            {item.text}
+          </MenuItem>
+        ))}
+      </Select>
+    ) : (
+      <Typography key="2">
+        {messagesSubPages.find((item) => item.id == pageId)?.text}
+      </Typography>
+    ),
+  ]
+}
+
+const maybeJoinWithSpace = (a: string, b: string) => {
+  if (a == '' || b == '') {
+    return a + b
+  }
+  if (a.slice(-1).charCodeAt(0) < 128 || b.slice(0, 1).charCodeAt(0) < 128) {
+    return `${a} ${b}`
+  }
+  return `${a}${b}`
+}
+
 const Breadcrumbs = () => {
-  const activeRoute = useActiveRoute()
   const [searchParams] = useSearchParams()
   const { state } = useAppState()
 
+  const location = useLocation()
+  const matches = matchRoutes(routes.current, location)
+  const activeMatch = matches?.length ? matches[matches.length - 1] : undefined
+  const activeRoute = activeMatch?.route
+  const narrowView = useMediaQuery('(max-width: 800px)')
+
+  useEffect(() => {
+    const title = '清水河畔 - 电子科技大学官方论坛'
+    const suffix = ` - ${title}`
+    const shortSuffix = ' - 清水河畔'
+    if (activeRoute?.id == 'forum') {
+      if (state.activeForum) {
+        document.title = `${state.activeForum.name} - ${title}`
+      }
+    } else if (activeRoute?.id == 'thread') {
+      if (state.activeForum && state.activeThread) {
+        document.title = `${state.activeThread?.subject} - ${state.activeForum.name}${shortSuffix}`
+      }
+    } else if (activeRoute?.id == 'user' || activeRoute?.id == 'userByName') {
+      if (state.userBreadcumbs) {
+        const name = state.userBreadcumbs.self
+          ? '我的'
+          : state.userBreadcumbs.username
+            ? maybeJoinWithSpace(state.userBreadcumbs.username, '的')
+            : ''
+        document.title = `${name}个人空间 ${suffix}`
+      }
+    } else {
+      document.title = title
+    }
+  }, [activeRoute, state.activeThread, state.activeForum, state.userBreadcumbs])
+
+  if (activeRoute?.id == 'index' || activeRoute?.id == '404') {
+    return <></>
+  }
   return (
-    <MuiBreadcrumbs>
+    <MuiBreadcrumbs
+      sx={{
+        '.MuiBreadcrumbs-ol, .MuiBreadcrumbs-li': {
+          display: 'inline',
+          verticalAlign: 'middle',
+        },
+        '.MuiBreadcrumbs-separator': {
+          display: 'inline-block',
+          verticalAlign: 'middle',
+        },
+      }}
+    >
       <StyledRouterLink color="inherit" to={pages.index()}>
         首页
       </StyledRouterLink>
       {['forum', 'thread', 'post'].includes(activeRoute?.id || '') &&
-        forum(state)}
+        forum(state, activeRoute?.id == 'post')}
       {activeRoute?.id == 'post' && <Typography>发帖</Typography>}
       {activeRoute?.id == 'thread' && thread(state)}
-      {activeRoute?.id == 'search' && search(searchParams)}
+      {activeRoute?.id == 'search' &&
+        activeMatch &&
+        search(activeMatch.params, searchParams)}
+      {(activeRoute?.id == 'user' || activeRoute?.id == 'userByName') &&
+        user(state)}
+      {[
+        'messages_chat',
+        'messages_chat_user',
+        'messages_posts',
+        'messages_system',
+      ].includes(activeRoute?.id ?? '') && messages(activeRoute, narrowView)}
     </MuiBreadcrumbs>
   )
 }

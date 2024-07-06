@@ -1,3 +1,4 @@
 packages:
   - 'bbs'
-  - 'SSO'
+  - 'legacy'
+  - 'markdown-renderer'

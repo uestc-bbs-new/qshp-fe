@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 
+import { AxiosWrapper, apiResultCode, kHttpUnauthorized } from '@/apis/request'
 import { notifyUserCallbacks } from '@/states/user'
-import { AxiosWrapper, apiResultCode, kHttpUnauthorized } from '@/utils/request'
 
 export default (axios: AxiosInstance | AxiosWrapper) =>
   axios.interceptors.response.use(

@@ -1,40 +1,50 @@
 import { InsertChart } from '@mui/icons-material'
-import { Box, Divider, Skeleton, Typography } from '@mui/material'
+import { Divider, Skeleton, Stack, Typography } from '@mui/material'
 
 import { GlobalStat } from '@/common/interfaces/response'
 import { pages } from '@/utils/routes'
 
 import Link from '../Link'
+import Separated from '../Separated'
 
-const Divider_ = () => {
-  return (
-    <Divider
-      orientation="vertical"
-      variant="middle"
-      sx={{ height: 15, mx: 1 }}
-    ></Divider>
-  )
-}
 const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
   return (
-    <Box display="flex" alignItems="center" sx={{ my: 2 }}>
+    <Stack
+      direction="row"
+      alignItems="center"
+      flexWrap="wrap"
+      flexGrow={1}
+      flexShrink={1}
+    >
       <InsertChart sx={{ color: '#74EAE9', mr: 1 }} />
       {data ? (
-        <>
-          <Typography color="grey">今日：</Typography>
-          {data.today_posts}
-          <Divider_ />
-          <Typography color="grey">昨日：</Typography>
-          {data.yesterday_posts}
-          <Divider_ />
-          <Typography color="grey">帖子：</Typography>
-          {data.total_posts}
-          <Divider_ />
-          <Typography color="grey">会员：</Typography>
-          {data.total_users}
+        <Separated
+          separator={
+            <Divider
+              orientation="vertical"
+              variant="middle"
+              sx={{ height: 15, mx: 1 }}
+            />
+          }
+        >
+          <>
+            <Typography color="grey">今日：</Typography>
+            {data.today_posts}
+          </>
+          <>
+            <Typography color="grey">昨日：</Typography>
+            {data.yesterday_posts}
+          </>
+          <>
+            <Typography color="grey">帖子：</Typography>
+            {data.total_posts}
+          </>
+          <>
+            <Typography color="grey">会员：</Typography>
+            {data.total_users}
+          </>
           {data.new_user && (
             <>
-              <Divider_ />
               <Typography color="grey">欢迎新会员：</Typography>
               <Link
                 to={pages.user({ username: data.new_user.username })}
@@ -45,11 +55,17 @@ const OverviewInfo = ({ data }: { data?: GlobalStat }) => {
               </Link>
             </>
           )}
-        </>
+          {!!data.online_users && (
+            <>
+              <Typography color="grey">在线用户：</Typography>
+              {data.online_users}
+            </>
+          )}
+        </Separated>
       ) : (
-        <Skeleton sx={{ flexGrow: 1 }} />
+        <Skeleton width="60%" />
       )}
-    </Box>
+    </Stack>
   )
 }
 export default OverviewInfo

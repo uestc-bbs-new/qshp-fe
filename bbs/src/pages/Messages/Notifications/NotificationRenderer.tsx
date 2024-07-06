@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 import { Notification } from '@/common/interfaces/response'
 import Link from '@/components/Link'
@@ -8,9 +8,11 @@ import { pages } from '@/utils/routes'
 const NotificationRenderer = ({
   item,
   summary,
+  small,
 }: {
   item: Notification
   summary?: boolean
+  small?: boolean
 }) => {
   const fontWeightStyle = item.unread ? { fontWeight: 'bold' } : undefined
   const fontWeightProp = item.unread ? { fontWeight: 'bold' } : {}
@@ -51,7 +53,11 @@ const NotificationRenderer = ({
       </Typography>
     )
   }
-  return <UserHtmlRenderer html={item.html_message} style={fontWeightStyle} />
+  return (
+    <Box sx={small ? { '& .quote blockquote': { mt: 0.5, mb: 0 } } : undefined}>
+      <UserHtmlRenderer html={item.html_message} style={fontWeightStyle} />
+    </Box>
+  )
 }
 
 export const getNotificationTarget = (item: Notification) => {

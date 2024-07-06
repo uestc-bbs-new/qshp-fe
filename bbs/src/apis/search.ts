@@ -1,10 +1,10 @@
+import request, { commonUrl } from '@/apis/request'
 import { GenericList, ThreadInList } from '@/common/interfaces/response'
 import {
   SearchSummaryResponse,
   SearchSummaryUser,
 } from '@/common/interfaces/search'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { commonUrl } from '@/utils/request'
 
 export const searchSummary = async (query: string) => {
   const result = await request.get<SearchSummaryResponse>(

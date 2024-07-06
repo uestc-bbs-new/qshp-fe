@@ -1,3 +1,4 @@
+import request, { commonUrl } from '@/apis/request'
 import { User } from '@/common/interfaces/base'
 import { ThreadInList } from '@/common/interfaces/response'
 import {
@@ -11,7 +12,6 @@ import {
   UserReply,
 } from '@/common/interfaces/user'
 import { unescapeSubject } from '@/utils/htmlEscape'
-import request, { commonUrl } from '@/utils/request'
 
 export type CommonQueryParams = Partial<User> & {
   /** 是否获取用户概况（用户空间顶部显示的内容） */

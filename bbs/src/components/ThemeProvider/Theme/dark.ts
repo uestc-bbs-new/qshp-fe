@@ -14,6 +14,7 @@ const darkTheme = createTheme(
       background: {
         default: '#141516',
         paper: '#292B2D',
+        paperHighlighted: '#35383b',
       },
     },
     components: {
@@ -70,6 +71,12 @@ const darkTheme = createTheme(
       },
       userAction: {
         color: lighten('#5F6166', 0.7),
+      },
+      drawerItemText: {
+        color: '#dddddd',
+      },
+      drawerHeading: {
+        color: '#dddddd',
       },
     },
     commonSx: {

@@ -24,12 +24,14 @@ import {
   Tabs,
   TextField,
   TextFieldProps,
+  useMediaQuery,
 } from '@mui/material'
 
 import { signIn } from '@/apis/auth'
 import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
 import { gotoIdas } from '@/utils/routes'
+import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 
 import Captcha, {
@@ -131,7 +133,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   const doSignIn = async (formData: FormData, captchaValue?: string) => {
     try {
       setSigninPending(true)
-      const authorization = await signIn({
+      const result = await signIn({
         username: formData.username,
         password: formData.password,
         keep_signed_in: formData.keepSignedIn,
@@ -140,10 +142,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           captcha_type: captcha?.name,
         }),
       })
-      if (authorization) {
-        persistedStates.authorizationHeader = authorization
-        close()
-      }
+      persistedStates.authorizationHeader = result.authorization
+      close()
     } catch (e_) {
       const e = e_ as
         | {
@@ -154,7 +154,14 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           }
         | undefined
       if (e?.type == 'api' && e?.code == 1) {
-        setCaptcha(e.details.data[0])
+        setCaptcha(
+          isVpnProxy
+            ? {
+                name: 'hcaptcha',
+                site: '52100d97-0777-4497-8852-e380d5b3430b',
+              }
+            : e.details.data[0]
+        )
       } else {
         showError(e?.message || '登录失败！')
       }
@@ -181,7 +188,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         <Alert severity="info">{state.globalDialog.prompt}</Alert>
       )}
       <Tabs value={0} sx={{ my: 1.5 }}>
-        <Tab label="用户名密码登录" />
+        <Tab label="河畔密码登录" />
         <Tab label="统一身份认证登录" onClick={() => gotoIdas()} />
       </Tabs>
       <form onSubmit={onSubmit} ref={formRef}>
@@ -219,6 +226,18 @@ const LoginDialog = ({ open }: { open: boolean }) => {
             </Stack>
           </>
         )}
+        <Stack direction="row" justifyContent="center" mb={1.5}>
+          <Button onClick={() => gotoIdas({ mode: 'resetpassword' })}>
+            忘记密码
+          </Button>
+          <Button
+            onClick={() =>
+              dispatch({ type: 'open dialog', payload: { kind: 'register' } })
+            }
+          >
+            注册新用户
+          </Button>
+        </Stack>
         <Stack direction="row" justifyContent="center">
           <Button type="submit" disabled={signinPending} variant="contained">
             {signinPending ? '请稍候...' : '登录'}
@@ -241,42 +260,46 @@ export const TransparentBackdropBlurDialog = ({
   children,
   onClose,
   ...props
-}: DialogProps & { children: React.ReactNode }) => (
-  <Dialog
-    onClose={onClose}
-    {...props}
-    PaperProps={{
-      ...props.PaperProps,
-      sx: (theme) => ({
-        borderRadius: '8px',
-        backgroundColor:
-          theme.palette.mode == 'light'
-            ? 'rgba(243, 245, 247, 0.87)'
-            : 'rgba(49, 55, 66, 0.75)',
-      }),
-    }}
-    sx={{
-      backdropFilter: 'blur(3px)',
-      backgroundColor: 'rgba(189, 189, 189, 0.35)',
-      ...props.sx,
-    }}
-  >
-    {onClose && (
-      <DialogTitle sx={{ p: 1 }}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
-          <IconButton onClick={(e) => onClose && onClose(e, 'escapeKeyDown')}>
-            <Close />
-          </IconButton>
+}: DialogProps & { children: React.ReactNode }) => {
+  const thinView = useMediaQuery('(max-width: 560px)')
+  return (
+    <Dialog
+      onClose={onClose}
+      {...props}
+      PaperProps={{
+        ...props.PaperProps,
+        sx: (theme) => ({
+          borderRadius: '8px',
+          backgroundColor:
+            theme.palette.mode == 'light'
+              ? 'rgba(243, 245, 247, 0.87)'
+              : 'rgba(49, 55, 66, 0.75)',
+          ...(thinView && { m: 2 }),
+        }),
+      }}
+      sx={{
+        backdropFilter: 'blur(3px)',
+        backgroundColor: 'rgba(189, 189, 189, 0.35)',
+        ...props.sx,
+      }}
+    >
+      {onClose && (
+        <DialogTitle sx={{ p: 1 }}>
+          <Stack direction="row" justifyContent="flex-end" alignItems="center">
+            <IconButton onClick={(e) => onClose && onClose(e, 'escapeKeyDown')}>
+              <Close />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+      )}
+      <DialogContent sx={{ px: thinView ? 3 : 5 }}>
+        <Stack alignItems="center" mb={3} minWidth={thinView ? undefined : 352}>
+          <img src={logo} css={css({ maxWidth: '100%' })} />
         </Stack>
-      </DialogTitle>
-    )}
-    <DialogContent sx={{ px: 5 }}>
-      <Stack alignItems="center" mb={3} minWidth={352}>
-        <img src={logo} css={css({ maxWidth: '100%' })} />
-      </Stack>
-      {children}
-    </DialogContent>
-  </Dialog>
-)
+        {children}
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export default LoginDialog

@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify'
 
+import { FontSizeVariant, mapLegacyFontSize } from '@/utils/bbcode/bbcode'
 import { pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 import { searchParamsExtract } from '@/utils/tools'
@@ -94,7 +95,11 @@ const transformLink = (url?: string | null) => {
   }
 }
 
-export const transformUserHtml = (html: string) => {
+export const transformUserHtml = (
+  html: string,
+  normalizeLegacyFontSize?: boolean,
+  sizeVariant?: FontSizeVariant
+) => {
   const container = document.createElement('div')
   container.innerHTML = DOMPurify.sanitize(html)
   ;[].forEach.call(
@@ -113,5 +118,17 @@ export const transformUserHtml = (html: string) => {
       a.href = transformLegacyLinks(url)
     }
   })
+  if (normalizeLegacyFontSize) {
+    ;[].forEach.call(
+      container.querySelectorAll('font'),
+      (font: HTMLElement) => {
+        const size = font.getAttribute('size')
+        if (size) {
+          font.removeAttribute('size')
+          font.style.fontSize = mapLegacyFontSize(size, sizeVariant)
+        }
+      }
+    )
+  }
   return container.innerHTML
 }

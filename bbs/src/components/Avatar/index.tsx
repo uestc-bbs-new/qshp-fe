@@ -27,6 +27,7 @@ const Avatar = ({ uid, size, imageSize, alt, sx, ...other }: AvatarProps) => {
   }
   return (
     <MuiAvatar
+      key={uid}
       imgProps={{ loading: 'lazy' }}
       src={src}
       {...commonProps}

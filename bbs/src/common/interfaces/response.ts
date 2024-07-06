@@ -2,6 +2,16 @@ import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
 import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
+export type PaginationParams = {
+  total: number
+  page_size: number
+  page: number
+}
+
+export type GenericList<T> = PaginationParams & {
+  rows: T[]
+}
+
 export type ThreadBasics = {
   thread_id: number
   forum_id: number
@@ -61,7 +71,17 @@ export type Thread = ThreadBasics &
     poll?: ThreadPollDetails
     reply_credit?: ThreadReplyCredit
     collections?: Collection[]
+    last_moderation?: ModerateAction
   }
+
+export type ModerateAction = {
+  uid: number
+  username: string
+  dateline: number
+  expiration?: number
+  action: string
+  magic_name?: string
+}
 
 export type ThreadPollDetails = {
   /** 投票选项 */
@@ -122,19 +142,13 @@ export type UserInfo = {
   last_login_at: number
 }
 
-export type ThreadList = {
-  total: number
-  rows?: Array<Thread>
+export type ThreadList = GenericList<Thread> & {
   forum?: ForumDetails
 }
 
-export interface PostDetails {
-  page: number
-  pagesize: number
-  total: number
+export type PostDetails = GenericList<PostFloor> & {
   thread?: Thread
   forum?: ForumDetails
-  rows: PostFloor[]
 }
 
 /** 用户组相关信息 */
@@ -193,6 +207,9 @@ export interface PostFloor {
   reply_credit_amount?: number
   reply_credit_name?: string
   lastedit_id?: number
+  last_edit_time?: number
+  last_editor?: string
+  last_editor_uid?: number
   attachments?: Attachment[]
   invisible: number
 }
@@ -233,27 +250,6 @@ export interface PostExtraDetails {
 
 export interface PostDetailsByPostId {
   [post_id: number]: PostExtraDetails
-}
-
-export type IdasAuthResult = {
-  authorization?: string
-  new_user?: boolean
-  users?: {
-    uid: number
-    username: string
-  }[]
-  ephemeral_authorization: string
-  remaining_registers?: number
-}
-
-export type PaginationParams = {
-  total: number
-  page_size: number
-  page: number
-}
-
-export type GenericList<T> = PaginationParams & {
-  rows: T[]
 }
 
 export type MessageCounts = {
@@ -342,6 +338,7 @@ export type GlobalStat = {
     uid: number
     username: string
   }
+  online_users?: number
 }
 
 export type TopListKey =
@@ -356,8 +353,22 @@ export type TopList = {
   [id in TopListKey]?: TopListThread[]
 }
 
+export const kAnnouncementSimple = 1
+
+export type Announcement = {
+  kind: number
+  title: string
+  summary?: string
+  href?: string
+  start_time?: number
+  end_time?: number
+  highlight_color?: string
+  dark_highlight_color?: string
+}
+
 export type IndexData = {
   global_stat?: GlobalStat
+  announcement?: Announcement[]
   forum_list?: Forum[]
   top_list?: TopList
 }

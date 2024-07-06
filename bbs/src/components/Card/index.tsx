@@ -29,7 +29,11 @@ const Card = forwardRef(function Card(
     <Box
       {...other}
       ref={ref}
-      className={`rounded-lg shadow-lg ${tiny ? 'px-2' : 'px-4'} ${className}`}
+      className={`rounded-lg shadow-lg ${className}`}
+      sx={{
+        px: tiny ? 0.875 : 1.75,
+        ...other.sx,
+      }}
       style={{
         ...other.style,
         backgroundColor: theme.palette.background.paper,
