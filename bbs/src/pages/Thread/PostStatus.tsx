@@ -12,7 +12,11 @@ const PostStatus = ({ post }: { post: PostFloor }) => {
       )}
       {post.blocked && (
         <Alert severity="warning">
-          <Typography>本帖被管理员或版主屏蔽</Typography>
+          <Typography>
+            {post.blocked_by_report
+              ? '本帖举报人数较多，已暂时屏蔽'
+              : '本帖被管理员或版主屏蔽'}
+          </Typography>
         </Alert>
       )}
       {post.hidden_reply && (

@@ -199,6 +199,7 @@ export interface PostFloor {
 
   pinned?: boolean
   blocked?: boolean
+  blocked_by_report?: boolean
   warned?: boolean
   hidden_reply?: boolean
   password?: boolean
