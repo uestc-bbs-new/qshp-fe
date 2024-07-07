@@ -322,7 +322,7 @@ function Forum() {
                       (item: any) => item.display_order > 0
                     ) && (
                       <Top>
-                        {isFetching ? (
+                        {isFetching && !threadList?.rows?.length ? (
                           <List>
                             <ListItem>
                               <Skeleton
@@ -352,7 +352,7 @@ function Forum() {
                       searchParams={searchParams}
                       onChange={() => threadListTop.current?.scrollIntoView()}
                     >
-                      {isFetching ? (
+                      {isFetching && !threadList?.rows?.length ? (
                         <List>
                           {[...Array(8)].map((_, index) => (
                             <ListItem key={index}>
