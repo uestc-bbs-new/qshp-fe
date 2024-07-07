@@ -84,7 +84,7 @@ const TopListView = ({
       (lastLocation.current.pathname != location.pathname ||
         lastLocation.current.search != location.search)
     ) {
-      if (!state.toplistView?.sidebar) {
+      if (state.toplistView?.open && !state.toplistView?.sidebar) {
         dispatch({ type: 'close toplist', payload: { noTransition: true } })
       }
     }
