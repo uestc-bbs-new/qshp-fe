@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { useUnmount } from 'usehooks-ts'
 
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -30,11 +29,6 @@ const Home = () => {
   const mobileView = useMediaQuery('(max-width: 800px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
-  useUnmount(() => {
-    if (!state.toplistView?.sidebar) {
-      dispatch({ type: 'close toplist', payload: { noTransition: true } })
-    }
-  })
 
   const {
     data: indexData,

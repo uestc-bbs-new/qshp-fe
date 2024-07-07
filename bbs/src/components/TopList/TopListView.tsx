@@ -14,6 +14,7 @@ import React, {
 } from 'react'
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
+import { useLocation } from 'react-router-dom'
 
 import {
   Close,
@@ -75,6 +76,23 @@ const TopListView = ({
   }
 
   const forumList = useForumList()
+  const location = useLocation()
+  const lastLocation = useRef<{ pathname?: string; search?: string }>()
+  useEffect(() => {
+    if (
+      lastLocation.current &&
+      (lastLocation.current.pathname != location.pathname ||
+        lastLocation.current.search != location.search)
+    ) {
+      if (!state.toplistView?.sidebar) {
+        dispatch({ type: 'close toplist', payload: { noTransition: true } })
+      }
+    }
+    lastLocation.current = {
+      pathname: location.pathname,
+      search: location.search,
+    }
+  }, [location])
 
   return (
     <Stack height="100%">
