@@ -92,6 +92,7 @@ const Floor = ({
   onReply,
   onComment,
   onEdit,
+  onReport,
 }: {
   children: React.ReactNode
   threadControls?: React.ReactNode
@@ -103,6 +104,7 @@ const Floor = ({
   onReply: (post: PostFloor) => void
   onComment: (post: PostFloor) => void
   onEdit: (post: PostFloor) => void
+  onReport: (post: PostFloor) => void
 }) => {
   const gotoLink =
     post.position == 1 && post.is_first
@@ -255,6 +257,7 @@ const Floor = ({
               onReply={() => onReply(post)}
               onComment={() => onComment(post)}
               onEdit={() => onEdit(post)}
+              onReport={() => onReport(post)}
             />
           </Stack>
         </Stack>

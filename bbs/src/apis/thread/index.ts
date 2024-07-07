@@ -178,3 +178,6 @@ export const getAtList = (query: string, thread_id?: number) => {
     params: { q: query, ...(thread_id && { thread_id }) },
   })
 }
+
+export const reportPost = (pid: number, fid: number, message: string) =>
+  request.post(`${commonUrl}/post/report`, { pid, fid, message })

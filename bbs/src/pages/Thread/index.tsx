@@ -35,6 +35,7 @@ import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
 import { useWatermark } from './Watermark'
+import { ReportDialog } from './dialogs/Report'
 import ActionDialog from './dialogs/index'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
 
@@ -86,6 +87,7 @@ const Thread = () => {
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] =
     useState<ActionDialogType>(undefined)
+  const [reportDialog, setReportDialog] = useState(false)
   const isInternalEnforced =
     !!threadDetails?.forum_id &&
     kEnforceInternalFids.includes(threadDetails?.forum_id)
@@ -274,6 +276,11 @@ const Thread = () => {
     setDialogOpen(true)
   }
 
+  const handleReport = (post: PostFloor) => {
+    setActivePost(post)
+    setReportDialog(true)
+  }
+
   const currentlyReversed =
     query.order_type == 'reverse' ||
     (threadDetails?.reverse_replies && query.order_type != 'forward')
@@ -339,6 +346,7 @@ const Thread = () => {
                           onReply={handleReply}
                           onComment={handleComment}
                           onEdit={handleEdit}
+                          onReport={handleReport}
                           threadControls={
                             <>
                               <Link
@@ -440,6 +448,13 @@ const Thread = () => {
               onSubmitted,
               onComment: refreshComment,
             }}
+          />
+        )}
+        {activePost && reportDialog && (
+          <ReportDialog
+            open
+            onClose={() => setReportDialog(false)}
+            post={activePost}
           />
         )}
       </Box>
