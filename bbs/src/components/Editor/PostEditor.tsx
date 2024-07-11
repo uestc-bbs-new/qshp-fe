@@ -169,7 +169,7 @@ const PostEditor = ({
   }
 
   useEffect(() => {
-    if (valueRef.current.forum_id != forum?.fid) {
+    if (kind == 'newthread' && valueRef.current.forum_id != forum?.fid) {
       valueRef.current.forum_id = forum?.fid
       valueRef.current.type_id = undefined
     }
