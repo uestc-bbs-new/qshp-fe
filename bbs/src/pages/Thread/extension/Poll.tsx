@@ -175,6 +175,11 @@ const pollOptionBarStyle = {
   marginBottom: '4px',
   ...pollOptionBarBaseStyle,
 }
+const pollOptionBarPlaceholderStyle = {
+  ...pollOptionBarStyle,
+  height: '1px',
+  backgroundColor: '#cccccc',
+}
 const PollOption = ({
   poll,
   option,
@@ -219,19 +224,27 @@ const PollOption = ({
         ) : (
           <Typography my={1}>{label}</Typography>
         )}
-        <div css={pollOptionBarStyle}>
-          <div
-            css={pollOptionBarBaseStyle}
-            style={{
-              backgroundColor: color,
-              width: `${percentage}%`,
-            }}
-          ></div>
-        </div>
+        {option.votes == undefined ? (
+          <div css={pollOptionBarPlaceholderStyle} />
+        ) : (
+          <div css={pollOptionBarStyle}>
+            <div
+              css={pollOptionBarBaseStyle}
+              style={{
+                backgroundColor: color,
+                width: `${percentage}%`,
+              }}
+            ></div>
+          </div>
+        )}
       </Stack>
       <Stack direction="row" alignItems="flex-end">
-        <Typography mx={1}>{percentage.toFixed(1)}%</Typography>
-        <Typography sx={{ color }}>({option.votes || 0})</Typography>
+        {option.votes != undefined && (
+          <>
+            <Typography mx={1}>{percentage.toFixed(1)}%</Typography>
+            <Typography sx={{ color }}>({option.votes || 0})</Typography>
+          </>
+        )}
       </Stack>
     </>
   )
