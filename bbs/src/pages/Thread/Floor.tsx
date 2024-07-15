@@ -267,6 +267,7 @@ const Floor = ({
 }
 
 const PostAuthor = ({ post }: { post: PostFloor }) => {
+  const { state } = useAppState()
   return (
     <Box px={2} py={2}>
       <UserCard item={post}>
@@ -279,9 +280,18 @@ const PostAuthor = ({ post }: { post: PostFloor }) => {
           <Typography variant="authorName" mt={0.5} component="p">
             {post.is_anonymous ? '匿名' : post.author}
           </Typography>
+          {!!post.is_anonymous && state.user.uid == post.author_id && (
+            <Typography
+              variant="authorGroupSubtitle"
+              textAlign="center"
+              component="p"
+            >
+              （自己）
+            </Typography>
+          )}
         </AuthorLink>
       </UserCard>
-      {!!post.author_id && (
+      {!!post.author_id && !post.is_anonymous && (
         <AuthorDetails
           author={post.author}
           authorDetails={post.author_details}
@@ -292,6 +302,7 @@ const PostAuthor = ({ post }: { post: PostFloor }) => {
 }
 
 const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
+  const { state } = useAppState()
   const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <Box px={thinView ? 1 : 2} py={1}>
@@ -319,13 +330,14 @@ const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
                   {post.is_anonymous ? '匿名' : post.author}
                 </Typography>
               </AuthorLink>
-              {!!post.author_details?.digests && (
+              {!!post.author_details?.digests && !post.is_anonymous && (
                 <Stack alignItems="flex-start" ml={0.5}>
                   <DigestAuthor username={post.author} sx={{ p: 0 }} />
                 </Stack>
               )}
             </Stack>
             {!!post.author_id &&
+              !post.is_anonymous &&
               (post.author_details ? (
                 <Stack direction="row">
                   <Chip text={post.author_details.group_title} />
@@ -340,6 +352,15 @@ const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
                   ( 该用户已删除 )
                 </Typography>
               ))}
+            {!!post.is_anonymous && state.user.uid == post.author_id && (
+              <Typography
+                variant="authorGroupSubtitle"
+                textAlign="center"
+                component="p"
+              >
+                (自己)
+              </Typography>
+            )}
           </Stack>
           {!!post.author_details?.medals?.length && (
             <Stack ml={1} flexShrink={1} overflow="hidden">
@@ -359,7 +380,7 @@ const AuthorLink = ({
   post: PostFloor
   children?: ReactNode
 }) =>
-  post.author_id && post.author_details ? (
+  post.author_id && post.author_details && !post.is_anonymous ? (
     <Link to={pages.user({ uid: post.author_id })} underline="hover">
       {children}
     </Link>
