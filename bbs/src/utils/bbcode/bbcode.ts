@@ -310,7 +310,7 @@ function parseNonCodeBbcode(
       str = str.replace(/\[postbg\]\s*([^[<\r\n;'"?()]+?)\s*\[\/postbg\]/gi, '')
     }
     str = str.replace(
-      /\[color=([\w#(),\s]+?)\]/gi,
+      /\[color=([\w#(),.\s]+?)\]/gi,
       '<span class="post-text-color" style="color:$1">'
     )
     if (options.mode != 'postcomment') {
