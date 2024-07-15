@@ -300,11 +300,11 @@ function parseNonCodeBbcode(
         '<a href="$1$3" target="_blank">$4</a>'
       )
       str = str.replace(
-        /\[email\](.[^\\=[]"*)\[\/email\]/gi,
+        /\[email\](.[^\\=["]*)\[\/email\]/gi,
         '<a href="mailto:$1">$1</a>'
       )
       str = str.replace(
-        /\[email=(.[^\\=[]"*)\](.*?)\[\/email\]/gi,
+        /\[email=(.[^\\=["]*)\](.*?)\[\/email\]/gi,
         '<a href="mailto:$1" target="_blank">$2</a>'
       )
       str = str.replace(/\[postbg\]\s*([^[<\r\n;'"?()]+?)\s*\[\/postbg\]/gi, '')

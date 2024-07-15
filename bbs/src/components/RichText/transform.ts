@@ -84,11 +84,11 @@ const transformLink = (url?: string | null) => {
   if (!url) {
     return
   }
-  if (!url.match(/^(?:\/|https?:)/i)) {
+  if (!url.match(/^(?:\/|https?:|mailto:|tel:)/i)) {
     return `${siteRoot}/${url}`
   }
   const match = url.match(
-    /^(https?:\/*)(bbs\.uestc\.edu\.cn|bbs\.stuhome\.net|ibm\.anlove\.me|bbs\.anlove\.me|bbs\.auxten\.com|bbs\.qshpan\.com|bbs\.stuhome\.com|bbs\.tangdg\.info|bbs\.germanyt\.com|bbs\.watermen\.net|bbs\.uestc6\.edu\.cn)(\/*.*)/i
+    /^(https?:\/*)(bbs\.uestc\.edu\.cn|bbs-uestc-edu-cn-s\.vpn\.uestc\.edu\.cn(?::8118)?|bbs\.stuhome\.net|ibm\.anlove\.me|bbs\.anlove\.me|bbs\.auxten\.com|bbs\.qshpan\.com|bbs\.stuhome\.com|bbs\.tangdg\.info|bbs\.germanyt\.com|bbs\.watermen\.net|bbs\.uestc6\.edu\.cn)(\/*.*)/i
   )
   if (match) {
     return `${siteRoot}${match[3]}`
@@ -116,6 +116,10 @@ export const transformUserHtml = (
     const url = transformLink(originalUrl) || originalUrl
     if (url) {
       a.href = transformLegacyLinks(url)
+      if (!url.match(/^(?:\/|https?:\/*bbs\.uestc\.edu\.cn)/)) {
+        a.target = '_blank'
+        a.rel = 'noopener'
+      }
     }
   })
   if (normalizeLegacyFontSize) {
