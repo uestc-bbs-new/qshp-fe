@@ -30,10 +30,13 @@ const isFileImage = (fileName: string) =>
   supportedImageExtensions.includes(getFileExtension(fileName))
 
 const getMarkdownFromAttachment = (item: Attachment) => {
+  // Replace some special markdown characters that might interfere with markdown
+  // parsing or regexp replacing.
+  const filteredFileName = item.filename.replace(/[\][]()!]/g, '-')
   if (isFileImage(item.filename)) {
-    return `![${item.filename}](i:${item.attachment_id})`
+    return `![${filteredFileName}](i:${item.attachment_id})`
   }
-  return `[${item.filename}](a:${item.attachment_id})`
+  return `[${filteredFileName}](a:${item.attachment_id})`
 }
 
 function options({
