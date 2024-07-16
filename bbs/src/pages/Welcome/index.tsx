@@ -21,6 +21,8 @@ const articleCss = css({
   fontSize: 18,
   textAlign: 'justify',
   textWrap: 'pretty',
+  marginTop: '1em',
+  marginBottom: '2em',
   p: {
     margin: '0.5em 0',
     lineHeight: '1.75em',
