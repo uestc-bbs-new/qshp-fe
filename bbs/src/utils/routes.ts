@@ -141,6 +141,7 @@ export const pages = {
     ),
 
   resetPassword: `/resetpassword`,
+  welcome: '/welcome',
 }
 
 export const legacyPages = {

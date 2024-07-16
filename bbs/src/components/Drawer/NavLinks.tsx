@@ -68,6 +68,11 @@ const listServiceItems: NavLink[] = [
     external: true,
   },
   {
+    link: `${siteRoot}/home.php?mod=task`,
+    name: '水滴小任务',
+    external: true,
+  },
+  {
     link: `${siteRoot}/home.php?mod=spacecp&ac=credit&op=exchange`,
     name: '论坛货币兑换',
     external: true,
@@ -207,7 +212,7 @@ const Sections = () => {
   const narrowTopBar = useMediaQuery('(max-width: 850px)')
   const legacyUrl = useDiscuzLink()
   return (
-    <List style={{ color: '#7082a7' }} className=" pl-4">
+    <List className=" pl-4">
       <ListItemLink
         link={pages.index()}
         name="首页"

@@ -19,6 +19,7 @@ import {
 import Error from '@/components/Error'
 import { RegisterContent } from '@/components/Login/Register'
 import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
+import { pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import CommonLayout from './CommonLayout'
@@ -132,11 +133,12 @@ export const RegisterForm = ({
     }
     if (result) {
       persistedStates.authorizationHeader = result.authorization
-      if (window.innerWidth < 750) {
-        navigate(idasResult.continue, { replace: true })
-      } else {
-        location.href = '/'
-      }
+      navigate(pages.welcome, {
+        replace: true,
+        state: {
+          continue: window.innerWidth < 750 ? idasResult.continue : undefined,
+        },
+      })
     }
   }
   return (

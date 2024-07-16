@@ -23,6 +23,7 @@ import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
+import { Welcome } from '@/pages/Welcome'
 import { isPreviewRelease } from '@/utils/releaseMode'
 
 import routes from './routes'
@@ -123,6 +124,11 @@ routes.current = [
     path: '/register',
     id: 'register',
     element: <RegisterHome />,
+  },
+  {
+    path: '/welcome',
+    id: 'welcome',
+    element: <Welcome />,
   },
   {
     path: '/resetpassword',
