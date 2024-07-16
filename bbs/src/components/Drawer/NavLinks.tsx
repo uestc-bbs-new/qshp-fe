@@ -185,15 +185,24 @@ const ListItemLink = ({
   link,
   name,
   Icon,
+  external,
   onClick,
 }: {
   link: string
   name: string
   Icon?: React.ElementType
+  external?: boolean
   onClick?: () => void
 }) => {
   return (
-    <Link to={link} underline="none" color="inherit" onClick={onClick}>
+    <Link
+      to={link}
+      external={external}
+      target={external ? '_blank' : undefined}
+      underline="none"
+      color="inherit"
+      onClick={onClick}
+    >
       <ListItemButton>
         <ListItemIcon sx={{ minWidth: 36, color: '#0268FD' }}>
           {Icon ? <Icon /> : <KeyboardCommandKeyIcon />}
@@ -256,7 +265,11 @@ const Sections = () => {
         name="客户端下载"
         onClick={() => dispatch({ type: 'set drawer' })}
       ></ListItemLink>
-      {/* <ListItemLink link={pages.index()} name="河畔小游戏"></ListItemLink> */}
+      <ListItemLink
+        link={`${siteRoot}/merge_qshp/`}
+        external
+        name="河畔小游戏"
+      ></ListItemLink>
       {narrowTopBar && (
         <Link
           to={legacyUrl}
