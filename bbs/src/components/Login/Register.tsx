@@ -22,6 +22,15 @@ export const RegisterContent = ({ small }: { small?: boolean }) => (
         进入统一身份认证平台
       </Button>
     </Stack>
+    <Typography color="red" my={2}>
+      2024 级本科生预计 8 月中旬可在
+      <Link to="https://freshman.uestc.edu.cn/" target="_blank" external>
+        迎新系统
+      </Link>
+      查询学号，在统一身份认证平台
+      <br />
+      激活账号后即可注册清水河畔，敬请期待。
+    </Typography>
     <Stack direction="row" justifyContent="flex-end" mt={3}>
       <Link
         external
