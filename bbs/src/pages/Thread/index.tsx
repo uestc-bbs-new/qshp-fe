@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 
 import {
+  Alert,
   Box,
   List,
   ListItem,
@@ -27,6 +28,12 @@ import {
   PostFloor,
   Thread as ThreadType,
 } from '@/common/interfaces/response'
+import {
+  kThreadDisplayOrderDeleted,
+  kThreadDisplayOrderDraft,
+  kThreadDisplayOrderInReview,
+  kThreadDisplayOrderRejected,
+} from '@/common/interfaces/thread'
 import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -108,6 +115,7 @@ const Thread = () => {
       order_type: orderType || undefined,
       thread_details: threadChanged || !threadDetails,
       forum_details: threadChanged || !forumDetails,
+      a: !!searchParams.get('a'),
     }
   }
   const [query, setQuery] = useState(initQuery())
@@ -325,6 +333,22 @@ const Thread = () => {
               page={info?.page ?? 1}
               onChange={handlePageChange}
             />
+            {info?.thread?.display_order == kThreadDisplayOrderDraft && (
+              <Alert severity="info">本帖在草稿箱中，尚未公开发表。</Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderDeleted && (
+              <Alert severity="error">本帖已删除，仅管理员可见。</Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderRejected && (
+              <Alert severity="error">
+                本帖未通过审核，已忽略，仅管理员可见。
+              </Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderInReview && (
+              <Alert severity="warning">
+                本版块发帖后需要审核，新主题待审核通过后公开显示。
+              </Alert>
+            )}
             {info?.rows
               ? info?.rows.map((item, index) => {
                   return (

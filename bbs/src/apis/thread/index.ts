@@ -23,6 +23,7 @@ export const getThreadsInfo = async ({
   order_type,
   thread_details,
   forum_details,
+  a,
 }: {
   thread_id: number
   page?: number
@@ -30,6 +31,7 @@ export const getThreadsInfo = async ({
   order_type?: string
   thread_details?: boolean
   forum_details?: boolean
+  a?: boolean
 }) => {
   const result = await request.get<PostDetails>(`${commonUrl}/post/list`, {
     params: {
@@ -40,6 +42,7 @@ export const getThreadsInfo = async ({
         order_type == 'reverse' ? 1 : order_type == 'forward' ? 2 : null,
       thread_details: thread_details ? 1 : 0,
       forum_details: forum_details ? 1 : 0,
+      ...(a && { a: 1 }),
     },
   })
   makeThreadTypesMap(result.forum)

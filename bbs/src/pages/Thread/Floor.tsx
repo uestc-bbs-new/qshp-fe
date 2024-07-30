@@ -5,6 +5,7 @@ import PublishIcon from '@mui/icons-material/Publish'
 import {
   Alert,
   Box,
+  Chip as MuiChip,
   Stack,
   Tooltip,
   Typography,
@@ -17,6 +18,12 @@ import {
   PostFloor,
   Thread,
 } from '@/common/interfaces/response'
+import {
+  kThreadDisplayOrderDeleted,
+  kThreadDisplayOrderDraft,
+  kThreadDisplayOrderInReview,
+  kThreadDisplayOrderRejected,
+} from '@/common/interfaces/thread'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
@@ -74,7 +81,39 @@ function PostSubject({
             <Chip text={type.name} size="large" />
           </Link>
         )}
-        <Typography variant="h6">{post.subject}</Typography>
+        <Typography
+          variant="h6"
+          style={
+            thread?.display_order == kThreadDisplayOrderDeleted
+              ? {
+                  textDecoration: 'line-through red 2px',
+                }
+              : undefined
+          }
+        >
+          {post.subject}
+        </Typography>
+        {thread?.display_order == kThreadDisplayOrderDraft && (
+          <MuiChip
+            label="草稿"
+            variant="threadItemDraft"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
+        {thread?.display_order == kThreadDisplayOrderInReview && (
+          <MuiChip
+            label="审核中"
+            variant="threadItemReview"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
+        {thread?.display_order == kThreadDisplayOrderRejected && (
+          <MuiChip
+            label="已忽略"
+            variant="threadItemReview"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
       </Stack>
     )
   }

@@ -23,3 +23,8 @@ export const kThreadDisplayOrderDeleted = -1
 export const kThreadDisplayOrderInReview = -2
 export const kThreadDisplayOrderRejected = -3
 export const kThreadDisplayOrderDraft = -4
+
+export const kPostInvisibleThreadDeleted = -1
+export const kPostInvisibleInReview = -2
+export const kPostInvisibleDraft = -3
+export const kPostInvisibleReplyDeleted = -5
