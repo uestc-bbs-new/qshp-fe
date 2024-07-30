@@ -149,6 +149,7 @@ export type ThreadList = GenericList<Thread> & {
 export type PostDetails = GenericList<PostFloor> & {
   thread?: Thread
   forum?: ForumDetails
+  redirect_tid?: number
 }
 
 /** 用户组相关信息 */

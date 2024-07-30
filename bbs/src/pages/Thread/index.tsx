@@ -19,8 +19,14 @@ import {
 } from '@mui/material'
 
 import { getPostDetails, getThreadsInfo } from '@/apis/thread'
+import { ApiError } from '@/common/interfaces/error'
+import { errThreadRedirected } from '@/common/interfaces/errors'
 import { ForumDetails } from '@/common/interfaces/forum'
-import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
+import {
+  PostDetails,
+  PostFloor,
+  Thread as ThreadType,
+} from '@/common/interfaces/response'
 import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -127,8 +133,21 @@ const Thread = () => {
     refetch,
   } = useQuery({
     queryKey: ['thread', query],
-    queryFn: () => {
-      return getThreadsInfo(query)
+    queryFn: async () => {
+      try {
+        return await getThreadsInfo(query)
+      } catch (ee) {
+        const e = ee as ApiError
+        if (
+          e.type == 'api' &&
+          e.code == errThreadRedirected &&
+          e.details?.data?.redirect_tid
+        ) {
+          navigate(pages.thread(e.details.data.redirect_tid))
+          return await new Promise<PostDetails>(() => {})
+        }
+        throw e
+      }
     },
   })
   useEffect(() => {
