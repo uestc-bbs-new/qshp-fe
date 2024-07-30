@@ -54,6 +54,9 @@ const baseComponent = {
       },
     ],
   },
+}
+
+export const getComponentsByMode = (mode: 'dark' | 'light') => ({
   MuiChip: {
     variants: [
       {
@@ -97,9 +100,27 @@ const baseComponent = {
             'linear-gradient(270.00deg, rgb(217, 247, 190) 0%,rgba(217, 247, 190, 0) 100%),rgb(92, 219, 211)',
         },
       },
+      {
+        props: { variant: 'threadItemDraft' },
+        style: {
+          ...threadItemLabelCommonStyle,
+          background:
+            mode == 'dark'
+              ? 'linear-gradient(270.00deg, rgb(188, 188, 188) 0%,rgba(188, 188, 188, 0) 100%),rgb(109, 109, 109)'
+              : 'linear-gradient(270.00deg, rgb(208, 208, 208) 0%,rgba(208, 208, 208, 0) 100%),rgb(169, 169, 169)',
+        },
+      },
+      {
+        props: { variant: 'threadItemReview' },
+        style: {
+          ...threadItemLabelCommonStyle,
+          background:
+            'linear-gradient(90.00deg, rgb(234, 33, 33),rgba(255, 133, 192, 0) 100%),linear-gradient(270.00deg, rgba(250, 140, 22, 0.8) 0%,rgba(250, 84, 28, 0.8) 99.237%)',
+        },
+      },
     ],
   },
-}
+})
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
@@ -204,6 +225,8 @@ declare module '@mui/material/Chip' {
     threadItemRecommended: true
     threadItemExcellent: true
     threadItemFreshman: true
+    threadItemDraft: true
+    threadItemReview: true
   }
 }
 

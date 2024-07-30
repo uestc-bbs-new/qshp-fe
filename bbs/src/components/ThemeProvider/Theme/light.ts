@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material'
 
-import baseComponent, { baseTheme } from './base'
+import baseComponent, { baseTheme, getComponentsByMode } from './base'
 
 const lightTheme = createTheme(
   {
@@ -22,6 +22,7 @@ const lightTheme = createTheme(
     },
     components: {
       ...baseComponent,
+      ...getComponentsByMode('light'),
     },
   }
 )

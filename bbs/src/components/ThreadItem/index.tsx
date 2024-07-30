@@ -20,6 +20,12 @@ import {
   TopListKey,
   TopListThread,
 } from '@/common/interfaces/response'
+import {
+  kThreadDisplayOrderDeleted,
+  kThreadDisplayOrderDraft,
+  kThreadDisplayOrderInReview,
+  kThreadDisplayOrderRejected,
+} from '@/common/interfaces/thread'
 import Chip from '@/components/Chip'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -140,21 +146,26 @@ const ThreadItem = ({
                         variant="threadItemSubject"
                         color="inherit"
                         sx={{ verticalAlign: 'middle' }}
-                        style={
-                          ignoreThreadHighlight
-                            ? undefined
-                            : {
-                                fontWeight: data.highlight_bold
-                                  ? 'bold'
-                                  : undefined,
-                                fontStyle: data.highlight_italic
-                                  ? 'italic'
-                                  : undefined,
-                                textDecoration: data.highlight_underline
-                                  ? 'underline'
-                                  : undefined,
-                              }
-                        }
+                        style={{
+                          ...(!ignoreThreadHighlight && {
+                            fontWeight: data.highlight_bold
+                              ? 'bold'
+                              : undefined,
+                            fontStyle: data.highlight_italic
+                              ? 'italic'
+                              : undefined,
+                            textDecoration: data.highlight_underline
+                              ? 'underline'
+                              : undefined,
+                          }),
+                          ...((data.display_order ==
+                            kThreadDisplayOrderDeleted ||
+                            data.display_order ==
+                              kThreadDisplayOrderRejected) && {
+                            textDecoration: 'line-through red 2px',
+                            opacity: 0.8,
+                          }),
+                        }}
                       >
                         {data.subject}
                       </Typography>
@@ -454,6 +465,27 @@ const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
       <MuiChip
         label="新人"
         variant="threadItemFreshman"
+        sx={{ mx: 0.5, verticalAlign: 'middle' }}
+      />
+    )}
+    {thread.display_order == kThreadDisplayOrderDraft && (
+      <MuiChip
+        label="草稿"
+        variant="threadItemDraft"
+        sx={{ mx: 0.5, verticalAlign: 'middle' }}
+      />
+    )}
+    {thread.display_order == kThreadDisplayOrderInReview && (
+      <MuiChip
+        label="审核中"
+        variant="threadItemReview"
+        sx={{ mx: 0.5, verticalAlign: 'middle' }}
+      />
+    )}
+    {thread.display_order == kThreadDisplayOrderRejected && (
+      <MuiChip
+        label="已忽略"
+        variant="threadItemReview"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}

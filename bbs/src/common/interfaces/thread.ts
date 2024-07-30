@@ -18,3 +18,8 @@ export type PostReplyResult = {
   post_id: number
   ext_credits_update?: ExtCreditMap
 }
+
+export const kThreadDisplayOrderDeleted = -1
+export const kThreadDisplayOrderInReview = -2
+export const kThreadDisplayOrderRejected = -3
+export const kThreadDisplayOrderDraft = -4
