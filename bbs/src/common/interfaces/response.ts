@@ -70,6 +70,7 @@ export type Thread = ThreadBasics &
   ThreadExtended & {
     poll?: ThreadPollDetails
     reply_credit?: ThreadReplyCredit
+    rush_reply?: RushReplyDetails
     collections?: Collection[]
     last_moderation?: ModerateAction
   }
@@ -129,6 +130,15 @@ export type ThreadReplyCredit = {
   remaining_amount: number
 }
 
+export type RushReplyDetails = {
+  credit_limit?: number
+  start_time?: number
+  end_time?: number
+  max_position?: number
+  reply_limit?: number
+  target_positions?: string[]
+}
+
 export type Users = {
   user_id: number
   username: string
@@ -184,7 +194,7 @@ export interface PostFloor {
   thread_id: number
   forum_id: number
   position: number
-  is_first: number
+  is_first?: number
   dateline: number
   subject: string
   message: string
@@ -194,7 +204,7 @@ export interface PostFloor {
   author_details?: PostAuthorDetails
   support: number
   oppose: number
-  is_anonymous: number
+  is_anonymous?: number
   usesig: number
   smileyoff: number
 
@@ -213,7 +223,7 @@ export interface PostFloor {
   last_editor?: string
   last_editor_uid?: number
   attachments?: Attachment[]
-  invisible: number
+  invisible?: number
 }
 
 export interface PostComment {
