@@ -242,7 +242,7 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
-        attachments: editor.current?.attachments,
+        attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()
