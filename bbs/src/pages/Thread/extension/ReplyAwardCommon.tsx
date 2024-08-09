@@ -55,17 +55,20 @@ export const ReplyAwardBadge = ({
 )
 
 const kReplyAwardHeight = 56
+const kReplyAwardLargeHeight = 72
 
 export const ReplyAwardFloorLeft = ({
   shortName,
   promptText,
   rightBadge,
   topBottom,
+  large,
 }: {
   shortName: string
   promptText: React.ReactNode
   rightBadge?: React.ReactNode
   topBottom?: boolean
+  large?: boolean
 }) => (
   <Stack
     direction="row"
@@ -74,7 +77,9 @@ export const ReplyAwardFloorLeft = ({
     }
     alignItems="center"
     borderBottom={topBottom ? undefined : '5px solid #A3B8DC'}
-    height={topBottom ? undefined : kReplyAwardHeight}
+    height={
+      topBottom ? undefined : large ? kReplyAwardLargeHeight : kReplyAwardHeight
+    }
     px={topBottom ? 2 : undefined}
     pt={topBottom ? 1.5 : undefined}
   >
@@ -102,16 +107,20 @@ export const ReplyAwardFloorLeft = ({
 export const ReplyAwardFloorRight = ({
   children,
   topBottom,
+  large,
 }: {
   children: React.ReactNode
   topBottom?: boolean
+  large?: boolean
 }) => (
   <Stack
     direction="row"
     alignItems="center"
     justifyContent="space-between"
     borderBottom={`${topBottom ? 2 : 5}px solid #E0E0E0`}
-    height={topBottom ? undefined : kReplyAwardHeight}
+    height={
+      topBottom ? undefined : large ? kReplyAwardLargeHeight : kReplyAwardHeight
+    }
     px={2}
     py={topBottom ? 1 : undefined}
   >

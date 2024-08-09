@@ -49,6 +49,11 @@ import {
   ReplyCreditFloorLeft,
   ReplyCreditFloorRight,
 } from './extension/ReplyCredit'
+import {
+  RushReplyBadge,
+  RushReplyFloorLeft,
+  RushReplyFloorRight,
+} from './extension/RushReply'
 import { PostExtraDetailsEx } from './types'
 
 function PostSubject({
@@ -164,22 +169,50 @@ const Floor = ({
             })}
             width={192}
           >
-            {firstInPage && threadDetails?.reply_credit && (
-              <ReplyCreditFloorLeft threadDetails={threadDetails} />
+            {firstInPage && (
+              <>
+                {threadDetails?.reply_credit && (
+                  <ReplyCreditFloorLeft threadDetails={threadDetails} />
+                )}
+                {threadDetails?.rush_reply && (
+                  <RushReplyFloorLeft threadDetails={threadDetails} />
+                )}
+              </>
             )}
             <PostAuthor post={post} />
           </Stack>
         )}
         <Stack className="flex-1" minWidth="1em">
-          {firstInPage && threadDetails?.reply_credit && (
+          {firstInPage && (
             <>
-              {narrowView && (
-                <ReplyCreditFloorLeft threadDetails={threadDetails} topBottom />
+              {threadDetails?.reply_credit && (
+                <>
+                  {narrowView && (
+                    <ReplyCreditFloorLeft
+                      threadDetails={threadDetails}
+                      topBottom
+                    />
+                  )}
+                  <ReplyCreditFloorRight
+                    threadDetails={threadDetails}
+                    topBottom={narrowView}
+                  />
+                </>
               )}
-              <ReplyCreditFloorRight
-                threadDetails={threadDetails}
-                topBottom={narrowView}
-              />
+              {threadDetails?.rush_reply && (
+                <>
+                  {narrowView && (
+                    <RushReplyFloorLeft
+                      threadDetails={threadDetails}
+                      topBottom
+                    />
+                  )}
+                  <RushReplyFloorRight
+                    threadDetails={threadDetails}
+                    topBottom={narrowView}
+                  />
+                </>
+              )}
             </>
           )}
           {narrowView && <PostAuthorLandscape post={post} />}
@@ -226,6 +259,12 @@ const Floor = ({
             )}
             <PostStatus post={post} />
             {post.reply_credit_name && <ReplyCreditBadge post={post} />}
+            {threadDetails?.rush_reply && (
+              <RushReplyBadge
+                rushReply={threadDetails.rush_reply}
+                post={post}
+              />
+            )}
             {children}
             {post.position == 1 && !!post.is_first && (
               <PollExtension threadDetails={threadDetails} />
