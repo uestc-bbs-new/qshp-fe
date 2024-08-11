@@ -32,7 +32,7 @@ const isFileImage = (fileName: string) =>
 const getMarkdownFromAttachment = (item: Attachment) => {
   // Replace some special markdown characters that might interfere with markdown
   // parsing or regexp replacing.
-  const filteredFileName = item.filename.replace(/[\][]()!]/g, '-')
+  const filteredFileName = item.filename.replace(/[[\]()!~_$]/g, '-')
   if (isFileImage(item.filename)) {
     return `![${filteredFileName}](i:${item.attachment_id})`
   }
