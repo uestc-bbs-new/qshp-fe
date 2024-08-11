@@ -33,13 +33,13 @@ export const RegisterContent = ({ small }: { small?: boolean }) => {
         textAlign="justify"
         sx={{ textWrap: 'pretty' }}
       >
-        2024 级本科生预计 8 月中旬可在
-        <Link to="https://freshman.uestc.edu.cn/" target="_blank" external>
-          迎新系统
+        2024 级新生请在
+        <Link to="https://idas.uestc.edu.cn/" target="_blank" external>
+          统一身份认证平台
         </Link>
-        查询学号，在统一身份认证平台
+        中点击登录按钮下方的“账号激活”，
         {!thin && <br />}
-        激活账号后即可注册清水河畔，敬请期待。
+        填写信息完成激活后即可在此注册清水河畔。
       </Typography>
       <Stack direction="row" justifyContent="flex-end" mt={3}>
         <Link
