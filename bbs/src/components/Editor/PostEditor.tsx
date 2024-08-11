@@ -242,7 +242,9 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
-        attachments,
+        attachments: editLegacy
+          ? valueRef.current.attachments
+          : editor.current?.attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()
