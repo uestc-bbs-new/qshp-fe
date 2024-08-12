@@ -63,7 +63,9 @@ export const RushReplyFloorLeft = ({
       </>
     }
     rightBadge={
-      threadDetails.can_reply && topBottom ? <RushReplyInProgress /> : undefined
+      threadDetails.can_reply && topBottom ? (
+        <RushReplyStatus rushReply={threadDetails.rush_reply} />
+      ) : undefined
     }
   />
 )
@@ -146,27 +148,40 @@ export const RushReplyFloorRight = ({
           `，目标楼层：${threadDetails.rush_reply.target_positions.join('、')}`}
         。
       </Typography>
-      {threadDetails.can_reply && !topBottom && <RushReplyInProgress />}
+      {threadDetails.can_reply && !topBottom && (
+        <RushReplyStatus rushReply={threadDetails.rush_reply} />
+      )}
     </ReplyAwardFloorRight>
   )
 }
 
-const RushReplyInProgress = () => (
-  <Stack
-    direction="row"
-    alignItems="center"
-    flexShrink={0}
-    ml={1.5}
-    sx={{
-      borderRadius: '4px',
-      backgroundColor: 'rgba(33, 117, 243, 0.8)',
-      color: 'white',
-      fontSize: 16,
-      px: 1.25,
-      py: 0.75,
-    }}
-  >
-    <MilitaryTech />
-    <Typography ml={1}>抢楼进行中</Typography>
-  </Stack>
-)
+const RushReplyStatus = ({ rushReply }: { rushReply?: RushReplyDetails }) => {
+  const now = Date.now() / 1000
+  const notStarted = rushReply?.start_time && rushReply.start_time > now
+  const ended = rushReply?.end_time && rushReply.end_time < now
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      flexShrink={0}
+      ml={1.5}
+      sx={{
+        borderRadius: '4px',
+        backgroundColor: notStarted
+          ? 'rgba(215, 55, 45, 0.8)'
+          : ended
+            ? 'rgba(111, 111, 111, 0.8)'
+            : 'rgba(33, 117, 243, 0.8)',
+        color: 'white',
+        fontSize: 16,
+        px: 1.25,
+        py: 0.75,
+      }}
+    >
+      <MilitaryTech />
+      <Typography ml={1}>
+        {notStarted ? '抢楼未开始' : ended ? '抢楼已结束' : '抢楼进行中'}
+      </Typography>
+    </Stack>
+  )
+}
