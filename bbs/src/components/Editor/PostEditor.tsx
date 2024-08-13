@@ -214,7 +214,16 @@ const PostEditor = ({
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
           setAttachments([])
-          notifyCreditsUpdate(result.ext_credits_update)
+          if (result.pending_review) {
+            dispatch({
+              type: 'open snackbar',
+              payload: {
+                severity: 'warning',
+                message: '本版块发帖后需要审核，审核通过后才会公开显示。',
+              },
+            })
+          }
+          notifyCreditsUpdate(result.ext_credits_update, 3000)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -253,7 +262,7 @@ const PostEditor = ({
     }
   }
 
-  const notifyCreditsUpdate = (updates?: ExtCreditMap) => {
+  const notifyCreditsUpdate = (updates?: ExtCreditMap, delayMs?: number) => {
     if (updates) {
       let hasNegative = false
       const message = extCreditNames
@@ -270,13 +279,15 @@ const PostEditor = ({
         .filter((text) => !!text)
         .join('，')
       if (message) {
-        dispatch({
-          type: 'open snackbar',
-          payload: {
-            severity: hasNegative ? 'warning' : 'success',
-            message,
-          },
-        })
+        setTimeout(() => {
+          dispatch({
+            type: 'open snackbar',
+            payload: {
+              severity: hasNegative ? 'warning' : 'success',
+              message,
+            },
+          })
+        }, delayMs ?? 0)
       }
     }
   }

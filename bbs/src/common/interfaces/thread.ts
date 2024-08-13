@@ -11,6 +11,7 @@ export type ThreadTypeMap = { [type_id: number]: ThreadType }
 
 export type PostThreadResult = {
   thread_id: number
+  pending_review?: boolean
   ext_credits_update?: ExtCreditMap
 }
 
