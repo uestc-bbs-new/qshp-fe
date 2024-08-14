@@ -9,6 +9,7 @@ import pages from './pages'
 const list = [
   { text: '全局公告', to: pages.announcement() },
   { text: '首页列表', to: pages.toplist() },
+  { text: '高级', to: pages.advanced() },
 ]
 
 const Layout = () => (

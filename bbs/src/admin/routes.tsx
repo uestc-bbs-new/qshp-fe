@@ -20,6 +20,11 @@ const adminRoutes: RouteObject[] = [
         path: 'toplist',
         lazy: () => import('./lazy').then((a) => a.ToplistRoute),
       },
+      {
+        id: 'admin/adnavced',
+        path: 'advanced',
+        lazy: () => import('./lazy').then((a) => a.AdvancedRoute),
+      },
     ],
   },
 ]
