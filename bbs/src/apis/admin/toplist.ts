@@ -35,5 +35,5 @@ export type HotlistConfig = {
 
 export const getHotlistConfig = () =>
   request.get<HotlistConfig>(kHotlistConfigUrl)
-export const setAnnouncement = (config: HotlistConfig) =>
+export const setHotlistConfig = (config: HotlistConfig) =>
   request.post(kHotlistConfigUrl, config)
