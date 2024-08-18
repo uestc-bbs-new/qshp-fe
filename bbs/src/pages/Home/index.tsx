@@ -10,7 +10,6 @@ import {
   Skeleton,
   Stack,
   useMediaQuery,
-  useTheme,
 } from '@mui/material'
 
 import { getIndexData } from '@/apis/common'
@@ -21,6 +20,7 @@ import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
+import { persistedStates } from '@/utils/storage'
 
 import { ForumGroup } from './ForumCover'
 
@@ -29,13 +29,7 @@ const Home = () => {
   const mobileView = useMediaQuery('(max-width: 800px)')
   const { state, dispatch } = useAppState()
   const location = useLocation()
-  useEffect(() => {
-    return () => {
-      dispatch({ type: 'close toplist', payload: { noTransition: true } })
-    }
-  }, [mobileView])
 
-  const theme = useTheme()
   const {
     data: indexData,
     isLoading,
@@ -67,7 +61,10 @@ const Home = () => {
     if (indexData?.top_list) {
       globalCache.topList = indexData.top_list
     }
-    if ((mobileView && indexData) || state.toplistView?.manuallyOpened) {
+    if (
+      ((mobileView && indexData) || state.toplistView?.manuallyOpened) &&
+      !state.toplistView?.sidebar
+    ) {
       dispatch({
         type: 'open toplist',
         payload: {
@@ -123,7 +120,13 @@ const Home = () => {
           onClick={() => {
             dispatch({
               type: 'open toplist',
-              payload: { manuallyOpened: true },
+              payload: {
+                manuallyOpened: true,
+                ...((state.toplistView?.sidebar ||
+                  persistedStates.toplistMode == 'sidebar') && {
+                  sidebar: true,
+                }),
+              },
             })
           }}
         >

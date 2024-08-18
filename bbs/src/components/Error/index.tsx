@@ -1,6 +1,5 @@
 import {
   Alert,
-  AlertColor,
   AlertTitle,
   Button,
   Stack,
@@ -9,6 +8,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { parseApiError } from '@/apis/error'
 import { payForum } from '@/apis/forum'
 import { ExtCreditMap, extCreditNames } from '@/common/interfaces/base'
 import {
@@ -18,13 +18,6 @@ import {
 } from '@/common/interfaces/errors'
 
 import Separated from '../Separated'
-
-const isForumRestrictions = (error: any) =>
-  !!(
-    error &&
-    error.code &&
-    [errForumRestrictedByCredits, errForumRestrictedByPay].includes(error.code)
-  )
 
 const Credits = ({ extCredits }: { extCredits: ExtCreditMap }) => (
   <Separated separator="，">
@@ -60,30 +53,8 @@ const Error = ({
   onRefresh?: () => void
   small?: boolean
 }) => {
-  let message = error.message
-  if (error.type == 'http') {
-    if (error.status == 401) {
-      message = '该页面需要登录后才能浏览。'
-    } else {
-      message = `HTTP ${error.status} ${error.statusText}`
-    }
-  } else if (error.type == 'network') {
-    message = '网络不畅，请稍后刷新重试'
-  } else if (!message) {
-    message = '系统错误'
-  }
+  const { message, severity, title, forumRestrictions } = parseApiError(error)
 
-  let severity: AlertColor = 'error'
-  let title = '错误'
-  let forumRestrictions: ForumRestrictions | undefined = undefined
-  if (isForumRestrictions(error)) {
-    severity = 'warning'
-    title = '提示'
-    forumRestrictions = error.details?.data
-    if (forumRestrictions?.prompt) {
-      message = forumRestrictions.prompt
-    }
-  }
   return (
     <Alert
       severity={severity}

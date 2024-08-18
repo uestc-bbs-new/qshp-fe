@@ -30,7 +30,7 @@ import {
 import { signIn } from '@/apis/auth'
 import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
-import { gotoIdas } from '@/utils/routes'
+import { gotoIdas, pages } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 
@@ -227,7 +227,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
           </>
         )}
         <Stack direction="row" justifyContent="center" mb={1.5}>
-          <Button onClick={() => gotoIdas({ mode: 'resetpassword' })}>
+          {/* TODO: Do not use location.href */}
+          <Button onClick={() => (location.href = pages.resetPassword)}>
             忘记密码
           </Button>
           <Button

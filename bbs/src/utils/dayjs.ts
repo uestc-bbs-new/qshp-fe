@@ -11,10 +11,12 @@ dayjs.extend(duration)
 
 export const chineseTime = (
   time: number,
-  options?: { short?: boolean; full?: boolean }
+  options?: { short?: boolean; full?: boolean; seconds?: boolean }
 ) => {
   if (options?.full) {
-    return dayjs(time).format('YYYY-MM-DD HH:mm')
+    return dayjs(time).format(
+      `YYYY-MM-DD HH:mm${options?.seconds ? ':ss' : ''}`
+    )
   }
   const now = new Date()
   let format = 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm')

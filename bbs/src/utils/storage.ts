@@ -20,7 +20,10 @@ const getLocalStorage = (key: string, defaultValue?: string) => {
 
 const kAuthorizationKey = 'newbbs_authorization'
 const kTheme = 'newbbs_theme'
+const kTopListMode = 'newbbs_toplist_mode'
 const kTopListAsideLastTab = 'toplist_aside_last_tab'
+
+export type TopListMode = 'full' | 'sidebar'
 
 export const persistedStates = {
   get topListAsideLastTab(): string | undefined {
@@ -44,5 +47,12 @@ export const persistedStates = {
   },
   set theme(value: Theme | 'auto') {
     setLocalStorage(kTheme, value)
+  },
+  get toplistMode(): TopListMode {
+    const mode = getLocalStorage(kTopListMode, 'full')
+    return mode == 'sidebar' ? 'sidebar' : 'full'
+  },
+  set toplistMode(value: TopListMode) {
+    setLocalStorage(kTopListMode, value ?? 'full')
   },
 }

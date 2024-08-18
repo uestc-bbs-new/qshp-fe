@@ -14,6 +14,7 @@ type FooterProps = {
   onReply?: () => void
   onComment?: () => void
   onEdit?: () => void
+  onReport?: () => void
 }
 
 const Footer = ({
@@ -23,6 +24,7 @@ const Footer = ({
   onReply,
   onComment,
   onEdit,
+  onReport,
 }: FooterProps) => {
   const { state } = useAppState()
   const [support, setSupport] = useState(post.support)
@@ -46,7 +48,7 @@ const Footer = ({
     }
   }
   return (
-    <Stack direction="row" mt={1}>
+    <Stack direction="row" flexWrap="wrap" mt={1}>
       {canReply && (
         <>
           <Button variant="text" onClick={onComment}>
@@ -71,6 +73,11 @@ const Footer = ({
             反对{!!oppose && ` (${oppose})`}
           </Button>
         </>
+      )}
+      {post.author_id != state.user.uid && (
+        <Button variant="text" onClick={onReport}>
+          举报
+        </Button>
       )}
     </Stack>
   )

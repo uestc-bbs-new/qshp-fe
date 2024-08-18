@@ -40,7 +40,8 @@ export const ThreadPostHeader = ({
   const [typeId, setTypeId] = useState(initialValue?.type_id)
 
   const renderForumSelect = kind == 'newthread'
-  const renderSubject = kind != 'reply' && (kind != 'edit' || subject)
+  const renderSubject =
+    kind == 'newthread' || (kind == 'edit' && initialValue?.subject)
   const renderThreadType =
     (kind == 'newthread' || (kind == 'edit' && initialValue?.editingThread)) &&
     threadTypes.length > 0

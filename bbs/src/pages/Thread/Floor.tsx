@@ -5,6 +5,7 @@ import PublishIcon from '@mui/icons-material/Publish'
 import {
   Alert,
   Box,
+  Chip as MuiChip,
   Stack,
   Tooltip,
   Typography,
@@ -17,6 +18,12 @@ import {
   PostFloor,
   Thread,
 } from '@/common/interfaces/response'
+import {
+  kThreadDisplayOrderDeleted,
+  kThreadDisplayOrderDraft,
+  kThreadDisplayOrderInReview,
+  kThreadDisplayOrderRejected,
+} from '@/common/interfaces/thread'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
@@ -42,6 +49,11 @@ import {
   ReplyCreditFloorLeft,
   ReplyCreditFloorRight,
 } from './extension/ReplyCredit'
+import {
+  RushReplyBadge,
+  RushReplyFloorLeft,
+  RushReplyFloorRight,
+} from './extension/RushReply'
 import { PostExtraDetailsEx } from './types'
 
 function PostSubject({
@@ -74,7 +86,39 @@ function PostSubject({
             <Chip text={type.name} size="large" />
           </Link>
         )}
-        <Typography variant="h6">{post.subject}</Typography>
+        <Typography
+          variant="h6"
+          style={
+            thread?.display_order == kThreadDisplayOrderDeleted
+              ? {
+                  textDecoration: 'line-through red 2px',
+                }
+              : undefined
+          }
+        >
+          {post.subject}
+        </Typography>
+        {thread?.display_order == kThreadDisplayOrderDraft && (
+          <MuiChip
+            label="草稿"
+            variant="threadItemDraft"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
+        {thread?.display_order == kThreadDisplayOrderInReview && (
+          <MuiChip
+            label="审核中"
+            variant="threadItemReview"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
+        {thread?.display_order == kThreadDisplayOrderRejected && (
+          <MuiChip
+            label="已忽略"
+            variant="threadItemReview"
+            sx={{ mx: 0.5, verticalAlign: 'middle' }}
+          />
+        )}
       </Stack>
     )
   }
@@ -92,6 +136,7 @@ const Floor = ({
   onReply,
   onComment,
   onEdit,
+  onReport,
 }: {
   children: React.ReactNode
   threadControls?: React.ReactNode
@@ -103,6 +148,7 @@ const Floor = ({
   onReply: (post: PostFloor) => void
   onComment: (post: PostFloor) => void
   onEdit: (post: PostFloor) => void
+  onReport: (post: PostFloor) => void
 }) => {
   const gotoLink =
     post.position == 1 && post.is_first
@@ -123,22 +169,50 @@ const Floor = ({
             })}
             width={192}
           >
-            {firstInPage && threadDetails?.reply_credit && (
-              <ReplyCreditFloorLeft threadDetails={threadDetails} />
+            {firstInPage && (
+              <>
+                {threadDetails?.reply_credit && (
+                  <ReplyCreditFloorLeft threadDetails={threadDetails} />
+                )}
+                {threadDetails?.rush_reply && (
+                  <RushReplyFloorLeft threadDetails={threadDetails} />
+                )}
+              </>
             )}
             <PostAuthor post={post} />
           </Stack>
         )}
         <Stack className="flex-1" minWidth="1em">
-          {firstInPage && threadDetails?.reply_credit && (
+          {firstInPage && (
             <>
-              {narrowView && (
-                <ReplyCreditFloorLeft threadDetails={threadDetails} topBottom />
+              {threadDetails?.reply_credit && (
+                <>
+                  {narrowView && (
+                    <ReplyCreditFloorLeft
+                      threadDetails={threadDetails}
+                      topBottom
+                    />
+                  )}
+                  <ReplyCreditFloorRight
+                    threadDetails={threadDetails}
+                    topBottom={narrowView}
+                  />
+                </>
               )}
-              <ReplyCreditFloorRight
-                threadDetails={threadDetails}
-                topBottom={narrowView}
-              />
+              {threadDetails?.rush_reply && (
+                <>
+                  {narrowView && (
+                    <RushReplyFloorLeft
+                      threadDetails={threadDetails}
+                      topBottom
+                    />
+                  )}
+                  <RushReplyFloorRight
+                    threadDetails={threadDetails}
+                    topBottom={narrowView}
+                  />
+                </>
+              )}
             </>
           )}
           {narrowView && <PostAuthorLandscape post={post} />}
@@ -185,6 +259,12 @@ const Floor = ({
             )}
             <PostStatus post={post} />
             {post.reply_credit_name && <ReplyCreditBadge post={post} />}
+            {threadDetails?.rush_reply && (
+              <RushReplyBadge
+                rushReply={threadDetails.rush_reply}
+                post={post}
+              />
+            )}
             {children}
             {post.position == 1 && !!post.is_first && (
               <PollExtension threadDetails={threadDetails} />
@@ -255,6 +335,7 @@ const Floor = ({
               onReply={() => onReply(post)}
               onComment={() => onComment(post)}
               onEdit={() => onEdit(post)}
+              onReport={() => onReport(post)}
             />
           </Stack>
         </Stack>
@@ -264,6 +345,7 @@ const Floor = ({
 }
 
 const PostAuthor = ({ post }: { post: PostFloor }) => {
+  const { state } = useAppState()
   return (
     <Box px={2} py={2}>
       <UserCard item={post}>
@@ -276,9 +358,18 @@ const PostAuthor = ({ post }: { post: PostFloor }) => {
           <Typography variant="authorName" mt={0.5} component="p">
             {post.is_anonymous ? '匿名' : post.author}
           </Typography>
+          {!!post.is_anonymous && state.user.uid == post.author_id && (
+            <Typography
+              variant="authorGroupSubtitle"
+              textAlign="center"
+              component="p"
+            >
+              （自己）
+            </Typography>
+          )}
         </AuthorLink>
       </UserCard>
-      {!!post.author_id && (
+      {!!post.author_id && !post.is_anonymous && (
         <AuthorDetails
           author={post.author}
           authorDetails={post.author_details}
@@ -289,6 +380,7 @@ const PostAuthor = ({ post }: { post: PostFloor }) => {
 }
 
 const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
+  const { state } = useAppState()
   const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <Box px={thinView ? 1 : 2} py={1}>
@@ -316,13 +408,14 @@ const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
                   {post.is_anonymous ? '匿名' : post.author}
                 </Typography>
               </AuthorLink>
-              {!!post.author_details?.digests && (
+              {!!post.author_details?.digests && !post.is_anonymous && (
                 <Stack alignItems="flex-start" ml={0.5}>
                   <DigestAuthor username={post.author} sx={{ p: 0 }} />
                 </Stack>
               )}
             </Stack>
             {!!post.author_id &&
+              !post.is_anonymous &&
               (post.author_details ? (
                 <Stack direction="row">
                   <Chip text={post.author_details.group_title} />
@@ -337,6 +430,15 @@ const PostAuthorLandscape = ({ post }: { post: PostFloor }) => {
                   ( 该用户已删除 )
                 </Typography>
               ))}
+            {!!post.is_anonymous && state.user.uid == post.author_id && (
+              <Typography
+                variant="authorGroupSubtitle"
+                textAlign="center"
+                component="p"
+              >
+                (自己)
+              </Typography>
+            )}
           </Stack>
           {!!post.author_details?.medals?.length && (
             <Stack ml={1} flexShrink={1} overflow="hidden">
@@ -356,7 +458,7 @@ const AuthorLink = ({
   post: PostFloor
   children?: ReactNode
 }) =>
-  post.author_id && post.author_details ? (
+  post.author_id && post.author_details && !post.is_anonymous ? (
     <Link to={pages.user({ uid: post.author_id })} underline="hover">
       {children}
     </Link>
@@ -438,7 +540,7 @@ const PostTime = ({
 }) => {
   const timestamp = post.dateline * 1000
   const simplifiedTime = chineseTime(timestamp)
-  const fullTime = chineseTime(timestamp, { full: true })
+  const fullTime = chineseTime(timestamp, { full: true, seconds: true })
   const content = (
     <Link color="inherit" underline="none" to={gotoLink}>
       {simplifiedTime}
@@ -451,6 +553,15 @@ const PostTime = ({
     <Tooltip
       title={<Typography variant="body2">{fullTime}</Typography>}
       placement="top"
+      slotProps={{
+        tooltip: {
+          sx: {
+            '.MuiTooltip-popper[data-popper-placement*="top"] &': {
+              mb: 0.25,
+            },
+          },
+        },
+      }}
     >
       {content}
     </Tooltip>

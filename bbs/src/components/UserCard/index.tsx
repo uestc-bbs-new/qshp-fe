@@ -15,8 +15,10 @@ import { PostAuthorDetails, PostFloor } from '@/common/interfaces/response'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import siteRoot from '@/utils/siteRoot'
 
 import Avatar from '../Avatar'
+import Link from '../Link'
 
 type ItemProps = {
   title: string
@@ -98,7 +100,15 @@ const Cover = ({
       </Stack>
       <Divider variant="middle" />
       <Box className="p-4">
-        <Button variant="outlined">私信</Button>
+        <Button
+          variant="outlined"
+          component={Link}
+          to={`${siteRoot}/home.php?mod=space&do=pm&subop=view&touid=${item.author_id}#last`}
+          external
+          target="_blank"
+        >
+          私信
+        </Button>
       </Box>
     </Box>
   )

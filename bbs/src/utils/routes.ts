@@ -139,6 +139,9 @@ export const pages = {
       `/search/user`,
       new URLSearchParams({ q: params.keyword })
     ),
+
+  resetPassword: `/resetpassword`,
+  welcome: '/welcome',
 }
 
 export const legacyPages = {

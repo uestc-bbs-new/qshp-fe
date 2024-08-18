@@ -11,6 +11,11 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import {
+  kSidebarWidth,
+  useSidebarInMarginMediaQuery,
+} from '@/common/ui/TopList'
+import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
@@ -22,6 +27,10 @@ import { useAppState } from '@/states'
 const Layout = () => {
   const { state, dispatch } = useAppState()
   const thinView = useMediaQuery('(max-width: 560px)')
+  const sidebarInMargin = useSidebarInMarginMediaQuery()
+  const sidebarNotFit = useMediaQuery(
+    `(max-width: ${kContentWidth + kSidebarWidth}px)`
+  )
 
   return (
     <>
@@ -34,6 +43,16 @@ const Layout = () => {
         <Box
           component="main"
           className={`flex w-full flex-col items-center align-middle transition-all`}
+          ml={
+            state.toplistView?.open && state.toplistView?.sidebar
+              ? sidebarInMargin
+                ? 0
+                : sidebarNotFit
+                  ? `${kSidebarWidth}px`
+                  : `calc(${kSidebarWidth * 2 + kContentWidth}px - 100%)`
+              : undefined
+          }
+          sx={{ transition: 'marginRight 0.5s ease' }}
         >
           <Toolbar id="back-to-top-anchor" />
           <Box
@@ -47,7 +66,7 @@ const Layout = () => {
             <Outlet />
           </Box>
         </Box>
-        <ScrollTop>
+        <ScrollTop hidden={state.toplistView?.open}>
           <Fab size="small" aria-label="回到顶部">
             <KeyboardArrowUp />
           </Fab>
@@ -84,13 +103,13 @@ const Layout = () => {
         <TopListDialog
           open={!!state.toplistView?.open}
           alwaysOpen={!!state.toplistView?.alwaysOpen}
-          noTransition={!!state.toplistView?.noTransition}
-          onClose={() =>
+          sidebar={!!state.toplistView?.sidebar}
+          onClose={() => {
             dispatch({
               type: 'close toplist',
               payload: { manuallyOpened: false },
             })
-          }
+          }}
         />
       )}
     </>

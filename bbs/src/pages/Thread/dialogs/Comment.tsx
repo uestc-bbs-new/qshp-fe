@@ -2,8 +2,10 @@ import { useRef, useState } from 'react'
 
 import { Box, Button, Stack, TextField } from '@mui/material'
 
+import { parseApiError } from '@/apis/error'
 import { kMaxCommentLength, postComment } from '@/apis/thread'
 import { PostFloor } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 import { handleCtrlEnter } from '@/utils/tools'
 
 const Comment = ({
@@ -15,6 +17,7 @@ const Comment = ({
   onClose?: () => void
   onCompleted: () => void
 }) => {
+  const { dispatch } = useAppState()
   const [dialogPending, setDialogPending] = useState(false)
   const [commentError, setCommentError] = useState('')
   const commentMessage = useRef<HTMLInputElement>()
@@ -37,7 +40,17 @@ const Comment = ({
           onClose && onClose()
           onCompleted()
         })
-        .catch(() => setDialogPending(false))
+        .catch((e) => {
+          setDialogPending(false)
+          const { message } = parseApiError(e)
+          dispatch({
+            type: 'open snackbar',
+            payload: {
+              severity: 'error',
+              message,
+            },
+          })
+        })
     } else if (!commentError) {
       setCommentError('请输入点评内容。')
     }

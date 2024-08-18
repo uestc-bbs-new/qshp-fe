@@ -23,9 +23,20 @@ import Search from '@/pages/Search'
 import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
+import { Welcome } from '@/pages/Welcome'
 import { isPreviewRelease } from '@/utils/releaseMode'
+import { pages } from '@/utils/routes'
 
 import routes from './routes'
+
+const indexLoader = ({ request }: { request: Request }) => {
+  const url = new URL(request.url)
+  const uidMatch = url.search.match(/^\?([0-9]+)$/)
+  if (uidMatch) {
+    return redirect(pages.user({ uid: parseInt(uidMatch[1]) }))
+  }
+  return redirect('/new')
+}
 
 const devPages: RouteObject[] = [
   {
@@ -64,7 +75,7 @@ routes.current = [
     ),
     children: [
       { path: '*', id: '404', element: <NotFound /> },
-      { path: '/', loader: () => redirect('/new') },
+      { path: '/', loader: indexLoader },
       { path: '/new', id: 'index', element: <Home /> },
       { path: '/search/:type?', id: 'search', element: <Search /> },
       { path: '/post/:fid?', id: 'post', element: <Edit /> },
@@ -123,6 +134,11 @@ routes.current = [
     path: '/register',
     id: 'register',
     element: <RegisterHome />,
+  },
+  {
+    path: '/welcome',
+    id: 'welcome',
+    element: <Welcome />,
   },
   {
     path: '/resetpassword',

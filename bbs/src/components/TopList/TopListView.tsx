@@ -4,7 +4,9 @@ import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 
 import React, {
+  forwardRef,
   useEffect,
+  useImperativeHandle,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -12,35 +14,59 @@ import React, {
 } from 'react'
 import { useInView } from 'react-cool-inview'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
+import { useLocation } from 'react-router-dom'
 
-import { Close } from '@mui/icons-material'
+import {
+  Close,
+  KeyboardArrowUp,
+  KeyboardDoubleArrowLeft,
+  Refresh,
+  Wysiwyg,
+} from '@mui/icons-material'
 import {
   Alert,
   Box,
   Button,
+  CircularProgress,
+  Fab,
   IconButton,
   List,
   Paper,
   Skeleton,
+  Slide,
   Stack,
   Tab,
   Tabs,
   debounce,
+  useMediaQuery,
 } from '@mui/material'
 
 import { getTopLists } from '@/apis/common'
 import { TopListKey, TopListThread } from '@/common/interfaces/response'
+import {
+  kSidebarWidth,
+  useSidebarInMarginMediaQuery,
+} from '@/common/ui/TopList'
+import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { ForumGroup } from '@/pages/Home/ForumCover'
 import { useAppState, useForumList, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
+import { persistedStates } from '@/utils/storage'
 
 const kAllForums = 'allforums'
 type TabKey = TopListKey | 'allforums'
 const tabKeys: TabKey[] = [...topListKeys, kAllForums]
 
-const TopListView = ({ onClose }: { onClose?: () => void }) => {
+const TopListView = ({
+  singleColumn,
+  onClose,
+}: {
+  singleColumn?: boolean
+  onClose?: () => void
+}) => {
+  const { state, dispatch } = useAppState()
   const [activeTab, setActiveTab] = useState<TabKey>('newthread')
   const swiperRef = useRef<SwiperRef>(null)
 
@@ -50,6 +76,23 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
   }
 
   const forumList = useForumList()
+  const location = useLocation()
+  const lastLocation = useRef<{ pathname?: string; search?: string }>()
+  useEffect(() => {
+    if (
+      lastLocation.current &&
+      (lastLocation.current.pathname != location.pathname ||
+        lastLocation.current.search != location.search)
+    ) {
+      if (state.toplistView?.open && !state.toplistView?.sidebar) {
+        dispatch({ type: 'close toplist', payload: { noTransition: true } })
+      }
+    }
+    lastLocation.current = {
+      pathname: location.pathname,
+      search: location.search,
+    }
+  }, [location])
 
   return (
     <Stack height="100%">
@@ -78,9 +121,30 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
           />
         </Tabs>
         {onClose && (
-          <IconButton onClick={() => onClose()}>
-            <Close />
-          </IconButton>
+          <Stack direction="row" alignItems="center">
+            <IconButton
+              onClick={() => {
+                const sidebar = !state.toplistView?.sidebar
+                persistedStates.toplistMode = sidebar ? 'sidebar' : 'full'
+                dispatch({
+                  type: 'open toplist',
+                  payload: {
+                    ...state.toplistView,
+                    sidebar,
+                  },
+                })
+              }}
+            >
+              {state.toplistView?.sidebar ? (
+                <Wysiwyg />
+              ) : (
+                <KeyboardDoubleArrowLeft />
+              )}
+            </IconButton>
+            <IconButton onClick={() => onClose()}>
+              <Close />
+            </IconButton>
+          </Stack>
         )}
       </Stack>
 
@@ -96,16 +160,14 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
-              <TabContent tab={key} requireSignIn>
-                <TopListTab tab={key} />
-              </TabContent>
+              <ThreadTabContent tab={key} singleColumn={singleColumn} />
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
             <TabContent tab={kAllForums}>
               <List>
                 {forumList?.map((item) => (
-                  <ForumGroup data={item} key={item.name} />
+                  <ForumGroup data={item} key={item.name} toplistView />
                 ))}
               </List>
             </TabContent>
@@ -113,6 +175,25 @@ const TopListView = ({ onClose }: { onClose?: () => void }) => {
         </Swiper>
       </Box>
     </Stack>
+  )
+}
+
+const ThreadTabContent = ({
+  tab,
+  singleColumn,
+}: {
+  tab: TopListKey
+  singleColumn?: boolean
+}) => {
+  const tabRef = useRef<TopListTabHandle>(null)
+  return (
+    <TabContent
+      tab={tab}
+      requireSignIn
+      onRefresh={() => tabRef.current?.refresh() ?? Promise.resolve()}
+    >
+      <TopListTab tab={tab} ref={tabRef} singleColumn={singleColumn} />
+    </TabContent>
   )
 }
 
@@ -132,11 +213,13 @@ const TabContent = ({
   children,
   requireSignIn,
   skeleton,
+  onRefresh,
 }: {
   tab: TabKey
   children?: React.ReactNode
   requireSignIn?: boolean
   skeleton?: React.ReactNode
+  onRefresh?: () => Promise<void>
 }) => {
   const { state, dispatch } = useAppState()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -146,13 +229,20 @@ const TabContent = ({
     }
   }, [tab])
 
-  const saveScrollffsetDebounced = useMemo(
+  const onScroll = useMemo(
     () =>
       debounce(() => {
-        toplistScrollOffset[tab] = scrollRef.current?.scrollTop ?? 0
+        const offset = scrollRef.current?.scrollTop ?? 0
+        toplistScrollOffset[tab] = offset
+        setShowBackTop(offset > 64)
       }),
     []
   )
+  const scrollToTop = () =>
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+
+  const [showBackTop, setShowBackTop] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   if (state.user.uninitialized) {
     return (
@@ -205,177 +295,286 @@ const TabContent = ({
           backgroundColor: '#999',
           width: '3px',
         },
+        scrollbarGutter: 'stable',
+        overscrollBehavior: 'contain',
       }}
-      onScroll={() => saveScrollffsetDebounced()}
+      onScroll={() => onScroll()}
       ref={scrollRef}
     >
       {children}
+      <Stack position="absolute" right={12} bottom={8} spacing={1}>
+        {onRefresh && (
+          <Fab
+            size="small"
+            color="primary"
+            onClick={() => {
+              scrollToTop()
+              setRefreshing(true)
+              onRefresh().finally(() => setRefreshing(false))
+            }}
+          >
+            {refreshing ? (
+              <CircularProgress sx={{ color: 'black' }} size={24} />
+            ) : (
+              <Refresh />
+            )}
+          </Fab>
+        )}
+        <Slide direction="left" in={showBackTop}>
+          <Fab size="small" onClick={scrollToTop}>
+            <KeyboardArrowUp />
+          </Fab>
+        </Slide>
+      </Stack>
     </Box>
   )
 }
 
-const TopListTab = ({ tab }: { tab: TopListKey }) => {
-  const homeCachedData = useTopList()
-  const getCache = () => {
-    const cachedData = toplistCache[tab]
-    if (cachedData) {
-      return cachedData
-    }
-    return {
-      list: homeCachedData && homeCachedData[tab],
-      page: 1,
-      scrollOffset: 0,
-    }
-  }
-  const initData = getCache()
-  const [list, setList] = useState<TopListThread[] | undefined>(initData.list)
-  const [isEnded, setEnded] = useState(false)
-  const [isFetching, setFetching] = useState(false)
-  const [isError, setError] = useState(false)
-  const [page, setPage] = useState(initData.page)
-  const saveCache = (newData: Partial<TopListCacheEntry>) => {
-    const newList = newData.list || list
-    if (newList) {
-      toplistCache[tab] = {
-        page,
-        ...newData,
-        list: newList,
+type TopListTabHandle = {
+  refresh: () => Promise<void>
+}
+type TopListTabProps = { tab: TopListKey; singleColumn?: boolean }
+const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
+  function TopListTab({ tab, singleColumn }: TopListTabProps, ref) {
+    const homeCachedData = useTopList()
+    const getCache = () => {
+      const cachedData = toplistCache[tab]
+      if (cachedData) {
+        return cachedData
+      }
+      return {
+        list: homeCachedData && homeCachedData[tab],
+        page: 1,
+        scrollOffset: 0,
       }
     }
-  }
-  useEffect(() => {
     const initData = getCache()
-    setList(initData.list)
-    setPage(initData.page)
-  }, [tab])
-
-  const fetch = async () => {
-    setFetching(true)
-    setError(false)
-    let newPage = page
-    try {
-      const newData = (await getTopLists(tab, page + 1))[tab]
-      if (newData?.length) {
-        ++newPage
-        setPage(newPage)
-      } else {
-        setEnded(true)
-      }
-      let newList: TopListThread[] | undefined
-      newData?.forEach((item) => {
-        if (
-          (list || []).every(
-            (existingItem) => existingItem.thread_id != item.thread_id
-          )
-        ) {
-          if (!newList) {
-            newList = list?.slice() || []
-          }
-          newList.push(item)
-        }
-      })
+    const [list, setList] = useState<TopListThread[] | undefined>(initData.list)
+    const [isEnded, setEnded] = useState(false)
+    const [isFetching, setFetching] = useState(false)
+    const [isError, setError] = useState(false)
+    const [page, setPage] = useState(initData.page)
+    const saveCache = (newData: Partial<TopListCacheEntry>) => {
+      const newList = newData.list || list
       if (newList) {
-        setList(newList)
+        toplistCache[tab] = {
+          page,
+          ...newData,
+          list: newList,
+        }
       }
-      saveCache({ list: newList, page: newPage })
-    } catch (_) {
-      setError(true)
-    } finally {
-      setFetching(false)
     }
-  }
+    useEffect(() => {
+      const initData = getCache()
+      setList(initData.list)
+      setPage(initData.page)
+    }, [tab])
 
-  const { observe } = useInView({
-    rootMargin: '50px 0px',
-    onEnter: () => {
-      if (!isEnded && !isFetching && !isError) {
-        fetch()
+    const fetch = async () => {
+      setFetching(true)
+      setError(false)
+      let newPage = page
+      try {
+        const newData = (await getTopLists(tab, page + 1))[tab]
+        if (newData?.length) {
+          ++newPage
+          setPage(newPage)
+        } else {
+          setEnded(true)
+        }
+        let newList: TopListThread[] | undefined
+        newData?.forEach((item) => {
+          if (
+            (list || []).every(
+              (existingItem) => existingItem.thread_id != item.thread_id
+            )
+          ) {
+            if (!newList) {
+              newList = list?.slice() || []
+            }
+            newList.push(item)
+          }
+        })
+        if (newList) {
+          setList(newList)
+        }
+        saveCache({ list: newList, page: newPage })
+      } catch (_) {
+        setError(true)
+      } finally {
+        setFetching(false)
       }
-    },
-  })
+    }
 
+    useImperativeHandle(
+      ref,
+      () => ({
+        async refresh() {
+          const data = {
+            list: (await getTopLists(tab, 1))[tab],
+            page: 1,
+          }
+          setList(data.list)
+          setPage(data.page)
+          saveCache(data)
+        },
+      }),
+      []
+    )
+
+    const { observe } = useInView({
+      rootMargin: '50px 0px',
+      onEnter: () => {
+        if (!isEnded && !isFetching && !isError) {
+          fetch()
+        }
+      },
+    })
+
+    return (
+      <>
+        {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
+        <ListView list={list} singleColumn={singleColumn} />
+        {!isEnded && !(isFetching && page == 1) && (
+          <Stack ref={isFetching ? undefined : observe}>
+            {isError ? (
+              <Alert
+                severity="error"
+                action={
+                  <Button color="inherit" size="small" onClick={() => fetch()}>
+                    重试
+                  </Button>
+                }
+                sx={{ mt: 2 }}
+              >
+                加载失败
+              </Alert>
+            ) : (
+              [...Array(6)].map((_, index) => (
+                <Skeleton key={index} height={40} />
+              ))
+            )}
+          </Stack>
+        )}
+      </>
+    )
+  }
+)
+
+const ListView = ({
+  list,
+  singleColumn,
+}: {
+  list?: TopListThread[]
+  singleColumn?: boolean
+}) => {
+  const single = useMediaQuery('(max-width: 720px') || singleColumn
+  if (!list?.length) {
+    return <></>
+  }
+  const items = list?.map((item) => (
+    <ThreadItemGrid
+      key={item.thread_id}
+      item={item}
+      sx={single ? { my: 1.5 } : undefined}
+    />
+  ))
+  if (single) {
+    return <>{items}</>
+  }
   return (
-    <>
-      {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
-      {!!list?.length && (
-        <ResponsiveMasonry
-          columnsCountBreakPoints={{ 320: 1, 720: 2, 1200: 3 }}
-        >
-          <Masonry gutter="12px">
-            {list?.map((item) => (
-              <ThreadItemGrid key={item.thread_id} item={item} />
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-      )}
-      {!isEnded && !(isFetching && page == 1) && (
-        <Stack ref={isFetching ? undefined : observe}>
-          {isError ? (
-            <Alert
-              severity="error"
-              action={
-                <Button color="inherit" size="small" onClick={() => fetch()}>
-                  重试
-                </Button>
-              }
-              sx={{ mt: 2 }}
-            >
-              加载失败
-            </Alert>
-          ) : (
-            [...Array(6)].map((_, index) => (
-              <Skeleton key={index} height={40} />
-            ))
-          )}
-        </Stack>
-      )}
-    </>
+    <ResponsiveMasonry
+      columnsCountBreakPoints={{
+        320: 1,
+        720: 2,
+        800: 1,
+        848: 2,
+        1300: 3,
+        1921: 4,
+      }}
+    >
+      <Masonry gutter="12px">{items}</Masonry>
+    </ResponsiveMasonry>
   )
 }
 
 export const TopListDialog = ({
   open,
   alwaysOpen,
-  noTransition,
+  sidebar,
   onClose,
 }: {
   open: boolean
   alwaysOpen?: boolean
-  noTransition?: boolean
+  sidebar?: boolean
   onClose: () => void
 }) => {
-  useEffect(() => {
-    if (open && !alwaysOpen) {
-      document.body.style.overflow = 'hidden'
-    } else if (!open) {
-      document.body.style.overflow = ''
-    }
-    return () => void (document.body.style.overflow = '')
-  }, [open])
-
-  return (
+  const sidebarInMargin = useSidebarInMarginMediaQuery()
+  const content = (
     <Paper
-      sx={{
-        left: 0,
-        right: 0,
-        bottom: 0,
-        top: 64,
-        position: 'fixed',
-        zIndex: 1,
-      }}
+      sx={(theme) => ({
+        position: 'absolute',
+        ...(alwaysOpen
+          ? {
+              left: 0,
+              right: 0,
+              top: 64,
+              bottom: 0,
+            }
+          : sidebar
+            ? {
+                position: 'fixed',
+                left: sidebarInMargin
+                  ? `calc(50% - ${kContentWidth / 2 + kSidebarWidth}px)`
+                  : 0,
+                top: 64,
+                bottom: 0,
+                width: kSidebarWidth,
+                zIndex: 1,
+              }
+            : {
+                left: 64,
+                right: 64,
+                bottom: 16,
+                top: 72,
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: `4px 4px 8px ${
+                  theme.palette.mode == 'dark'
+                    ? 'rgba(255, 255, 255, 0.15)'
+                    : 'rgba(0, 0, 0, 0.2)'
+                }`,
+              }),
+      })}
       hidden={!open}
     >
       <TopListView
-        onClose={
-          alwaysOpen
-            ? undefined
-            : () => {
-                document.body.style.overflow = ''
-                onClose()
-              }
-        }
+        singleColumn={sidebar}
+        onClose={alwaysOpen ? undefined : onClose}
       />
     </Paper>
+  )
+  if (sidebar) {
+    return content
+  }
+  return (
+    <div
+      css={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1,
+        ...(!alwaysOpen && {
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          backdropFilter: 'blur(2px)',
+        }),
+      }}
+      hidden={!open}
+    >
+      {content}
+    </div>
   )
 }
 

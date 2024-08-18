@@ -16,6 +16,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import { parseApiError } from '@/apis/error'
 import { editPost, postThread, replyThread } from '@/apis/thread'
 import {
   Attachment,
@@ -109,19 +110,15 @@ const PostEditor = ({
     initialValue = { ...initialValue }
     if (initialValue.format == 1 || initialValue.format == -1) {
       initialValue.format = 2
+      if (initialValue.smileyoff == 0 && initialValue.message) {
+        initialValue.message = convertLegacySmilies(initialValue.message)
+      }
     }
     if (initialValue.format == 0 && initialValue.message) {
       initialValue.message = initialValue.message.replace(
         /^\[i=s\] 本帖最后由 (.+?) 于 (.+?) 编辑 \[\/i\]\s{0,2}/,
         ''
       )
-    }
-    if (
-      initialValue.format == 0 &&
-      initialValue.smileyoff == 0 &&
-      initialValue.message
-    ) {
-      initialValue.message = convertLegacySmilies(initialValue.message)
     }
   }
 
@@ -131,6 +128,9 @@ const PostEditor = ({
     kind
   ]
   const editor = useRef<EditorHandle>(null)
+  const [waitTimeout, setWaitTimeout] = useState<number>()
+  const timeoutInterval = useRef<number>()
+  const timeoutValue = useRef<number>()
 
   const {
     props: snackbarProps,
@@ -172,15 +172,40 @@ const PostEditor = ({
   }
 
   useEffect(() => {
-    valueRef.current.forum_id = forum?.fid
+    if (kind == 'newthread' && valueRef.current.forum_id != forum?.fid) {
+      valueRef.current.forum_id = forum?.fid
+      valueRef.current.type_id = undefined
+    }
   }, [forum?.fid])
 
-  const handleError = () => {
+  const startWaitTimeout = (timeout: number) => {
+    if (timeoutInterval.current) {
+      clearInterval(timeoutInterval.current)
+    }
+    timeoutValue.current = timeout
+    setWaitTimeout(Math.ceil(timeout / 1000))
+    timeoutInterval.current = setInterval(() => {
+      if (!timeoutValue.current || timeoutValue.current <= 0) {
+        clearInterval(timeoutInterval.current)
+        timeoutInterval.current = undefined
+      } else {
+        timeoutValue.current = Math.max(0, timeoutValue.current - 1000)
+      }
+      setWaitTimeout(Math.ceil((timeoutValue.current ?? 0) / 1000))
+    }, 1000)
+  }
+
+  const handleError = (e: any) => {
     setPostPending(false)
+    const { message, waitTimeout } = parseApiError(e)
+    if (waitTimeout) {
+      startWaitTimeout(waitTimeout)
+    }
+    showError(message)
   }
 
   const handleSubmit = async () => {
-    if (postPending) {
+    if (postPending || waitTimeout) {
       return
     }
 
@@ -212,7 +237,16 @@ const PostEditor = ({
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
           setAttachments([])
-          notifyCreditsUpdate(result.ext_credits_update)
+          if (result.pending_review) {
+            dispatch({
+              type: 'open snackbar',
+              payload: {
+                severity: 'warning',
+                message: '本版块发帖后需要审核，审核通过后才会公开显示。',
+              },
+            })
+          }
+          notifyCreditsUpdate(result.ext_credits_update, 3000)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -240,7 +274,9 @@ const PostEditor = ({
         post_id: postId,
         ...valueRef.current,
         message,
-        attachments: editor.current?.attachments,
+        attachments: editLegacy
+          ? valueRef.current.attachments
+          : editor.current?.attachments,
       })
         .then(() => {
           onSubmitted && onSubmitted()
@@ -249,7 +285,7 @@ const PostEditor = ({
     }
   }
 
-  const notifyCreditsUpdate = (updates?: ExtCreditMap) => {
+  const notifyCreditsUpdate = (updates?: ExtCreditMap, delayMs?: number) => {
     if (updates) {
       let hasNegative = false
       const message = extCreditNames
@@ -266,13 +302,15 @@ const PostEditor = ({
         .filter((text) => !!text)
         .join('，')
       if (message) {
-        dispatch({
-          type: 'open snackbar',
-          payload: {
-            severity: hasNegative ? 'warning' : 'success',
-            message,
-          },
-        })
+        setTimeout(() => {
+          dispatch({
+            type: 'open snackbar',
+            payload: {
+              severity: hasNegative ? 'warning' : 'success',
+              message,
+            },
+          })
+        }, delayMs ?? 0)
       }
     }
   }
@@ -292,14 +330,10 @@ const PostEditor = ({
     if (!legacyHtml && !legacy && legacyPost) {
       console.log(convertLegacySimple(legacyPost.message))
       setLegacyHtml(
-        renderLegacyPostToDangerousHtml(
-          {
-            ...legacyPost,
-            message: convertLegacySimple(legacyPost.message),
-          },
-          undefined,
-          useMediaQuery('(max-width: 640px)') ? 'small' : 'default'
-        )
+        renderLegacyPostToDangerousHtml({
+          ...legacyPost,
+          message: convertLegacySimple(legacyPost.message),
+        })
       )
     }
     setEditLegacy(legacy)
@@ -422,10 +456,14 @@ const PostEditor = ({
         {smallAuthor && <Author small anonymous={anonymous} />}
         <Button
           variant="contained"
-          disabled={postPending}
+          disabled={!!waitTimeout || postPending}
           onClick={handleSubmit}
         >
-          {postPending ? '请稍候...' : buttonText}
+          {waitTimeout
+            ? `请稍候 (${waitTimeout})`
+            : postPending
+              ? '请稍候...'
+              : buttonText}
         </Button>
       </Stack>
       <Snackbar

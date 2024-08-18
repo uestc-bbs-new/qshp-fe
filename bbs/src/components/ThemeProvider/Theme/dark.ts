@@ -1,6 +1,10 @@
 import { createTheme, lighten } from '@mui/material'
 
-import baseComponent, { baseColors, baseTheme } from './base'
+import baseComponent, {
+  baseColors,
+  baseTheme,
+  getComponentsByMode,
+} from './base'
 
 const darkTheme = createTheme(
   {
@@ -19,6 +23,7 @@ const darkTheme = createTheme(
     },
     components: {
       ...baseComponent,
+      ...getComponentsByMode('dark'),
     },
     typography: {
       signinTitle: {

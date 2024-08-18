@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 
 import {
+  Alert,
   Box,
   List,
   ListItem,
@@ -19,8 +20,20 @@ import {
 } from '@mui/material'
 
 import { getPostDetails, getThreadsInfo } from '@/apis/thread'
+import { ApiError } from '@/common/interfaces/error'
+import { errThreadRedirected } from '@/common/interfaces/errors'
 import { ForumDetails } from '@/common/interfaces/forum'
-import { PostFloor, Thread as ThreadType } from '@/common/interfaces/response'
+import {
+  PostDetails,
+  PostFloor,
+  Thread as ThreadType,
+} from '@/common/interfaces/response'
+import {
+  kThreadDisplayOrderDeleted,
+  kThreadDisplayOrderDraft,
+  kThreadDisplayOrderInReview,
+  kThreadDisplayOrderRejected,
+} from '@/common/interfaces/thread'
 import Aside from '@/components/Aside'
 import Card from '@/components/Card'
 import PostEditor from '@/components/Editor/PostEditor'
@@ -35,6 +48,7 @@ import { searchParamsAssign } from '@/utils/tools'
 
 import Floor from './Floor'
 import { useWatermark } from './Watermark'
+import { ReportDialog } from './dialogs/Report'
 import ActionDialog from './dialogs/index'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
 
@@ -86,6 +100,7 @@ const Thread = () => {
   const closeDialog = () => setDialogOpen(false)
   const [currentDialog, setCurrentDialog] =
     useState<ActionDialogType>(undefined)
+  const [reportDialog, setReportDialog] = useState(false)
   const isInternalEnforced =
     !!threadDetails?.forum_id &&
     kEnforceInternalFids.includes(threadDetails?.forum_id)
@@ -100,6 +115,7 @@ const Thread = () => {
       order_type: orderType || undefined,
       thread_details: threadChanged || !threadDetails,
       forum_details: threadChanged || !forumDetails,
+      a: !!searchParams.get('a'),
     }
   }
   const [query, setQuery] = useState(initQuery())
@@ -125,8 +141,21 @@ const Thread = () => {
     refetch,
   } = useQuery({
     queryKey: ['thread', query],
-    queryFn: () => {
-      return getThreadsInfo(query)
+    queryFn: async () => {
+      try {
+        return await getThreadsInfo(query)
+      } catch (ee) {
+        const e = ee as ApiError
+        if (
+          e.type == 'api' &&
+          e.code == errThreadRedirected &&
+          e.details?.data?.redirect_tid
+        ) {
+          navigate(pages.thread(e.details.data.redirect_tid))
+          return await new Promise<PostDetails>(() => {})
+        }
+        throw e
+      }
     },
   })
   useEffect(() => {
@@ -274,6 +303,11 @@ const Thread = () => {
     setDialogOpen(true)
   }
 
+  const handleReport = (post: PostFloor) => {
+    setActivePost(post)
+    setReportDialog(true)
+  }
+
   const currentlyReversed =
     query.order_type == 'reverse' ||
     (threadDetails?.reverse_replies && query.order_type != 'forward')
@@ -299,6 +333,22 @@ const Thread = () => {
               page={info?.page ?? 1}
               onChange={handlePageChange}
             />
+            {info?.thread?.display_order == kThreadDisplayOrderDraft && (
+              <Alert severity="info">本帖在草稿箱中，尚未公开发表。</Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderDeleted && (
+              <Alert severity="error">本帖已删除，仅管理员可见。</Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderRejected && (
+              <Alert severity="error">
+                本帖未通过审核，已忽略，仅管理员可见。
+              </Alert>
+            )}
+            {info?.thread?.display_order == kThreadDisplayOrderInReview && (
+              <Alert severity="warning">
+                本版块发帖后需要审核，新主题待审核通过后公开显示。
+              </Alert>
+            )}
             {info?.rows
               ? info?.rows.map((item, index) => {
                   return (
@@ -339,6 +389,7 @@ const Thread = () => {
                           onReply={handleReply}
                           onComment={handleComment}
                           onEdit={handleEdit}
+                          onReport={handleReport}
                           threadControls={
                             <>
                               <Link
@@ -440,6 +491,13 @@ const Thread = () => {
               onSubmitted,
               onComment: refreshComment,
             }}
+          />
+        )}
+        {activePost && reportDialog && (
+          <ReportDialog
+            open
+            onClose={() => setReportDialog(false)}
+            post={activePost}
           />
         )}
       </Box>
