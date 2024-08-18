@@ -2,6 +2,7 @@ import {
   ForumRestrictions,
   errForumRestrictedByCredits,
   errForumRestrictedByPay,
+  errRateLimited,
 } from '@/common/interfaces/errors'
 
 const isForumRestrictions = (error: any) =>
@@ -36,5 +37,20 @@ export const parseApiError = (error: any) => {
       message = forumRestrictions.prompt
     }
   }
-  return { message, severity, title, forumRestrictions }
+  const result: {
+    message: string
+    severity: 'error' | 'warning'
+    title: string
+    forumRestrictions?: ForumRestrictions
+    waitTimeout?: number
+  } = { message, severity, title, forumRestrictions }
+  if (
+    error &&
+    error.code == errRateLimited &&
+    error.details?.data?.wait_timeout
+  ) {
+    result.waitTimeout = error.details.data.wait_timeout
+  }
+  console.log(result, error)
+  return result
 }

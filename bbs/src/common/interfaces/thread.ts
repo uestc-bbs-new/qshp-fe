@@ -18,6 +18,7 @@ export type PostThreadResult = {
 export type PostReplyResult = {
   post_id: number
   ext_credits_update?: ExtCreditMap
+  wait_timeout?: number
 }
 
 export const kThreadDisplayOrderDeleted = -1

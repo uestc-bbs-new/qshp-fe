@@ -128,6 +128,9 @@ const PostEditor = ({
     kind
   ]
   const editor = useRef<EditorHandle>(null)
+  const [waitTimeout, setWaitTimeout] = useState<number>()
+  const timeoutInterval = useRef<number>()
+  const timeoutValue = useRef<number>()
 
   const {
     props: snackbarProps,
@@ -175,14 +178,34 @@ const PostEditor = ({
     }
   }, [forum?.fid])
 
+  const startWaitTimeout = (timeout: number) => {
+    if (timeoutInterval.current) {
+      clearInterval(timeoutInterval.current)
+    }
+    timeoutValue.current = timeout
+    setWaitTimeout(Math.ceil(timeout / 1000))
+    timeoutInterval.current = setInterval(() => {
+      if (!timeoutValue.current || timeoutValue.current <= 0) {
+        clearInterval(timeoutInterval.current)
+        timeoutInterval.current = undefined
+      } else {
+        timeoutValue.current = Math.max(0, timeoutValue.current - 1000)
+      }
+      setWaitTimeout(Math.ceil((timeoutValue.current ?? 0) / 1000))
+    }, 1000)
+  }
+
   const handleError = (e: any) => {
     setPostPending(false)
-    const { message } = parseApiError(e)
+    const { message, waitTimeout } = parseApiError(e)
+    if (waitTimeout) {
+      startWaitTimeout(waitTimeout)
+    }
     showError(message)
   }
 
   const handleSubmit = async () => {
-    if (postPending) {
+    if (postPending || waitTimeout) {
       return
     }
 
@@ -433,10 +456,14 @@ const PostEditor = ({
         {smallAuthor && <Author small anonymous={anonymous} />}
         <Button
           variant="contained"
-          disabled={postPending}
+          disabled={!!waitTimeout || postPending}
           onClick={handleSubmit}
         >
-          {postPending ? '请稍候...' : buttonText}
+          {waitTimeout
+            ? `请稍候 (${waitTimeout})`
+            : postPending
+              ? '请稍候...'
+              : buttonText}
         </Button>
       </Stack>
       <Snackbar
