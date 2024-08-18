@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-key */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   Autocomplete,
@@ -9,9 +8,27 @@ import {
   TextField,
 } from '@mui/material'
 
+import { searchUsers } from '@/apis/search'
+
+type FriendType = {
+  username: string
+  uid: number
+}
+
 export default function ChooseFriends() {
   const [selectedChips, setSelectedChips] = useState(0)
+  const timer = useRef<number | null>(null)
+  const [friendList, setFriendList] = useState<FriendType[]>([])
 
+  useEffect(() => {
+    ;(async () => {
+      const res = await searchUsers({ query: '', withFriends: true })
+      console.log(res)
+      setFriendList(res.rows)
+    })()
+  }, [])
+
+  console.log()
   return (
     <Stack>
       <Autocomplete
@@ -20,7 +37,7 @@ export default function ChooseFriends() {
         disableCloseOnSelect
         freeSolo
         filterSelectedOptions
-        options={FriendList.map((option) => option.friendname)}
+        options={friendList.map((option) => option.username)}
         renderTags={(value: readonly string[], getTagProps) => {
           setSelectedChips(value.length)
           return value.map((option: string, index: number) => (
@@ -28,6 +45,7 @@ export default function ChooseFriends() {
               variant="outlined"
               label={option}
               {...getTagProps({ index })}
+              key={index}
             />
           ))
         }}
@@ -39,6 +57,18 @@ export default function ChooseFriends() {
               margin="dense"
               label="收件人*"
               placeholder="请选择好友或正确填写收件人用户名后回车"
+              onChange={async (e) => {
+                if (timer.current === null) {
+                  timer.current = setTimeout(async () => {
+                    const res = await searchUsers({
+                      query: e.target.value,
+                      withFriends: true,
+                    })
+                    setFriendList(res.rows)
+                    timer.current = null
+                  }, 300)
+                }
+              }}
             />
             <DialogContentText marginBottom={1}>
               注意：输入多个用户名时请使用
@@ -61,20 +91,3 @@ export default function ChooseFriends() {
     </Stack>
   )
 }
-
-const FriendList = [
-  { friendname: '好友1', addtime: 1 },
-  { friendname: '好友2', addtime: 2 },
-  { friendname: '好友3', addtime: 3 },
-  { friendname: '好友4', addtime: 4 },
-  { friendname: '好友5', addtime: 5 },
-  { friendname: '好友6', addtime: 6 },
-  { friendname: '好友7', addtime: 7 },
-  { friendname: '好友8', addtime: 8 },
-  { friendname: '好友9', addtime: 9 },
-  { friendname: '好友10', addtime: 10 },
-  { friendname: '好友11', addtime: 11 },
-  { friendname: '好友12', addtime: 12 },
-  { friendname: '好友13', addtime: 13 },
-  { friendname: '好友14', addtime: 14 },
-]

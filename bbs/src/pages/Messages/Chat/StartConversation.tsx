@@ -1,8 +1,10 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 import SendIcon from '@mui/icons-material/Send'
 import {
+  Autocomplete,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,10 +14,28 @@ import {
   TextField,
 } from '@mui/material'
 
-import AddRecipient from './AddRecipient'
+import { sendChatMessage } from '@/apis/messages'
+// import AddRecipient from './AddRecipient'
+import { searchUsers } from '@/apis/search'
 
 const StartConversation = () => {
   const [open, setOpen] = useState(false)
+  const [selectedChips, setSelectedChips] = useState<string[]>([])
+  const [message, setMessage] = useState('')
+  const timer = useRef<number | null>(null)
+  const [friendList, setFriendList] = useState([
+    { username: '好友1', uid: 1 },
+    { username: '好友2', uid: 2 },
+    { username: '好友3', uid: 3 },
+  ])
+
+  useEffect(() => {
+    ;(async () => {
+      const res = await searchUsers({ query: '', withFriends: true })
+      console.log(res)
+      setFriendList([...(res.friends ? res.friends : []), ...res.rows])
+    })()
+  }, [])
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -69,7 +89,75 @@ const StartConversation = () => {
         </DialogTitle>
         <DialogContent>
           <Stack direction="row">
-            <AddRecipient></AddRecipient>
+            {/* <AddRecipient></AddRecipient> */}
+            <Stack>
+              <Autocomplete
+                fullWidth
+                multiple
+                disableCloseOnSelect
+                freeSolo
+                filterSelectedOptions
+                options={friendList.map((option) => option.username)}
+                renderTags={(value: string[], getTagProps) => {
+                  setSelectedChips(value)
+                  return value.map((option: string, index: number) => (
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })}
+                      key={index}
+                    />
+                  ))
+                }}
+                renderInput={(params) => (
+                  <div>
+                    <TextField
+                      {...params}
+                      fullWidth
+                      margin="dense"
+                      label="收件人*"
+                      placeholder="请选择好友或正确填写收件人用户名后回车"
+                      onChange={async (e) => {
+                        if (timer.current === null) {
+                          timer.current = setTimeout(async () => {
+                            const res = await searchUsers({
+                              query: e.target.value,
+                              withFriends: true,
+                            })
+
+                            console.log([
+                              ...(res.friends ? res.friends : []),
+                              ...res.rows,
+                            ])
+
+                            setFriendList([
+                              ...(res.friends ? res.friends : []),
+                              ...res.rows,
+                            ])
+                            timer.current = null
+                          }, 500)
+                        }
+                      }}
+                    />
+                    <DialogContentText marginBottom={1}>
+                      注意：输入多个用户名时请使用
+                      <strong>回车</strong>
+                      将不同用户名分隔开
+                    </DialogContentText>
+                  </div>
+                )}
+              />
+              {selectedChips.length >= 2 && (
+                <TextField
+                  fullWidth
+                  id="outlined-textarea"
+                  label="群聊标题*"
+                  placeholder="请输入群聊标题，不超过80字"
+                  margin="dense"
+                  multiline
+                />
+              )}
+            </Stack>
           </Stack>
           <DialogContentText marginBottom={1}></DialogContentText>
           <TextField
@@ -80,11 +168,24 @@ const StartConversation = () => {
             multiline
             rows={5}
             margin="dense"
+            onChange={(e) => {
+              setMessage(e.target.value)
+            }}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>关闭</Button>
-          <Button type="submit">发送</Button>
+          <Button
+            type="submit"
+            onClick={() => {
+              sendChatMessage({
+                usernames: selectedChips,
+                message: message,
+              })
+            }}
+          >
+            发送
+          </Button>
         </DialogActions>
       </Dialog>
     </Fragment>
