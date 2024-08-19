@@ -69,10 +69,13 @@ export const RegisterForm = ({
   const validateUserName = async () => {
     const username = getFormField('username')
     if (
-      username.length < kMinUserNameLength ||
-      username.length > kMaxUserNameLength
+      // This regex is just a subset of CJK characters recognized by backend, but for simplicity,
+      // use it for now.
+      !username.match(/^[\u4E00-\u9FFF\u3400-\u4DBF]{2}$/) &&
+      (username.length < kMinUserNameLength ||
+        username.length > kMaxUserNameLength)
     ) {
-      setUserNameError('用户名长度为 3~15 个字符。')
+      setUserNameError('用户名长度为 3~15 个字符，或两个汉字。')
       return
     }
     setUserNameError('')
