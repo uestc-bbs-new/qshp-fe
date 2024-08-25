@@ -35,7 +35,7 @@ const ConversationList = ({
   }, [activeRef.current])
   return (
     <>
-      <List>
+      <List className="p-0">
         {list.map((chat) => (
           <ConversationItem
             key={chat.conversation_id}
