@@ -28,6 +28,7 @@ export default function ChooseFriends() {
     })()
   }, [])
 
+  console.log()
   return (
     <Stack>
       <Autocomplete
