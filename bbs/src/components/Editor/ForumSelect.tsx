@@ -33,6 +33,10 @@ const canPostThreadInForumOrChildren = (forum: Forum) => {
   )
 }
 
+const hasSubForumsThatCanPostThread = (forum: Forum) =>
+  forum.children?.length &&
+  forum.children.some((subForum) => subForum.can_post_thread)
+
 const isForumOrChildrenSelected = (forum: Forum, fid?: number) => {
   if (!fid) {
     return false
@@ -142,7 +146,7 @@ const ForumList = ({
   }, [selectedFid])
 
   const onChooseForum = (forum: Forum, noSub?: boolean) => {
-    if (!forum.children?.length || noSub) {
+    if (!hasSubForumsThatCanPostThread(forum) || noSub) {
       onCompleted(forum.fid)
     }
   }
@@ -194,9 +198,7 @@ const ForumButton = ({
   )
   const thinView = useMediaQuery('(max-width: 560px)')
   const [tooltipOpen, setTooltipOpen] = useState(false)
-  const hasSub =
-    item.children?.length &&
-    item.children.some((subForum) => subForum.can_post_thread)
+  const hasSub = hasSubForumsThatCanPostThread(item)
   return (
     <Grid
       item
