@@ -39,29 +39,107 @@ import { globalCache, useForumList } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
-const WeightEntry = ({ text, value }: { text: string; value?: number }) => (
-  <Stack alignItems="center">
-    <Typography>{text}</Typography>
-    <Typography>{value}</Typography>
-  </Stack>
-)
-
-const WeightView = ({ weight }: { weight: HotlistWeights }) => (
+const WeightEntry = ({
+  text,
+  value,
+  parentValue,
+}: {
+  text: string
+  value?: number
+  parentValue?: number
+}) => {
+  if (value == undefined && parentValue != undefined) {
+    return <></>
+  }
+  const bold = parentValue == undefined ? !!value : value != undefined
+  const fontWeight = bold ? 'bold' : undefined
+  const gray = value == undefined && parent != undefined
+  return (
+    <Stack alignItems="center">
+      <Typography fontWeight={fontWeight}>{text}</Typography>
+      <Typography
+        fontWeight={fontWeight}
+        color={gray ? 'lightgray' : undefined}
+      >
+        {value ?? parentValue}
+      </Typography>
+    </Stack>
+  )
+}
+const WeightView = ({
+  weight,
+  parent,
+}: {
+  weight: HotlistWeights
+  parent?: HotlistWeights
+}) => (
   <Stack direction="row" spacing={1} flexWrap="wrap">
-    <WeightEntry text="总权重" value={weight.overall ?? 1} />
-    <WeightEntry text="点赞" value={weight.likes} />
-    <WeightEntry text="点踩" value={weight.dislikes} />
-    <WeightEntry text="回复" value={weight.replies} />
-    <WeightEntry text="点评" value={weight.comments} />
-    <WeightEntry text="收藏" value={weight.favorites} />
-    <WeightEntry text="回复作者" value={weight.reply_authors} />
-    <WeightEntry text="点评作者" value={weight.comment_authors} />
-    <WeightEntry text="正面评分次数" value={weight.positive_rates} />
-    <WeightEntry text="正面评分总数" value={weight.positive_scores} />
-    <WeightEntry text="负面评分次数" value={weight.negative_rates} />
-    <WeightEntry text="负面评分总数" value={weight.negative_scores} />
-    <WeightEntry text="发表时间" value={weight.thread_post_age} />
-    <WeightEntry text="回复时间" value={weight.thread_post_age} />
+    <WeightEntry
+      text="总权重"
+      value={weight.overall}
+      parentValue={parent?.overall ?? 1}
+    />
+    <WeightEntry text="点赞" value={weight.likes} parentValue={parent?.likes} />
+    <WeightEntry
+      text="点踩"
+      value={weight.dislikes}
+      parentValue={parent?.dislikes}
+    />
+    <WeightEntry
+      text="回复"
+      value={weight.replies}
+      parentValue={parent?.replies}
+    />
+    <WeightEntry
+      text="点评"
+      value={weight.comments}
+      parentValue={parent?.comments}
+    />
+    <WeightEntry
+      text="收藏"
+      value={weight.favorites}
+      parentValue={parent?.favorites}
+    />
+    <WeightEntry
+      text="回复作者"
+      value={weight.reply_authors}
+      parentValue={parent?.reply_authors}
+    />
+    <WeightEntry
+      text="点评作者"
+      value={weight.comment_authors}
+      parentValue={parent?.comment_authors}
+    />
+    <WeightEntry
+      text="正面评分次数"
+      value={weight.positive_rates}
+      parentValue={parent?.positive_rates}
+    />
+    <WeightEntry
+      text="正面评分总数"
+      value={weight.positive_scores}
+      parentValue={parent?.positive_scores}
+    />
+    <WeightEntry
+      text="负面评分次数"
+      value={weight.negative_rates}
+      parentValue={parent?.negative_rates}
+    />
+    <WeightEntry
+      text="负面评分总数"
+      value={weight.negative_scores}
+      parentValue={parent?.negative_scores}
+    />
+    <WeightEntry
+      text="发表时间"
+      value={weight.thread_post_age}
+      parentValue={parent?.thread_post_age}
+    />
+    <WeightEntry
+      text="回复时间"
+      value={weight.last_reply_age}
+      parentValue={parent?.last_reply_age}
+    />
   </Stack>
 )
 
@@ -374,6 +452,7 @@ const Toplist = () => {
                   {item.fids.map((fid) => (
                     <ForumEntry key={fid} fid={fid} />
                   ))}
+                  <WeightView weight={item} parent={config.weights} />
                 </Box>
               ))}
             </>
