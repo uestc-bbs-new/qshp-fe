@@ -27,6 +27,7 @@ import {
 import {
   HotlistCandidate,
   HotlistConfig,
+  HotlistOverride,
   HotlistWeights,
   fetchHotlist,
   getHotlistConfig,
@@ -59,6 +60,8 @@ const WeightView = ({ weight }: { weight: HotlistWeights }) => (
     <WeightEntry text="正面评分总数" value={weight.positive_scores} />
     <WeightEntry text="负面评分次数" value={weight.negative_rates} />
     <WeightEntry text="负面评分总数" value={weight.negative_scores} />
+    <WeightEntry text="发表时间" value={weight.thread_post_age} />
+    <WeightEntry text="回复时间" value={weight.thread_post_age} />
   </Stack>
 )
 
@@ -105,13 +108,13 @@ const OverrideSection = ({
   config: HotlistConfig
   setConfig: React.Dispatch<React.SetStateAction<HotlistConfig | undefined>>
 }) => {
-  const key = kind == 'uid' ? 'uid_overrides' : 'tid_overrides'
+  const key = kind == 'uid' ? 'uid_overrides2' : 'tid_overrides2'
   const value = config[key]
   const title = `特殊${kind == 'uid' ? '用户' : '帖子'}`
   const [open, setOpen] = useState(false)
   const [activeId, setActiveId] = useState<number>()
   const [newId, setNewId] = useState('')
-  const [newRank, setNewRank] = useState('')
+  const [newValue, setNewValue] = useState<HotlistOverride>()
   const [blocked, setBlocked] = useState(false)
   return (
     <>
@@ -121,7 +124,7 @@ const OverrideSection = ({
           onClick={() => {
             setActiveId(undefined)
             setNewId('')
-            setNewRank('')
+            setNewValue(undefined)
             setBlocked(false)
             setOpen(true)
           }}
@@ -131,20 +134,30 @@ const OverrideSection = ({
       </Typography>
       {value ? (
         <Stack direction="row" spacing={1} flexWrap="wrap">
-          {dictMap(value, (id, rank) => (
+          {dictMap(value, (id, item) => (
             <Stack
               key={id}
               alignItems="center"
               onClick={() => {
                 setActiveId(id)
                 setNewId(id.toString())
-                setNewRank(rank?.toString() ?? '')
-                setBlocked(rank == -1)
+                setNewValue({ ...item })
+                setBlocked(item?.rank == -1)
                 setOpen(true)
               }}
             >
               <Typography>{id}</Typography>
-              <Typography>{rank == -1 ? '屏蔽' : `下沉 ${rank} 名`}</Typography>
+              {item?.rank && (
+                <Typography>
+                  {item?.rank == -1 ? '屏蔽' : `下沉 ${item?.rank} 名`}
+                </Typography>
+              )}
+              {item?.score_coefficient && (
+                <Typography>系数：{item.score_coefficient}</Typography>
+              )}
+              {item?.score_delta && (
+                <Typography>增量：{item.score_delta}</Typography>
+              )}
             </Stack>
           ))}
         </Stack>
@@ -182,18 +195,56 @@ const OverrideSection = ({
               />
               <TextField
                 label="下沉排名"
-                value={newRank}
+                value={newValue?.rank}
                 disabled={blocked}
                 onChange={(e) => {
                   const value = e.target.value.trim()
                   if (!value || value == '-') {
-                    setNewRank(value)
+                    const v = { ...newValue }
+                    delete v['rank']
+                    setNewValue(v)
                     return
                   }
                   const intValue = parseInt(value)
                   if (!isNaN(intValue)) {
-                    setNewRank(intValue.toString())
+                    setNewValue({ ...newValue, rank: intValue })
                     setBlocked(intValue == -1)
+                  }
+                }}
+              />
+              <TextField
+                label="系数"
+                value={newValue?.score_coefficient}
+                disabled={blocked}
+                onChange={(e) => {
+                  const value = e.target.value.trim()
+                  if (!value) {
+                    const v = { ...newValue }
+                    delete v['score_coefficient']
+                    setNewValue(v)
+                    return
+                  }
+                  const intValue = parseFloat(value)
+                  if (!isNaN(intValue)) {
+                    setNewValue({ ...newValue, score_coefficient: intValue })
+                  }
+                }}
+              />
+              <TextField
+                label="增量"
+                value={newValue?.score_delta}
+                disabled={blocked}
+                onChange={(e) => {
+                  const value = e.target.value.trim()
+                  if (!value) {
+                    const v = { ...newValue }
+                    delete v['score_delta']
+                    setNewValue(v)
+                    return
+                  }
+                  const intValue = parseFloat(value)
+                  if (!isNaN(intValue)) {
+                    setNewValue({ ...newValue, score_delta: intValue })
                   }
                 }}
               />
@@ -213,13 +264,12 @@ const OverrideSection = ({
                   variant="contained"
                   onClick={() => {
                     const id = parseInt(newId)
-                    const rank = blocked ? -1 : parseInt(newRank)
-                    if (isNaN(id) || isNaN(rank)) {
+                    if (isNaN(id)) {
                       return
                     }
-                    const newOverrides: { [id in number]?: number } = {
+                    const newOverrides: { [id in number]?: HotlistOverride } = {
                       ...value,
-                      [id]: rank,
+                      [id]: { ...newValue, ...(blocked && { rank: -1 }) },
                     }
                     if (activeId) {
                       if (activeId != id) {
@@ -241,7 +291,7 @@ const OverrideSection = ({
                     variant="outlined"
                     onClick={() => {
                       let newOverrides:
-                        | { [id in number]?: number }
+                        | { [id in number]?: HotlistOverride }
                         | undefined = {
                         ...value,
                       }
@@ -471,7 +521,7 @@ const Toplist = () => {
 
 const ScoreView = ({ item }: { item: HotlistCandidate }) => (
   <Stack alignItems="center">
-    <Stack direction="row">
+    <Stack direction="row" alignItems="center">
       <Typography variant="h6">{item.score.toFixed(1)}</Typography>
       {item.score != item.raw_score && (
         <Typography variant="body2" ml={1}>

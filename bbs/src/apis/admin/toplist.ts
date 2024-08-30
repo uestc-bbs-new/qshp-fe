@@ -36,8 +36,8 @@ export type HotlistConfig = {
     } & HotlistWeights
   >
   fid_top_limits?: { [fid in number]?: number }
-  uid_overrides2?: { [uid in number]?: number }
-  tid_overrides2?: { [tid in number]?: number }
+  uid_overrides2?: { [uid in number]?: HotlistOverride }
+  tid_overrides2?: { [tid in number]?: HotlistOverride }
   excluded_fids?: number[]
 
   uid_overrides?: { [uid in number]?: number } // DEPRECATED
