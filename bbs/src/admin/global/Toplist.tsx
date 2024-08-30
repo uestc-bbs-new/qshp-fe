@@ -2,7 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 
 import React, { useState } from 'react'
 
-import { AddCircle, Close, RemoveCircle } from '@mui/icons-material'
+import {
+  AddCircle,
+  ArrowCircleDown,
+  Close,
+  KeyboardDoubleArrowDown,
+  RemoveCircle,
+} from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -19,13 +25,17 @@ import {
 } from '@mui/material'
 
 import {
+  HotlistCandidate,
   HotlistConfig,
   HotlistWeights,
+  fetchHotlist,
   getHotlistConfig,
   setHotlistConfig,
 } from '@/apis/admin/toplist'
+import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { globalCache, useForumList } from '@/states'
+import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
 const WeightEntry = ({ text, value }: { text: string; value?: number }) => (
@@ -62,7 +72,9 @@ const ForumEntry = ({
   onRemove?: () => void
 }) => (
   <Stack direction="row" alignItems="flex-end" flexShrink={0}>
-    <Link to={pages.forum(fid)}>{globalCache.fidNameMap[fid]}</Link>
+    <Link to={pages.forum(fid)} target="_blank">
+      {globalCache.fidNameMap[fid]}
+    </Link>
     {editing && (
       <IconButton onClick={onRemove}>
         <RemoveCircle />
@@ -256,6 +268,13 @@ const OverrideSection = ({
   )
 }
 
+const pad = (value: number | string) => value.toString().padStart(2, '0')
+
+const toDatetimeLocal = (value: Date) =>
+  `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
+    value.getDate()
+  )}T${pad(value.getHours())}:${pad(value.getMinutes())}`
+
 const Toplist = () => {
   const [config, setConfig] = useState<HotlistConfig>()
   const { isLoading, refetch } = useQuery({
@@ -268,6 +287,9 @@ const Toplist = () => {
     staleTime: Infinity,
   })
   const [savePending, setSavePending] = useState(false)
+  const [fetchPending, setFetchPending] = useState(false)
+  const [anchorTimestamp, setAnchorTimestamp] = useState(0)
+  const [list, setList] = useState<HotlistCandidate[]>()
   useForumList()
 
   if (isLoading) {
@@ -328,6 +350,7 @@ const Toplist = () => {
           <Button
             color="success"
             variant="contained"
+            disabled={savePending}
             onClick={async () => {
               try {
                 setSavePending(true)
@@ -340,11 +363,162 @@ const Toplist = () => {
           >
             保存
           </Button>
+          <Stack direction="row" alignItems="center" mt={2}>
+            <Button
+              color="info"
+              variant="contained"
+              disabled={fetchPending}
+              onClick={async () => {
+                try {
+                  setFetchPending(true)
+                  setList(
+                    await fetchHotlist({
+                      config,
+                      anchor_timestamp: anchorTimestamp,
+                    })
+                  )
+                } finally {
+                  setFetchPending(false)
+                }
+              }}
+            >
+              获取数据
+            </Button>
+            <Typography ml={2} mr={1}>
+              基准时间
+            </Typography>
+            <TextField
+              type="datetime-local"
+              size="small"
+              value={
+                anchorTimestamp
+                  ? toDatetimeLocal(new Date(anchorTimestamp * 1000))
+                  : ''
+              }
+              onChange={(e) => {
+                if (e.target.value) {
+                  setAnchorTimestamp(
+                    Math.floor(new Date(e.target.value).getTime() / 1000)
+                  )
+                } else {
+                  setAnchorTimestamp(0)
+                }
+              }}
+            />
+          </Stack>
+          {list && (
+            <table>
+              <thead>
+                <tr>
+                  <th>排名</th>
+                  <th>标题</th>
+                  <th>分值</th>
+                  <th>发表时间</th>
+                  <th>最后回复</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((item, index) => (
+                  <tr key={item.thread_id}>
+                    <td>
+                      <Typography>{index + 1}</Typography>
+                      {item.descend_by_excess && <KeyboardDoubleArrowDown />}
+                      {item.descend_by_override && <ArrowCircleDown />}
+                    </td>
+                    <td>
+                      <Stack>
+                        <Link
+                          to={pages.thread(item.thread_id)}
+                          variant="h6"
+                          target="_blank"
+                        >
+                          {item.subject}
+                        </Link>
+                        <Stack direction="row" alignItems="flex-end">
+                          <Link to={pages.forum(item.forum_id)} target="_blank">
+                            {globalCache.fidNameMap[item.forum_id]}
+                          </Link>
+                          <Avatar
+                            uid={item.author_id}
+                            size={28}
+                            sx={{ ml: 2, mr: 1 }}
+                          />
+                          <Link
+                            to={pages.user({ uid: item.author_id })}
+                            target="_blank"
+                          >
+                            {item.author}
+                          </Link>
+                        </Stack>
+                      </Stack>
+                    </td>
+                    <td>
+                      <ScoreView item={item} />
+                    </td>
+                    <td>{chineseTime(item.dateline * 1000)}</td>
+                    <td>{chineseTime(item.last_post * 1000)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           <pre>{JSON.stringify(config, null, 2)}</pre>
         </>
       )}
     </>
   )
 }
+
+const ScoreView = ({ item }: { item: HotlistCandidate }) => (
+  <Stack alignItems="center">
+    <Stack direction="row">
+      <Typography variant="h6">{item.score.toFixed(1)}</Typography>
+      {item.score != item.raw_score && (
+        <Typography variant="body2" ml={1}>
+          ({item.raw_score.toFixed(1)})
+        </Typography>
+      )}
+    </Stack>
+    <div
+      css={{
+        display: 'grid',
+        gridTemplate: 'auto auto / repeat(2, 1fr)',
+        gridAutoFlow: 'column',
+        justifyItems: 'center',
+        alignItems: 'end',
+        gap: '3px 5px',
+      }}
+    >
+      <Typography variant="body2">赞</Typography>
+      <Typography variant="body2">{item.recommend_add}</Typography>
+      <Typography variant="body2">踩</Typography>
+      <Typography variant="body2">{item.recommend_sub}</Typography>
+      <Typography variant="body2">
+        回复
+        <br />
+        作者
+      </Typography>
+      <Typography variant="body2">{item.reply_authors}</Typography>
+      <Typography variant="body2">
+        点评
+        <br />
+        作者
+      </Typography>
+      <Typography variant="body2">{item.comment_authors}</Typography>
+      <Typography variant="body2">
+        正面
+        <br />
+        评分
+      </Typography>
+      <Typography variant="body2">{item.positive_scores}</Typography>
+      <Typography variant="body2">
+        负面
+        <br />
+        评分
+      </Typography>
+      <Typography variant="body2">{item.negative_scores}</Typography>
+    </div>
+  </Stack>
+)
 
 export default Toplist
