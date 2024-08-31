@@ -23,16 +23,13 @@ const StartConversation = () => {
   const [selectedChips, setSelectedChips] = useState<string[]>([])
   const [message, setMessage] = useState('')
   const timer = useRef<number | null>(null)
-  const [friendList, setFriendList] = useState([
-    { username: '好友1', uid: 1 },
-    { username: '好友2', uid: 2 },
-    { username: '好友3', uid: 3 },
-  ])
+  const [friendList, setFriendList] = useState([{ username: '好友1', uid: 1 }])
+
+  const [groupChatTitle, setGroupChatTitle] = useState('')
 
   useEffect(() => {
     ;(async () => {
       const res = await searchUsers({ query: '', withFriends: true })
-      console.log(res)
       setFriendList([...(res.friends ? res.friends : []), ...res.rows])
     })()
   }, [])
@@ -125,17 +122,12 @@ const StartConversation = () => {
                               withFriends: true,
                             })
 
-                            console.log([
-                              ...(res.friends ? res.friends : []),
-                              ...res.rows,
-                            ])
-
                             setFriendList([
                               ...(res.friends ? res.friends : []),
                               ...res.rows,
                             ])
                             timer.current = null
-                          }, 500)
+                          }, 300)
                         }
                       }}
                     />
@@ -155,6 +147,9 @@ const StartConversation = () => {
                   placeholder="请输入群聊标题，不超过80字"
                   margin="dense"
                   multiline
+                  onChange={(e) => {
+                    setGroupChatTitle(e.target.value)
+                  }}
                 />
               )}
             </Stack>
@@ -178,9 +173,17 @@ const StartConversation = () => {
           <Button
             type="submit"
             onClick={() => {
+              // let chatMsg = {
+              //   usernames: selectedChips,
+              //   message: message,
+              // }
+              // if (selectedChips.length >= 2){
+              //   chatMsg.subject = groupChatTitle
+              // }
               sendChatMessage({
                 usernames: selectedChips,
                 message: message,
+                subject: groupChatTitle,
               })
             }}
           >
