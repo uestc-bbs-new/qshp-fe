@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { List, Pagination, Stack } from '@mui/material'
+import { Divider, List, Pagination, Stack } from '@mui/material'
 
 import {
   ChatConversation,
@@ -37,16 +37,19 @@ const ConversationList = ({
     <>
       <List className="p-0">
         {list.map((chat) => (
-          <ConversationItem
-            key={chat.conversation_id}
-            chat={chat}
-            lite={lite}
-            selected={chat == activeConversation}
-            ref={chat == activeConversation ? activeRef : undefined}
-            showOptSelect={showOptSelect}
-            checked={checkList[chat.conversation_id] || false}
-            onCheckboxChange={onCheckboxChange}
-          />
+          <>
+            <ConversationItem
+              key={chat.conversation_id}
+              chat={chat}
+              lite={lite}
+              selected={chat == activeConversation}
+              ref={chat == activeConversation ? activeRef : undefined}
+              showOptSelect={showOptSelect}
+              checked={checkList[chat.conversation_id] || false}
+              onCheckboxChange={onCheckboxChange}
+            />
+            <Divider></Divider>
+          </>
         ))}
       </List>
       {/* 分页栏 */}

@@ -15,7 +15,6 @@ import {
   Paper,
   Skeleton,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 
@@ -26,11 +25,12 @@ import {
 } from '@/apis/messages'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Editor, { EditorHandle } from '@/components/Editor'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
-import { handleCtrlEnter } from '@/utils/tools'
+import { handleCtrlEnter, isMobileDevice } from '@/utils/tools'
 
 import ConversationList from './ConversationList'
 
@@ -58,6 +58,9 @@ const Conversation = ({
   const [chatList, setChatList] = useState(initialList)
   const [isEnded, setEnded] = useState(false)
   const fetchMode = useRef('older')
+
+  const editor = useRef<EditorHandle>(null)
+
   const [data, setData] = useState<ChatMessage[]>([])
   const initQuery = () => ({
     chatId,
@@ -168,21 +171,21 @@ const Conversation = ({
   const messageRef = useRef<HTMLTextAreaElement>()
   const [sendPending, setSendPending] = useState(false)
   const sendMessage = async () => {
-    if (!messageRef.current?.value) {
+    if (!editor.current?.vditor?.getValue()) {
       return
     }
     setSendPending(true)
     try {
       await sendChatMessage({
         conversation_id: chatId,
-        message: messageRef.current.value,
+        message: editor.current?.vditor?.getValue() || '',
       })
     } catch (_) {
       return
     } finally {
       setSendPending(false)
     }
-    messageRef.current.value = ''
+    editor.current?.vditor?.setValue('')
     fetchMode.current = 'sent'
     refreshNewMessages()
   }
@@ -191,18 +194,22 @@ const Conversation = ({
   return (
     <Stack direction="row" maxHeight="calc(100vh - 200px)">
       {/* 左侧栏 */}
-      <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
-        <ConversationList
-          onCheckboxChange={onCheckboxChange}
-          list={chatList || []} // 聊天列表，如果不存在则为空数组
-          lite={true}
-          showOptSelect={showOptSelect}
-          checkList={checkList}
-          activeConversation={chatList?.find(
-            (item) => item.conversation_id == chatId || item.to_uid == uid
-          )}
-        />
-      </Box>
+      {isMobileDevice() ? (
+        <></>
+      ) : (
+        <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
+          <ConversationList
+            onCheckboxChange={onCheckboxChange}
+            list={chatList || []} // 聊天列表，如果不存在则为空数组
+            lite={true}
+            showOptSelect={showOptSelect}
+            checkList={checkList}
+            activeConversation={chatList?.find(
+              (item) => item.conversation_id == chatId || item.to_uid == uid
+            )}
+          />
+        </Box>
+      )}
       <Stack flexGrow={1}>
         <Box
           sx={(theme) => ({
@@ -290,7 +297,7 @@ const Conversation = ({
           p={1.5}
           alignItems="flex-end"
         >
-          <TextField
+          {/* <TextField
             multiline
             autoFocus
             rows={4}
@@ -302,6 +309,11 @@ const Conversation = ({
             })}
             onKeyDown={handleCtrlEnter(sendMessage)}
             inputRef={messageRef}
+          /> */}
+          <Editor
+            minHeight={200}
+            ref={editor}
+            onKeyDown={handleCtrlEnter(sendMessage)}
           />
           <IconButton
             sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}
