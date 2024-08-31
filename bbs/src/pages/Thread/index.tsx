@@ -70,8 +70,8 @@ const ForumPagination = (props: {
     <Stack direction="row" justifyContent="center" my={1.5}>
       {props.count > 1 && (
         <Pagination
-          boundaryCount={thinView ? 1 : 3}
-          siblingCount={1}
+          boundaryCount={thinView ? 1 : 2}
+          siblingCount={thinView ? 1 : 5}
           {...props}
         />
       )}

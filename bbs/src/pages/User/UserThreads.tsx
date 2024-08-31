@@ -177,8 +177,8 @@ function ThreadList<T extends PaginationParams>({
       {pagination && pagination.total > pagination.page_size && (
         <Stack direction="row" justifyContent="center" my={1.5}>
           <Pagination
-            boundaryCount={3}
-            siblingCount={1}
+            boundaryCount={2}
+            siblingCount={5}
             page={pagination.page}
             count={Math.ceil(pagination.total / (pagination.page_size || 1))}
             onChange={handlePageChange}
