@@ -10,6 +10,7 @@ export type PaginationParams = {
 
 export type GenericList<T> = PaginationParams & {
   rows: T[]
+  friends?: T[]
 }
 
 export type ThreadBasics = {
