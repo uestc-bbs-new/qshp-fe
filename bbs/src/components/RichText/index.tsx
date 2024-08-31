@@ -197,7 +197,7 @@ export const LegacyPostRenderer = ({
   return <UserHtmlRenderer html={html} orphanAttachments={orphanAttachments} />
 }
 
-export const MarkdownPostRenderer = ({
+const MarkdownPostRenderer = ({
   message,
   attachments,
 }: {

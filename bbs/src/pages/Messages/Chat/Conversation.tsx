@@ -15,6 +15,7 @@ import {
   Paper,
   Skeleton,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 
@@ -25,9 +26,7 @@ import {
 } from '@/apis/messages'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
-import Editor, { EditorHandle } from '@/components/Editor'
 import Link from '@/components/Link'
-import { MarkdownPostRenderer } from '@/components/RichText'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
@@ -59,9 +58,6 @@ const Conversation = ({
   const [chatList, setChatList] = useState(initialList)
   const [isEnded, setEnded] = useState(false)
   const fetchMode = useRef('older')
-
-  const editor = useRef<EditorHandle>(null)
-
   const [data, setData] = useState<ChatMessage[]>([])
   const initQuery = () => ({
     chatId,
@@ -172,21 +168,21 @@ const Conversation = ({
   const messageRef = useRef<HTMLTextAreaElement>()
   const [sendPending, setSendPending] = useState(false)
   const sendMessage = async () => {
-    if (!editor.current?.vditor?.getValue()) {
+    if (!messageRef.current?.value) {
       return
     }
     setSendPending(true)
     try {
       await sendChatMessage({
         conversation_id: chatId,
-        message: editor.current?.vditor?.getValue() || '',
+        message: messageRef.current.value,
       })
     } catch (_) {
       return
     } finally {
       setSendPending(false)
     }
-    editor.current?.vditor?.setValue('')
+    messageRef.current.value = ''
     fetchMode.current = 'sent'
     refreshNewMessages()
   }
@@ -269,8 +265,7 @@ const Conversation = ({
                 </Typography>
                 <Paper elevation={3} sx={{ p: 1 }}>
                   <Typography sx={{ lineBreak: 'anywhere' }}>
-                    {/* {item.message} */}
-                    <MarkdownPostRenderer message={item.message} />
+                    {item.message}
                   </Typography>
                   <Typography
                     variant="subtitle2"
@@ -295,7 +290,7 @@ const Conversation = ({
           p={1.5}
           alignItems="flex-end"
         >
-          {/* <TextField
+          <TextField
             multiline
             autoFocus
             rows={4}
@@ -307,11 +302,6 @@ const Conversation = ({
             })}
             onKeyDown={handleCtrlEnter(sendMessage)}
             inputRef={messageRef}
-          /> */}
-          <Editor
-            minHeight={200}
-            ref={editor}
-            onKeyDown={handleCtrlEnter(sendMessage)}
           />
           <IconButton
             sx={{ flexGrow: 0, flexShrink: 0, ml: 1, mb: 1 }}
