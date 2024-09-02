@@ -4,8 +4,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-cool-inview'
 
 import { Send } from '@mui/icons-material'
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
 import {
   Box,
+  Button,
   Divider,
   IconButton,
   List,
@@ -24,8 +26,10 @@ import {
 } from '@/apis/messages'
 import { ChatConversation, ChatMessage } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
+import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { pages } from '@/utils/routes'
 import { handleCtrlEnter } from '@/utils/tools'
 
 import ConversationList from './ConversationList'
@@ -37,10 +41,18 @@ const Conversation = ({
   chatId,
   uid,
   initialList,
+  showOptSelect,
+  checkList,
+  page,
+  onCheckboxChange,
 }: {
   chatId?: number
   uid?: number
   initialList?: ChatConversation[]
+  showOptSelect: boolean
+  checkList: Record<number, boolean>
+  page?: number
+  onCheckboxChange: (isChecked: boolean, id: number) => void
 }) => {
   const { state } = useAppState()
   const [chatList, setChatList] = useState(initialList)
@@ -174,26 +186,47 @@ const Conversation = ({
     fetchMode.current = 'sent'
     refreshNewMessages()
   }
+  //高度最大为视窗高度减去200像素
+
   return (
     <Stack direction="row" maxHeight="calc(100vh - 200px)">
+      {/* 左侧栏 */}
       <Box sx={{ width: 200 }} flexShrink={0} overflow="auto">
         <ConversationList
-          list={chatList || []}
+          onCheckboxChange={onCheckboxChange}
+          list={chatList || []} // 聊天列表，如果不存在则为空数组
           lite={true}
+          showOptSelect={showOptSelect}
+          checkList={checkList}
           activeConversation={chatList?.find(
             (item) => item.conversation_id == chatId || item.to_uid == uid
           )}
         />
       </Box>
       <Stack flexGrow={1}>
+        <Box
+          sx={(theme) => ({
+            height: '40px',
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#D7E6FD' : '#545454',
+            textAlign: 'right',
+          })}
+          flexShrink={0}
+          overflow="auto"
+        >
+          <ReturnList page={page} />
+        </Box>
+
         <List
-          sx={{
+          sx={(theme) => ({
             p: 1,
             overflow: 'auto',
             width: '100%',
             flexGrow: 1,
             flexShrink: 1,
-          }}
+            backgroundColor:
+              theme.palette.mode == 'light' ? '#FAFBFC' : '#262626',
+          })}
           ref={scrollContainer}
         >
           {!isEnded && !(isFetching && query.page == 1) && (
@@ -261,7 +294,12 @@ const Conversation = ({
             multiline
             autoFocus
             rows={4}
-            sx={{ flexGrow: 1, flexShrink: 1 }}
+            sx={(theme) => ({
+              flexGrow: 1,
+              flexShrink: 1,
+              backgroundColor:
+                theme.palette.mode == 'light' ? '#F8FAFF' : '#545454',
+            })}
             onKeyDown={handleCtrlEnter(sendMessage)}
             inputRef={messageRef}
           />
@@ -275,6 +313,28 @@ const Conversation = ({
         </Stack>
       </Stack>
     </Stack>
+  )
+}
+
+//让返回按钮能够返回站内信的主页面
+const ReturnList = ({ page }: { page?: number }) => {
+  return (
+    <Button
+      component={Link}
+      to={pages.chat() + `${page ? `?page=${page}` : ''}`}
+      sx={(theme) => ({
+        color: theme.palette.mode == 'light' ? '#0268FD' : '#90CAF9',
+        marginRight: '30px',
+        width: 'auto',
+        backgroundColor: 'inherit',
+        border: 'none',
+        height: '40px',
+        fontSize: '13px',
+      })}
+    >
+      <KeyboardReturnIcon sx={{ marginRight: '4px', width: '18px' }} />
+      返回
+    </Button>
   )
 }
 
