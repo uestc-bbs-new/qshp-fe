@@ -27,20 +27,22 @@ export const RegisterContent = ({ small }: { small?: boolean }) => {
           进入统一身份认证平台
         </Button>
       </Stack>
-      <Typography
-        color="red"
-        my={2}
-        textAlign="justify"
-        sx={{ textWrap: 'pretty' }}
-      >
-        2024 级新生请在
-        <Link to="https://idas.uestc.edu.cn/" target="_blank" external>
-          统一身份认证平台
-        </Link>
-        中点击登录按钮下方的“账号激活”，
-        {!thin && <br />}
-        填写信息完成激活后即可在此注册清水河畔。
-      </Typography>
+      {false && ( // Preserved for the next year.
+        <Typography
+          color="red"
+          my={2}
+          textAlign="justify"
+          sx={{ textWrap: 'pretty' }}
+        >
+          2024 级新生请在
+          <Link to="https://idas.uestc.edu.cn/" target="_blank" external>
+            统一身份认证平台
+          </Link>
+          中点击登录按钮下方的“账号激活”，
+          {!thin && <br />}
+          填写信息完成激活后即可在此注册清水河畔。
+        </Typography>
+      )}
       <Stack direction="row" justifyContent="flex-end" mt={3}>
         <Link
           external
