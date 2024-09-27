@@ -33,6 +33,9 @@ export const RushReplyBadge = ({
       if (position.length >= 2 && position[position.length - 1] == '*') {
         return postPosition.startsWith(position.slice(0, -1))
       }
+      if (position.length >= 2 && position[0] == '*') {
+        return postPosition.endsWith(position.slice(1))
+      }
     })
   )
     return (
