@@ -14,6 +14,7 @@ import {
 
 import { getIndexData } from '@/apis/common'
 import headerImg from '@/assets/header.jpg'
+import Ad from '@/components/Ad'
 import Aside from '@/components/Aside'
 import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
@@ -108,6 +109,7 @@ const Home = () => {
   return (
     <>
       <Banner src={headerImg} />
+      <Ad />
       <Stack
         direction="row"
         justifyContent="space-between"

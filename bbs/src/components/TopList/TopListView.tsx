@@ -55,6 +55,8 @@ import { useAppState, useForumList, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 import { persistedStates } from '@/utils/storage'
 
+import Ad from '../Ad'
+
 const kAllForums = 'allforums'
 type TabKey = TopListKey | 'allforums'
 const tabKeys: TabKey[] = [...topListKeys, kAllForums]
@@ -336,6 +338,7 @@ type TopListTabHandle = {
 type TopListTabProps = { tab: TopListKey; singleColumn?: boolean }
 const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
   function TopListTab({ tab, singleColumn }: TopListTabProps, ref) {
+    const singleColumnAd = useMediaQuery('(max-width: 720px')
     const homeCachedData = useTopList()
     const getCache = () => {
       const cachedData = toplistCache[tab]
@@ -434,6 +437,7 @@ const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
     return (
       <>
         {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
+        {tab == 'newthread' && <Ad mb={2} singleColumn={singleColumnAd} />}
         <ListView list={list} singleColumn={singleColumn} />
         {!isEnded && !(isFetching && page == 1) && (
           <Stack ref={isFetching ? undefined : observe}>
