@@ -23,7 +23,7 @@ export const chineseTime = (
   if (time > now.getTime()) {
     return dayjs(time).format(format)
   } else {
-    if (time > now.getTime() - 1000 * 60 && time < now.getTime()) {
+    if (time > now.getTime() - 1000 * 60 && time <= now.getTime() + 1000 * 60) {
       return '刚刚'
     }
     if (Date.now() - time < 1000 * 60 * 60 * 3) {
