@@ -15,13 +15,13 @@ import {
 import { getIndexData } from '@/apis/common'
 import headerImg from '@/assets/header.jpg'
 import Aside from '@/components/Aside'
-import Banner from '@/components/Banner'
 import CampusService from '@/components/Header/CampusService'
 import HeaderCards from '@/components/Header/HeaderCards'
 import OverviewInfo from '@/components/Header/OverviewInfo'
 import { globalCache, setForumListCache, useAppState } from '@/states'
 import { persistedStates } from '@/utils/storage'
 
+import Banner from './Banner'
 import { ForumGroup } from './ForumCover'
 
 const Home = () => {
