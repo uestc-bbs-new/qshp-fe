@@ -3,9 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 import EditNoteIcon from '@mui/icons-material/EditNote'
 import {
   Box,
+  Button,
   Divider,
   Grid,
   Skeleton,
@@ -100,11 +102,19 @@ const Information = ({
     userQuery.admin,
   ])
 
+  const [hideSensitiveFields, setHideSensitiveFields] = useState(true)
+
   return (
     <Box pt={1}>
       {self && (
         <>
-          <Stack alignItems="flex-end" pb={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-end"
+            spacing={2}
+            pb={1}
+          >
             <Link
               to={
                 isPreviewRelease
@@ -115,12 +125,28 @@ const Information = ({
               target={isPreviewRelease ? '_blank' : undefined}
             >
               <Stack direction="row" alignItems="center">
+                <EditNoteIcon />
                 <Typography fontSize={12} align="right" className="m-1">
                   编辑
                 </Typography>
-                <EditNoteIcon />
               </Stack>
             </Link>
+            <Button
+              variant="text"
+              onClick={() => setHideSensitiveFields(!hideSensitiveFields)}
+            >
+              {hideSensitiveFields ? (
+                <>
+                  <Visibility sx={{ mr: 0.5 }} />
+                  显示所有信息
+                </>
+              ) : (
+                <>
+                  <VisibilityOff sx={{ mr: 0.5 }} />
+                  隐藏敏感信息
+                </>
+              )}
+            </Button>
           </Stack>
           <Divider />
         </>
@@ -130,7 +156,12 @@ const Information = ({
           <Section title="基本信息">
             <Grid container>
               <FieldValueGrid title="UID" text={userSummary?.uid} />
-              {data.email && <FieldValueGrid title="Email" text={data.email} />}
+              {data.email && (
+                <FieldValueGrid
+                  title="Email"
+                  text={hideSensitiveFields ? '****************' : data.email}
+                />
+              )}
             </Grid>
           </Section>
           {data.introduction && (
@@ -171,7 +202,10 @@ const Information = ({
                 text={chineseTime(data.register_time * 1000)}
               />
               {data.register_ip && (
-                <FieldValueGrid title="注册 IP" text={data.register_ip} />
+                <FieldValueGrid
+                  title="注册 IP"
+                  text={hideSensitiveFields ? '**********' : data.register_ip}
+                />
               )}
               <FieldValueGrid
                 title="最后访问"
@@ -182,7 +216,10 @@ const Information = ({
                 text={chineseTime(data.last_activity * 1000)}
               />
               {data.last_ip && (
-                <FieldValueGrid title="上次访问 IP" text={data.last_ip} />
+                <FieldValueGrid
+                  title="上次访问 IP"
+                  text={hideSensitiveFields ? '**********' : data.last_ip}
+                />
               )}
               <FieldValueGrid
                 title="上次发表"
