@@ -117,7 +117,9 @@ function Favorites({
                 '& .MuiAccordionSummary-content': { my: 0 },
               }}
             >
-              <Typography variant="userProfileHeading">淘专辑</Typography>
+              <Typography variant="userProfileHeading">
+                公共收藏夹（淘专辑）
+              </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ pt: 0, pb: 2, px: 1.75 }}>
               {collections.map((item) => (
@@ -139,7 +141,7 @@ function Favorites({
       {self && !!data?.total && data.rows && (
         <>
           <Typography variant="userProfileHeading" component="p" mt={2}>
-            我的收藏
+            个人收藏夹
           </Typography>
           {data.rows.map((item) => (
             <FavoriteItem key={item.favorite_id} item={item} />
