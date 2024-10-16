@@ -8,7 +8,11 @@ import {
   ThreadPollOption,
   ThreadReplyCredit,
 } from '@/common/interfaces/response'
-import { PostReplyResult, PostThreadResult } from '@/common/interfaces/thread'
+import {
+  PostReplyResult,
+  PostThreadResult,
+  ThreadFavoriteStatus,
+} from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
 
 import { makeThreadTypesMap } from '../common'
@@ -184,3 +188,6 @@ export const getAtList = (query: string, thread_id?: number) => {
 
 export const reportPost = (pid: number, fid: number, message: string) =>
   request.post(`${commonUrl}/post/report`, { pid, fid, message })
+
+export const getThreadFavorite = (tid: number) =>
+  request.get<ThreadFavoriteStatus>(`${commonUrl}/thread/favorite/${tid}`)

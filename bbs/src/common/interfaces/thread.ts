@@ -21,6 +21,21 @@ export type PostReplyResult = {
   wait_timeout?: number
 }
 
+export type PublicThreadFavoriteFolder = {
+  collection_id: number
+  owner_uid: number
+  username: string
+  name: string
+  description?: string
+  is_owner?: boolean
+  is_favorite?: boolean
+}
+
+export type ThreadFavoriteStatus = {
+  is_personal_favorite?: boolean
+  public_favorites?: PublicThreadFavoriteFolder[]
+}
+
 export const kThreadDisplayOrderDeleted = -1
 export const kThreadDisplayOrderInReview = -2
 export const kThreadDisplayOrderRejected = -3

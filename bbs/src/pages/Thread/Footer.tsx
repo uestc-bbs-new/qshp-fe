@@ -7,6 +7,8 @@ import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
+import { FavoriteDialog } from './dialogs/Favorite'
+
 type FooterProps = {
   forumDetails?: ForumDetails
   threadDetails?: Thread
@@ -47,6 +49,9 @@ const Footer = ({
       }
     }
   }
+
+  const [favoriteDialog, setFavoriteDialog] = useState(false)
+  const favorite = async () => {}
   return (
     <Stack direction="row" flexWrap="wrap" mt={1}>
       {canReply && (
@@ -78,6 +83,20 @@ const Footer = ({
         <Button variant="text" onClick={onReport}>
           举报
         </Button>
+      )}
+      {!!post.is_first && (
+        <Button variant="text" onClick={() => setFavoriteDialog(true)}>
+          收藏
+          {!!threadDetails?.favorite_times &&
+            ` (${threadDetails.favorite_times})`}
+        </Button>
+      )}
+      {favoriteDialog && (
+        <FavoriteDialog
+          open
+          onClose={() => setFavoriteDialog(false)}
+          post={post}
+        />
       )}
     </Stack>
   )
