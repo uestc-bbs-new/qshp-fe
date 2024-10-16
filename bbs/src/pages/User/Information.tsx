@@ -157,6 +157,12 @@ const Information = ({
           <Section title="活跃概况">
             <Grid container spacing={1}>
               <FieldValueGrid
+                title="发帖量"
+                text={`${
+                  userSummary ? userSummary.threads + userSummary.replies : ''
+                }`}
+              />
+              <FieldValueGrid
                 title="在线时间"
                 text={`${data.online_time} 小时`}
               />
