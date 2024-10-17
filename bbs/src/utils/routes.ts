@@ -107,7 +107,7 @@ export const pages = {
     withSearchAndHash(
       `/user/${
         params?.username
-          ? `name/${params.username}`
+          ? `name/${encodeURIComponent(params.username)}`
           : params?.uid
             ? params.uid
             : 'me'
