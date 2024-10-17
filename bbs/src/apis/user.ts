@@ -34,7 +34,7 @@ const getApiBase = (user: Partial<User>) => {
     return `${userApiBase}/${user.uid}`
   }
   if (user.username) {
-    return `${userApiBase}/name/${user.username}`
+    return `${userApiBase}/name/${encodeURIComponent(user.username)}`
   }
   return `${userApiBase}/me`
 }
