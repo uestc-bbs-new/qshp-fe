@@ -294,7 +294,12 @@ export type MessagesSummary = {
   new_notifications?: Notification[]
 }
 
-export type NotificationKind = 'reply' | 'comment' | 'at' | 'admin'
+export type NotificationKind =
+  | 'reply'
+  | 'comment'
+  | 'at'
+  | 'thread_collect'
+  | 'admin'
 
 export type Notification = {
   id: number
@@ -309,6 +314,9 @@ export type Notification = {
   post_id?: number
   subject?: string
   summary?: string
+
+  collection_id?: number
+  collection_name?: string
 }
 
 export type ChatConversation = {

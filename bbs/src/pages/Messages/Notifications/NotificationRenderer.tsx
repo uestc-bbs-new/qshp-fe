@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import { Notification } from '@/common/interfaces/response'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
-import { pages } from '@/utils/routes'
+import { legacyPages, pages } from '@/utils/routes'
 
 const NotificationRenderer = ({
   item,
@@ -53,6 +53,38 @@ const NotificationRenderer = ({
       </Typography>
     )
   }
+  if (item.kind == 'thread_collect') {
+    return (
+      <Typography {...fontWeightProp}>
+        恭喜您的主题{' '}
+        <Link to={item.thread_id ? pages.thread(item.thread_id) : undefined}>
+          {item.subject}
+        </Link>{' '}
+        被
+        {!!item.author_id && (
+          <>
+            {' '}
+            <Link to={pages.user({ uid: item.author_id })}>
+              {item.author}
+            </Link>{' '}
+          </>
+        )}
+        收录至公共收藏夹（淘专辑）
+        <Link
+          external
+          target="_blank"
+          to={
+            item.collection_id
+              ? legacyPages.collection(item.collection_id)
+              : undefined
+          }
+        >
+          {item.collection_name}
+        </Link>
+        ！
+      </Typography>
+    )
+  }
   return (
     <Box sx={small ? { '& .quote blockquote': { mt: 0.5, mb: 0 } } : undefined}>
       <UserHtmlRenderer html={item.html_message} style={fontWeightStyle} />
@@ -66,6 +98,9 @@ export const getNotificationTarget = (item: Notification) => {
     item.post_id
   ) {
     return pages.goto(item.post_id)
+  }
+  if (item.kind == 'thread_collect' && item.thread_id) {
+    return pages.thread(item.thread_id)
   }
 }
 
