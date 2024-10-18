@@ -186,3 +186,14 @@ export const getUserFavorites = async (
   )
   return result
 }
+
+export const deleteUserFavorite = (options: {
+  collection_id?: number
+  personal_favorite?: boolean
+  tid_list?: number[]
+  favorite_id_list?: number[]
+}) =>
+  request.post<{ deleted_count?: number }>(
+    `${userApiBase}/favorites/delete`,
+    options
+  )

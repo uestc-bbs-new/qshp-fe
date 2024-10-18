@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { useState } from 'react'
+
 import {
   AddLink,
   CheckBox,
@@ -20,11 +22,14 @@ import {
   Typography,
 } from '@mui/material'
 
-import { getThreadFavorite } from '@/apis/thread'
+import { parseApiError } from '@/apis/error'
+import { favoriteThread, getThreadFavorite } from '@/apis/thread'
+import { deleteUserFavorite } from '@/apis/user'
 import { PostFloor } from '@/common/interfaces/response'
 import { PublicThreadFavoriteFolder } from '@/common/interfaces/thread'
 import Avatar from '@/components/Avatar'
 import GeneralDialog from '@/components/GeneralDialog'
+import { useAppState } from '@/states'
 import siteRoot from '@/utils/siteRoot'
 
 const FavoriteItem = ({
@@ -36,7 +41,6 @@ const FavoriteItem = ({
   noButton,
   disabled,
   onClick,
-  onButtonClick,
 }: {
   item?: PublicThreadFavoriteFolder
   text?: string
@@ -45,8 +49,7 @@ const FavoriteItem = ({
   favorite?: boolean
   noButton?: boolean
   disabled?: boolean
-  onClick?: () => void
-  onButtonClick?: React.MouseEventHandler<HTMLButtonElement>
+  onClick?: (closeAfterComplete: boolean) => void
 }) => {
   const kIconSize = 32
   const iconProps2 = {
@@ -74,14 +77,24 @@ const FavoriteItem = ({
         </Stack>
       </Stack>
       {!noButton && (
-        <IconButton onClick={onButtonClick} disabled={disabled}>
+        <IconButton
+          onClick={
+            onClick
+              ? (e) => {
+                  e.stopPropagation()
+                  onClick(false)
+                }
+              : undefined
+          }
+          disabled={disabled}
+        >
           {favorite ? <DeleteRounded color="error" /> : <StarBorderRounded />}
         </IconButton>
       )}
     </Stack>
   )
   const itemProps = {
-    onClick,
+    onClick: onClick ? () => !favorite && onClick(true) : undefined,
   }
   return favorite ? (
     <ListItem {...itemProps}>{children}</ListItem>
@@ -101,11 +114,57 @@ export const FavoriteDialog = ({
   onClose?: () => void
   post: PostFloor
 }) => {
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ['thread/favorite', post.thread_id],
     queryFn: () => getThreadFavorite(post.thread_id),
   })
+  const { dispatch } = useAppState()
+  const [pending, setPending] = useState(false)
 
+  const favorite = async (
+    collection_id: number | undefined,
+    is_favorite: boolean | undefined,
+    closeAfterComplete: boolean
+  ) => {
+    const favoriteFolder = {
+      personal_favorite: collection_id == undefined,
+      collection_id,
+    }
+    let message = '已收藏'
+    let severity = 'success'
+    try {
+      setPending(true)
+      if (is_favorite) {
+        message = '已删除'
+        await deleteUserFavorite({
+          ...favoriteFolder,
+          tid_list: [post.thread_id],
+        })
+      } else {
+        await favoriteThread(post.thread_id, { ...favoriteFolder })
+      }
+    } catch (e) {
+      ;({ message, severity } = parseApiError(e))
+    } finally {
+      setPending(false)
+    }
+    if (severity != 'success' || closeAfterComplete) {
+      dispatch({
+        type: 'open snackbar',
+        payload: {
+          severity,
+          message,
+        },
+      })
+    }
+    if (severity == 'success') {
+      if (closeAfterComplete) {
+        onClose && onClose()
+      } else {
+        await refetch()
+      }
+    }
+  }
   return (
     <GeneralDialog
       open={open}
@@ -128,6 +187,14 @@ export const FavoriteDialog = ({
               }
               text={data?.is_personal_favorite ? '已收藏' : '添加到个人收藏'}
               favorite={data?.is_personal_favorite}
+              onClick={(closeAfterComplete) =>
+                favorite(
+                  undefined,
+                  data?.is_personal_favorite,
+                  closeAfterComplete
+                )
+              }
+              disabled={pending}
             />
           </List>
           <Typography variant="h6">公共收藏夹（淘专辑）</Typography>
@@ -138,6 +205,14 @@ export const FavoriteDialog = ({
                 item={item}
                 IconComponent={CollectionsBookmark}
                 favorite={item.is_favorite}
+                onClick={(closeAfterComplete) =>
+                  favorite(
+                    item.collection_id,
+                    item.is_favorite,
+                    closeAfterComplete
+                  )
+                }
+                disabled={pending}
               />
             ))}
             <FavoriteItem

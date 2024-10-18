@@ -190,4 +190,13 @@ export const reportPost = (pid: number, fid: number, message: string) =>
   request.post(`${commonUrl}/post/report`, { pid, fid, message })
 
 export const getThreadFavorite = (tid: number) =>
-  request.get<ThreadFavoriteStatus>(`${commonUrl}/thread/favorite/${tid}`)
+  request.get<ThreadFavoriteStatus>(`${commonUrl}/thread/${tid}/favorite`)
+
+export const favoriteThread = (
+  tid: number,
+  options: { personal_favorite?: boolean; collection_id?: number }
+) =>
+  request.put<ThreadFavoriteStatus>(
+    `${commonUrl}/thread/${tid}/favorite`,
+    options
+  )
