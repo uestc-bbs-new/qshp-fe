@@ -39,11 +39,20 @@ const withSearchAndHash = (
 }
 
 export type SettingsSubPage = 'profile' | 'privacy' | 'password' | 'blacklist'
+export type UserSubPage =
+  | 'profile'
+  | 'threads'
+  | 'replies'
+  | 'postcomments'
+  | 'friends'
+  | 'visitors'
+  | 'favorites'
+  | 'comments'
 
 export type UserPageParams = {
   uid?: number
   username?: string
-  subPage?: string
+  subPage?: UserSubPage
   removeVisitLog?: boolean
   admin?: boolean
 }

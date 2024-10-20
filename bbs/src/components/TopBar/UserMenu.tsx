@@ -5,8 +5,8 @@ import {
   LightMode,
   Logout,
   Person,
-  SavedSearch,
   Settings,
+  StarBorderPurple500Rounded,
 } from '@mui/icons-material'
 import {
   Badge,
@@ -25,7 +25,6 @@ import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
 import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
-import siteRoot from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 import {
   getSystemTheme,
@@ -86,14 +85,12 @@ const MenuContent = ({ small }: { small?: boolean }) => {
         </MenuItem>
         <MenuItem
           component={MenuItemLink}
-          to={`${siteRoot}/forum.php?mod=collection`}
-          external
-          target="_blank"
+          to={pages.user({ subPage: 'favorites' })}
         >
           <ListItemIcon>
-            <SavedSearch fontSize="small" />
+            <StarBorderPurple500Rounded />
           </ListItemIcon>
-          淘帖
+          我的收藏
         </MenuItem>
         <MenuItem onClick={toggleTheme}>
           <ListItemIcon>
