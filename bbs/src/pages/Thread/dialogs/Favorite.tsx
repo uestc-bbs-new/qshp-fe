@@ -12,7 +12,6 @@ import {
   SvgIconComponent,
 } from '@mui/icons-material'
 import {
-  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -28,9 +27,10 @@ import { deleteUserFavorite } from '@/apis/user'
 import { PostFloor } from '@/common/interfaces/response'
 import { PublicThreadFavoriteFolder } from '@/common/interfaces/thread'
 import Avatar from '@/components/Avatar'
-import GeneralDialog from '@/components/GeneralDialog'
 import { useAppState } from '@/states'
 import siteRoot from '@/utils/siteRoot'
+
+import { LoadingDialog } from './LoadingDialog'
 
 const FavoriteItem = ({
   item,
@@ -114,7 +114,7 @@ export const FavoriteDialog = ({
   onClose?: () => void
   post: PostFloor
 }) => {
-  const { isLoading, data, refetch } = useQuery({
+  const { isLoading, isError, data, error, refetch } = useQuery({
     queryKey: ['thread/favorite', post.thread_id],
     queryFn: () => getThreadFavorite(post.thread_id),
   })
@@ -166,66 +166,48 @@ export const FavoriteDialog = ({
     }
   }
   return (
-    <GeneralDialog
-      open={open}
-      onClose={onClose}
+    <LoadingDialog
       titleText="收藏帖子"
-      actions={[]}
+      {...{ open, onClose, isLoading, isError, error }}
     >
-      {isLoading ? (
-        <Stack justifyContent="center" alignItems="center" px={10} py={6}>
-          <CircularProgress />
-        </Stack>
-      ) : (
-        <>
-          <Typography variant="h6">个人收藏夹</Typography>
-          <List>
-            <FavoriteItem
-              IconComponent={data?.is_personal_favorite ? CheckBox : AddLink}
-              iconProps={
-                data?.is_personal_favorite ? { color: 'success' } : undefined
-              }
-              text={data?.is_personal_favorite ? '已收藏' : '添加到个人收藏'}
-              favorite={data?.is_personal_favorite}
-              onClick={(closeAfterComplete) =>
-                favorite(
-                  undefined,
-                  data?.is_personal_favorite,
-                  closeAfterComplete
-                )
-              }
-              disabled={pending}
-            />
-          </List>
-          <Typography variant="h6">公共收藏夹（淘专辑）</Typography>
-          <List>
-            {data?.public_favorites?.map((item) => (
-              <FavoriteItem
-                key={item.collection_id}
-                item={item}
-                IconComponent={CollectionsBookmark}
-                favorite={item.is_favorite}
-                onClick={(closeAfterComplete) =>
-                  favorite(
-                    item.collection_id,
-                    item.is_favorite,
-                    closeAfterComplete
-                  )
-                }
-                disabled={pending}
-              />
-            ))}
-            <FavoriteItem
-              IconComponent={LibraryAdd}
-              text="新建公共收藏夹（淘专辑）"
-              noButton
-              onClick={() =>
-                window.open(`${siteRoot}/forum.php?mod=collection&action=edit`)
-              }
-            />
-          </List>
-        </>
-      )}
-    </GeneralDialog>
+      <Typography variant="h6">个人收藏夹</Typography>
+      <List>
+        <FavoriteItem
+          IconComponent={data?.is_personal_favorite ? CheckBox : AddLink}
+          iconProps={
+            data?.is_personal_favorite ? { color: 'success' } : undefined
+          }
+          text={data?.is_personal_favorite ? '已收藏' : '添加到个人收藏'}
+          favorite={data?.is_personal_favorite}
+          onClick={(closeAfterComplete) =>
+            favorite(undefined, data?.is_personal_favorite, closeAfterComplete)
+          }
+          disabled={pending}
+        />
+      </List>
+      <Typography variant="h6">公共收藏夹（淘专辑）</Typography>
+      <List>
+        {data?.public_favorites?.map((item) => (
+          <FavoriteItem
+            key={item.collection_id}
+            item={item}
+            IconComponent={CollectionsBookmark}
+            favorite={item.is_favorite}
+            onClick={(closeAfterComplete) =>
+              favorite(item.collection_id, item.is_favorite, closeAfterComplete)
+            }
+            disabled={pending}
+          />
+        ))}
+        <FavoriteItem
+          IconComponent={LibraryAdd}
+          text="新建公共收藏夹（淘专辑）"
+          noButton
+          onClick={() =>
+            window.open(`${siteRoot}/forum.php?mod=collection&action=edit`)
+          }
+        />
+      </List>
+    </LoadingDialog>
   )
 }
