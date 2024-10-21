@@ -8,6 +8,7 @@ import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
 import { FavoriteDialog } from './dialogs/Favorite'
+import { RateDialog } from './dialogs/Rate'
 
 type FooterProps = {
   forumDetails?: ForumDetails
@@ -51,7 +52,7 @@ const Footer = ({
   }
 
   const [favoriteDialog, setFavoriteDialog] = useState(false)
-  const favorite = async () => {}
+  const [rateDialog, setRateDialog] = useState(false)
   return (
     <Stack direction="row" flexWrap="wrap" mt={1}>
       {canReply && (
@@ -97,6 +98,12 @@ const Footer = ({
           onClose={() => setFavoriteDialog(false)}
           post={post}
         />
+      )}
+      <Button variant="text" onClick={() => setRateDialog(true)}>
+        评分
+      </Button>
+      {rateDialog && (
+        <RateDialog open onClose={() => setRateDialog(false)} post={post} />
       )}
     </Stack>
   )

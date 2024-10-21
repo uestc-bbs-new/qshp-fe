@@ -1,5 +1,5 @@
 import request, { commonUrl } from '@/apis/request'
-import { Attachment } from '@/common/interfaces/base'
+import { Attachment, ExtCreditName } from '@/common/interfaces/base'
 import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
   PostDetails,
@@ -200,3 +200,25 @@ export const favoriteThread = (
     `${commonUrl}/thread/${tid}/favorite`,
     options
   )
+
+export type RateCreditOptions = {
+  min: number
+  max: number
+  deduct_self?: boolean
+  limit_24h_positive?: number
+  remaining_24h_positive?: number
+  limit_24h_negative?: number
+  remaining_24h_negative?: number
+  tax_rate_negative?: number
+  require_notify?: boolean
+  require_reason?: boolean
+}
+export type PostRateOptions = {
+  is_moderator?: boolean
+  common_reasons?: string[]
+  credits: {
+    [name in ExtCreditName]: RateCreditOptions
+  }
+}
+export const getPostRateOptions = (pid: number) =>
+  request.get<PostRateOptions>(`${commonUrl}/post/${pid}/rate`)
