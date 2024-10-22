@@ -91,7 +91,7 @@ export const RateDialog = ({
                         ...tdPx,
                       }}
                     >
-                      {details.min} ~ {details.max}
+                      {details.min ?? 0} ~ {details.max ?? 0}
                     </td>
                     <td css={tdPx}>
                       <RemainingCredits details={details} />
@@ -175,7 +175,7 @@ export const RateDialog = ({
       />
       <Stack direction="row" justifyContent="flex-end" alignItems="center">
         <FormControlLabel
-          control={<Checkbox defaultChecked />}
+          control={<Checkbox defaultChecked disabled={data?.require_notify} />}
           label="通知作者"
           sx={{ mr: 1.5 }}
         />
@@ -199,15 +199,17 @@ const RemainingCredits = ({ details }: { details: RateCreditOptions }) => {
             icon: RemoveCircleOutline,
             amount: details.remaining_24h_negative,
           },
-        ].map((item, index) => {
-          const Icon = item.icon
-          return (
-            <Stack direction="row" alignItems="center" key={index}>
-              <Icon sx={iconSx} />
-              {item.amount}
-            </Stack>
-          )
-        })}
+        ]
+          .filter((item) => item.amount)
+          .map((item, index) => {
+            const Icon = item.icon
+            return (
+              <Stack direction="row" alignItems="center" key={index}>
+                <Icon sx={iconSx} />
+                {item.amount}
+              </Stack>
+            )
+          })}
       </div>
     </Stack>
   )

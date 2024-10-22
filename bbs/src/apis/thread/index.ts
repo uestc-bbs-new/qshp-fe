@@ -210,11 +210,11 @@ export type RateCreditOptions = {
   limit_24h_negative?: number
   remaining_24h_negative?: number
   tax_rate_negative?: number
-  require_notify?: boolean
-  require_reason?: boolean
 }
 export type PostRateOptions = {
   is_moderator?: boolean
+  require_notify?: boolean
+  require_reason?: boolean
   common_reasons?: string[]
   credits: {
     [name in ExtCreditName]: RateCreditOptions
