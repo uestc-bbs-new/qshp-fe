@@ -30,7 +30,7 @@ import {
 import EmptyList from '@/components/EmptyList'
 import Link from '@/components/Link'
 import ThreadItem, { ThreadReplyOrCommentItem } from '@/components/ThreadItem'
-import { pages } from '@/utils/routes'
+import { UserSubPage, pages } from '@/utils/routes'
 import { scrollAnchorCss } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
@@ -212,9 +212,14 @@ function coalesceRepliesOrComments(
 }
 
 const tabs = [
-  { id: 'threads', title: '主题', component: Threads, fetcher: getUserThreads },
   {
-    id: 'replies',
+    id: 'threads' as UserSubPage,
+    title: '主题',
+    component: Threads,
+    fetcher: getUserThreads,
+  },
+  {
+    id: 'replies' as UserSubPage,
     title: '回复',
     component: Replies,
     fetcher: (
@@ -227,7 +232,7 @@ const tabs = [
       ),
   },
   {
-    id: 'postcomments',
+    id: 'postcomments' as UserSubPage,
     title: '点评',
     component: PostComments,
     fetcher: (

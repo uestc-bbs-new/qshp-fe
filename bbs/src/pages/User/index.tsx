@@ -10,7 +10,7 @@ import EmptyList from '@/components/EmptyList'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
-import { pages } from '@/utils/routes'
+import { UserSubPage, pages } from '@/utils/routes'
 
 import Favorites from './Favorites'
 import Friends from './Friends'
@@ -21,7 +21,7 @@ import UserCard from './UserCard'
 import UserThreads from './UserThreads'
 import Visitors from './Visitors'
 
-const tabs = [
+const tabs: { id: UserSubPage; title: string }[] = [
   { id: 'profile', title: '个人资料' },
   { id: 'threads', title: '帖子' },
   { id: 'friends', title: '好友' },
