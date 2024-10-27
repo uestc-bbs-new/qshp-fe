@@ -201,15 +201,13 @@ const Announcement = () => {
         {data?.map((item, index) => (
           <ListItem key={index}>
             <AnnouncementBox m={1} width="100%">
-              <Stack direction="row">
-                <AnnouncementBody
-                  item={item}
-                  sx={{ flexGrow: 1, flexShrink: 1 }}
-                />
-                <Stack flexGrow={0} flexShrink={0}>
-                  <Button onClick={() => handleEdit(item)}>编辑</Button>
-                  <Button onClick={() => handleDelete(item)}>删除</Button>
-                </Stack>
+              <AnnouncementBody
+                item={item}
+                sx={{ flexGrow: 1, flexShrink: 1 }}
+              />
+              <Stack flexGrow={0} flexShrink={0}>
+                <Button onClick={() => handleEdit(item)}>编辑</Button>
+                <Button onClick={() => handleDelete(item)}>删除</Button>
               </Stack>
             </AnnouncementBox>
           </ListItem>

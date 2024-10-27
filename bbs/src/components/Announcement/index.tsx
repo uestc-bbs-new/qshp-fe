@@ -4,7 +4,7 @@ import 'swiper/css/pagination'
 import { Autoplay, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useMatches } from 'react-router-dom'
 
 import { Campaign } from '@mui/icons-material'
@@ -34,37 +34,28 @@ export const AnnouncementBox = ({
   m?: number
   width?: string
 }) => {
-  const leftWidth = 48
   const theme = useTheme()
   return (
-    <Box
-      position="relative"
+    <Stack
+      direction="row"
+      mb={1.75}
+      border="2px solid"
+      borderColor={theme.palette.primary.main}
       {...other}
-      sx={{
-        position: 'relative',
-        paddingLeft: `${leftWidth}px`,
-        border: '2px solid black',
-        borderColor: theme.palette.primary.main,
-        ...sx,
-      }}
+      sx={sx}
     >
-      {children}
       <Stack
-        position="absolute"
         justifyContent="center"
         alignItems="center"
-        width={leftWidth}
-        left={0}
-        top={0}
-        bottom={0}
-        zIndex={1}
+        width={48}
         sx={{
           backgroundColor: theme.palette.primary.main,
         }}
       >
         <Campaign fontSize="large" sx={{ color: theme.palette.grey[300] }} />
       </Stack>
-    </Box>
+      {children}
+    </Stack>
   )
 }
 
@@ -133,10 +124,13 @@ const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
   if (!state.announcement) {
     return <Skeleton height={74} sx={{ mb: 1.75 }} />
   }
+  if (!state.announcement.length) {
+    return <></>
+  }
+
   if (state.announcement?.length) {
     return (
       <AnnouncementBox
-        mb={1.75}
         sx={{
           '--swiper-pagination-bottom': 0,
           '--swiper-pagination-bullet-size': '6px',
@@ -152,6 +146,7 @@ const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
           slidesPerView={1}
           loop={state.announcement.length > 1}
           nested={inSwiper}
+          css={{ flexGrow: 1, flexShrink: 1 }}
         >
           {state.announcement.map((item, index) => (
             <SwiperSlide key={index}>
@@ -161,8 +156,6 @@ const Announcement = ({ inSwiper }: { inSwiper?: boolean }) => {
         </Swiper>
       </AnnouncementBox>
     )
-  } else {
-    return <></>
   }
 }
 
