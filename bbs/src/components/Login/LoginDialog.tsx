@@ -77,14 +77,12 @@ const SignInTextField = ({
     />
     <Stack
       justifyContent="center"
+      width={36}
       sx={{
         position: 'absolute',
         pl: 2,
         top: 0,
         bottom: 0,
-        '& svg': {
-          width: '100%',
-        },
       }}
     >
       {adornmentIcon}
@@ -99,6 +97,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   const captchaRef = useRef<CaptchaType>()
   const [signinPending, setSigninPending] = useState(false)
   const close = () => dispatch({ type: 'close dialog' })
+  const narrowView = useMediaQuery('(max-width: 560px)')
+
   type FormData = {
     username: string
     password: string
@@ -183,7 +183,11 @@ const LoginDialog = ({ open }: { open: boolean }) => {
     setSnackbarOpen(true)
   }
   return (
-    <TransparentBackdropBlurDialog open={open} onClose={close}>
+    <TransparentBackdropBlurDialog
+      open={open}
+      onClose={close}
+      fullScreen={narrowView}
+    >
       {state.globalDialog?.prompt && (
         <Alert severity="info">{state.globalDialog.prompt}</Alert>
       )}
@@ -260,12 +264,14 @@ const LoginDialog = ({ open }: { open: boolean }) => {
 export const TransparentBackdropBlurDialog = ({
   children,
   onClose,
+  fullScreen,
   ...props
 }: DialogProps & { children: React.ReactNode }) => {
   const thinView = useMediaQuery('(max-width: 560px)')
   return (
     <Dialog
       onClose={onClose}
+      fullScreen={fullScreen}
       {...props}
       PaperProps={{
         ...props.PaperProps,
@@ -275,7 +281,7 @@ export const TransparentBackdropBlurDialog = ({
             theme.palette.mode == 'light'
               ? 'rgba(243, 245, 247, 0.87)'
               : 'rgba(49, 55, 66, 0.75)',
-          ...(thinView && { m: 2 }),
+          ...(thinView && !fullScreen && { m: 2 }),
         }),
       }}
       sx={{
