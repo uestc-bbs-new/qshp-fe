@@ -224,7 +224,7 @@ const TabContent = ({
   requireSignIn?: boolean
   skeleton?: React.ReactNode
   onRefresh?: () => Promise<void>
-  sx?: SxProps<Box>
+  sx?: SxProps
 }) => {
   const { state, dispatch } = useAppState()
   const scrollRef = useRef<HTMLDivElement>(null)
