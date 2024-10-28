@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
+  Alert,
+  CircularProgress,
+  Stack,
   Typography,
   darken,
   getContrastRatio,
@@ -205,6 +208,9 @@ const MarkdownPostRenderer = ({
   attachments?: Attachment[]
 }) => {
   const { state } = useAppState()
+  const [loadingState, setLoadingState] = useState<'loading' | 'error' | ''>(
+    'loading'
+  )
   const el = useRef<HTMLDivElement>(null)
   useEffect(() => {
     ;(async () => {
@@ -217,6 +223,8 @@ const MarkdownPostRenderer = ({
             attachments: attachments || [],
           })
         )
+          .then(() => setLoadingState(''))
+          .catch(() => setLoadingState('error'))
     })()
   }, [message, attachments])
   const navigate = useNavigate()
@@ -225,7 +233,32 @@ const MarkdownPostRenderer = ({
     <div
       className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
       onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
+      css={
+        loadingState ? { minHeight: '48px', position: 'relative' } : undefined
+      }
     >
+      {loadingState && (
+        <Alert
+          icon={loadingState == 'loading' ? false : undefined}
+          severity={loadingState == 'error' ? 'error' : 'info'}
+          sx={{ mb: 1, position: 'absolute', left: 0, top: 0, right: 0 }}
+        >
+          <Stack direction="row" alignItems="center">
+            {loadingState == 'loading' ? (
+              <>
+                <CircularProgress size="1.5em" />
+                <Typography ml={1} variant="threadItemSummary">
+                  内容加载中，若长时间未显示请刷新页面……
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography>加载失败，请刷新重试。</Typography>
+              </>
+            )}
+          </Stack>
+        </Alert>
+      )}
       <Typography color="text.primary" ref={el}></Typography>
     </div>
   )

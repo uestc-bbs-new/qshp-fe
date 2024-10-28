@@ -10,6 +10,8 @@ import React, {
 } from 'react'
 
 import {
+  Alert,
+  CircularProgress,
   Divider,
   Grid,
   IconButton,
@@ -17,6 +19,7 @@ import {
   Stack,
   Tab,
   Tabs,
+  Typography,
 } from '@mui/material'
 
 import { Attachment } from '@/common/interfaces/base'
@@ -63,6 +66,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
     attachments: initialAttachments || [],
     onUpdateAttachments,
   })
+  const [loading, setLoading] = useState(true)
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
   const smilyAnchor = useRef<HTMLElement>()
@@ -89,6 +93,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
             )
           }
           vditorInitialized.current = true
+          setLoading(false)
         },
         beforeGetMarkdown,
         ...options({
@@ -137,6 +142,16 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
   )
   return (
     <>
+      {loading && (
+        <Alert icon={false} severity="info">
+          <Stack direction="row" alignItems="center">
+            <CircularProgress size="1.5em" />
+            <Typography ml={1} variant="threadItemSummary">
+              编辑器加载中，若长时间未显示请刷新页面……
+            </Typography>
+          </Stack>
+        </Alert>
+      )}
       <div
         ref={vditorRef}
         className="vditor flex-1"
