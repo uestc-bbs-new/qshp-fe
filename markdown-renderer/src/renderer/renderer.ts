@@ -32,6 +32,29 @@ export const renderAttachmentImage = (
   return `${img}/>`
 }
 
+export const renderAttachMedia = (attach: Attachment) => {
+  if (!attach.download_url) {
+    return ''
+  }
+  if (attach.filename.match(/\.(mp4|flv)$/i)) {
+    return html`<div>
+      <video
+        class="post_attachment_video"
+        controls
+        src="${attach.download_url}"
+      ></video>
+    </div>`
+  }
+  if (attach.filename.match(/\.mp3$/i)) {
+    return html`<audio
+      class="post_attachment_audio"
+      controls
+      src="${attach.download_url}"
+    ></audio>`
+  }
+  return
+}
+
 const renderImage = (src: string, alt: string, context?: VditorContext) => {
   if (src == 's' && unifiedSmilyMap[parseInt(alt || '')]) {
     return html`<img
@@ -91,22 +114,8 @@ const renderLink = (
         data-x-original-alt="${text}"
         >${text}</a
       >`
-      if (rendererType == 'Preview' && attach.download_url) {
-        if (attach.filename.match(/\.(mp4|flv)$/i)) {
-          result += html`<div>
-            <video
-              class="post_attachment_video"
-              controls
-              src="${attach.download_url}"
-            ></video>
-          </div>`
-        } else if (attach.filename.match(/\.mp3$/i)) {
-          result += html`<audio
-            class="post_attachment_audio"
-            controls
-            src="${attach.download_url}"
-          ></audio>`
-        }
+      if (rendererType == 'Preview') {
+        result += renderAttachMedia(attach)
       }
       return result
     }

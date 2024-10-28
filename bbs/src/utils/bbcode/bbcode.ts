@@ -1,7 +1,10 @@
 import { Attachment } from '@/common/interfaces/base'
 import siteRoot from '@/utils/siteRoot'
 
-import { renderAttachmentImage } from '../../../../markdown-renderer/src/renderer/renderer'
+import {
+  renderAttachMedia,
+  renderAttachmentImage,
+} from '../../../../markdown-renderer/src/renderer/renderer'
 import {
   legacySmilyMaps,
   smilyMaps,
@@ -508,9 +511,12 @@ const renderAttachment = (attach: Attachment) => {
   if (attach.is_image) {
     return renderAttachmentImage(attach)
   }
-  return `<span class="attach-file"><a href="${
-    attach.download_url
-  }">${htmlspecialchars(attach.filename)}</a></span>` // TODO: attach file
+  return (
+    `<span class="attach-file"><a href="${
+      attach.download_url
+    }">${htmlspecialchars(attach.filename)}</a></span>` +
+    renderAttachMedia(attach)
+  ) // TODO: attach file
 }
 
 const parseAttachments = (
