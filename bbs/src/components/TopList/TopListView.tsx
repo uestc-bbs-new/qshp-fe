@@ -35,6 +35,7 @@ import {
   Skeleton,
   Slide,
   Stack,
+  SxProps,
   Tab,
   Tabs,
   debounce,
@@ -166,8 +167,8 @@ const TopListView = ({
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
-            <TabContent tab={kAllForums}>
-              <List>
+            <TabContent tab={kAllForums} sx={{ px: 1, py: 0 }}>
+              <List disablePadding>
                 {forumList?.map((item) => (
                   <ForumGroup data={item} key={item.name} toplistView />
                 ))}
@@ -216,12 +217,14 @@ const TabContent = ({
   requireSignIn,
   skeleton,
   onRefresh,
+  sx,
 }: {
   tab: TabKey
   children?: React.ReactNode
   requireSignIn?: boolean
   skeleton?: React.ReactNode
   onRefresh?: () => Promise<void>
+  sx?: SxProps<Box>
 }) => {
   const { state, dispatch } = useAppState()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -299,6 +302,7 @@ const TabContent = ({
         },
         scrollbarGutter: 'stable',
         overscrollBehavior: 'contain',
+        ...sx,
       }}
       onScroll={() => onScroll()}
       ref={scrollRef}

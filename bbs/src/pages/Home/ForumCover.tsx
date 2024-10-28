@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
+  Button,
   Collapse,
   Divider,
   Grid,
@@ -12,6 +13,7 @@ import {
   ListItemText,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material'
 
@@ -153,6 +155,7 @@ export const ForumGroup = ({
 }) => {
   const [open, setOpen] = useState(true)
   const theme = useTheme()
+  const narrowView = useMediaQuery('(max-width: 640px')
 
   const handleClick = () => {
     setOpen(!open)
@@ -186,20 +189,72 @@ export const ForumGroup = ({
         className="border-b-4 rounded-lg"
         style={{ borderBottomColor: theme.palette.primary.main }}
       />
-      <Collapse in={open} timeout="auto" unmountOnExit className="p-4">
-        <Grid container spacing={2}>
+      <Collapse
+        in={open}
+        timeout="auto"
+        unmountOnExit
+        sx={narrowView ? { py: 2 } : { p: 1.75 }}
+      >
+        <Grid container columnSpacing={1} rowSpacing={2}>
           {data?.children
             ?.filter((item) => item.name)
-            .map((item, index) => (
-              <Grid
-                item
-                key={index}
-                style={{ width: '100%' }}
-                {...(toplistView ? { sm: 6, lg: 4, xl: 3 } : { sm: 6, lg: 4 })}
-              >
-                <ForumCover data={item} />
-              </Grid>
-            ))}
+            .map((item, index) =>
+              narrowView ? (
+                <Grid item key={index} xs={6}>
+                  <Button
+                    component={Link}
+                    to={pages.forum(item.fid)}
+                    fullWidth
+                    sx={{ justifyContent: 'flex-start' }}
+                  >
+                    <Stack direction="row">
+                      <Box
+                        width={40}
+                        height={40}
+                        borderRadius="100%"
+                        mr={1}
+                        style={{
+                          backgroundImage: `url(${getForumCover(item.fid)})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }}
+                      />
+                      <Stack>
+                        <Stack direction="row" alignItems="center">
+                          <Typography fontSize={18}>{item.name}</Typography>
+                          {!!item.todayposts && (
+                            <Typography ml={1} variant="threadItemStat">
+                              ({item.todayposts})
+                            </Typography>
+                          )}
+                        </Stack>
+                        {!!item.latest_thread?.lastpost_time && (
+                          <Typography fontSize={12} variant="threadItemStat">
+                            {chineseTime(
+                              item.latest_thread.lastpost_time * 1000,
+                              {
+                                short: true,
+                              }
+                            )}
+                          </Typography>
+                        )}
+                      </Stack>
+                    </Stack>
+                  </Button>
+                </Grid>
+              ) : (
+                <Grid
+                  item
+                  key={index}
+                  style={{ width: '100%' }}
+                  {...(toplistView
+                    ? { sm: 6, lg: 4, xl: 3 }
+                    : { sm: 6, lg: 4 })}
+                >
+                  <ForumCover data={item} />
+                </Grid>
+              )
+            )}
         </Grid>
       </Collapse>
     </>
