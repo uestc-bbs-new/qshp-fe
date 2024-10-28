@@ -1,20 +1,21 @@
 import React, { Suspense } from 'react'
 
 import { Close } from '@mui/icons-material'
-import { CircularProgress, Dialog, IconButton } from '@mui/material'
+import { Button, CircularProgress, Dialog, IconButton } from '@mui/material'
 
-import { ImageItem } from './types'
+import Link from '@/components/Link'
+import { ImageViewDetails } from '@/states/reducers/stateReducer'
 
 const LazyImageView = React.lazy(() => import('./ImageView'))
 
 const ImageViewDialog = ({
   open,
   onClose,
-  singleImage,
+  details,
 }: {
   open: boolean
   onClose?: () => void
-  singleImage?: ImageItem
+  details?: ImageViewDetails
 }) => {
   return (
     <Dialog
@@ -39,7 +40,7 @@ const ImageViewDialog = ({
           />
         }
       >
-        <LazyImageView {...{ onClose, singleImage }} />
+        <LazyImageView {...{ onClose, singleImage: details?.images[0] }} />
       </Suspense>
       <IconButton
         sx={(theme) => ({
@@ -57,6 +58,21 @@ const ImageViewDialog = ({
       >
         <Close />
       </IconButton>
+      <Button
+        variant="contained"
+        component={Link}
+        href={details?.images[0]?.raw_url ?? details?.images[0]?.path}
+        download={details?.images[0]?.filename}
+        target="_blank"
+        sx={{
+          position: 'absolute',
+          right: 10,
+          bottom: 10,
+          boxShadow: '0 0 32px rgba(0, 0, 0, 0.6)',
+        }}
+      >
+        下载原图
+      </Button>
     </Dialog>
   )
 }

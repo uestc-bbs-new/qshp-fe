@@ -122,7 +122,7 @@ export const SummaryAttachments = ({ item }: { item: SummaryItem }) => {
                     type: 'open dialog',
                     payload: {
                       kind: 'image',
-                      imageDetails: item.path,
+                      imageDetails: { images: [item] },
                     },
                   })
                 }}

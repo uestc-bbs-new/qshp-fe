@@ -5,14 +5,14 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 
 import { CircularProgress, Stack } from '@mui/material'
 
-import { ImageItem } from './types'
+import { ImageViewItem } from '@/states/reducers/stateReducer'
 
 const ImageView = ({
   onClose,
   singleImage,
 }: {
   onClose?: () => void
-  singleImage?: ImageItem
+  singleImage?: ImageViewItem
 }) => {
   const fullSizeCss = { width: '100%', height: '100%' }
   const [panning, setPanning] = useState(false)
@@ -55,7 +55,7 @@ const ImageView = ({
           >
             {singleImage && (
               <img
-                src={singleImage.fullUrl}
+                src={singleImage.path}
                 css={css({
                   width: 'auto',
                   height: 'auto',

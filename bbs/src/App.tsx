@@ -58,11 +58,11 @@ function App() {
             {state.globalDialog?.kind == 'login' && <LoginDialog open />}
             {state.globalDialog?.kind == 'register' && <RegisterDialog open />}
             {state.globalDialog?.kind == 'image' &&
-              state.globalDialog?.imageDetails && (
+              state.globalDialog?.imageDetails?.images && (
                 <ImageViewDialog
                   open
                   onClose={() => dispatch({ type: 'close dialog' })}
-                  singleImage={{ fullUrl: state.globalDialog.imageDetails }}
+                  details={state.globalDialog.imageDetails}
                 />
               )}
           </>

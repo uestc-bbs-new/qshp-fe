@@ -1,4 +1,4 @@
-import { html } from '../utils/html'
+import { html, htmlspecialchars } from '../utils/html'
 import siteRoot from '../utils/siteRoot'
 import { unifiedSmilyMap } from './smilyData'
 import { Attachment, VditorContext } from './types'
@@ -23,6 +23,9 @@ export const renderAttachmentImage = (
     data-x-fullsize-path="${siteRoot}${attach.path}"
     class="post_attachment post_attachment_image"
     loading="lazy"`
+  if (attach.raw_url) {
+    img += ` data-x-raw-path="${htmlspecialchars(attach.raw_url)}"`
+  }
   if (extraAttributes) {
     img += ` ${extraAttributes}`
   }

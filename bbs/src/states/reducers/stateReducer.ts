@@ -22,10 +22,22 @@ type ThreadBreadcumbEntry = {
   subject: string
 }
 
+export type ImageViewItem = {
+  path: string
+  filename?: string
+  thumbnail_url?: string
+  raw_url?: string
+}
+
+export type ImageViewDetails = {
+  images: ImageViewItem[]
+  moreTid?: number
+}
+
 type GlobalDialogState = {
   kind?: 'login' | 'register' | 'image'
   prompt?: string
-  imageDetails?: string
+  imageDetails?: ImageViewDetails
 }
 
 type GlobalSnackbarState = {

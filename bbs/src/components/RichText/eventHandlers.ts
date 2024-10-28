@@ -16,7 +16,14 @@ export const onClickHandler = (
         type: 'open dialog',
         payload: {
           kind: 'image',
-          imageDetails: img.getAttribute('data-x-fullsize-path') || img.src,
+          imageDetails: {
+            images: [
+              {
+                path: img.getAttribute('data-x-fullsize-path') || img.src,
+                raw_url: img.getAttribute('data-x-raw-path'),
+              },
+            ],
+          },
         },
       })
     }
