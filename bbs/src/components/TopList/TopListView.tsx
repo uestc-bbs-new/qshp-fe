@@ -75,7 +75,7 @@ const TopListView = ({
 
   const switchTab = (key: TabKey) => {
     setActiveTab(key)
-    swiperRef.current?.swiper?.slideTo(tabKeys.indexOf(key))
+    swiperRef.current?.swiper?.slideToLoop(tabKeys.indexOf(key))
   }
 
   const forumList = useForumList()
