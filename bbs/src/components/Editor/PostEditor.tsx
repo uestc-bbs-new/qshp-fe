@@ -354,7 +354,7 @@ const PostEditor = ({
       ) : (
         <PostNotice forum={forum} position={kind} />
       )}
-      <Stack direction="row" flexShrink={1} minHeight="1em">
+      <Stack direction="row" flexShrink={1} flexGrow={1} minHeight="1em">
         {!smallAuthor && <Author anonymous={anonymous} />}
         <Stack flexGrow={1} flexShrink={1} maxWidth="100%">
           <ThreadPostHeader

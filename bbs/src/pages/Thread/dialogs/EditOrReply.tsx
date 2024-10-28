@@ -39,7 +39,7 @@ const EditOrReply = ({
   }
 
   return (
-    <Stack px={2} pb={1.5} flexShrink={1}>
+    <Stack px={2} pb={1.5} flexShrink={1} flexGrow={1}>
       <PostEditor
         kind={mode}
         smallAuthor

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Close } from '@mui/icons-material'
-import { IconButton, Stack, Typography } from '@mui/material'
+import { IconButton, Stack, Typography, useMediaQuery } from '@mui/material'
 
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
@@ -32,6 +32,7 @@ const ActionDialog = ({
   onSubmitted: (action?: string, fromDialog?: boolean) => void
   onComment: () => void
 }) => {
+  const narrowView = useMediaQuery('(max-width: 640px)')
   return (
     <DraggableDialog
       disableRestoreFocus // Work around of bug https://github.com/mui/material-ui/issues/33004
@@ -39,6 +40,9 @@ const ActionDialog = ({
       onClose={onClose}
       maxWidth="md"
       fullWidth
+      fullScreen={
+        narrowView && (currentDialog == 'edit' || currentDialog == 'reply')
+      }
       DraggableProps={{ defaultClassName: 'draggable-with-vditor' }}
       sx={{
         '& > .MuiPaper-root': { maxHeight: '90%' },
