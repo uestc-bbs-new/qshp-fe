@@ -59,7 +59,12 @@ const renderImage = (src: string, alt: string, context?: VditorContext) => {
   }
   return html`<img src="${src}" alt="${alt || ''}" />`
 }
-const renderLink = (href: string, text: string, context?: VditorContext) => {
+const renderLink = (
+  href: string,
+  text: string,
+  rendererType: string,
+  context?: VditorContext
+) => {
   const atMatch = href.match(/^at:(\d+)$/)
   if (atMatch) {
     return html`<a
@@ -77,7 +82,7 @@ const renderLink = (href: string, text: string, context?: VditorContext) => {
     )
     if (attach) {
       context?.inlineAttachments?.add(attach.attachment_id)
-      return html`<a
+      let result = html`<a
         class="post_attachment post_attachment_file"
         href="${attach.download_url || 'javascript:void(0)'}"
         download="${attach.filename}"
@@ -86,6 +91,24 @@ const renderLink = (href: string, text: string, context?: VditorContext) => {
         data-x-original-alt="${text}"
         >${text}</a
       >`
+      if (rendererType == 'Preview' && attach.download_url) {
+        if (attach.filename.match(/\.(mp4|flv)$/i)) {
+          result += html`<div>
+            <video
+              class="post_attachment_video"
+              controls
+              src="${attach.download_url}"
+            ></video>
+          </div>`
+        } else if (attach.filename.match(/\.mp3$/i)) {
+          result += html`<audio
+            class="post_attachment_audio"
+            controls
+            src="${attach.download_url}"
+          ></audio>`
+        }
+      }
+      return result
     }
   }
   return html`<a href="${href}">${text}</a>`
@@ -200,7 +223,12 @@ export const customRenderers = (
             html = renderImage(state.dest || '', state.text || '', context)
           } else if (state.type == 'link') {
             renderState.pop()
-            html = renderLink(state.dest || '', state.text || '', context)
+            html = renderLink(
+              state.dest || '',
+              state.text || '',
+              rendererType,
+              context
+            )
           } else {
             console.error('Unknown render state type', state)
           }

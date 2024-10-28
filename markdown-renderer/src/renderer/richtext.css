@@ -49,3 +49,13 @@
 .rich-text-theme-dark .vditor-reset blockquote {
   background-color: #454e5e;
 }
+
+.rich-text-content video.post_attachment_video {
+  max-width: 100%;
+  max-height: 70vh;
+}
+
+.rich-text-content audio.post_attachment_audio {
+  margin: 0.5em 0;
+  display: block;
+}
