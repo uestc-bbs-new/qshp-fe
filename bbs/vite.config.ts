@@ -11,10 +11,15 @@ if (process.env['UESTC_BBS_IMGPROXY_SERVER']) {
   staticProxies['/thumb'] = {
     target: process.env['UESTC_BBS_IMGPROXY_SERVER'],
     rewrite: (path) => path.replace(/^\/thumb/, ''),
+    changeOrigin: true,
   }
 }
 if (process.env['UESTC_BBS_DATA_SERVER']) {
   staticProxies['/data'] = {
+    target: process.env['UESTC_BBS_DATA_SERVER'],
+    changeOrigin: true,
+  }
+  staticProxies['/star/api/v1/attachment/forum'] = {
     target: process.env['UESTC_BBS_DATA_SERVER'],
     changeOrigin: true,
   }
