@@ -52,7 +52,7 @@ export const renderAttachMedia = (attach: Attachment) => {
       src="${attach.download_url}"
     ></audio>`
   }
-  return
+  return ''
 }
 
 const renderImage = (src: string, alt: string, context?: VditorContext) => {
