@@ -21,6 +21,7 @@ export const onClickHandler = (
               {
                 path: img.getAttribute('data-x-fullsize-path') || img.src,
                 raw_url: img.getAttribute('data-x-raw-path'),
+                filename: img.getAttribute('data-x-filename'),
               },
             ],
           },

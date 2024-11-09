@@ -20,6 +20,7 @@ export const renderAttachmentImage = (
     : siteRoot + attach.path
   let img = html`<img
     src="${src}"
+    data-x-filename="${attach.filename}"
     data-x-fullsize-path="${siteRoot}${attach.path}"
     class="post_attachment post_attachment_image"
     loading="lazy"`
