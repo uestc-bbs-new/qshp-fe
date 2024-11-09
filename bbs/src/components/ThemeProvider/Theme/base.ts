@@ -271,6 +271,8 @@ export const baseTheme: ThemeOptions = {
     authorCustomTitle: {
       fontSize: 13,
       textAlign: 'justify',
+      wordBreak: 'break-all',
+      overflowWrap: 'anywhere',
       color: baseColors.authorCustomTitle,
     },
     authorGroupTitle: {
