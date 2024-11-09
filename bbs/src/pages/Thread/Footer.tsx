@@ -7,6 +7,9 @@ import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
+import { FavoriteDialog } from './dialogs/Favorite'
+import { RateDialog } from './dialogs/Rate'
+
 type FooterProps = {
   forumDetails?: ForumDetails
   threadDetails?: Thread
@@ -81,6 +84,26 @@ const Footer = ({
         <Button variant="text" onClick={onReport}>
           举报
         </Button>
+      )}
+      {!!post.is_first && (
+        <Button variant="text" onClick={() => setFavoriteDialog(true)}>
+          收藏
+          {!!threadDetails?.favorite_times &&
+            ` (${threadDetails.favorite_times})`}
+        </Button>
+      )}
+      {favoriteDialog && (
+        <FavoriteDialog
+          open
+          onClose={() => setFavoriteDialog(false)}
+          post={post}
+        />
+      )}
+      <Button variant="text" onClick={() => setRateDialog(true)}>
+        评分
+      </Button>
+      {rateDialog && (
+        <RateDialog open onClose={() => setRateDialog(false)} post={post} />
       )}
     </Stack>
   )
