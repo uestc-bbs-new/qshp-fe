@@ -3,7 +3,6 @@ import React, { Suspense } from 'react'
 import { Close } from '@mui/icons-material'
 import { Button, CircularProgress, Dialog, IconButton } from '@mui/material'
 
-import Link from '@/components/Link'
 import { ImageViewDetails } from '@/states/reducers/stateReducer'
 
 const LazyImageView = React.lazy(() => import('./ImageView'))
@@ -60,7 +59,7 @@ const ImageViewDialog = ({
       </IconButton>
       <Button
         variant="contained"
-        component={Link}
+        component="a"
         href={details?.images[0]?.raw_url ?? details?.images[0]?.path}
         download={details?.images[0]?.filename}
         target="_blank"
