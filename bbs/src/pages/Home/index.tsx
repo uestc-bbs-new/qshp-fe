@@ -62,6 +62,9 @@ const Home = () => {
     if (indexData?.top_list) {
       globalCache.topList = indexData.top_list
     }
+    if (indexData?.global_stat) {
+      globalCache.globalStat = indexData.global_stat
+    }
     if (
       ((mobileView && indexData) || state.toplistView?.manuallyOpened) &&
       !state.toplistView?.sidebar

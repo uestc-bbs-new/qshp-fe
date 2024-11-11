@@ -52,11 +52,12 @@ import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import ThreadItemGrid from '@/components/ThreadItem/ThreadItemGrid'
 import { ForumGroup } from '@/pages/Home/ForumCover'
-import { useAppState, useForumList, useTopList } from '@/states'
+import { globalCache, useAppState, useForumList, useTopList } from '@/states'
 import { topListKeys, topListTitleMap } from '@/utils/constants'
 import { persistedStates } from '@/utils/storage'
 
 import Ad from '../Ad'
+import { OverviewInfoMobile } from '../Header/OverviewInfo'
 
 const kAllForums = 'allforums'
 type TabKey = TopListKey | 'allforums'
@@ -78,7 +79,6 @@ const TopListView = ({
     swiperRef.current?.swiper?.slideToLoop(tabKeys.indexOf(key))
   }
 
-  const forumList = useForumList()
   const location = useLocation()
   const lastLocation = useRef<{ pathname?: string; search?: string }>()
   useEffect(() => {
@@ -167,13 +167,7 @@ const TopListView = ({
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
-            <TabContent tab={kAllForums} sx={{ px: 1, py: 0 }}>
-              <List disablePadding>
-                {forumList?.map((item) => (
-                  <ForumGroup data={item} key={item.name} toplistView />
-                ))}
-              </List>
-            </TabContent>
+            <ForumTabContent />
           </SwiperSlide>
         </Swiper>
       </Box>
@@ -196,6 +190,22 @@ const ThreadTabContent = ({
       onRefresh={() => tabRef.current?.refresh() ?? Promise.resolve()}
     >
       <TopListTab tab={tab} ref={tabRef} singleColumn={singleColumn} />
+    </TabContent>
+  )
+}
+
+const ForumTabContent = () => {
+  const forumList = useForumList()
+  const narrowView = useMediaQuery('(max-width: 640px')
+
+  return (
+    <TabContent tab={kAllForums} sx={{ px: 1, py: 0 }}>
+      <List disablePadding>
+        {forumList?.map((item) => (
+          <ForumGroup data={item} key={item.name} toplistView />
+        ))}
+      </List>
+      {narrowView && <OverviewInfoMobile data={globalCache.globalStat} />}
     </TabContent>
   )
 }
