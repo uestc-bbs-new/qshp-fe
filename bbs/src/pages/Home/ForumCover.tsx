@@ -195,7 +195,7 @@ export const ForumGroup = ({
         unmountOnExit
         sx={narrowView ? { py: 2 } : { p: 1.75 }}
       >
-        <Grid container columnSpacing={0} rowSpacing={2}>
+        <Grid container columnSpacing={narrowView ? 0 : 1} rowSpacing={2}>
           {data?.children
             ?.filter((item) => item.name)
             .map((item, index) =>
