@@ -195,7 +195,7 @@ export const ForumGroup = ({
         unmountOnExit
         sx={narrowView ? { py: 2 } : { p: 1.75 }}
       >
-        <Grid container columnSpacing={1} rowSpacing={2}>
+        <Grid container columnSpacing={0} rowSpacing={2}>
           {data?.children
             ?.filter((item) => item.name)
             .map((item, index) =>
@@ -205,7 +205,7 @@ export const ForumGroup = ({
                     component={Link}
                     to={pages.forum(item.fid)}
                     fullWidth
-                    sx={{ justifyContent: 'flex-start' }}
+                    sx={{ justifyContent: 'flex-start', px: 0.75 }}
                   >
                     <Stack direction="row">
                       <Box
@@ -213,6 +213,8 @@ export const ForumGroup = ({
                         height={40}
                         borderRadius="100%"
                         mr={1}
+                        flexGrow={0}
+                        flexShrink={0}
                         style={{
                           backgroundImage: `url(${getForumCover(item.fid)})`,
                           backgroundSize: 'cover',
@@ -220,24 +222,24 @@ export const ForumGroup = ({
                         }}
                       />
                       <Stack>
+                        <Typography fontSize={18}>{item.name}</Typography>
                         <Stack direction="row" alignItems="center">
-                          <Typography fontSize={18}>{item.name}</Typography>
+                          {!!item.latest_thread?.lastpost_time && (
+                            <Typography fontSize={12} variant="threadItemStat">
+                              {chineseTime(
+                                item.latest_thread.lastpost_time * 1000,
+                                {
+                                  short: true,
+                                }
+                              )}
+                            </Typography>
+                          )}
                           {!!item.todayposts && (
                             <Typography ml={1} variant="threadItemStat">
                               ({item.todayposts})
                             </Typography>
                           )}
                         </Stack>
-                        {!!item.latest_thread?.lastpost_time && (
-                          <Typography fontSize={12} variant="threadItemStat">
-                            {chineseTime(
-                              item.latest_thread.lastpost_time * 1000,
-                              {
-                                short: true,
-                              }
-                            )}
-                          </Typography>
-                        )}
                       </Stack>
                     </Stack>
                   </Button>
