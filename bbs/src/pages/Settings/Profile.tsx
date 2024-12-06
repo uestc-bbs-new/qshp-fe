@@ -12,10 +12,10 @@ import {
   useTheme,
 } from '@mui/material'
 
-import Avatar from '@/components/Avatar'
 import { StyledField } from '@/components/StyledField'
 import { StyledSelect } from '@/components/StyledSelect'
 
+import ProfileAvatar from './ProfileAvatar'
 import ProfileSign from './ProfileSign'
 
 const menuItems = ['公开', '好友可见', '保密']
@@ -38,7 +38,7 @@ const Profile = () => {
             </Typography>
             <Stack direction="row" alignItems="center" sx={{ mb: 3 }}>
               <Typography sx={{ width: 100 }}>头像</Typography>
-              <Avatar uid={0} size={100} />
+              <ProfileAvatar />
             </Stack>
             <Stack direction="row" alignItems="center">
               <Typography sx={{ width: 100 }}>用户名</Typography>
