@@ -20,6 +20,8 @@ import {
 } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
+import StartConversation from './Chat/StartConversation'
+
 const Messages = () => {
   const route = useActiveRoute()
   const [count, setCount] = useState<MessageCounts>()
@@ -65,6 +67,7 @@ const Messages = () => {
               </Link>
             ))}
           </List>
+          <StartConversation></StartConversation>
         </Paper>
       )}
       <Outlet context={{ setCount }} />
