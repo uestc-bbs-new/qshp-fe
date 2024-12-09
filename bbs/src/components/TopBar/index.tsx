@@ -16,6 +16,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import logo from '@/assets/qshp-logo-outlined.png'
 import Link, { LinkProps } from '@/components/Link'
 import { useAppState } from '@/states'
 import { State } from '@/states/reducers/stateReducer'
@@ -130,11 +131,6 @@ const TopBar = () => {
     })
   }
 
-  const logoImg = new URL(
-    `../../assets/qshp-logo.png`,
-    import.meta.url
-  ).href.toString()
-
   const narrowTopBar = useMediaQuery('(max-width: 850px)')
   const miniSearch = useMediaQuery('(max-width: 800px)')
   const smallLogo = useMediaQuery('(max-width: 400px)')
@@ -167,7 +163,7 @@ const TopBar = () => {
           </IconButton>
           <Link to={pages.index()} className="text-white">
             <img
-              src={logoImg}
+              src={logo}
               alt="logo"
               css={{
                 width: smallLogo ? 150 : 175,
