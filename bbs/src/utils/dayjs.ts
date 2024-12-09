@@ -20,15 +20,17 @@ export const chineseTime = (
   }
   const now = new Date()
   let format = 'YYYY-MM-DD' + (options?.short ? '' : ' HH:mm')
-  if (time > now.getTime()) {
+  if (
+    time > now.getTime() - 1000 * 60 &&
+    time <= now.getTime() + 1000 * 60 * 2 // Allow 2 minutes of error between client and server
+  ) {
+    return '刚刚'
+  } else if (time > now.getTime()) {
+    // Future time
     return dayjs(time).format(format)
-  } else {
-    if (time > now.getTime() - 1000 * 60 && time <= now.getTime() + 1000 * 60) {
-      return '刚刚'
-    }
-    if (Date.now() - time < 1000 * 60 * 60 * 3) {
-      return dayjs(time).fromNow()
-    }
+  } else if (now.getTime() - time < 1000 * 60 * 60 * 3) {
+    // Recent time within 3 hours
+    return dayjs(time).fromNow()
   }
   const date = new Date(time)
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
