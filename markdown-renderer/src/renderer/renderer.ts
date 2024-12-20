@@ -19,8 +19,12 @@ export const renderAttachmentImage = (
     ? attach.thumbnail_url
     : siteRoot + attach.path
   let fullSizePath = siteRoot + attach.path
+  let rawUrl = attach.raw_url
   // TODO: Remove this after backend correctly return paths.
   if (attach.thumbnail_url) {
+    if (!rawUrl) {
+      rawUrl = fullSizePath
+    }
     fullSizePath = attach.thumbnail_url + '?variant=original'
   }
   let img = html`<img
@@ -29,8 +33,8 @@ export const renderAttachmentImage = (
     data-x-fullsize-path="${fullSizePath}"
     class="post_attachment post_attachment_image"
     loading="lazy"`
-  if (attach.raw_url) {
-    img += ` data-x-raw-path="${htmlspecialchars(attach.raw_url)}"`
+  if (rawUrl) {
+    img += ` data-x-raw-path="${htmlspecialchars(rawUrl)}"`
   }
   if (extraAttributes) {
     img += ` ${extraAttributes}`
