@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { useState } from 'react'
+import React from 'react'
 
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material'
 import {
@@ -72,10 +73,10 @@ export const RateDialog = ({
             .map((name) => {
               const details = data?.credits[name]
               if (!details) {
-                return <></>
+                return <React.Fragment key={name} />
               }
               return (
-                <>
+                <React.Fragment key={name}>
                   <tr>
                     <td css={tdPy}>
                       <TextField
@@ -122,7 +123,7 @@ export const RateDialog = ({
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               )
             })}
         </tbody>
