@@ -6,6 +6,7 @@ import { votePost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
+import { isDeveloper } from '@/states/settings'
 
 import { FavoriteDialog } from './dialogs/Favorite'
 import { RateDialog } from './dialogs/Rate'
@@ -85,7 +86,7 @@ const Footer = ({
           举报
         </Button>
       )}
-      {!!post.is_first && (
+      {isDeveloper() && !!post.is_first && (
         <Button variant="text" onClick={() => setFavoriteDialog(true)}>
           收藏
           {!!threadDetails?.favorite_times &&
@@ -99,9 +100,11 @@ const Footer = ({
           post={post}
         />
       )}
-      <Button variant="text" onClick={() => setRateDialog(true)}>
-        评分
-      </Button>
+      {isDeveloper() && (
+        <Button variant="text" onClick={() => setRateDialog(true)}>
+          评分
+        </Button>
+      )}
       {rateDialog && (
         <RateDialog open onClose={() => setRateDialog(false)} post={post} />
       )}
