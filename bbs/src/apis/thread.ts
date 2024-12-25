@@ -15,7 +15,7 @@ import {
 } from '@/common/interfaces/thread'
 import { unescapeSubject } from '@/utils/htmlEscape'
 
-import { makeThreadTypesMap } from '../common'
+import { makeThreadTypesMap } from './common'
 
 export const kPostPageSize = 20
 
