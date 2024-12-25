@@ -23,7 +23,7 @@ import { signOut } from '@/apis/auth'
 import Tooltip from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
-import { isIdasRelease, isPreviewRelease } from '@/utils/releaseMode'
+import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 import {
@@ -39,10 +39,6 @@ import Separated from '../Separated'
 import { MessageTabs } from './Message'
 
 const MenuContent = ({ small }: { small?: boolean }) => {
-  if (isIdasRelease) {
-    return <></>
-  }
-
   const { state, dispatch } = useAppState()
   const [themeSetting, setThemeSetting] = useState(persistedStates.theme)
   const [systemTheme, setSystemTheme] = useState(getSystemTheme())

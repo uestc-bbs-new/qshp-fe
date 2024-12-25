@@ -2,7 +2,6 @@ import boat from '@/assets/404/boat.png'
 import bg from '@/assets/404/sky_bg.png'
 import waveBack from '@/assets/404/wave_back.png'
 import waveFront from '@/assets/404/wave_front.png'
-import { isIdasRelease } from '@/utils/releaseMode'
 
 const NotFound = () => {
   return (
@@ -50,7 +49,7 @@ const NotFound = () => {
         css={{
           position: 'absolute',
           left: (280 / 1920) * 100 + 'vw',
-          bottom: ((isIdasRelease ? 560 : 404) / 1920) * 100 + 'vw',
+          bottom: (404 / 1920) * 100 + 'vw',
           color: '#DD8837',
           fontWeight: 600,
           '@media (max-width: 800px)': {
@@ -62,11 +61,28 @@ const NotFound = () => {
           },
         }}
       >
-        {isIdasRelease ? (
+        <>
+          <div
+            css={{
+              fontSize: (320 / 1920) * 100 + 'vw',
+              lineHeight: 1,
+              '@media (min-width: 1800px)': {
+                fontSize: '300px',
+              },
+              '@media (max-width: 800px)': {
+                fontSize: '132px',
+              },
+              '@media (max-width: 600px)': {
+                fontSize: '40vw',
+              },
+            }}
+          >
+            404
+          </div>
           <div
             css={{
               fontSize: (64 / 1920) * 100 + 'vw',
-              lineHeight: 1.5,
+              lineHeight: 1,
               '@media (min-width: 1920px)': {
                 fontSize: '64px',
               },
@@ -78,48 +94,9 @@ const NotFound = () => {
               },
             }}
           >
-            新版河畔暂未上线，
-            <br />
-            敬请期待……
+            该页面无法找到……
           </div>
-        ) : (
-          <>
-            <div
-              css={{
-                fontSize: (320 / 1920) * 100 + 'vw',
-                lineHeight: 1,
-                '@media (min-width: 1800px)': {
-                  fontSize: '300px',
-                },
-                '@media (max-width: 800px)': {
-                  fontSize: '132px',
-                },
-                '@media (max-width: 600px)': {
-                  fontSize: '40vw',
-                },
-              }}
-            >
-              404
-            </div>
-            <div
-              css={{
-                fontSize: (64 / 1920) * 100 + 'vw',
-                lineHeight: 1,
-                '@media (min-width: 1920px)': {
-                  fontSize: '64px',
-                },
-                '@media (max-width: 800px)': {
-                  fontSize: '32px',
-                },
-                '@media (max-width: 600px)': {
-                  fontSize: '7vw',
-                },
-              }}
-            >
-              该页面无法找到……
-            </div>
-          </>
-        )}
+        </>
       </div>
     </div>
   )
