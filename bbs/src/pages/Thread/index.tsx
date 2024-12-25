@@ -247,6 +247,15 @@ const Thread = () => {
         })
       )
   }
+  const refreshRate = (post: PostFloor) => {
+    setPostDetails(
+      Object.assign({}, postDetails, {
+        [post.post_id]: Object.assign({}, postDetails[post.post_id], {
+          ratesRefresh: (postDetails[post.post_id]?.ratesRefresh || 0) + 1,
+        }),
+      })
+    )
+  }
 
   useEffect(() => {
     const pendingTimeout = new Set<number>()
@@ -390,6 +399,7 @@ const Thread = () => {
                           onComment={handleComment}
                           onEdit={handleEdit}
                           onReport={handleReport}
+                          onRateCompleted={refreshRate}
                           threadControls={
                             <>
                               <Link

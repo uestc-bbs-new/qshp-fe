@@ -1,3 +1,5 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+
 import { useState } from 'react'
 
 import { Close, Reviews } from '@mui/icons-material'
@@ -8,6 +10,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -18,13 +21,15 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import { PostRate, PostRateStat } from '@/common/interfaces/response'
+import { getPostDetails } from '@/apis/thread'
+import { PostFloor, PostRate, PostRateStat } from '@/common/interfaces/response'
 import Avatar from '@/components/Avatar'
 import Chip from '@/components/Chip'
 import Link from '@/components/Link'
 import { pages } from '@/utils/routes'
 
 import { PostExtraDetailsAccordian } from './PostExtraDetails'
+import { PostExtraDetailsEx } from './types'
 
 const kCreditNamesToPromote = ['威望', '奖励券']
 const kCreditNamesInOrder = ['威望', '水滴', '奖励券']
@@ -32,6 +37,52 @@ const kMaxPromotedRates = 3
 const kMaxInitialRates = 10
 
 const PostRates = ({
+  post,
+  postDetails,
+}: {
+  post: PostFloor
+  postDetails?: PostExtraDetailsEx
+}) => {
+  const queryKey: [string, { post_id: number; refresh?: number }] = [
+    'postrate',
+    { post_id: post.post_id, refresh: postDetails?.ratesRefresh },
+  ]
+  const { data: currentPostDetails, isLoading } = useQuery({
+    queryKey,
+    placeholderData: keepPreviousData,
+    queryFn: async ({ queryKey }) => {
+      const [_, { post_id }] = queryKey
+      if (
+        postDetails?.rates &&
+        postDetails.rate_stat &&
+        !postDetails.ratesRefresh
+      ) {
+        return postDetails
+      }
+      return (
+        await getPostDetails({
+          threadId: post.thread_id,
+          ratePids: [post.post_id],
+        })
+      )[post_id]
+    },
+  })
+
+  if (isLoading) {
+    return [...Array(3)].map((_, index) => <Skeleton key={index} height={50} />)
+  }
+  if (!currentPostDetails?.rates || !currentPostDetails.rate_stat) {
+    return <></>
+  }
+  return (
+    <PostRatesContent
+      rates={currentPostDetails.rates}
+      rateStat={currentPostDetails.rate_stat}
+    />
+  )
+}
+
+const PostRatesContent = ({
   rates,
   rateStat,
 }: {

@@ -137,6 +137,7 @@ const Floor = ({
   onComment,
   onEdit,
   onReport,
+  onRateCompleted,
 }: {
   children: React.ReactNode
   threadControls?: React.ReactNode
@@ -149,6 +150,7 @@ const Floor = ({
   onComment: (post: PostFloor) => void
   onEdit: (post: PostFloor) => void
   onReport: (post: PostFloor) => void
+  onRateCompleted: (post: PostFloor) => void
 }) => {
   const gotoLink =
     post.position == 1 && post.is_first
@@ -303,24 +305,16 @@ const Floor = ({
                 !!postDetails?.commentsRefresh
               }
             >
-              <>
-                {(postDetails?.comments || !!postDetails?.commentsRefresh) && (
-                  <PostComments post={post} postDetails={postDetails} />
-                )}
-              </>
+              <PostComments post={post} postDetails={postDetails} />
             </PostExtraDetailsContainer>
             <PostExtraDetailsContainer
               loading={!!post.has_rate && !postDetails}
               hasContent={
-                !!postDetails?.rates?.length && !!postDetails?.rate_stat
+                (!!postDetails?.rates?.length && !!postDetails?.rate_stat) ||
+                !!postDetails?.ratesRefresh
               }
             >
-              {postDetails?.rates && postDetails?.rate_stat && (
-                <PostRates
-                  rates={postDetails.rates}
-                  rateStat={postDetails.rate_stat}
-                />
-              )}
+              <PostRates post={post} postDetails={postDetails} />
             </PostExtraDetailsContainer>
             <Box flexGrow={1} />
             {!!post.usesig &&
@@ -336,6 +330,7 @@ const Floor = ({
               onComment={() => onComment(post)}
               onEdit={() => onEdit(post)}
               onReport={() => onReport(post)}
+              onRateCompleted={() => onRateCompleted(post)}
             />
           </Stack>
         </Stack>

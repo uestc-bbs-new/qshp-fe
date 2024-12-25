@@ -220,5 +220,13 @@ export type PostRateOptions = {
     [name in ExtCreditName]: RateCreditOptions
   }
 }
+export type PostRateActionDetails = {
+  credits: { [name in ExtCreditName]?: number }
+  reason: string
+  notify?: boolean
+}
 export const getPostRateOptions = (pid: number) =>
   request.get<PostRateOptions>(`${commonUrl}/post/${pid}/rate`)
+
+export const ratePost = (pid: number, details: PostRateActionDetails) =>
+  request.post(`${commonUrl}/post/${pid}/rate`, details)

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import React from 'react'
 
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material'
@@ -15,8 +15,9 @@ import {
   Typography,
 } from '@mui/material'
 
-import { RateCreditOptions, getPostRateOptions } from '@/apis/thread'
-import { extCreditNames } from '@/common/interfaces/base'
+import { parseApiError } from '@/apis/error'
+import { RateCreditOptions, getPostRateOptions, ratePost } from '@/apis/thread'
+import { ExtCreditName, extCreditNames } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
 
@@ -25,10 +26,12 @@ import { LoadingDialog } from './LoadingDialog'
 export const RateDialog = ({
   open,
   onClose,
+  onComplete,
   post,
 }: {
   open: boolean
   onClose?: () => void
+  onComplete?: () => void
   post: PostFloor
 }) => {
   const { isLoading, isError, data, error, refetch } = useQuery({
@@ -37,13 +40,54 @@ export const RateDialog = ({
   })
   const { dispatch } = useAppState()
   const [pending, setPending] = useState(false)
+  const [credits, setCredits] = useState<{ [name in ExtCreditName]?: number }>(
+    {}
+  )
   const [reason, setReason] = useState('')
+  const notifyRef = useRef<HTMLInputElement>(null)
 
   const rate = async () => {
     try {
       setPending(true)
+      if (data?.require_reason && !reason.trim()) {
+        dispatch({
+          type: 'open snackbar',
+          payload: {
+            severity: 'error',
+            message: '请输入或选择评分理由。',
+          },
+        })
+        return
+      }
+      const filteredCredits = Object.entries(credits).filter(
+        ([_, amount]) => !!amount
+      )
+      if (filteredCredits.length == 0) {
+        dispatch({
+          type: 'open snackbar',
+          payload: {
+            severity: 'error',
+            message: '请输入评分数额。',
+          },
+        })
+        return
+      }
+      await ratePost(post.post_id, {
+        credits: Object.fromEntries(filteredCredits),
+        reason,
+        notify: notifyRef.current?.checked,
+      })
+      onComplete && onComplete()
+      onClose && onClose()
     } catch (e) {
-      1
+      const { message, severity } = parseApiError(e)
+      dispatch({
+        type: 'open snackbar',
+        payload: {
+          severity,
+          message,
+        },
+      })
     } finally {
       setPending(false)
     }
@@ -84,6 +128,19 @@ export const RateDialog = ({
                         label={name}
                         size="small"
                         sx={{ width: '7em' }}
+                        value={credits[name] ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value.trim()
+                          const newCredits = Object.assign({}, credits)
+                          if (!value) {
+                            delete newCredits[name]
+                          }
+                          const valueInt = parseInt(value)
+                          if (!isNaN(valueInt)) {
+                            newCredits[name] = valueInt
+                          }
+                          setCredits(newCredits)
+                        }}
                       />
                     </td>
                     <td
@@ -176,11 +233,19 @@ export const RateDialog = ({
       />
       <Stack direction="row" justifyContent="flex-end" alignItems="center">
         <FormControlLabel
-          control={<Checkbox defaultChecked disabled={data?.require_notify} />}
+          control={
+            <Checkbox
+              defaultChecked
+              disabled={data?.require_notify}
+              inputRef={notifyRef}
+            />
+          }
           label="通知作者"
           sx={{ mr: 1.5 }}
         />
-        <Button variant="contained">确定</Button>
+        <Button variant="contained" onClick={rate} disabled={pending}>
+          确定
+        </Button>
       </Stack>
     </LoadingDialog>
   )

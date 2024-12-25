@@ -11,16 +11,6 @@ import { isDeveloper } from '@/states/settings'
 import { FavoriteDialog } from './dialogs/Favorite'
 import { RateDialog } from './dialogs/Rate'
 
-type FooterProps = {
-  forumDetails?: ForumDetails
-  threadDetails?: Thread
-  post: PostFloor
-  onReply?: () => void
-  onComment?: () => void
-  onEdit?: () => void
-  onReport?: () => void
-}
-
 const Footer = ({
   forumDetails,
   threadDetails,
@@ -29,7 +19,17 @@ const Footer = ({
   onComment,
   onEdit,
   onReport,
-}: FooterProps) => {
+  onRateCompleted,
+}: {
+  forumDetails?: ForumDetails
+  threadDetails?: Thread
+  post: PostFloor
+  onReply?: () => void
+  onComment?: () => void
+  onEdit?: () => void
+  onReport?: () => void
+  onRateCompleted?: () => void
+}) => {
   const { state } = useAppState()
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
@@ -106,7 +106,12 @@ const Footer = ({
         </Button>
       )}
       {rateDialog && (
-        <RateDialog open onClose={() => setRateDialog(false)} post={post} />
+        <RateDialog
+          open
+          onClose={() => setRateDialog(false)}
+          onComplete={onRateCompleted}
+          post={post}
+        />
       )}
     </Stack>
   )
