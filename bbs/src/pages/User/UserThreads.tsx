@@ -198,7 +198,11 @@ function coalesceRepliesOrComments(
     [thread_id: number]: CoalescedReply
   } = {}
   data.rows?.forEach((item) => {
-    const replyItem = { post_id: item.post_id, summary: item.summary }
+    const replyItem = {
+      post_id: item.post_id,
+      summary: item.summary,
+      invisible: item.invisible,
+    }
     if (tidItemMap[item.thread_id]) {
       tidItemMap[item.thread_id].replyItems.push(replyItem)
     } else {

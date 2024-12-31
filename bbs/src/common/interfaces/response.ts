@@ -31,6 +31,7 @@ export type ThreadInList = Omit<ThreadBasics, 'author' | 'author_id'> &
   Partial<ThreadExtended> & {
     last_poster: string
     forum_name?: string
+    invisible?: number
   }
 
 type ThreadExtended = {

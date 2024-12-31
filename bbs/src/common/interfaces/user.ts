@@ -17,6 +17,7 @@ export type UserReply = Omit<ThreadBasics, 'summary'> & {
   forum_name?: string
   /** 回复内容摘要 */
   summary: string
+  invisible?: number
 }
 
 /** 用户发表过的点评 */

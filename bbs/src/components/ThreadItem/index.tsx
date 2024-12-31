@@ -21,6 +21,8 @@ import {
   TopListThread,
 } from '@/common/interfaces/response'
 import {
+  kPostInvisibleReplyDeleted,
+  kPostInvisibleThreadDeleted,
   kThreadDisplayOrderDeleted,
   kThreadDisplayOrderDraft,
   kThreadDisplayOrderInReview,
@@ -51,6 +53,7 @@ const formatNumber = (num: number) => {
 export type ThreadReplyOrCommentItem = {
   post_id: number
   summary: string
+  invisible?: number
 }
 
 type ThreadItemProps = {
@@ -160,8 +163,8 @@ const ThreadItem = ({
                           }),
                           ...((data.display_order ==
                             kThreadDisplayOrderDeleted ||
-                            data.display_order ==
-                              kThreadDisplayOrderRejected) && {
+                            data.display_order == kThreadDisplayOrderRejected ||
+                            data.invisible == kPostInvisibleThreadDeleted) && {
                             textDecoration: 'line-through red 2px',
                             opacity: 0.8,
                           }),
@@ -560,7 +563,14 @@ const ThreadRepliesOrComments = ({
               my={0.25}
               onClick={(e) => e.stopPropagation()}
             >
-              <Typography variant="threadItemSummary">
+              <Typography
+                variant="threadItemSummary"
+                style={
+                  item.invisible == kPostInvisibleReplyDeleted
+                    ? { textDecoration: 'line-through red 1px' }
+                    : undefined
+                }
+              >
                 {item.summary}
               </Typography>
             </Link>
