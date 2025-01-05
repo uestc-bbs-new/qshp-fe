@@ -45,7 +45,10 @@ const ReplyCredit = ({
     if (!valueRef.current) {
       return
     }
-    valueRef.current.reply_credit = hasReplyCredit ? newDetails : undefined
+    valueRef.current.reply_credit =
+      hasReplyCredit && newDetails?.credit_amount && newDetails.count
+        ? newDetails
+        : undefined
     if (newDetails) {
       setDetails(newDetails)
     }
