@@ -19,6 +19,7 @@ import { parseApiError } from '@/apis/error'
 import { RateCreditOptions, getPostRateOptions, ratePost } from '@/apis/thread'
 import { ExtCreditName, extCreditNames } from '@/common/interfaces/base'
 import { PostFloor } from '@/common/interfaces/response'
+import { notifyCreditsUpdate } from '@/common/ui/credits'
 import { useAppState } from '@/states'
 
 import { LoadingDialog } from './LoadingDialog'
@@ -72,13 +73,14 @@ export const RateDialog = ({
         })
         return
       }
-      await ratePost(post.post_id, {
+      const result = await ratePost(post.post_id, {
         credits: Object.fromEntries(filteredCredits),
         reason,
         notify: notifyRef.current?.checked,
       })
       onComplete && onComplete()
       onClose && onClose()
+      notifyCreditsUpdate(dispatch, result)
     } catch (e) {
       const { message, severity } = parseApiError(e)
       dispatch({
