@@ -1,4 +1,4 @@
-import { ExtCreditMap } from './base'
+import { ExtCreditsUpdateResponse } from './base'
 
 export type ThreadType = {
   type_id: number
@@ -12,14 +12,12 @@ export type ThreadTypeMap = { [type_id: number]: ThreadType }
 export type PostThreadResult = {
   thread_id: number
   pending_review?: boolean
-  ext_credits_update?: ExtCreditMap
-}
+} & ExtCreditsUpdateResponse
 
 export type PostReplyResult = {
   post_id: number
-  ext_credits_update?: ExtCreditMap
   wait_timeout?: number
-}
+} & ExtCreditsUpdateResponse
 
 export type PublicThreadFavoriteFolder = {
   collection_id: number

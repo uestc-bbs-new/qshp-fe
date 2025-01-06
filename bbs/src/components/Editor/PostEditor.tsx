@@ -18,13 +18,10 @@ import {
 
 import { parseApiError } from '@/apis/error'
 import { editPost, postThread, replyThread } from '@/apis/thread'
-import {
-  Attachment,
-  ExtCreditMap,
-  extCreditNames,
-} from '@/common/interfaces/base'
+import { Attachment } from '@/common/interfaces/base'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor } from '@/common/interfaces/response'
+import { notifyCreditsUpdate } from '@/common/ui/credits'
 import Editor, { EditorHandle } from '@/components/Editor'
 import PostNotice from '@/components/Editor/PostNotice'
 import { useSnackbar } from '@/components/Snackbar'
@@ -246,7 +243,7 @@ const PostEditor = ({
               },
             })
           }
-          notifyCreditsUpdate(result.ext_credits_update, 3000)
+          notifyCreditsUpdate(dispatch, result, 3000)
           navigate(pages.thread(result.thread_id))
         })
         .catch(handleError)
@@ -263,7 +260,7 @@ const PostEditor = ({
           editor.current?.vditor?.setValue('')
           editor.current?.attachments?.splice(0)
           setAttachments([])
-          notifyCreditsUpdate(result.ext_credits_update)
+          notifyCreditsUpdate(dispatch, result)
           setPostPending(false)
           onSubmitted && onSubmitted()
         })
@@ -282,36 +279,6 @@ const PostEditor = ({
           onSubmitted && onSubmitted()
         })
         .catch(handleError)
-    }
-  }
-
-  const notifyCreditsUpdate = (updates?: ExtCreditMap, delayMs?: number) => {
-    if (updates) {
-      let hasNegative = false
-      const message = extCreditNames
-        .map((k) => {
-          const v = updates[k]
-          if (!v) {
-            return ''
-          }
-          if (v < 0) {
-            hasNegative = true
-          }
-          return `${k} ${v > 0 ? `+${v}` : v}`
-        })
-        .filter((text) => !!text)
-        .join('，')
-      if (message) {
-        setTimeout(() => {
-          dispatch({
-            type: 'open snackbar',
-            payload: {
-              severity: hasNegative ? 'warning' : 'success',
-              message,
-            },
-          })
-        }, delayMs ?? 0)
-      }
     }
   }
 

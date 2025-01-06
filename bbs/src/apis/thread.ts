@@ -1,5 +1,9 @@
 import request, { commonUrl } from '@/apis/request'
-import { Attachment, ExtCreditName } from '@/common/interfaces/base'
+import {
+  Attachment,
+  ExtCreditName,
+  ExtCreditsUpdateResponse,
+} from '@/common/interfaces/base'
 import { AtListResponse, PostPosition } from '@/common/interfaces/post'
 import {
   PostDetails,
@@ -229,4 +233,7 @@ export const getPostRateOptions = (pid: number) =>
   request.get<PostRateOptions>(`${commonUrl}/post/${pid}/rate`)
 
 export const ratePost = (pid: number, details: PostRateActionDetails) =>
-  request.post(`${commonUrl}/post/${pid}/rate`, details)
+  request.post<ExtCreditsUpdateResponse>(
+    `${commonUrl}/post/${pid}/rate`,
+    details
+  )

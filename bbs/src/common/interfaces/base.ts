@@ -33,3 +33,7 @@ export type UploadResponse = {
 export type ExtCreditName = '水滴' | '威望' | '奖励券'
 export const extCreditNames: ExtCreditName[] = ['水滴', '威望', '奖励券']
 export type ExtCreditMap = { [name in ExtCreditName]?: number }
+
+export type ExtCreditsUpdateResponse = {
+  ext_credits_update?: ExtCreditMap
+}
