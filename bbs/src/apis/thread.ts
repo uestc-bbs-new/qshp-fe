@@ -152,11 +152,16 @@ export const votePost = (params: {
   })
 }
 
-export const findPost = (post_id: string, thread_id?: string) => {
+export const findPost = (
+  post_id: string,
+  thread_id?: string,
+  admin?: boolean
+) => {
   return request.get<PostPosition>(`${commonUrl}/post/find`, {
     params: {
       tid: thread_id,
       pid: post_id,
+      ...(admin && { a: 1 }),
     },
   })
 }

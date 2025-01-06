@@ -4,7 +4,13 @@ import { findPost, kPostPageSize } from '@/apis/thread'
 import Error from '@/components/Error'
 import { pages } from '@/utils/routes'
 
-const Goto = async ({ params }: { params: object }) => {
+const Goto = async ({
+  params,
+  request,
+}: {
+  params: object
+  request: Request
+}) => {
   const p = params as { tidOrPid: string; pid?: string }
   let tid: string | undefined = p.tidOrPid
   let pid = p.pid
@@ -12,16 +18,21 @@ const Goto = async ({ params }: { params: object }) => {
     pid = p.tidOrPid
     tid = undefined
   }
-  const result = await findPost(pid, tid)
+  const url = new URL(request.url)
+  const admin = url.searchParams.get('a')
+  const result = await findPost(pid, tid, !!admin)
   const page = Math.ceil(result.position / kPostPageSize)
+  const query = new URLSearchParams()
+  if (page > 1) {
+    query.set('page', page.toString())
+  }
+  if (admin) {
+    query.set('a', admin)
+  }
   return redirect(
     pages.thread(
       result.thread_id,
-      page > 1
-        ? new URLSearchParams({
-            page: page.toString(),
-          })
-        : undefined,
+      query.size > 0 ? query : undefined,
       `post-${pid}`
     )
   )
