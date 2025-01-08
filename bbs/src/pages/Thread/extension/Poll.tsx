@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 
+import { parseApiError } from '@/apis/error'
 import { pollVote } from '@/apis/thread'
 import {
   Thread,
@@ -49,6 +50,7 @@ const Poll = ({
     message: snackbarMessage,
     show: showError,
   } = useSnackbar()
+  const [pending, setPending] = useState(false)
 
   const handleChange = (option_id: number, checked: boolean) => {
     // <Radio> fires onChange only when checked so we have to clear to make
@@ -75,14 +77,25 @@ const Poll = ({
       showError(`最多选择 ${poll.max_choices} 项。`)
       return
     }
-    setPoll(
-      await pollVote(
-        threadDetails.thread_id,
-        Array.from(selectedOptions.current.entries())
-          .filter(([_, checked]) => checked)
-          .map(([optionId, _]) => optionId)
+    if (pending) {
+      return
+    }
+    setPending(true)
+    try {
+      setPoll(
+        await pollVote(
+          threadDetails.thread_id,
+          Array.from(selectedOptions.current.entries())
+            .filter(([_, checked]) => checked)
+            .map(([optionId, _]) => optionId)
+        )
       )
-    )
+    } catch (e) {
+      const { message } = parseApiError(e)
+      showError(message)
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -132,7 +145,7 @@ const Poll = ({
           {poll.selected_options ? (
             <Typography>您已经投票，感谢您的参与！</Typography>
           ) : (
-            <Button variant="contained" onClick={vote}>
+            <Button variant="contained" disabled={pending} onClick={vote}>
               确认投票
             </Button>
           )}
