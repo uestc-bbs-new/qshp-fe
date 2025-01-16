@@ -142,8 +142,23 @@ export const ResetPasswordHome = () => {
               </Button>
             </Stack>
             <Typography variant="h6" textAlign="justify" mt={6}>
-              毕业用户请通过清水河畔官方 QQ 号 1942224235 联系站长。
+              毕业用户可点击右下角“返回旧版”通过学号与信息门户密码认证后重置密码。
             </Typography>
+            <Typography variant="h6" textAlign="justify" mt={1}>
+              如果您已忘记信息门户密码，或遇到其他问题，请通过清水河畔官方 QQ 号
+              1942224235 联系站长。
+            </Typography>
+            <Stack direction="row" justifyContent="flex-end" mt={2}>
+              <Link
+                external
+                to="/plugin.php?id=rnreg:resetpassword&forceold=1"
+                target="_blank"
+                underline="hover"
+                sx={{ color: '#ccc' }}
+              >
+                返回旧版
+              </Link>
+            </Stack>
           </Stack>
         </CommonLayout>
       </DialogContent>
