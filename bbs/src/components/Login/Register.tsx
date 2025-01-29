@@ -27,6 +27,16 @@ export const RegisterContent = ({ small }: { small?: boolean }) => {
           进入统一身份认证平台
         </Button>
       </Stack>
+      <Typography
+        color="red"
+        my={2}
+        textAlign="justify"
+        sx={{ textWrap: 'pretty' }}
+      >
+        目前统一身份认证系统暂时无法在校外访问，点击上述按钮后将通过校园 VPN
+        访问。完成注册后可重新返回 bbs.uestc.edu.cn
+        并使用注册时输入的用户名密码登录清水河畔，无需继续使用 VPN。
+      </Typography>
       {false && ( // Preserved for the next year.
         <Typography
           color="red"
