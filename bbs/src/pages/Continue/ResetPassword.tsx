@@ -141,16 +141,6 @@ export const ResetPasswordHome = () => {
                 进入统一身份认证平台
               </Button>
             </Stack>
-            <Typography
-              color="red"
-              my={2}
-              textAlign="justify"
-              sx={{ textWrap: 'pretty' }}
-            >
-              目前统一身份认证系统暂时无法在校外访问，点击上述按钮后将通过校园
-              VPN 访问。完成操作后可重新返回 bbs.uestc.edu.cn
-              并使用刚才选择的用户名及输入的密码登录清水河畔，无需继续使用 VPN。
-            </Typography>
             <Typography variant="h6" textAlign="justify" mt={6}>
               毕业用户可点击右下角“返回旧版”通过学号与信息门户密码认证后重置密码。
             </Typography>
