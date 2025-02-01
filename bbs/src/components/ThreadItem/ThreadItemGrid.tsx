@@ -40,11 +40,12 @@ const ThreadItemGrid = ({
         <Link
           to={item.author_id ? `/user/${item.author_id}` : undefined}
           mr={1}
+          sx={{ flexGrow: 0, flexShrink: 0 }}
           onClick={(e) => e.stopPropagation()}
         >
           <Avatar alt={item.author} uid={item.author_id} size={48} />
         </Link>
-        <Stack>
+        <Stack flexGrow={1}>
           <Link
             to={item.author_id ? `/user/${item.author_id}` : undefined}
             onClick={(e) => e.stopPropagation()}
