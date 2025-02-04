@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import adminRoutes from '@/admin/routes'
+import betRoutes from '@/ext/bet/routes'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import { RegisterHome } from '@/pages/Continue/Register'
 import Renew from '@/pages/Continue/Renew'
@@ -120,6 +121,16 @@ routes.current = [
         element: <User />,
       },
       ...adminRoutes,
+      {
+        path: '/x',
+        children: [
+          {
+            path: '',
+            loader: () => redirect('/'),
+          },
+          ...(isPreviewRelease ? [] : betRoutes),
+        ],
+      },
       ...(isPreviewRelease ? [] : devPages),
     ],
   },
