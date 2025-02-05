@@ -27,6 +27,15 @@
   max-width: 100%;
 }
 
+.rich-text-theme-dark img {
+  background-color: #cccccc;
+}
+
+.rich-text-theme-dark img.post_smily,
+.post-signature .rich-text-theme-dark img {
+  background-color: transparent;
+}
+
 .rich-text-content blockquote,
 .rich-text-content .vditor-reset blockquote {
   background-color: rgb(241, 243, 250);

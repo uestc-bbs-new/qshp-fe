@@ -3,7 +3,7 @@ import { css } from '@emotion/react'
 import { useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 
-import { CircularProgress, Stack } from '@mui/material'
+import { CircularProgress, Stack, useTheme } from '@mui/material'
 
 import { ImageViewItem } from '@/states/reducers/stateReducer'
 
@@ -17,6 +17,7 @@ const ImageView = ({
   const fullSizeCss = { width: '100%', height: '100%' }
   const [panning, setPanning] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const theme = useTheme()
   return (
     <>
       {!loaded && (
@@ -61,6 +62,9 @@ const ImageView = ({
                   height: 'auto',
                   maxWidth: '100%',
                   maxHeight: '100%',
+                  ...(theme.palette.mode == 'dark' && {
+                    backgroundColor: '#cccccc',
+                  }),
                 })}
                 onLoad={() => setLoaded(true)}
               />

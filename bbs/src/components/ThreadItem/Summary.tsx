@@ -1,7 +1,14 @@
 import React from 'react'
 
 import { BurstMode } from '@mui/icons-material'
-import { Grid, Stack, SxProps, Theme, Typography } from '@mui/material'
+import {
+  Grid,
+  Stack,
+  SxProps,
+  Theme,
+  Typography,
+  useTheme,
+} from '@mui/material'
 
 import { AttachmentSummary } from '@/common/interfaces/base'
 import { ThreadBasics } from '@/common/interfaces/response'
@@ -19,23 +26,29 @@ export const SummaryAttachmentItem = ({
 }: {
   item: AttachmentSummary
   onClick?: () => void
-}) => (
-  <SummaryAttachmentGrid onClick={onClick}>
-    <img
-      src={
-        item.thumbnail_url
-          ? setVariantForThumbnailUrl(item.thumbnail_url, 'summary')
-          : item.path
-      }
-      loading="lazy"
-      css={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-      }}
-    />
-  </SummaryAttachmentGrid>
-)
+}) => {
+  const theme = useTheme()
+  return (
+    <SummaryAttachmentGrid onClick={onClick}>
+      <img
+        src={
+          item.thumbnail_url
+            ? setVariantForThumbnailUrl(item.thumbnail_url, 'summary')
+            : item.path
+        }
+        loading="lazy"
+        css={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          ...(theme.palette.mode == 'dark' && {
+            backgroundColor: '#cccccc',
+          }),
+        }}
+      />
+    </SummaryAttachmentGrid>
+  )
+}
 
 export const SummaryAttachmentMore = ({ threadId }: { threadId: number }) => (
   <SummaryAttachmentGrid sx={{ backgroundColor: '#eeeeee' }}>

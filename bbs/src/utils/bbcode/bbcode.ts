@@ -276,7 +276,7 @@ function parseNonCodeBbcode(
           path = legacySmilyMaps[codePrefix][code]
         }
         if (path) {
-          return `<img src="${kSmilyBasePath}${path}" class="smily">`
+          return `<img src="${kSmilyBasePath}${path}" class="post_smily">`
         }
         return fullCode
       }
