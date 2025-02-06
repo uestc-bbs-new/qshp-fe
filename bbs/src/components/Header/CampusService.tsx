@@ -43,6 +43,7 @@ const listServiceItems: NavLink[] = [
   },
   { link: 'https://gis.uestc.edu.cn/', name: '校园地图', external: true },
   { link: 'https://www.lib.uestc.edu.cn/', name: '图书馆', external: true },
+  { link: 'https://webvpn.uestc.edu.cn/', name: '校园 VPN', external: true },
 ]
 
 const CampusService = () => {
