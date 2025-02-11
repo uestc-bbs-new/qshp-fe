@@ -113,15 +113,20 @@ const ForumCover = ({ data }: { data: Forum }) => {
                   </Box>
                 </Link>
               </Stack>
-              <Stack direction="row">
-                <Typography>
+              <Box className="line-clamp-1">
+                <Typography component="span" sx={{ verticalAlign: 'middle' }}>
                   {chineseTime(data.latest_thread?.lastpost_time * 1000, {
                     short: true,
                   })}
                 </Typography>
                 {!!data.latest_thread?.thread_id && (
                   <>
-                    <Typography className="mx-1">·</Typography>
+                    <Typography
+                      mx={0.5}
+                      sx={{ display: 'inline-block', verticalAlign: 'middle' }}
+                    >
+                      ·
+                    </Typography>
                     <Link
                       to={
                         data.latest_thread?.lastpost_authorid
@@ -132,12 +137,13 @@ const ForumCover = ({ data }: { data: Forum }) => {
                       }
                       color="inherit"
                       onClick={(e) => e.stopPropagation()}
+                      sx={{ verticalAlign: 'middle' }}
                     >
                       {data.latest_thread?.lastpost_author}
                     </Link>
                   </>
                 )}
-              </Stack>
+              </Box>
             </Box>
           )}
         </Stack>
