@@ -362,13 +362,19 @@ const Thread = () => {
               ? info?.rows.map((item, index) => {
                   return (
                     <Box
-                      className="rounded-lg shadow-lg"
+                      className={`rounded-r-lg shadow-lg${
+                        '#' + postElementId(item.post_id) == location.hash
+                          ? ' active'
+                          : ''
+                      }`}
                       mb={thinView ? 1 : 1.75}
                       sx={(theme) => ({
-                        backgroundColor:
-                          '#' + postElementId(item.post_id) == location.hash
-                            ? theme.palette.background.paperHighlighted
-                            : theme.palette.background.paper,
+                        backgroundColor: theme.palette.background.paper,
+                        '&.active': {
+                          backgroundColor:
+                            theme.palette.background.paperHighlighted,
+                          outline: `2px solid ${theme.palette.primary.main}`,
+                        },
                       })}
                       key={item.post_id}
                     >
