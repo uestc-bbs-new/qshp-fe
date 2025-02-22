@@ -80,11 +80,14 @@ const transformLegacyLinks = (url: string) => {
   return url
 }
 
-const transformLink = (url?: string | null) => {
+const transformLink = (url?: string | null, options?: { image?: boolean }) => {
   if (!url) {
     return
   }
-  if (!url.match(/^(?:\/|https?:|mailto:|tel:)/i)) {
+  const regex = options?.image
+    ? /^(?:\/|https?:|data:)/i
+    : /^(?:\/|https?:|mailto:|tel:)/i
+  if (!url.match(regex)) {
     return `${siteRoot}/${url}`
   }
   const match = url.match(
@@ -105,7 +108,7 @@ export const transformUserHtml = (
   ;[].forEach.call(
     container.querySelectorAll('img'),
     (img: HTMLImageElement) => {
-      const url = transformLink(img.getAttribute('src'))
+      const url = transformLink(img.getAttribute('src'), { image: true })
       if (url) {
         img.src = url
       }
