@@ -12,7 +12,7 @@ import {
 import coverDark from '@/assets/cover-dark.jpg'
 import coverLight from '@/assets/cover-light.jpg'
 import { PostAuthorDetails, PostFloor } from '@/common/interfaces/response'
-import Tooltip from '@/components/Tooltip'
+import { NotOpenOnDragTooltip } from '@/components/Tooltip'
 import { useAppState } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
 import siteRoot from '@/utils/siteRoot'
@@ -121,9 +121,11 @@ type CardProps = {
 
 const UserCard = ({ item, children }: CardProps) => {
   return item.author_details ? (
-    <Tooltip title={<Cover item={item} authorDetails={item.author_details} />}>
+    <NotOpenOnDragTooltip
+      title={<Cover item={item} authorDetails={item.author_details} />}
+    >
       {children}
-    </Tooltip>
+    </NotOpenOnDragTooltip>
   ) : (
     <>{children}</>
   )
