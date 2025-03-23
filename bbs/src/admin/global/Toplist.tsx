@@ -37,6 +37,7 @@ import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { globalCache, useForumList } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
+import { toDatetimeLocal } from '@/utils/input'
 import { pages } from '@/utils/routes'
 
 const WeightEntry = ({
@@ -395,13 +396,6 @@ const OverrideSection = ({
     </>
   )
 }
-
-const pad = (value: number | string) => value.toString().padStart(2, '0')
-
-const toDatetimeLocal = (value: Date) =>
-  `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
-    value.getDate()
-  )}T${pad(value.getHours())}:${pad(value.getMinutes())}`
 
 const Toplist = () => {
   const [config, setConfig] = useState<HotlistConfig>()

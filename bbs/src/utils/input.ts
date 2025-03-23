@@ -32,3 +32,9 @@ export const parseNumberInput = (
   }
   return parseInt(value)
 }
+
+const pad = (value: number | string) => value.toString().padStart(2, '0')
+export const toDatetimeLocal = (value: Date) =>
+  `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
+    value.getDate()
+  )}T${pad(value.getHours())}:${pad(value.getMinutes())}`
