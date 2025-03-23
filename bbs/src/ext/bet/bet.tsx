@@ -6,7 +6,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 
@@ -34,13 +38,28 @@ export const BetSubmitDialog = ({
           <Typography variant="h5">{competition.title}</Typography>
         </DialogTitle>
         <DialogContent>
-          {competition.options?.map((item, index) => (
-            <React.Fragment key={index}>
-              <Typography>
-                {item.text} ({item.rate})
-              </Typography>
-            </React.Fragment>
-          ))}
+          <RadioGroup>
+            {competition.options?.map((item, index) => (
+              <React.Fragment key={index}>
+                <FormControlLabel
+                  value={item.id}
+                  control={<Radio />}
+                  label={
+                    <Typography>
+                      {item.text} ({item.rate})
+                    </Typography>
+                  }
+                />
+              </React.Fragment>
+            ))}
+          </RadioGroup>
+          <Stack direction="row" alignItems="center">
+            <Typography>投注水滴：</Typography>
+            <TextField size="small" type="number" />
+          </Stack>
+          <Typography>
+            您当前拥有 水滴，最低投注 水滴，最高 水滴，投注后至少剩余 水滴。
+          </Typography>
           {errorPrompt && (
             <Alert severity="error" sx={{ my: 1.5 }}>
               {errorPrompt}

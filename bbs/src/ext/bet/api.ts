@@ -74,6 +74,8 @@ export type BetDetails = {
   tax_rate?: number
   start_time?: number
   end_time?: number
+  min_bet_credits?: number
+  max_bet_credits?: number
   draft?: boolean
   cancel?: boolean
 }

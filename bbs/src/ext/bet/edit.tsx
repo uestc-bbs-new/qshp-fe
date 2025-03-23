@@ -11,7 +11,11 @@ import {
   Typography,
 } from '@mui/material'
 
-import { normalizeNumberInput, parseNumberInput } from '@/utils/input'
+import {
+  normalizeNumberInput,
+  parseNumberInput,
+  toDatetimeLocal,
+} from '@/utils/input'
 
 import { BetDetails, BetStatus, createBet, updateBet } from './api'
 
@@ -33,6 +37,20 @@ export const BetEditDialog = ({
       text: item.text,
       rate: item.rate.toString(),
     })) ?? [{ ...emptyOption }, { ...emptyOption }]
+  )
+  const [endTime, setEndTime] = useState(
+    initialValue?.end_time
+      ? toDatetimeLocal(new Date(initialValue.end_time))
+      : ''
+  )
+  const [taxRate, setTaxRate] = useState(
+    initialValue?.tax_rate ? (initialValue.tax_rate * 100).toString() : ''
+  )
+  const [minCredits, setMinCredits] = useState(
+    initialValue?.min_bet_credits?.toString() ?? ''
+  )
+  const [maxCredits, setMaxCredits] = useState(
+    initialValue?.max_bet_credits?.toString() ?? ''
   )
   const [errorPrompt, setErrorPrompt] = useState('')
   const [submitValue, setSubmitValue] = useState<BetDetails>()
@@ -80,6 +98,25 @@ export const BetEditDialog = ({
       setErrorPrompt('请输入有效的竞猜选项及赔率。')
       return
     }
+
+    let num = parseFloat(taxRate)
+    if (num) {
+      value.tax_rate = num / 100
+    }
+    num = parseInt(minCredits)
+    if (num) {
+      value.min_bet_credits = num
+    }
+    num = parseInt(maxCredits)
+    if (num) {
+      value.max_bet_credits = num
+    }
+    if (endTime) {
+      const date = new Date(endTime)
+      if (date) {
+        value.end_time = date.getTime()
+      }
+    }
     if (draft || !inDraft) {
       doSubmit(value)
     } else {
@@ -117,7 +154,7 @@ export const BetEditDialog = ({
               display: 'grid',
               grid: 'auto-flow / max-content 1fr max-content 1fr',
               alignItems: 'center',
-              gap: '1em 0.5em',
+              gap: '1em',
             }}
           >
             <Typography>标题</Typography>
@@ -149,6 +186,66 @@ export const BetEditDialog = ({
                 />
               </React.Fragment>
             ))}
+          </div>
+          <div
+            css={{
+              display: 'grid',
+              grid: 'auto-flow / max-content 1fr max-content 1fr',
+              alignItems: 'center',
+              gap: '1em',
+              marginTop: '2em',
+            }}
+          >
+            <Typography>截止时间</Typography>
+            <TextField
+              size="small"
+              type="datetime-local"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+            />
+            <Typography>服务费率</Typography>
+            <Stack direction="row" alignItems="center">
+              <TextField
+                size="small"
+                type="number"
+                disabled={!inDraft}
+                value={taxRate}
+                onChange={(e) =>
+                  setTaxRate(
+                    normalizeNumberInput(e.target.value, { nonNegative: true })
+                  )
+                }
+              />
+              <Typography ml={0.5}>%</Typography>
+            </Stack>
+            <Typography>最低投注</Typography>
+            <TextField
+              size="small"
+              type="number"
+              value={minCredits}
+              onChange={(e) =>
+                setMinCredits(
+                  normalizeNumberInput(e.target.value, {
+                    integer: true,
+                    nonNegative: true,
+                  })
+                )
+              }
+            />
+            <Typography>最高投注</Typography>
+            <TextField
+              size="small"
+              type="number"
+              value={maxCredits}
+              onChange={(e) =>
+                setMaxCredits(
+                  normalizeNumberInput(e.target.value, {
+                    integer: true,
+                    nonNegative: true,
+                  })
+                )
+              }
+            />
           </div>
           {errorPrompt && (
             <Alert severity="error" sx={{ my: 1.5 }}>
@@ -186,13 +283,19 @@ export const BetEditDialog = ({
           <Typography>请仔细核对选项与赔率，开盘后无法更改：</Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography fontWeight="bold">{title}</Typography>
+          <Typography fontWeight="bold" mb={1}>
+            {title}
+          </Typography>
           {options.map((item, index) => (
             <Stack direction="row" key={index}>
               <Typography>{item.text}</Typography>
               <Typography ml={1}>赔率：{item.rate}</Typography>
             </Stack>
           ))}
+          <Stack direction="row" mt={1}>
+            <Typography>服务费率</Typography>
+            <Typography ml={1}>{taxRate || 0}%</Typography>
+          </Stack>
           <Stack direction="row" spacing="1em" mt={2}>
             <Button
               color="primary"
