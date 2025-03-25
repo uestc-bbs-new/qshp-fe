@@ -50,7 +50,10 @@ export const NotOpenOnDragTooltip = ({ ...props }: TooltipProps) => {
   const leaveDelay = props.leaveDelay ?? 0
   const enterTouchDelay = props.enterTouchDelay ?? 700
   return (
-    <ClickAwayListener onClickAway={() => setOpen(false)}>
+    <ClickAwayListener
+      touchEvent="onTouchStart"
+      onClickAway={() => setOpen(false)}
+    >
       <div
         onTouchStart={(e) => {
           cleanup()
