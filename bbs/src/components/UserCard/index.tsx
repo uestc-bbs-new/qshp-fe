@@ -123,6 +123,7 @@ const UserCard = ({ item, children }: CardProps) => {
   return item.author_details ? (
     <NotOpenOnDragTooltip
       title={<Cover item={item} authorDetails={item.author_details} />}
+      enterDelay={300}
     >
       {children}
     </NotOpenOnDragTooltip>

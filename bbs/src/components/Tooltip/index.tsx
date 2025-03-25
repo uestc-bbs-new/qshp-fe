@@ -55,10 +55,7 @@ export const NotOpenOnDragTooltip = ({ ...props }: TooltipProps) => {
         onTouchStart={(e) => {
           cleanup()
           if (!open) {
-            timeout.current = setTimeout(
-              () => setOpen(true),
-              enterTouchDelay + enterDelay
-            )
+            timeout.current = setTimeout(() => setOpen(true), enterTouchDelay)
           }
           if (e.touches[0]) {
             touch.current = e.touches[0]
@@ -85,14 +82,12 @@ export const NotOpenOnDragTooltip = ({ ...props }: TooltipProps) => {
         onMouseEnter={() => {
           if (!open) {
             cleanup()
-            setTimeout(() => setOpen(true), enterDelay)
+            timeout.current = setTimeout(() => setOpen(true), enterDelay)
           }
         }}
         onMouseLeave={() => {
-          if (open) {
-            cleanup()
-            setTimeout(() => setOpen(false), leaveDelay)
-          }
+          cleanup()
+          timeout.current = setTimeout(() => setOpen(false), leaveDelay)
         }}
       >
         <Tooltip {...props} open={open} />
