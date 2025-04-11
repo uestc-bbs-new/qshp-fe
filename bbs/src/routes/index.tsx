@@ -146,6 +146,12 @@ routes.current = [
         lazy: () => import('./legacy/lazy').then((a) => a.Read),
         element: <NotFound />,
       },
+      {
+        path: '/u.php',
+        id: 'legacy_phpwind_u',
+        lazy: () => import('./legacy/lazy').then((a) => a.U),
+        element: <NotFound />,
+      },
     ],
   },
   {
