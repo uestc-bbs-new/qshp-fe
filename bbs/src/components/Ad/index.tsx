@@ -28,13 +28,15 @@ const Ad = ({ mb, singleColumn }: { mb?: number; singleColumn?: boolean }) => {
         .map((item, index) => (
           <Grid item xs={singleColumn ? 12 : 6} key={index}>
             <Link
-              sx={{
+              sx={(theme) => ({
                 display: 'block',
-                border: '2px solid #ddd',
+                border: `2px solid ${
+                  theme.palette.mode == 'dark' ? '#444' : '#ddd'
+                }`,
                 paddingTop: (79 / 618) * 100 + '%',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-              }}
+              })}
               style={{
                 backgroundImage: `url(${item.image})`,
               }}
