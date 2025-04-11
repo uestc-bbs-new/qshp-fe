@@ -8,13 +8,14 @@ type AdItem = {
 }
 
 const Ad = ({ mb, singleColumn }: { mb?: number; singleColumn?: boolean }) => {
-  const adData: AdItem[] = [
-    // {
-    //   image:
-    //     'https://bbs.uestc.edu.cn/',
-    //   href: 'https://bbs.uestc.edu.cn/',
-    // },
-  ].slice()
+  const adData: AdItem[] = []
+  if (Date.now() <= new Date(2025, 4 - 1, 18, 12).getTime()) {
+    adData.push({
+      image: 'https://bbs.uestc.edu.cn/data/attachment/common/fe/20250411.jpg',
+      href: '/thread/2278872',
+    })
+  }
+
   if (adData.length % 2 == 1) {
     adData.push({})
   }
