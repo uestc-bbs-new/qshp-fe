@@ -43,7 +43,11 @@ import {
 } from '@mui/material'
 
 import { getTopLists } from '@/apis/common'
-import { TopListKey, TopListThread } from '@/common/interfaces/response'
+import {
+  TopList,
+  TopListKey,
+  TopListThread,
+} from '@/common/interfaces/response'
 import {
   kSidebarWidth,
   useSidebarInMarginMediaQuery,
@@ -65,9 +69,11 @@ const tabKeys: TabKey[] = [...topListKeys, kAllForums]
 
 const TopListView = ({
   singleColumn,
+  alwaysOpen,
   onClose,
 }: {
   singleColumn?: boolean
+  alwaysOpen?: boolean
   onClose?: () => void
 }) => {
   const { state, dispatch } = useAppState()
@@ -163,7 +169,11 @@ const TopListView = ({
         >
           {topListKeys.map((key) => (
             <SwiperSlide key={key}>
-              <ThreadTabContent tab={key} singleColumn={singleColumn} />
+              <ThreadTabContent
+                tab={key}
+                alwaysOpen={alwaysOpen}
+                singleColumn={singleColumn}
+              />
             </SwiperSlide>
           ))}
           <SwiperSlide key={kAllForums}>
@@ -177,9 +187,11 @@ const TopListView = ({
 
 const ThreadTabContent = ({
   tab,
+  alwaysOpen,
   singleColumn,
 }: {
   tab: TopListKey
+  alwaysOpen?: boolean
   singleColumn?: boolean
 }) => {
   const tabRef = useRef<TopListTabHandle>(null)
@@ -189,7 +201,12 @@ const ThreadTabContent = ({
       requireSignIn
       onRefresh={() => tabRef.current?.refresh() ?? Promise.resolve()}
     >
-      <TopListTab tab={tab} ref={tabRef} singleColumn={singleColumn} />
+      <TopListTab
+        tab={tab}
+        ref={tabRef}
+        alwaysOpen={alwaysOpen}
+        singleColumn={singleColumn}
+      />
     </TabContent>
   )
 }
@@ -349,9 +366,13 @@ const TabContent = ({
 type TopListTabHandle = {
   refresh: () => Promise<void>
 }
-type TopListTabProps = { tab: TopListKey; singleColumn?: boolean }
+type TopListTabProps = {
+  tab: TopListKey
+  alwaysOpen?: boolean
+  singleColumn?: boolean
+}
 const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
-  function TopListTab({ tab, singleColumn }: TopListTabProps, ref) {
+  function TopListTab({ tab, alwaysOpen, singleColumn }: TopListTabProps, ref) {
     const singleColumnAd = useMediaQuery('(max-width: 720px')
     const homeCachedData = useTopList()
     const getCache = () => {
@@ -451,7 +472,9 @@ const TopListTab = forwardRef<TopListTabHandle, TopListTabProps>(
     return (
       <>
         {(tab == 'newthread' || tab == 'hotlist') && <Announcement inSwiper />}
-        {tab == 'newthread' && <Ad mb={2} singleColumn={singleColumnAd} />}
+        {tab == 'newthread' && alwaysOpen && (
+          <Ad mb={2} singleColumn={singleColumnAd} />
+        )}
         <ListView list={list} singleColumn={singleColumn} />
         {!isEnded && !(isFetching && page == 1) && (
           <Stack ref={isFetching ? undefined : observe}>
@@ -568,6 +591,7 @@ export const TopListDialog = ({
     >
       <TopListView
         singleColumn={sidebar}
+        alwaysOpen={alwaysOpen}
         onClose={alwaysOpen ? undefined : onClose}
       />
     </Paper>
