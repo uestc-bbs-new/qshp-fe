@@ -132,6 +132,20 @@ routes.current = [
         ],
       },
       ...(isPreviewRelease ? [] : devPages),
+
+      // Legacy PHPWind handlers for backward compatibility.
+      {
+        path: '/job.php',
+        id: 'legacy_phpwind_job',
+        lazy: () => import('./legacy/lazy').then((a) => a.Job),
+        element: <NotFound />,
+      },
+      {
+        path: '/read.php',
+        id: 'legacy_phpwind_read',
+        lazy: () => import('./legacy/lazy').then((a) => a.Read),
+        element: <NotFound />,
+      },
     ],
   },
   {
