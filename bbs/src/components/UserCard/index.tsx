@@ -91,11 +91,11 @@ const Cover = ({
         <GridItem title="积分" text={authorDetails.credits} />
         <GridItem
           title="威望"
-          text={`${authorDetails.ext_credits['威望'] || 0} 点`}
+          text={`${(authorDetails.ext_credits && authorDetails.ext_credits['威望']) || 0} 点`}
         />
         <GridItem
           title="水滴"
-          text={`${authorDetails.ext_credits['水滴'] || 0} 滴`}
+          text={`${(authorDetails.ext_credits && authorDetails.ext_credits['水滴']) || 0} 滴`}
         />
       </Stack>
       <Divider variant="middle" />

@@ -181,7 +181,7 @@ export interface PostAuthorDetails extends UserGroupDetails {
   posts: number
   digests: number
   credits: number
-  ext_credits: ExtCreditMap
+  ext_credits?: ExtCreditMap
   medals?: number[]
   online_time: number
   register_time: number
