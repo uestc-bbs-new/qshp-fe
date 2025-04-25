@@ -68,3 +68,9 @@
   margin: 0.5em 0;
   display: block;
 }
+
+.rich-text-content-markdown .footnotes-defs-div li,
+.rich-text-content-markdown .footnotes-ref {
+  scroll-margin-top: 80px;
+  scroll-margin-bottom: 16px;
+}

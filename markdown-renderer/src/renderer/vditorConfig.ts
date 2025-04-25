@@ -1,6 +1,4 @@
-import DOMPurify from 'dompurify'
-
-import { customRenderers } from './renderer'
+import { transformPreviewHtml } from './renderer'
 import { RenderMode, VditorContext } from './types'
 
 export const common = {
@@ -32,6 +30,5 @@ export const getPreviewOptions = (
   mode,
   ...previewCommon(mode),
   ...commonEmojiPath,
-  renderers: customRenderers('Preview', context),
-  transform: (html) => DOMPurify.sanitize(html),
+  transform: (html) => transformPreviewHtml(html, context),
 })

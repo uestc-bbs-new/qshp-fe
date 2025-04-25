@@ -1,5 +1,8 @@
+import DOMPurify from 'dompurify'
+
 import { html, htmlspecialchars } from '../utils/html'
 import siteRoot from '../utils/siteRoot'
+import { transformLegacyLinks, transformLink } from '../utils/transform'
 import { unifiedSmilyMap } from './smilyData'
 import { Attachment, VditorContext } from './types'
 
@@ -349,4 +352,115 @@ export const beforeGetMarkdown = (currentMode: string, el: HTMLElement) => {
     return clone.innerHTML
   }
   return undefined
+}
+
+export const transformPreviewHtml = (html: string, context: VditorContext) => {
+  const container = document.createElement('div')
+  container.innerHTML = DOMPurify.sanitize(html, {
+    ALLOWED_URI_REGEXP:
+      /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|i|at?):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$)|s)/i,
+  })
+  ;[].forEach.call(
+    container.querySelectorAll('img'),
+    (img: HTMLImageElement) => {
+      const src = img.getAttribute('src')
+      if (src == 's') {
+        const smiley = unifiedSmilyMap[parseInt(img.alt || '')]
+        if (smiley) {
+          img.src = `${kSmilyBasePath}${smiley}`
+          img.className = 'post_smily'
+          return
+        }
+        img.src = ''
+        return
+      }
+
+      img.loading = 'lazy'
+      const match = src?.match(/^(?:i|a):([0-9]+)$/)
+      if (match) {
+        const id = parseInt(match[1])
+        const attach = context?.attachments?.find(
+          (item) => item.attachment_id == id
+        )
+        if (attach) {
+          context?.inlineAttachments?.add(attach.attachment_id)
+          let fullSizePath = siteRoot + attach.path
+          let rawUrl = attach.raw_url
+          // TODO: Remove this after backend correctly return paths.
+          if (attach.thumbnail_url) {
+            if (!rawUrl) {
+              rawUrl = fullSizePath
+            }
+            fullSizePath = attach.thumbnail_url + '?variant=original'
+          }
+          img.src = attach.thumbnail_url
+            ? attach.thumbnail_url
+            : siteRoot + attach.path
+          img.className = 'post_attachment post_attachment_image'
+          img.loading = 'lazy'
+          img.setAttribute('data-x-filename', attach.filename)
+          img.setAttribute('data-x-fullsize-path', fullSizePath)
+          return
+        }
+        img.src = ''
+        return
+      }
+    }
+  )
+  ;[].forEach.call(container.querySelectorAll('a'), (a: HTMLAnchorElement) => {
+    const href = a.getAttribute('href')
+    const atMatch = href?.match(/^at:(\d+)$/)
+    if (atMatch) {
+      a.className = 'post_at_user'
+      a.href = `/user/${atMatch[1]}`
+      return
+    }
+    const attachMatch = href?.match(/^a:(\d+)$/)
+    if (attachMatch) {
+      const id = parseInt(attachMatch[1])
+      const attach = context?.attachments?.find(
+        (item) => item.attachment_id == id
+      )
+      if (attach) {
+        context?.inlineAttachments?.add(attach.attachment_id)
+        a.className = 'post_attachment post_attachment_file'
+        a.href = attach.download_url || 'javascript:void(0)'
+
+        if (attach.download_url) {
+          if (attach.filename.match(/\.(mp4|flv)$/i)) {
+            const div = document.createElement('div')
+            const video = document.createElement('video')
+            video.className = 'post_attachment_video'
+            video.controls = true
+            video.src = attach.download_url
+            div.appendChild(video)
+            a.insertAdjacentElement('afterend', div)
+          }
+          if (attach.filename.match(/\.mp3$/i)) {
+            const audio = document.createElement('audio')
+            audio.className = 'post_attachment_audio'
+            audio.controls = true
+            audio.src = attach.download_url
+            a.insertAdjacentElement('afterend', audio)
+          }
+        }
+      } else {
+        console.warn('bad attachment', href)
+        a.href = ''
+      }
+      return
+    }
+
+    if (href) {
+      const newUrl = href.startsWith('#') ? href : transformLink(href) || href
+      if (newUrl) {
+        a.href = transformLegacyLinks(newUrl)
+        if (!newUrl.match(/^(?:\/|https?:\/*bbs\.uestc\.edu\.cn|#)/)) {
+          a.target = '_blank'
+          a.rel = 'noopener'
+        }
+      }
+    }
+  })
+  return container.innerHTML
 }
