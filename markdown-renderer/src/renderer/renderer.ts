@@ -455,7 +455,7 @@ export const transformPreviewHtml = (html: string, context: VditorContext) => {
       const newUrl = href.startsWith('#') ? href : transformLink(href) || href
       if (newUrl) {
         a.href = transformLegacyLinks(newUrl)
-        if (!newUrl.match(/^(?:\/|https?:\/*bbs\.uestc\.edu\.cn|#)/)) {
+        if (!newUrl.match(/^(?:\/|https?:\/*bbs\.uestc\.edu\.cn|#|mailto:)/)) {
           a.target = '_blank'
           a.rel = 'noopener'
         }
