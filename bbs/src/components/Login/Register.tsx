@@ -43,17 +43,6 @@ export const RegisterContent = ({ small }: { small?: boolean }) => {
           填写信息完成激活后即可在此注册清水河畔。
         </Typography>
       )}
-      <Stack direction="row" justifyContent="flex-end" mt={3}>
-        <Link
-          external
-          to="/member.php?mod=register&forceold=1"
-          target="_blank"
-          underline="hover"
-          sx={{ color: '#ccc' }}
-        >
-          返回旧版
-        </Link>
-      </Stack>
     </>
   )
 }
