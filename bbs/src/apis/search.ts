@@ -27,7 +27,7 @@ export const searchSummary = async (query: string) => {
   return result
 }
 
-export const searchThreads = ({
+export const searchThreads = async ({
   keyword,
   author,
   digest,
@@ -38,14 +38,22 @@ export const searchThreads = ({
   digest?: boolean
   page?: number
 }) => {
-  return request.get<GenericList<ThreadInList>>(`${commonUrl}/search/threads`, {
-    params: {
-      ...(keyword && { q: keyword }),
-      ...(author && { author }),
-      ...(digest && { digest: 1 }),
-      ...(page && { page }),
-    },
-  })
+  const result = await request.get<GenericList<ThreadInList>>(
+    `${commonUrl}/search/threads`,
+    {
+      params: {
+        ...(keyword && { q: keyword }),
+        ...(author && { author }),
+        ...(digest && { digest: 1 }),
+        ...(page && { page }),
+      },
+    }
+  )
+  result.rows?.forEach(
+    (item) =>
+      (item.subject = unescapeSubject(item.subject, item.dateline, true))
+  )
+  return result
 }
 
 export const searchUsers = ({
