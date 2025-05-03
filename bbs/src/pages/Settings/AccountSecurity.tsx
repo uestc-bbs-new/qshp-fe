@@ -15,25 +15,12 @@ import {
 import { StyledField } from '@/components/StyledField'
 import { StyledSelect } from '@/components/StyledSelect'
 
-const menuItems = [
-  '无安全提问',
-  '母亲的名字',
-  '父亲的名字',
-  '父亲出生的城市',
-  '您其中一位老师的名字',
-  '您个人计算机的型号',
-  '您最喜欢的餐馆名称',
-  '驾驶执照最后四位数字',
-]
-
-const PasswordSecurity = () => {
+const AccountSecurity = () => {
   const theme = useTheme()
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
   const [email, setEmail] = useState('')
-  const [securityQuestion, setSecurityQuestion] = useState('')
-  const [securityAnswer, setSecurityAnswer] = useState('')
 
   return (
     <>
@@ -104,33 +91,6 @@ const PasswordSecurity = () => {
             >
               如果不需要更改密码，此处请留空
             </Typography>
-
-            <Stack direction="row" alignItems="center" sx={{ mb: 4 }}>
-              <Typography sx={{ width: 100 }}>安全提问</Typography>
-              <FormControl sx={{ width: '30%' }}>
-                <StyledSelect
-                  value={securityQuestion}
-                  onChange={(e) => {
-                    const selectedValue = e.target.value as string
-                    setSecurityQuestion(selectedValue)
-                  }}
-                >
-                  {menuItems.map((item) => (
-                    <MenuItem key={item} value={item}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </StyledSelect>
-              </FormControl>
-            </Stack>
-            <Stack direction="row" alignItems="center" sx={{ mb: 4 }}>
-              <Typography sx={{ width: 100 }}>回答</Typography>
-              <StyledField
-                value={securityAnswer}
-                onChange={(e) => setSecurityAnswer(e.target.value)}
-                sx={{ width: '30%' }}
-              />
-            </Stack>
             <Stack direction="row" alignItems="center" sx={{ mb: 8 }}>
               <Typography sx={{ width: 100 }}>邮箱</Typography>
               <StyledField
@@ -151,4 +111,4 @@ const PasswordSecurity = () => {
     </>
   )
 }
-export default PasswordSecurity
+export default AccountSecurity

@@ -14,8 +14,8 @@ import Link from '@/components/Link'
 import { SettingsSubPage, pages } from '@/utils/routes'
 import siteRoot from '@/utils/siteRoot'
 
+import AccountSecurity from './AccountSecurity'
 import Blacklist from './Blacklist'
-import PasswordSecurity from './PasswordSecurity'
 import PrivacyFilter from './PrivacyFilter'
 import Profile from './Profile'
 
@@ -35,6 +35,12 @@ const listItems: subPageItem[] = [
     Component: Profile,
   },
   {
+    id: 'security',
+    name: '账号安全',
+    external: false,
+    Component: AccountSecurity,
+  },
+  {
     link: `${siteRoot}/home.php?mod=spacecp&ac=credit`,
     name: '积分',
     external: true,
@@ -49,12 +55,6 @@ const listItems: subPageItem[] = [
     name: '隐私筛选',
     external: false,
     Component: PrivacyFilter,
-  },
-  {
-    id: 'password',
-    name: '密码安全',
-    external: false,
-    Component: PasswordSecurity,
   },
   {
     id: 'blacklist',
