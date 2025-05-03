@@ -98,7 +98,6 @@ export const resetPassword = (
   params: EphemeralAuthorization & {
     user_id: number
     password: string
-    clear_password_question?: boolean
   }
 ) => {
   return authServiceWithUser.post<AuthorizationResult>(
