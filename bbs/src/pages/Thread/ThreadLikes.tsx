@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ThumbDown, ThumbUp } from '@mui/icons-material'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
 
-import { votePost } from '@/apis/thread'
+import { DEPRECATED_votePost } from '@/apis/thread'
 
 const threadLabelColors = ['#FF9A2E', '#6AA1FF']
 const kLeftRight = ['Left', 'Right']
@@ -79,13 +79,13 @@ const ThreadLikeLabel = ({
   index,
   borderRadius,
   values,
-  onIncrement,
+  onUpdate,
 }: {
   tid: number
   index: number
   borderRadius: number
   values: [number, number]
-  onIncrement: (index: number) => void
+  onUpdate: (likeDelta: number, dislikeDelta: number) => void
 }) => {
   const color = threadLabelColors[index]
   const iconProps = { htmlColor: color }
@@ -97,8 +97,8 @@ const ThreadLikeLabel = ({
     backgroundColor: color,
   }
   const like = async () => {
-    if (await votePost({ tid, support: index == 0 })) {
-      onIncrement(index)
+    if (await DEPRECATED_votePost({ tid, support: index == 0 })) {
+      onUpdate(index == 0 ? 1 : 0, index == 1 ? 1 : 0)
     }
   }
   return (
@@ -149,9 +149,10 @@ const ThreadLikes = ({
   useEffect(() => {
     setNewValues(values)
   }, [values])
-  const onIncrement = (index: number) => {
+  const onUpdate = (likeDelta: number, dislikeDelta: number) => {
     const v: [number, number] = [...newValues]
-    v[index]++
+    v[0] += likeDelta
+    v[1] += dislikeDelta
     setNewValues(v)
   }
 
@@ -169,7 +170,7 @@ const ThreadLikes = ({
         index={0}
         borderRadius={borderRadius}
         values={newValues}
-        onIncrement={onIncrement}
+        onUpdate={onUpdate}
       />
       <ThreadLikeMiddlePart borderRadius={borderRadius} values={newValues} />
       <ThreadLikeLabel
@@ -177,7 +178,7 @@ const ThreadLikes = ({
         index={1}
         borderRadius={borderRadius}
         values={newValues}
-        onIncrement={onIncrement}
+        onUpdate={onUpdate}
       />
     </Stack>
   )

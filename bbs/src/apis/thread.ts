@@ -142,7 +142,7 @@ export const getPostDetails = (params: {
   })
 }
 
-export const votePost = (params: {
+export const DEPRECATED_votePost = (params: {
   tid?: number
   pid?: number
   support: boolean

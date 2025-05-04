@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Button, Stack } from '@mui/material'
 
-import { votePost } from '@/apis/thread'
+import { DEPRECATED_votePost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
@@ -38,7 +38,7 @@ const Footer = ({
 
   const vote = async (supportPost: boolean) => {
     if (
-      await votePost({
+      await DEPRECATED_votePost({
         tid: post.thread_id,
         pid: post.post_id,
         support: supportPost,
