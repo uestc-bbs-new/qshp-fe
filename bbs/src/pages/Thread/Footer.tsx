@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button, Stack } from '@mui/material'
 
@@ -30,11 +30,17 @@ const Footer = ({
   onReport?: () => void
   onRateCompleted?: () => void
 }) => {
+  const canReply = forumDetails?.can_post_reply && threadDetails?.can_reply
+
   const { state } = useAppState()
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
-
-  const canReply = forumDetails?.can_post_reply && threadDetails?.can_reply
+  useEffect(() => {
+    setSupport(post.support)
+  }, [post.support])
+  useEffect(() => {
+    setOppose(post.oppose)
+  }, [post.oppose])
 
   const vote = async (supportPost: boolean) => {
     if (
