@@ -3,7 +3,13 @@ import { useEffect, useState } from 'react'
 import { ThumbDown, ThumbUp } from '@mui/icons-material'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
 
-import { DEPRECATED_votePost } from '@/apis/thread'
+import {
+  DEPRECATED_votePost,
+  PostReviewResult,
+  reviewPost,
+} from '@/apis/thread'
+import { useAppState } from '@/states'
+import { isDeveloper } from '@/states/settings'
 
 const threadLabelColors = ['#FF9A2E', '#6AA1FF']
 const kLeftRight = ['Left', 'Right']
@@ -87,6 +93,7 @@ const ThreadLikeLabel = ({
   values: [number, number]
   onUpdate: (likeDelta: number, dislikeDelta: number) => void
 }) => {
+  const { dispatch } = useAppState()
   const color = threadLabelColors[index]
   const iconProps = { htmlColor: color }
   const D = kLeftRight[index]
@@ -97,7 +104,29 @@ const ThreadLikeLabel = ({
     backgroundColor: color,
   }
   const like = async () => {
-    if (await DEPRECATED_votePost({ tid, support: index == 0 })) {
+    if (isDeveloper()) {
+      const result = await reviewPost({ tid, support: index == 0 })
+      switch (result) {
+        case PostReviewResult.Success:
+          onUpdate(index == 0 ? 1 : 0, index == 1 ? 1 : 0)
+          break
+        case PostReviewResult.Cancelled:
+          onUpdate(index == 0 ? -1 : 0, index == 1 ? -1 : 0)
+          break
+        case PostReviewResult.Updated:
+          onUpdate(index == 0 ? 1 : -1, index == 1 ? 1 : -1)
+          break
+        case PostReviewResult.Locked:
+          dispatch({
+            type: 'open snackbar',
+            payload: {
+              severity: 'warning',
+              message: '您已评价过本帖。',
+            },
+          })
+          break
+      }
+    } else if (await DEPRECATED_votePost({ tid, support: index == 0 })) {
       onUpdate(index == 0 ? 1 : 0, index == 1 ? 1 : 0)
     }
   }

@@ -152,6 +152,22 @@ export const DEPRECATED_votePost = (params: {
   })
 }
 
+export enum PostReviewResult {
+  Success = 0,
+  Cancelled = 1,
+  Updated = 2,
+  Locked = 3,
+}
+export const reviewPost = (params: {
+  tid?: number
+  pid?: number
+  support: boolean
+}) => {
+  return request.post<PostReviewResult>(`${commonUrl}/post/review`, undefined, {
+    params,
+  })
+}
+
 export const findPost = (
   post_id: string,
   thread_id?: string,
