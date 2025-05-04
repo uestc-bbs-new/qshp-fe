@@ -146,6 +146,9 @@ const ThreadLikes = ({
   const height = 48
   const borderRadius = height / 2
   const [newValues, setNewValues] = useState(values)
+  useEffect(() => {
+    setNewValues(values)
+  }, [values])
   const onIncrement = (index: number) => {
     const v: [number, number] = [...newValues]
     v[index]++
