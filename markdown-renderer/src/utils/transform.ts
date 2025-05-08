@@ -54,6 +54,12 @@ export const transformLegacyLinks = (url: string) => {
     if (parsed.pathname == '/read.php') {
       const tid = parseInt(parsed.searchParams.get('tid') || '')
       if (tid) {
+        if (parsed.hash.match(/^#\d+$/)) {
+          const pid = parseInt(parsed.hash.substring(1))
+          if (pid && pid > tid) {
+            return `/job.php?action=topost&tid=${tid}&pid=${pid}`
+          }
+        }
         return pages.thread(
           tid,
           searchParamsExtract(parsed.searchParams, ['page'])
