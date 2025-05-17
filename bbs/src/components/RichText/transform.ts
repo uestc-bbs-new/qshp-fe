@@ -7,6 +7,7 @@ import {
   transformLink,
 } from '../../../../markdown-renderer/src/utils/transform'
 
+const kInternalUrlRegEx = /^(?:\/|https?:\/*bbs\.uestc\.edu\.cn)/
 export const transformUserHtml = (
   html: string,
   normalizeLegacyFontSize?: boolean,
@@ -17,9 +18,12 @@ export const transformUserHtml = (
   ;[].forEach.call(
     container.querySelectorAll('img'),
     (img: HTMLImageElement) => {
-      const url = transformLink(img.getAttribute('src'), { image: true })
+      const src = img.getAttribute('src')
+      const url = transformLink(src, { image: true })
       if (url) {
         img.src = url
+      } else if (!src?.match(kInternalUrlRegEx)) {
+        img.referrerPolicy = 'no-referrer'
       }
     }
   )
@@ -28,7 +32,7 @@ export const transformUserHtml = (
     const url = transformLink(originalUrl) || originalUrl
     if (url) {
       a.href = transformLegacyLinks(url)
-      if (!url.match(/^(?:\/|https?:\/*bbs\.uestc\.edu\.cn)/)) {
+      if (!url.match(kInternalUrlRegEx)) {
         a.target = '_blank'
         a.rel = 'noopener'
       }

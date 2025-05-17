@@ -6,6 +6,8 @@ import { transformLegacyLinks, transformLink } from '../utils/transform'
 import { unifiedSmilyMap } from './smilyData'
 import { Attachment, VditorContext } from './types'
 
+const kInternalUrlRegEx = /^(?:\/|https?:\/*bbs\.uestc\.edu\.cn)/
+
 type RenderState = {
   type: 'image' | 'link'
   text?: string
@@ -364,6 +366,9 @@ export const transformPreviewHtml = (html: string, context: VditorContext) => {
     container.querySelectorAll('img'),
     (img: HTMLImageElement) => {
       const src = img.getAttribute('src')
+      if (src?.match(/^https?:\/\//i) && !src.match(kInternalUrlRegEx)) {
+        img.referrerPolicy = 'no-referrer'
+      }
       if (src == 's') {
         const smiley = unifiedSmilyMap[parseInt(img.alt || '')]
         if (smiley) {
