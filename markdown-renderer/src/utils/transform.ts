@@ -97,9 +97,9 @@ export const transformLink = (
     return `${siteRoot}/${url}`
   }
   const match = url.match(
-    /^(https?:\/*)(bbs\.uestc\.edu\.cn|bbs-uestc-edu-cn-s\.vpn\.uestc\.edu\.cn(?::8118)?|bbs\.stuhome\.net|ibm\.anlove\.me|bbs\.anlove\.me|bbs\.auxten\.com|bbs\.qshpan\.com|bbs\.stuhome\.com|bbs\.tangdg\.info|bbs\.germanyt\.com|bbs\.watermen\.net|bbs\.uestc6\.edu\.cn)(\/*.*)/i
+    /^(https?:\/*)(bbs\.uestc\.edu\.cn|bbs-uestc-edu-cn-s\.vpn\.uestc\.edu\.cn(?::8118)?|bbs\.stuhome\.net|ibm\.anlove\.me|bbs\.anlove\.me|bbs\.auxten\.com|bbs\.qshpan\.com|bbs\.stuhome\.com|bbs\.tangdg\.info|bbs\.germanyt\.com|bbs\.watermen\.net|bbs\.uestc6\.edu\.cn)\/*(.*)/i
   )
   if (match) {
-    return `${siteRoot}${match[3]}`
+    return `${siteRoot}/${match[3]}`
   }
 }
