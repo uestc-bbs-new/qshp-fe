@@ -515,7 +515,7 @@ const renderAttachment = (attach: Attachment) => {
     `<span class="attach-file"><a href="${
       attach.download_url
     }">${htmlspecialchars(attach.filename)}</a></span>` +
-    renderAttachMedia(attach)
+    renderAttachMedia('auto', attach)
   ) // TODO: attach file
 }
 
@@ -547,6 +547,18 @@ const parseAttachments = (
       }
       usedAttachments.add(attach.attachment_id)
       return renderAttachment(attach)
+    }
+  )
+  str = str.replace(
+    /\[(audio|video)]attach:\/\/(\d+)\.(?:mp3|mp4|flv)\[\/\1\]/gi,
+    (_, kind, aid) => {
+      const attach = aidAttachmentMap[aid]
+      console.log(kind, aid)
+      if (!attach) {
+        return ''
+      }
+      usedAttachments.add(attach.attachment_id)
+      return renderAttachMedia(kind.toLowerCase(), attach)
     }
   )
   for (const aid of usedAttachments) {

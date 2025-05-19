@@ -47,11 +47,21 @@ export const renderAttachmentImage = (
   return `${img}/>`
 }
 
-export const renderAttachMedia = (attach: Attachment) => {
+export const renderAttachMedia = (
+  kind: 'audio' | 'video' | 'auto' | string,
+  attach: Attachment
+) => {
   if (!attach.download_url) {
     return ''
   }
-  if (attach.filename.match(/\.(mp4|flv)$/i)) {
+  if (kind == 'auto') {
+    if (attach.filename.match(/\.(mp4|flv)$/i)) {
+      kind = 'video'
+    } else if (attach.filename.match(/\.mp3$/i)) {
+      kind = 'audio'
+    }
+  }
+  if (kind == 'video') {
     return html`<div>
       <video
         class="post_attachment_video"
@@ -60,7 +70,7 @@ export const renderAttachMedia = (attach: Attachment) => {
       ></video>
     </div>`
   }
-  if (attach.filename.match(/\.mp3$/i)) {
+  if (kind == 'audio') {
     return html`<audio
       class="post_attachment_audio"
       controls
@@ -130,7 +140,7 @@ const renderLink = (
         >${text}</a
       >`
       if (rendererType == 'Preview') {
-        result += renderAttachMedia(attach)
+        result += renderAttachMedia('auto', attach)
       }
       return result
     }
