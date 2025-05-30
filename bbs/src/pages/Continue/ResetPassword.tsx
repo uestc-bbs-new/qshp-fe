@@ -129,6 +129,20 @@ export const ResetPasswordHome = () => {
         <CommonLayout>
           <Stack pl={2} pr={4}>
             <Typography variant="signinTitle">忘记密码</Typography>
+            <Typography variant="h5" textAlign="justify" my={2} color="red">
+              根据
+              <Link
+                to="https://info.uestc.edu.cn/info/1015/4154.htm"
+                target="_blank"
+                external
+              >
+                学校安排
+              </Link>
+              ，统一身份认证系统计划于 5 月 30 日（周五）22:00 至 6 月 1
+              日（周日）08:00
+              进行维护，在此期间清水河畔注册、找回密码、统一身份认证登录功能将受到影响。已注册用户请使用河畔用户名与河畔密码登录，新用户及忘记密码的用户请在统一身份认证系统恢复正常后操作。如有疑问请通过清水河畔官方
+              QQ 号 1942224235 联系站长。
+            </Typography>
             <Typography variant="h6" textAlign="justify" my={3}>
               在校用户请通过统一身份认证验证后重置密码：
             </Typography>
