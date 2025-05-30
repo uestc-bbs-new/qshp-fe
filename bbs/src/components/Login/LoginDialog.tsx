@@ -24,6 +24,7 @@ import {
   Tabs,
   TextField,
   TextFieldProps,
+  Typography,
   useMediaQuery,
 } from '@mui/material'
 
@@ -198,13 +199,13 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       <form onSubmit={onSubmit} ref={formRef}>
         <SignInTextField
           name="username"
-          label="用户名"
+          label="河畔用户名"
           adornmentIcon={<User />}
         />
         <SignInTextField
           name="password"
           type="password"
-          label="密码"
+          label="河畔密码"
           adornmentIcon={<Password />}
         />
         <FormControlLabel
