@@ -13,19 +13,6 @@ export const RegisterContent = ({ small }: { small?: boolean }) => {
       >
         欢迎来到清水河畔！
       </Typography>
-      <Typography variant="h5" textAlign="justify" my={2} color="red">
-        根据
-        <Link
-          to="https://info.uestc.edu.cn/info/1015/4154.htm"
-          target="_blank"
-          external
-        >
-          学校安排
-        </Link>
-        ，统一身份认证系统在 5 月 30 日（周五）22:00 至 6 月 1 日（周日）08:00
-        期间处于维护状态。如果您在下一步的操作中遇到问题，请过一段时间后再重试。如有其他疑问请通过清水河畔官方
-        QQ 号 1942224235 联系站长。
-      </Typography>
       <Typography variant="h6" textAlign="justify" my={3}>
         清水河畔属于高校官方论坛，账号注册时必须进行实名关联。
         <br />

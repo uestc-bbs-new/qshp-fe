@@ -24,7 +24,6 @@ import {
   Tabs,
   TextField,
   TextFieldProps,
-  Typography,
   useMediaQuery,
 } from '@mui/material'
 
@@ -39,7 +38,6 @@ import Captcha, {
   CaptchaConfiguration,
   Captcha as CaptchaType,
 } from '../Captcha'
-import Link from '../Link'
 import Password from '../icons/Password'
 import User from '../icons/User'
 
@@ -197,19 +195,6 @@ const LoginDialog = ({ open }: { open: boolean }) => {
         <Tab label="河畔密码登录" />
         <Tab label="统一身份认证登录" onClick={() => gotoIdas()} />
       </Tabs>
-      <Typography textAlign="justify" my={2} color="red">
-        根据
-        <Link
-          to="https://info.uestc.edu.cn/info/1015/4154.htm"
-          target="_blank"
-          external
-        >
-          学校安排
-        </Link>
-        ，统一身份认证系统在 5 月 30 日（周五）22:00 至 6 月 1 日（周日）08:00
-        期间处于维护状态。如果您点击统一身份认证登录后遇到问题，请返回河畔通过河畔用户名与河畔密码登录。如有其他疑问请通过清水河畔官方
-        QQ 号 1942224235 联系站长。
-      </Typography>
       <form onSubmit={onSubmit} ref={formRef}>
         <SignInTextField
           name="username"
