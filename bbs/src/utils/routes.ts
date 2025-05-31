@@ -91,16 +91,6 @@ export const getIdasLink = (options?: IdasLinkOptions) => {
     : `${idasUrlBase}?service=${encodeURIComponent(continueUrl)}`
 }
 export const gotoIdas = (options?: IdasLinkOptions) => {
-  const now = Date.now()
-  if (now >= 1748613600000 && now <= 1748736000000) {
-    if (
-      !window.confirm(
-        '统一身份认证系统正在维护中，若下一步操作遇到问题，请您耐心等待系统恢复正常后返回河畔重试（维护结束时间：6 月 1 日周日8:00）。是否继续跳转统一身份认证系统？'
-      )
-    ) {
-      return
-    }
-  }
   location.href = getIdasLink(options)
 }
 
