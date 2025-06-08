@@ -15,6 +15,7 @@ import {
 import { searchThreads } from '@/apis/search'
 import EmptyList from '@/components/EmptyList'
 import ThreadItem from '@/components/ThreadItem'
+import { globalCache, useForumList } from '@/states'
 import { searchParamsAssign } from '@/utils/tools'
 
 const Thread = () => {
@@ -31,6 +32,7 @@ const Thread = () => {
     queryKey: ['search', 'threads', query],
     queryFn: () => searchThreads(query),
   })
+  const forumList = useForumList()
 
   useEffect(() => {
     setQuery(initQuery())
@@ -51,7 +53,7 @@ const Thread = () => {
     queryPrompt += `（${queryPromptDetails.join('，')}）`
   }
 
-  if (isLoading) {
+  if (isLoading || !forumList) {
     return [...Array(15)].map((_, index) => (
       <Skeleton key={index} height={85} />
     ))
@@ -74,7 +76,13 @@ const Thread = () => {
           <Paper elevation={3} sx={{ borderRadius: '10px', mt: 1 }}>
             <List>
               {data.rows.map((item) => (
-                <ThreadItem data={item} key={item.thread_id} />
+                <ThreadItem
+                  data={{
+                    ...item,
+                    forum_name: globalCache.fidNameMap[item.forum_id],
+                  }}
+                  key={item.thread_id}
+                />
               ))}
             </List>
           </Paper>
