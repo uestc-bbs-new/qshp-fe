@@ -14,7 +14,8 @@ import {
 
 import { searchThreads } from '@/apis/search'
 import EmptyList from '@/components/EmptyList'
-import ThreadItem from '@/components/ThreadItem'
+// import ThreadItem from '@/components/ThreadItem'
+import SearchResultItem from '@/components/SearchResult/'
 import { searchParamsAssign } from '@/utils/tools'
 
 const Thread = () => {
@@ -65,7 +66,7 @@ const Thread = () => {
     <>
       {!!data?.rows?.length && (
         <>
-          <Typography variant="h5" sx={{ mb: 1 }}>
+          <Typography variant="h6" sx={{ mb: 0 }}>
             搜索结果: {queryPrompt}
           </Typography>
           <Typography fontSize={12} color="grey">
@@ -74,7 +75,12 @@ const Thread = () => {
           <Paper elevation={3} sx={{ borderRadius: '10px', mt: 1 }}>
             <List>
               {data.rows.map((item) => (
-                <ThreadItem data={item} key={item.thread_id} />
+                <SearchResultItem
+                  data={item}
+                  key={item.thread_id}
+                  showSummary
+                  ignoreThreadHighlight
+                />
               ))}
             </List>
           </Paper>

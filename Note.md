@@ -1,0 +1,18 @@
+# 项目结构
+- bbs
+  - node_modules # 依赖包
+  - public # 静态资源
+  - src # 源代码
+    - admin # 后台管理?
+    - api # 接口
+    - assets # 静态资源
+    - common # 公共组件
+    - components # 组件
+    - dialogs # 弹窗
+    - pages # 页面
+      - Continue # 继续?
+      - Edit # 编辑
+    - router # 路由
+    - state # 状态管理
+    - utils # 工具函数
+  - third-party # 第三方库

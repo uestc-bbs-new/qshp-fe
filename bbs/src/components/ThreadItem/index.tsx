@@ -79,6 +79,8 @@ const ThreadItem = ({
   const to = pages.thread(data.thread_id)
   const navigate = useNavigate()
 
+  console.log('ThreadItem summary:', data.summary)
+  console.log(data.rows)
   return (
     <Box className="p-0.5">
       <Box
