@@ -384,6 +384,7 @@ const ThreadStat = ({
       >
         <>查看：{formatNumber(thread.views)}</>
         <>回复：{formatNumber(thread.replies)}</>
+        <>Stars: {formatNumber(0)}</>
       </Separated>
     </Typography>
   </Stack>
