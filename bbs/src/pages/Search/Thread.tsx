@@ -4,7 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import {
+  Button,
   List,
+  Menu,
+  MenuItem,
   Pagination,
   Paper,
   Skeleton,
@@ -18,14 +21,40 @@ import EmptyList from '@/components/EmptyList'
 import SearchResultItem from '@/components/SearchResult/'
 import { searchParamsAssign } from '@/utils/tools'
 
+const SORT_OPTIONS = [
+  { label: '时间倒序（最新）', value: 'newest' },
+  { label: '时间顺序（最早）', value: 'oldest' },
+  { label: '支持数倒序（最多支持）', value: 'recommend_desc' },
+  { label: '支持数顺序（最少支持）', value: 'recommend_asc' },
+]
+
 const Thread = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [sort, setSort] = useState(searchParams.get('sort') || 'relevance')
+
+  const handleSortClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleSortClose = (option?: string) => {
+    setAnchorEl(null)
+    if (option && option !== sort) {
+      setSort(option)
+      // 更新URL参数
+      const newParams = new URLSearchParams(searchParams)
+      newParams.set('sort', option)
+      navigate(`${location.pathname}?${newParams.toString()}`)
+    }
+  }
+
   const initQuery = () => ({
     keyword: searchParams.get('q'),
     author: searchParams.get('author'),
     digest: !!searchParams.get('digest'),
     page: parseInt(searchParams.get('page') || '') || 1,
+    sort: searchParams.get('sort') || 'relevance',
   })
   const [query, setQuery] = useState(initQuery())
   const { data, isLoading, refetch } = useQuery({
@@ -35,6 +64,7 @@ const Thread = () => {
 
   useEffect(() => {
     setQuery(initQuery())
+    setSort(searchParams.get('sort') || 'relevance')
   }, [searchParams])
 
   let queryPrompt = query.keyword || ''
@@ -66,9 +96,43 @@ const Thread = () => {
     <>
       {!!data?.rows?.length && (
         <>
-          <Typography variant="h6" sx={{ mb: 0 }}>
-            搜索结果: {queryPrompt}
-          </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Typography variant="h6" sx={{ mb: 0 }}>
+              搜索结果: {queryPrompt}
+            </Typography>
+            <Button
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={Boolean(anchorEl)}
+              onClick={handleSortClick}
+              size="small"
+              variant="outlined"
+            >
+              <span style={{ marginRight: 8 }}>Sort by:</span>
+              {SORT_OPTIONS.find((opt) => opt.value === sort)?.label ||
+                '支持数倒序（最多支持）'}
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => handleSortClose()}
+            >
+              {SORT_OPTIONS.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  selected={option.value === sort}
+                  onClick={() => handleSortClose(option.value)}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Stack>
           <Typography fontSize={12} color="grey">
             搜索到{data.total}条相关帖子
           </Typography>

@@ -32,11 +32,13 @@ export const searchThreads = ({
   author,
   digest,
   page,
+  sort,
 }: {
   keyword?: string | null
   author?: string | null
   digest?: boolean
   page?: number
+  sort?: string
 }) => {
   return request.get<GenericList<ThreadInList>>(`${commonUrl}/search/threads`, {
     params: {
@@ -44,6 +46,7 @@ export const searchThreads = ({
       ...(author && { author }),
       ...(digest && { digest: 1 }),
       ...(page && { page }),
+      ...(sort && { sort }),
     },
   })
 }
