@@ -26,6 +26,7 @@ const SORT_OPTIONS = [
   { label: '时间顺序（最早）', value: 'oldest' },
   { label: '支持数倒序（最多支持）', value: 'recommend_desc' },
   { label: '支持数顺序（最少支持）', value: 'recommend_asc' },
+  { label: '相关性排序', value: 'relevance' },
 ]
 
 const Thread = () => {

@@ -71,7 +71,10 @@ export default defineConfig({
   },
   server: {
     port: 7564,
-    allowedHosts: ['d10d-50-7-253-114.ngrok-free.app'],
+    allowedHosts: [
+      'd10d-50-7-253-114.ngrok-free.app',
+      '50b8-66-90-99-250.ngrok-free.app',
+    ],
     proxy: {
       '/dev': {
         target:
