@@ -80,7 +80,7 @@ const SearchResultItem = ({
   const navigate = useNavigate()
 
   console.log('ThreadItem summary:', data.summary)
-  console.log(data.rows)
+  // console.log(data.rows)
   return (
     <Box className="p-0.5">
       <Box
@@ -99,7 +99,7 @@ const SearchResultItem = ({
               />
               <ThreadAuthor thread={data} twoLines />
             </Stack>
-            <ThreadStatSmall thread={data} />
+            <ThreadStatSmall result={data} />
           </Stack>
         )}
         <Stack direction="row">
@@ -125,7 +125,7 @@ const SearchResultItem = ({
                         />
                       )}
                     <Link
-                      to={to}
+                      to={`/goto/${data.pid}`}
                       state={
                         fromForum && forumDetails
                           ? { fromForumId: forumDetails.fid }
@@ -224,7 +224,7 @@ const SearchResultItem = ({
                     )}
                     {!narrowView && (
                       <ThreadStat
-                        thread={data}
+                        result={data}
                         sx={data.forum_name ? { minWidth: '14em' } : undefined}
                       />
                     )}
@@ -279,7 +279,7 @@ const SearchResultItem = ({
               </Stack>
             </Stack>
             {narrowView && hideThreadAuthor && (
-              <ThreadStatSmall thread={data} bottomView />
+              <ThreadStatSmall result={data} bottomView />
             )}
           </Box>
         </Stack>
@@ -367,10 +367,10 @@ const ThreadAvatar = ({
 }
 
 const ThreadStat = ({
-  thread,
+  result,
   sx,
 }: {
-  thread: Pick<Thread, 'views' | 'replies'>
+  result: Pick<ThreadInList, 'views' | 'replies' | 'recommends' | 'pid'>
   sx?: SxProps<Theme>
 }) => (
   <Stack direction="row" justifyContent="flex-end" flexGrow={1} sx={sx}>
@@ -382,19 +382,19 @@ const ThreadStat = ({
           </Typography>
         }
       >
-        <>查看：{formatNumber(thread.views)}</>
-        <>回复：{formatNumber(thread.replies)}</>
-        <>Stars: {formatNumber(0)}</>
+        <>查看：{formatNumber(result.views)}</>
+        <>回复：{formatNumber(result.replies)}</>
+        <>Stars: {formatNumber(result.recommends ?? 0)}</>
       </Separated>
     </Typography>
   </Stack>
 )
 
 const ThreadStatSmall = ({
-  thread,
+  result,
   bottomView,
 }: {
-  thread: Pick<Thread, 'views' | 'replies'>
+  result: Pick<ThreadInList, 'views' | 'replies' | 'recommends' | 'pid'>
   bottomView?: boolean
 }) => {
   const iconSx = {
@@ -410,11 +410,11 @@ const ThreadStatSmall = ({
       >
         <Stack direction="row" alignItems="center">
           <Face5 sx={iconSx} />
-          {thread.views}
+          {result.views}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Textsms sx={iconSx} />
-          {thread.replies}
+          {result.replies}
         </Stack>
       </Stack>
     </Typography>
