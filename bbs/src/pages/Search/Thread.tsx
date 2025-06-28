@@ -27,6 +27,7 @@ const SORT_OPTIONS = [
   { label: '支持数倒序（最多支持）', value: 'recommend_desc' },
   { label: '支持数顺序（最少支持）', value: 'recommend_asc' },
   { label: '相关性排序', value: 'relevance' },
+  { label: '长度倒序（最长）', value: 'longest' },
   { label: '综合排序', value: 'default' },
 ]
 

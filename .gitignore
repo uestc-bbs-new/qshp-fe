@@ -24,3 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 stats.html
+
+# 脚本
+*.sh
+*.bat
+*.py
