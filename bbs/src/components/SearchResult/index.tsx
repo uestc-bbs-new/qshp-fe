@@ -13,13 +13,8 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { ForumBasics, ForumDetails } from '@/common/interfaces/forum'
-import {
-  Thread,
-  ThreadInList,
-  TopListKey,
-  TopListThread,
-} from '@/common/interfaces/response'
+import { ForumDetails } from '@/common/interfaces/forum'
+import { ThreadInList } from '@/common/interfaces/response'
 import {
   kThreadDisplayOrderDeleted,
   kThreadDisplayOrderDraft,
@@ -39,26 +34,23 @@ import { SummaryAttachments, SummaryText } from './Summary'
 
 const formatNumber = (num: number) => {
   if (num >= 1000 && num < 1000000) {
-    const formattedNum = (num / 1000).toFixed(1) + 'K'
-    return formattedNum
+    return (num / 1000).toFixed(1) + 'K'
   } else if (num >= 1000000) {
-    const formattedNum = (num / 1000000).toFixed(1) + 'M'
-    return formattedNum
+    return (num / 1000000).toFixed(1) + 'M'
   }
   return num
 }
 
-export type ThreadReplyOrCommentItem = {
+export type SearchResultReplyItem = {
   post_id: number
   summary: string
 }
 
-type ThreadItemProps = {
+type SearchResultItemProps = {
   data: ThreadInList
-  forum?: ForumBasics
   forumDetails?: ForumDetails
   showSummary?: boolean
-  replies?: ThreadReplyOrCommentItem[]
+  replies?: SearchResultReplyItem[]
   hideThreadAuthor?: boolean
   ignoreThreadHighlight?: boolean
   fromForum?: boolean
@@ -72,15 +64,13 @@ const SearchResultItem = ({
   hideThreadAuthor,
   ignoreThreadHighlight,
   fromForum,
-}: ThreadItemProps) => {
+}: SearchResultItemProps) => {
   const theme = useTheme()
   const narrowView = useMediaQuery('(max-width: 750px)')
   const thinView = useMediaQuery('(max-width: 560px)')
   const to = pages.thread(data.thread_id)
   const navigate = useNavigate()
 
-  console.log('ThreadItem summary:', data.summary)
-  // console.log(data.rows)
   return (
     <Box className="p-0.5">
       <Box
@@ -93,19 +83,21 @@ const SearchResultItem = ({
         {narrowView && !hideThreadAuthor && (
           <Stack direction="row" justifyContent="space-between">
             <Stack direction="row" mb={1}>
-              <ThreadAvatar
-                thread={{ author_id: data.author_id, author: data.author }}
+              <SearchResultAvatar
+                author_id={data.author_id}
+                author={data.author}
                 small
               />
-              <ThreadAuthor thread={data} twoLines />
+              <SearchResultAuthor data={data} twoLines />
             </Stack>
-            <ThreadStatSmall result={data} />
+            <SearchResultStatSmall result={data} />
           </Stack>
         )}
         <Stack direction="row">
           {!narrowView && !hideThreadAuthor && (
-            <ThreadAvatar
-              thread={{ author_id: data.author_id, author: data.author }}
+            <SearchResultAvatar
+              author_id={data.author_id}
+              author={data.author}
               small={showSummary}
             />
           )}
@@ -171,10 +163,10 @@ const SearchResultItem = ({
                       >
                         {data.subject}
                       </Typography>
-                      <ThreadExtraLabels thread={data} />
+                      <SearchResultExtraLabels data={data} />
                     </Link>
                   </Box>
-                  <ThreadRepliesOrComments
+                  <SearchResultRepliesOrComments
                     threadId={data.thread_id}
                     replies={replies}
                   />
@@ -223,7 +215,7 @@ const SearchResultItem = ({
                       </>
                     )}
                     {!narrowView && (
-                      <ThreadStat
+                      <SearchResultStat
                         result={data}
                         sx={data.forum_name ? { minWidth: '14em' } : undefined}
                       />
@@ -235,8 +227,8 @@ const SearchResultItem = ({
             </Box>
             <Stack direction="row" justifyContent="space-between">
               {!narrowView && (
-                <ThreadAuthor
-                  thread={data}
+                <SearchResultAuthor
+                  data={data}
                   hideThreadAuthor={hideThreadAuthor}
                 />
               )}
@@ -279,7 +271,7 @@ const SearchResultItem = ({
               </Stack>
             </Stack>
             {narrowView && hideThreadAuthor && (
-              <ThreadStatSmall result={data} bottomView />
+              <SearchResultStatSmall result={data} bottomView />
             )}
           </Box>
         </Stack>
@@ -289,88 +281,35 @@ const SearchResultItem = ({
   )
 }
 
-export const ThreadItemLite = ({
-  item,
-  fromTopList,
-}: {
-  item: TopListThread
-  fromTopList?: TopListKey
-}) => {
-  return (
-    <Box px={0.25} py={0.5}>
-      <Stack direction="row" alignItems="center">
-        <Link to={item.author_id ? `/user/${item.author_id}` : undefined}>
-          <Avatar alt={item.author} uid={item.author_id} size={30} />
-        </Link>
-        <Link
-          to={pages.thread(item.thread_id)}
-          {...(fromTopList && { state: { fromTopList } })}
-          color="inherit"
-          underline="hover"
-          className="line-clamp-3"
-          ml={1.2}
-        >
-          {item.label && <Chip text={item.label} />}
-          <Typography
-            textAlign="justify"
-            component="span"
-            sx={{ verticalAlign: 'middle' }}
-          >
-            {item.subject}
-          </Typography>
-        </Link>
-      </Stack>
-      <Stack
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="center"
-        className="text-sm"
-        pl={0.5}
-      >
-        <Link
-          to={item.author_id ? pages.user({ uid: item.author_id }) : undefined}
-        >
-          {item.author}
-        </Link>
-        <Typography fontSize="inherit" className="pl-1" color="grey">
-          {`· ${chineseTime(item.dateline * 1000, { short: true })}`}
-        </Typography>
-      </Stack>
-    </Box>
-  )
-}
-
-const ThreadAvatar = ({
-  thread,
+const SearchResultAvatar = ({
+  author_id,
+  author,
   small,
 }: {
-  thread: Partial<Pick<Thread, 'author_id' | 'author'>>
+  author_id?: number
+  author?: string
   small?: boolean
 }) => {
-  if (thread.author_id == undefined) {
+  if (author_id == undefined) {
     return <></>
   }
   return (
     <Box sx={{ mr: 2 }}>
       <Link
-        to={thread.author_id ? `/user/${thread.author_id}` : undefined}
+        to={author_id ? `/user/${author_id}` : undefined}
         onClick={(e) => e.stopPropagation()}
       >
-        <Avatar
-          alt={thread.author}
-          uid={thread.author_id}
-          size={small ? 40 : 48}
-        />
+        <Avatar alt={author} uid={author_id} size={small ? 40 : 48} />
       </Link>
     </Box>
   )
 }
 
-const ThreadStat = ({
+const SearchResultStat = ({
   result,
   sx,
 }: {
-  result: Pick<ThreadInList, 'views' | 'replies' | 'recommends' | 'pid'>
+  result: Pick<ThreadInList, 'views' | 'replies' | 'recommends'>
   sx?: SxProps<Theme>
 }) => (
   <Stack direction="row" justifyContent="flex-end" flexGrow={1} sx={sx}>
@@ -390,11 +329,11 @@ const ThreadStat = ({
   </Stack>
 )
 
-const ThreadStatSmall = ({
+const SearchResultStatSmall = ({
   result,
   bottomView,
 }: {
-  result: Pick<ThreadInList, 'views' | 'replies' | 'recommends' | 'pid'>
+  result: Pick<ThreadInList, 'views' | 'replies'>
   bottomView?: boolean
 }) => {
   const iconSx = {
@@ -421,15 +360,15 @@ const ThreadStatSmall = ({
   )
 }
 
-const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
+const SearchResultExtraLabels = ({ data }: { data: ThreadInList }) => (
   <>
-    {!!thread.reply_credit_remaining_amount && (
+    {!!data.reply_credit_remaining_amount && (
       <MuiChip
         label={
           <>
             回帖奖励
             <Typography fontWeight="bold" ml={0.5} component="span">
-              {thread.reply_credit_remaining_amount}
+              {data.reply_credit_remaining_amount}
             </Typography>
           </>
         }
@@ -437,55 +376,55 @@ const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {thread.special == 1 && (
+    {data.special == 1 && (
       <Poll
         htmlColor="#FA541C"
         sx={{ width: '0.85em', mx: '0.25em', verticalAlign: 'middle' }}
       />
     )}
-    {!!thread.digest && (
+    {!!data.digest && (
       <MuiChip
         label="精华"
         variant="threadItemDigest"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {(thread.stamp == 3 || thread.icon == 12) && (
+    {(data.stamp == 3 || data.icon == 12) && (
       <MuiChip
         label="优秀"
         variant="threadItemExcellent"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {(thread.stamp == 5 || thread.icon == 14) && (
+    {(data.stamp == 5 || data.icon == 14) && (
       <MuiChip
         label="推荐"
         variant="threadItemRecommended"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {thread.icon == 20 && (
+    {data.icon == 20 && (
       <MuiChip
         label="新人"
         variant="threadItemFreshman"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {thread.display_order == kThreadDisplayOrderDraft && (
+    {data.display_order == kThreadDisplayOrderDraft && (
       <MuiChip
         label="草稿"
         variant="threadItemDraft"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {thread.display_order == kThreadDisplayOrderInReview && (
+    {data.display_order == kThreadDisplayOrderInReview && (
       <MuiChip
         label="审核中"
         variant="threadItemReview"
         sx={{ mx: 0.5, verticalAlign: 'middle' }}
       />
     )}
-    {thread.display_order == kThreadDisplayOrderRejected && (
+    {data.display_order == kThreadDisplayOrderRejected && (
       <MuiChip
         label="已忽略"
         variant="threadItemReview"
@@ -495,16 +434,16 @@ const ThreadExtraLabels = ({ thread }: { thread: Partial<Thread> }) => (
   </>
 )
 
-const ThreadAuthor = ({
-  thread,
+const SearchResultAuthor = ({
+  data,
   hideThreadAuthor,
   twoLines,
 }: {
-  thread: Partial<Thread> & Required<Pick<Thread, 'dateline'>>
+  data: Pick<ThreadInList, 'author_id' | 'author' | 'dateline'>
   hideThreadAuthor?: boolean
   twoLines?: boolean
 }) => {
-  const time = <>{chineseTime(thread.dateline * 1000)}</>
+  const time = <>{chineseTime(data.dateline * 1000)}</>
   return (
     <Stack direction="row" alignItems="center">
       <Typography variant="threadItemAuthor">
@@ -523,17 +462,15 @@ const ThreadAuthor = ({
             }
           >
             <Link
-              underline={thread.author_id ? 'always' : 'none'}
-              color={thread.author_id ? undefined : 'inherit'}
+              underline={data.author_id ? 'always' : 'none'}
+              color={data.author_id ? undefined : 'inherit'}
               to={
-                thread.author_id
-                  ? pages.user({ uid: thread.author_id })
-                  : undefined
+                data.author_id ? pages.user({ uid: data.author_id }) : undefined
               }
               variant="threadItemAuthorLink"
               onClick={(e) => e.stopPropagation()}
             >
-              {thread.author}
+              {data.author}
             </Link>
             {time}
           </Separated>
@@ -543,12 +480,12 @@ const ThreadAuthor = ({
   )
 }
 
-const ThreadRepliesOrComments = ({
+const SearchResultRepliesOrComments = ({
   threadId,
   replies,
 }: {
   threadId: number
-  replies?: ThreadReplyOrCommentItem[]
+  replies?: SearchResultReplyItem[]
 }) =>
   replies?.length ? (
     <Box mb={0.5}>

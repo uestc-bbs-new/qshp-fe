@@ -17,7 +17,6 @@ import {
 
 import { searchThreads } from '@/apis/search'
 import EmptyList from '@/components/EmptyList'
-// import ThreadItem from '@/components/ThreadItem'
 import SearchResultItem from '@/components/SearchResult/'
 import { searchParamsAssign } from '@/utils/tools'
 
@@ -157,13 +156,15 @@ const Thread = () => {
               siblingCount={1}
               page={data.page}
               count={Math.ceil(data.total / (data.page_size || 1))}
-              onChange={(_, page) =>
-                navigate(
-                  `${location.pathname}?${searchParamsAssign(searchParams, {
+              onChange={(_, page) => {
+                const newUrl = `${location.pathname}?${searchParamsAssign(
+                  searchParams,
+                  {
                     page,
-                  })}`
-                )
-              }
+                  }
+                )}`
+                window.location.href = newUrl
+              }}
             />
           </Stack>
         </>
