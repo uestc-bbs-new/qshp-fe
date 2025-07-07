@@ -14,23 +14,21 @@ import {
 import { User } from '@/common/interfaces/base'
 import Avatar from '@/components/Avatar'
 
-import { IdasResultEx } from './common'
-
 const UserList = ({
-  idasResult,
+  users,
   disabled,
   showRegister,
   onClick,
   onRegister,
 }: {
-  idasResult: IdasResultEx
+  users?: User[]
   disabled?: boolean
   showRegister?: boolean
   onClick: (user: User) => void
-  onRegister: () => void
+  onRegister?: () => void
 }) => (
   <List>
-    {idasResult.users?.map((user, index) => (
+    {users?.map((user, index) => (
       <ListItem disableGutters key={index}>
         <ListItemButton disabled={disabled} onClick={() => onClick(user)}>
           <ListItemIcon>

@@ -8,9 +8,17 @@ import {
 import adminRoutes from '@/admin/routes'
 import betRoutes from '@/ext/bet/routes'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
+import {
+  EmailContinue,
+  EmailContinueError,
+  EmailContinueLoader,
+} from '@/pages/Continue/Email'
 import { RegisterHome } from '@/pages/Continue/Register'
 import Renew from '@/pages/Continue/Renew'
-import { ResetPasswordHome } from '@/pages/Continue/ResetPassword'
+import {
+  ResetPasswordEmailHome,
+  ResetPasswordHome,
+} from '@/pages/Continue/ResetPassword'
 import Edit from '@/pages/Edit'
 import Forum from '@/pages/Forum'
 import Goto, { GotoError } from '@/pages/Goto'
@@ -162,6 +170,13 @@ routes.current = [
     errorElement: <ContinueError />,
   },
   {
+    path: '/continue/email/:verify',
+    id: 'continue_email',
+    loader: EmailContinueLoader,
+    element: <EmailContinue />,
+    errorElement: <EmailContinueError />,
+  },
+  {
     path: '/register',
     id: 'register',
     element: <RegisterHome />,
@@ -175,6 +190,11 @@ routes.current = [
     path: '/resetpassword',
     id: 'resetpassword',
     element: <ResetPasswordHome />,
+  },
+  {
+    path: '/resetpassword/email',
+    id: 'resetpassword_email',
+    element: <ResetPasswordEmailHome />,
   },
 ]
 

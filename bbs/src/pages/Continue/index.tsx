@@ -107,7 +107,7 @@ const Continue = () => {
                   : '您注册了多个账号，请选择您需要登录的账号：'}
               </Typography>
               <UserList
-                idasResult={idasResult}
+                users={idasResult.users}
                 disabled={pending}
                 showRegister={!!idasResult.remaining_registers}
                 onClick={(user: User) => {
@@ -152,6 +152,7 @@ const Continue = () => {
             <>
               {selectedUser ? (
                 <ResetPassword
+                  method="idas"
                   user={selectedUser}
                   idasResult={idasResult}
                   onClose={back}

@@ -8,27 +8,38 @@ import {
   Dialog,
   DialogContent,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 
-import { resetPassword } from '@/apis/auth'
+import {
+  resetPassword,
+  resetPasswordByEmail,
+  sendEmailToResetPassword,
+} from '@/apis/auth'
 import { User } from '@/common/interfaces/base'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
-import { gotoIdas, pages } from '@/utils/routes'
+import { getIdasLink, gotoIdas, pages } from '@/utils/routes'
 
 import CommonLayout from './CommonLayout'
-import { CommonForm } from './Forms'
+import { CommonForm, SignUpTextField } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
 
 const ResetPassword = ({
+  method,
   user,
+  users,
+  emailVerify,
   idasResult,
   onClose,
 }: {
+  method: 'idas' | 'email'
   user: User
-  idasResult: IdasResultEx
+  users?: User[]
+  emailVerify?: string
+  idasResult?: IdasResultEx
   onClose: () => void
 }) => {
   const formRef = useRef<HTMLFormElement>(null)
@@ -46,17 +57,32 @@ const ResetPassword = ({
 
   const handleReset = async () => {
     const password = getFormField('password')
+    const studentIdOrName = getFormField('studentIdOrName').trim()
     if (!passwordValid.current || !password) {
+      return
+    }
+    if (method == 'email' && !studentIdOrName) {
       return
     }
     setPending(true)
     try {
-      await resetPassword({
-        code: idasResult.code,
-        ephemeral_authorization: idasResult.ephemeral_authorization,
-        user_id: user.uid,
-        password,
-      })
+      if (method == 'idas' && idasResult) {
+        await resetPassword({
+          code: idasResult.code,
+          ephemeral_authorization: idasResult.ephemeral_authorization,
+          user_id: user.uid,
+          password,
+        })
+      } else if (method == 'email' && emailVerify) {
+        await resetPasswordByEmail(
+          emailVerify,
+          user.uid,
+          password,
+          studentIdOrName
+        )
+      } else {
+        return
+      }
     } catch (e) {
       setApiError(e)
       return
@@ -84,6 +110,19 @@ const ResetPassword = ({
         disabled={pending}
       />
       <tr>
+        <th>
+          <Typography>关联学号/姓名</Typography>
+        </th>
+        <td>
+          <SignUpTextField
+            fullWidth
+            name="studentIdOrName"
+            disabled={pending}
+            sx={{ mb: 1 }}
+          />
+        </td>
+      </tr>
+      <tr>
         <th></th>
         <td>
           <Stack
@@ -92,11 +131,13 @@ const ResetPassword = ({
             alignItems="center"
             my={2}
           >
-            {success && idasResult.users && idasResult.users.length > 1 && (
-              <Button variant="outlined" onClick={onClose} sx={{ mr: 2 }}>
-                重置其他账号
-              </Button>
-            )}
+            {success &&
+              ((idasResult?.users && idasResult?.users.length > 1) ||
+                (users && users.length > 1)) && (
+                <Button variant="outlined" onClick={onClose} sx={{ mr: 2 }}>
+                  重置其他账号
+                </Button>
+              )}
             {success && (
               <Button component={Link} to={pages.index()} variant="contained">
                 返回首页
@@ -144,6 +185,69 @@ export const ResetPasswordHome = () => {
             <Typography variant="h6" textAlign="justify" mt={6}>
               毕业用户请通过清水河畔官方 QQ 号 1942224235 联系站长。
             </Typography>
+          </Stack>
+        </CommonLayout>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export const ResetPasswordEmailHome = () => {
+  const [pending, setPending] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [apiError, setApiError] = useState<unknown>()
+  const [emailSent, setEmailSent] = useState(false)
+  const handleSend = async () => {
+    const email = inputRef.current?.value
+    if (!email) {
+      return
+    }
+    setPending(true)
+    try {
+      await sendEmailToResetPassword(email)
+      setApiError(null)
+      setEmailSent(true)
+    } catch (e) {
+      setApiError(e)
+    } finally {
+      setPending(false)
+    }
+  }
+  return (
+    <Dialog open fullScreen>
+      <DialogContent sx={{ p: 0 }}>
+        <CommonLayout>
+          <Stack pl={2} pr={4} alignItems="flex-start">
+            <Typography variant="signinTitle">邮箱找回密码</Typography>
+            <Typography variant="h6" textAlign="justify" mt={4} mb={1}>
+              请准确输入您注册时填写的邮箱：
+            </Typography>
+            <SignUpTextField
+              type="email"
+              autoFocus
+              fullWidth
+              inputRef={inputRef}
+            />
+            <Button
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={pending || emailSent}
+              onClick={handleSend}
+            >
+              发送验证邮件
+            </Button>
+            {apiError ? <Error error={apiError} small /> : <></>}
+            {emailSent && (
+              <Alert severity="info">邮件已发送，请在邮箱中查看。</Alert>
+            )}
+            <Typography textAlign="justify" mt={5}>
+              注：仅供毕业用户使用，在校用户请通过
+              <Link to={getIdasLink({ mode: 'resetpassword' })} external>
+                统一身份认证
+              </Link>
+              验证后重置密码。
+            </Typography>
+            <Stack direction="row" justifyContent="flex-start"></Stack>
           </Stack>
         </CommonLayout>
       </DialogContent>

@@ -100,11 +100,23 @@ export const resetPassword = (
     password: string
   }
 ) => {
-  return authServiceWithUser.post<AuthorizationResult>(
-    `${authUrl}/resetpassword`,
-    params
-  )
+  return authServiceWithUser.post(`${authUrl}/resetpassword`, params)
 }
+
+export const sendEmailToResetPassword = (email: string) =>
+  authService.post(`${authUrl}/resetpassword/email/send`, { email })
+export const verifyEmailLink = (verify: string) =>
+  authService.post<{ users: User }>(`${authUrl}/resetpassword/email/${verify}`)
+export const resetPasswordByEmail = (
+  verify: string,
+  uid: number,
+  password: string,
+  student_id_or_name: string
+) =>
+  authService.post<{ users: User }>(
+    `${authUrl}/resetpassword/email/${verify}/reset/${uid}`,
+    { password, student_id_or_name }
+  )
 
 export const signOut = () => {
   return authService.post(`${authUrl}/signout`)
