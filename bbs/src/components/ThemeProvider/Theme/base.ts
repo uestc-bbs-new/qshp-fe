@@ -54,6 +54,13 @@ const baseComponent = {
       },
     ],
   },
+  MuiInputBase: {
+    styleOverrides: {
+      input: {
+        fontSize: 16,
+      },
+    },
+  },
 }
 
 export const getComponentsByMode = (mode: 'dark' | 'light') => ({
