@@ -27,6 +27,11 @@ import { CommonForm, SignUpTextField } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
 
+const kOfficialEmailAddress = 'bbs@uestc.edu.cn'
+const OfficialEmail = () => (
+  <a href={`mailto:${kOfficialEmailAddress}`}>{kOfficialEmailAddress}</a>
+)
+
 const ResetPassword = ({
   method,
   user,
@@ -183,7 +188,8 @@ export const ResetPasswordHome = () => {
               </Button>
             </Stack>
             <Typography variant="h6" textAlign="justify" mt={6}>
-              毕业用户请通过清水河畔官方 QQ 号 1942224235 联系站长。
+              毕业用户请通过清水河畔官方 QQ 号 1942224235 或官方邮箱{' '}
+              <OfficialEmail /> 联系站长。
             </Typography>
           </Stack>
         </CommonLayout>
@@ -238,7 +244,10 @@ export const ResetPasswordEmailHome = () => {
             </Button>
             {apiError ? <Error error={apiError} small /> : <></>}
             {emailSent && (
-              <Alert severity="info">邮件已发送，请在邮箱中查看。</Alert>
+              <Alert severity="info">
+                邮件已发送，请在邮箱中查看。如果未收到邮件，请检查垃圾邮件文件夹，或者将{' '}
+                <OfficialEmail /> 添加到白名单并重新发送验证邮件。
+              </Alert>
             )}
             <Typography textAlign="justify" mt={5}>
               注：仅供毕业用户使用，在校用户请通过
