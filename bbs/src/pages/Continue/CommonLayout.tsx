@@ -13,10 +13,12 @@ const CommonLayout = ({ children }: { children?: React.ReactNode }) => {
       flexGrow={1}
       flexShrink={1}
       minHeight={1}
+      maxHeight="100%"
+      flexDirection="row"
       sx={{
-        flexDirection: 'row',
         '@media (max-width: 800px)': {
           flexDirection: 'column',
+          maxHeight: 'none',
         },
       }}
     >
@@ -123,15 +125,16 @@ const CommonLayout = ({ children }: { children?: React.ReactNode }) => {
           }}
         />
       </Stack>
-      <Stack
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        flexGrow={1}
-        flexShrink={1}
-      >
-        {children}
-      </Stack>
+      <Box overflow="auto" flexGrow={1} flexShrink={1}>
+        <Stack
+          minHeight="100%"
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          {children}
+        </Stack>
+      </Box>
     </Stack>
   )
 }
