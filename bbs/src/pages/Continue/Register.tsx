@@ -18,6 +18,7 @@ import {
 } from '@/apis/auth'
 import Error from '@/components/Error'
 import { RegisterContent } from '@/components/Login/Register'
+import { isEmailValid } from '@/utils/input'
 import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
@@ -102,7 +103,7 @@ export const RegisterForm = ({
     const email = getFormField('email')
     if (email.length > 64) {
       setEmailError('邮箱地址太长。')
-    } else if (email.match(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/)) {
+    } else if (isEmailValid(email)) {
       setEmailError('')
     } else {
       setEmailError('请输入有效的邮箱地址。')

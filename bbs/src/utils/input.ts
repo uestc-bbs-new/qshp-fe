@@ -38,3 +38,6 @@ export const toDatetimeLocal = (value: Date) =>
   `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
     value.getDate()
   )}T${pad(value.getHours())}:${pad(value.getMinutes())}`
+
+export const isEmailValid = (value: string) =>
+  value.match(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/)
