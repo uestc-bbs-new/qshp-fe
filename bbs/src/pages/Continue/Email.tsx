@@ -1,16 +1,7 @@
 import { useState } from 'react'
 import { useLoaderData, useNavigate, useRouteError } from 'react-router-dom'
 
-import { PanoramaSharp } from '@mui/icons-material'
-import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Dialog, DialogContent, Typography } from '@mui/material'
 
 import { verifyEmailLink } from '@/apis/auth'
 import { User } from '@/common/interfaces/base'

@@ -36,6 +36,7 @@ const kOfficialEmailAddress = 'bbs@uestc.edu.cn'
 const OfficialEmail = () => (
   <a href={`mailto:${kOfficialEmailAddress}`}>{kOfficialEmailAddress}</a>
 )
+const kSavedStudentIdForEmailKey = 'newbbs_email_saved_studentid'
 
 const ResetPassword = ({
   method,
@@ -57,6 +58,10 @@ const ResetPassword = ({
   const [apiError, setApiError] = useState<unknown>()
   const [success, setSuccess] = useState(false)
   const [pending, setPending] = useState(false)
+  let savedStudentId = ''
+  try {
+    savedStudentId = sessionStorage.getItem(kSavedStudentIdForEmailKey) ?? ''
+  } catch (_) {}
 
   const getFormField = (name: string) => {
     if (!formRef.current) {
@@ -100,6 +105,8 @@ const ResetPassword = ({
       setPending(false)
     }
     setSuccess(true)
+    setApiError(null)
+    sessionStorage.setItem(kSavedStudentIdForEmailKey, studentIdOrName)
   }
   return (
     <CommonForm
@@ -130,6 +137,7 @@ const ResetPassword = ({
             disabled={pending}
             sx={{ mb: 1 }}
             helperText="选择其中任意一项输入，请勿同时输入学号姓名"
+            defaultValue={savedStudentId}
           />
         </td>
       </tr>
@@ -249,8 +257,12 @@ export const ResetPasswordEmailHome = () => {
       setApiError(null)
       setEmailSent(true)
     } catch (e: any) {
+      if (e?.type == 'http' && e.status == 401) {
+        e.type = 'api'
+        e.message = '邮件验证链接无效或已过期，请重新发送验证邮件。'
+      }
       setApiError(e)
-      if (e?.type == 'api' && e?.code == 1) {
+      if (e?.type == 'api' && e.code == 1) {
         captchaRef.current?.reset()
       }
     } finally {
@@ -261,7 +273,7 @@ export const ResetPasswordEmailHome = () => {
     <Dialog open fullScreen>
       <DialogContent sx={{ p: 0 }}>
         <CommonLayout>
-          <Stack pl={2} pr={4} alignItems="flex-start">
+          <Stack pl={2} pr={4} alignItems="flex-start" maxWidth={500}>
             <Typography variant="signinTitle">邮箱找回密码</Typography>
             {isError ? (
               <Alert severity="error" sx={{ mt: 2 }}>
