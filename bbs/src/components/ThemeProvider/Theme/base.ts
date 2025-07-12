@@ -57,7 +57,9 @@ const baseComponent = {
   MuiInputBase: {
     styleOverrides: {
       input: {
-        fontSize: 16,
+        '@media (max-width: 640px)': {
+          fontSize: 16,
+        },
       },
     },
   },
