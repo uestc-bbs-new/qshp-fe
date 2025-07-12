@@ -154,6 +154,7 @@ export const pages = {
     ),
 
   resetPassword: `/resetpassword`,
+  resetPasswordByEmail: `/resetpassword/email`,
   welcome: '/welcome',
 }
 

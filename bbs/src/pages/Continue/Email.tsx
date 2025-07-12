@@ -110,7 +110,7 @@ export const EmailContinueError = () => {
             variant="outlined"
             sx={{ mt: 2 }}
             component={Link}
-            to={pages.resetPassword}
+            to={pages.resetPasswordByEmail}
           >
             返回
           </Button>

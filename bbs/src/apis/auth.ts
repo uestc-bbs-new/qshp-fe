@@ -1,6 +1,8 @@
 import { authService, authServiceWithUser, commonUrl } from '@/apis/request'
 import { User } from '@/common/interfaces/base'
 
+import { CaptchaConfiguration } from './types/common'
+
 const authUrl = `${commonUrl}/auth`
 
 export type EphemeralAuthorization = {
@@ -19,13 +21,27 @@ export type IdasAuthResult = Partial<AuthorizationResult> & {
   remaining_registers?: number
 }
 
-export const signIn = (params: {
-  username: string
-  password: string
-  keep_signed_in: boolean
+type CaptchaResult = {
   captcha_value?: string
   captcha_type?: string
-}) => {
+}
+
+const getCaptchaHeaders = (params?: CaptchaResult) => ({
+  ...(params?.captcha_value && {
+    'X-UESTC-BBS-Captcha': params.captcha_value,
+  }),
+  ...(params?.captcha_type && {
+    'X-UESTC-BBS-Captcha-Type': params.captcha_type,
+  }),
+})
+
+export const signIn = (
+  params: {
+    username: string
+    password: string
+    keep_signed_in: boolean
+  } & CaptchaResult
+) => {
   return authServiceWithUser.post<AuthorizationResult>(
     `${authUrl}/signin`,
     {
@@ -34,14 +50,7 @@ export const signIn = (params: {
       keep_signed_in: params.keep_signed_in,
     },
     {
-      headers: {
-        ...(params.captcha_value && {
-          'X-UESTC-BBS-Captcha': params.captcha_value,
-        }),
-        ...(params.captcha_type && {
-          'X-UESTC-BBS-Captcha-Type': params.captcha_type,
-        }),
-      },
+      headers: getCaptchaHeaders(params),
     }
   )
 }
@@ -103,8 +112,22 @@ export const resetPassword = (
   return authServiceWithUser.post(`${authUrl}/resetpassword`, params)
 }
 
-export const sendEmailToResetPassword = (email: string) =>
-  authService.post(`${authUrl}/resetpassword/email/send`, { email })
+export const getEmailConfig = () =>
+  authService.get<{ required_captcha?: CaptchaConfiguration[] }>(
+    `${authUrl}/resetpassword/email/config`
+  )
+export const sendEmailToResetPassword = (params: {
+  email: string
+  captcha_value?: string
+  captcha_type?: string
+}) =>
+  authService.post(
+    `${authUrl}/resetpassword/email/send`,
+    { email: params.email },
+    {
+      headers: getCaptchaHeaders(params),
+    }
+  )
 export const verifyEmailLink = (verify: string) =>
   authService.post<{ users: User }>(`${authUrl}/resetpassword/email/${verify}`)
 export const resetPasswordByEmail = (

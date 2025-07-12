@@ -1,25 +1,30 @@
 import { css } from '@emotion/react'
+import { useQuery } from '@tanstack/react-query'
 
 import { useRef, useState } from 'react'
 
 import {
   Alert,
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 
 import {
+  getEmailConfig,
   resetPassword,
   resetPasswordByEmail,
   sendEmailToResetPassword,
 } from '@/apis/auth'
 import { User } from '@/common/interfaces/base'
+import Captcha, { Captcha as CaptchaType } from '@/components/Captcha'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
+import { isEmailValid } from '@/utils/input'
 import { getIdasLink, gotoIdas, pages } from '@/utils/routes'
 
 import CommonLayout from './CommonLayout'
@@ -124,6 +129,7 @@ const ResetPassword = ({
             name="studentIdOrName"
             disabled={pending}
             sx={{ mb: 1 }}
+            helperText="选择其中任意一项输入，请勿同时输入学号姓名"
           />
         </td>
       </tr>
@@ -202,19 +208,51 @@ export const ResetPasswordEmailHome = () => {
   const [pending, setPending] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const [apiError, setApiError] = useState<unknown>()
+  const [errorMessage, setErrorMessage] = useState<string>()
   const [emailSent, setEmailSent] = useState(false)
+  const captchaRef = useRef<CaptchaType>()
+  const captchaToken = useRef<string>()
+  const {
+    isLoading,
+    isError,
+    data: config,
+  } = useQuery({
+    queryKey: ['resetpassword', 'email', 'config'],
+    queryFn: getEmailConfig,
+  })
+  const onCaptchaVerified = (value: string) => {
+    captchaToken.current = value
+  }
   const handleSend = async () => {
     const email = inputRef.current?.value
-    if (!email) {
+    if (!email || !isEmailValid(email)) {
+      setErrorMessage('请输入有效的邮箱地址。')
       return
+    }
+    if (config?.required_captcha?.length && !captchaToken.current) {
+      setErrorMessage('请完成验证后继续操作。')
+      captchaRef.current?.reset()
+      return
+    }
+    if (errorMessage) {
+      setErrorMessage(undefined)
     }
     setPending(true)
     try {
-      await sendEmailToResetPassword(email)
+      await sendEmailToResetPassword({
+        email,
+        ...(captchaToken.current && { captcha_value: captchaToken.current }),
+        ...(config?.required_captcha?.length && {
+          captcha_type: config.required_captcha[0].name,
+        }),
+      })
       setApiError(null)
       setEmailSent(true)
-    } catch (e) {
+    } catch (e: any) {
       setApiError(e)
+      if (e?.type == 'api' && e?.code == 1) {
+        captchaRef.current?.reset()
+      }
     } finally {
       setPending(false)
     }
@@ -225,23 +263,52 @@ export const ResetPasswordEmailHome = () => {
         <CommonLayout>
           <Stack pl={2} pr={4} alignItems="flex-start">
             <Typography variant="signinTitle">邮箱找回密码</Typography>
-            <Typography variant="h6" textAlign="justify" mt={4} mb={1}>
-              请准确输入您注册时填写的邮箱：
-            </Typography>
-            <SignUpTextField
-              type="email"
-              autoFocus
-              fullWidth
-              inputRef={inputRef}
-            />
-            <Button
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={pending || emailSent}
-              onClick={handleSend}
-            >
-              发送验证邮件
-            </Button>
+            {isError ? (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                页面加载失败，请刷新重试
+              </Alert>
+            ) : (
+              <>
+                <Typography variant="h6" textAlign="justify" mt={4} mb={1}>
+                  请准确输入您注册时填写的邮箱：
+                </Typography>
+                <SignUpTextField
+                  type="email"
+                  autoFocus
+                  fullWidth
+                  inputRef={inputRef}
+                />
+                {isLoading && (
+                  <Stack
+                    justifyContent="center"
+                    alignItems="center"
+                    width="100%"
+                    minHeight={65}
+                    mt={1}
+                  >
+                    <CircularProgress />
+                  </Stack>
+                )}
+                {!!config?.required_captcha?.length && (
+                  <Box mt={1}>
+                    <Captcha
+                      captcha={config.required_captcha[0]}
+                      onVerified={onCaptchaVerified}
+                      ref={captchaRef}
+                    />
+                  </Box>
+                )}
+                <Button
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={pending || emailSent}
+                  onClick={handleSend}
+                >
+                  发送验证邮件
+                </Button>
+              </>
+            )}
+            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
             {apiError ? <Error error={apiError} small /> : <></>}
             {emailSent && (
               <Alert severity="info">

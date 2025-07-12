@@ -9,6 +9,7 @@ import {
 } from 'react'
 import React from 'react'
 import ReCaptcha from 'react-google-recaptcha'
+import Turnstile, { BoundTurnstileObject } from 'react-turnstile'
 
 import { CircularProgress, Stack } from '@mui/material'
 
@@ -30,12 +31,14 @@ export default forwardRef(function Captcha(
   const { state } = useAppState()
   const hCaptchaRef = useRef<HCaptcha>(null)
   const reCaptchaRef = useRef<ReCaptcha>(null)
+  const turnstileRef = useRef<BoundTurnstileObject | null>(null)
   useImperativeHandle(
     ref,
     () => ({
       reset() {
         hCaptchaRef.current?.resetCaptcha()
         reCaptchaRef.current?.reset()
+        turnstileRef.current?.reset()
       },
     }),
     [hCaptchaRef, reCaptchaRef]
@@ -64,6 +67,17 @@ export default forwardRef(function Captcha(
         theme={state.theme}
         onChange={(token) => token && onVerified(token)}
         ref={reCaptchaRef}
+      />
+    )
+  }
+  if (captcha.name == 'turnstile') {
+    return (
+      <Turnstile
+        sitekey={captcha.site}
+        theme={state.theme}
+        onLoad={(_, turnstile) => (turnstileRef.current = turnstile)}
+        onVerify={(token) => onVerified(token)}
+        fixedSize
       />
     )
   }
