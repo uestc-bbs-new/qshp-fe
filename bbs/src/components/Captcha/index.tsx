@@ -12,12 +12,8 @@ import ReCaptcha from 'react-google-recaptcha'
 
 import { CircularProgress, Stack } from '@mui/material'
 
+import { CaptchaConfiguration } from '@/apis/types/common'
 import { useAppState } from '@/states'
-
-export type CaptchaConfiguration = {
-  name: string
-  site: string
-}
 
 export const LazyHCaptcha = React.lazy(() => import('@hcaptcha/react-hcaptcha'))
 

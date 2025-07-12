@@ -28,16 +28,14 @@ import {
 } from '@mui/material'
 
 import { signIn } from '@/apis/auth'
+import { CaptchaConfiguration } from '@/apis/types/common'
 import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
 import { gotoIdas, pages } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 
-import Captcha, {
-  CaptchaConfiguration,
-  Captcha as CaptchaType,
-} from '../Captcha'
+import Captcha, { Captcha as CaptchaType } from '../Captcha'
 import Password from '../icons/Password'
 import User from '../icons/User'
 
