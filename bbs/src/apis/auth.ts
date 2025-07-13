@@ -1,4 +1,8 @@
-import { authService, authServiceWithUser, commonUrl } from '@/apis/request'
+import request, {
+  authService,
+  authServiceWithUser,
+  commonUrl,
+} from '@/apis/request'
 import { User } from '@/common/interfaces/base'
 
 import { CaptchaConfiguration } from './types/common'
@@ -144,3 +148,15 @@ export const resetPasswordByEmail = (
 export const signOut = () => {
   return authService.post(`${authUrl}/signout`)
 }
+
+export const checkRenew = () =>
+  request.get<{ require_password_signin?: boolean }>(`${authUrl}/renew/check`)
+export const queryRenew = (params: EphemeralAuthorization) =>
+  request.post<{ new_bind?: boolean; renew_users: User[] }>(
+    `${authUrl}/renew/query`,
+    params
+  )
+export const applyRenew = (params: EphemeralAuthorization) =>
+  request.post<number[]>(`${authUrl}/renew`, params)
+
+export const kErrRenewSameStudentId = 10

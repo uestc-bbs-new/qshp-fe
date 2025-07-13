@@ -27,15 +27,11 @@ import Link from '@/components/Link'
 import { isEmailValid } from '@/utils/input'
 import { getIdasLink, gotoIdas, pages } from '@/utils/routes'
 
-import CommonLayout from './CommonLayout'
+import CommonLayout, { OfficialEmail, WebmasterContact } from './CommonLayout'
 import { CommonForm, SignUpTextField } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
 
-const kOfficialEmailAddress = 'bbs@uestc.edu.cn'
-const OfficialEmail = () => (
-  <a href={`mailto:${kOfficialEmailAddress}`}>{kOfficialEmailAddress}</a>
-)
 const kSavedStudentIdForEmailKey = 'newbbs_email_saved_studentid'
 
 const ResetPassword = ({
@@ -126,21 +122,23 @@ const ResetPassword = ({
         onValidated={(valid) => (passwordValid.current = valid)}
         disabled={pending}
       />
-      <tr>
-        <th>
-          <Typography>关联学号/姓名</Typography>
-        </th>
-        <td>
-          <SignUpTextField
-            fullWidth
-            name="studentIdOrName"
-            disabled={pending}
-            sx={{ mb: 1 }}
-            helperText="选择其中任意一项输入，请勿同时输入学号姓名"
-            defaultValue={savedStudentId}
-          />
-        </td>
-      </tr>
+      {method == 'email' && (
+        <tr>
+          <th>
+            <Typography>关联学号/姓名</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              fullWidth
+              name="studentIdOrName"
+              disabled={pending}
+              sx={{ mb: 1 }}
+              helperText="选择其中任意一项输入"
+              defaultValue={savedStudentId}
+            />
+          </td>
+        </tr>
+      )}
       <tr>
         <th></th>
         <td>
@@ -202,8 +200,9 @@ export const ResetPasswordHome = () => {
               </Button>
             </Stack>
             <Typography variant="h6" textAlign="justify" mt={6}>
-              毕业用户请通过清水河畔官方 QQ 号 1942224235 或官方邮箱{' '}
-              <OfficialEmail /> 联系站长。
+              毕业用户请通过
+              <WebmasterContact />
+              联系站长。
             </Typography>
           </Stack>
         </CommonLayout>

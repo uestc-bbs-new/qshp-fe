@@ -155,6 +155,7 @@ export const pages = {
 
   resetPassword: `/resetpassword`,
   resetPasswordByEmail: `/resetpassword/email`,
+  renew: `/renew`,
   welcome: '/welcome',
 }
 

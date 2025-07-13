@@ -142,6 +142,8 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       })
       persistedStates.authorizationHeader = result.authorization
       close()
+      state.globalDialog?.successCallback &&
+        state.globalDialog.successCallback()
     } catch (e_) {
       const e = e_ as
         | {
@@ -191,7 +193,9 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       )}
       <Tabs value={0} sx={{ my: 1.5 }}>
         <Tab label="河畔密码登录" />
-        <Tab label="统一身份认证登录" onClick={() => gotoIdas()} />
+        {!state.globalDialog?.onlyPasswordLogin && (
+          <Tab label="统一身份认证登录" onClick={() => gotoIdas()} />
+        )}
       </Tabs>
       <form onSubmit={onSubmit} ref={formRef}>
         <SignInTextField

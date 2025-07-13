@@ -31,6 +31,7 @@ import { persistedStates } from '@/utils/storage'
 import Back from './Back'
 import CommonLayout from './CommonLayout'
 import { RegisterForm } from './Register'
+import { RenewContinue } from './Renew'
 import ResetPassword from './ResetPassword'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
@@ -183,14 +184,7 @@ const Continue = () => {
               )}
             </>
           )}
-          {page == 'renew' && (
-            <Stack>
-              <Typography variant="signinTitle">实名换绑</Typography>
-              <Typography variant="h6" my={2}>
-                下列账号将换绑至新学号，请确认：
-              </Typography>
-            </Stack>
-          )}
+          {page == 'renew' && <RenewContinue idasResult={idasResult} />}
         </CommonLayout>
       </DialogContent>
     </Dialog>

@@ -139,4 +139,14 @@ const CommonLayout = ({ children }: { children?: React.ReactNode }) => {
   )
 }
 
+const kOfficialEmailAddress = 'bbs@uestc.edu.cn'
+export const OfficialEmail = () => (
+  <a href={`mailto:${kOfficialEmailAddress}`}>{kOfficialEmailAddress}</a>
+)
+export const WebmasterContact = () => (
+  <>
+    清水河畔官方 QQ 号 1942224235 或官方邮箱 <OfficialEmail />{' '}
+  </>
+)
+
 export default CommonLayout

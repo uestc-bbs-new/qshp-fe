@@ -38,6 +38,8 @@ type GlobalDialogState = {
   kind?: 'login' | 'register' | 'image'
   prompt?: string
   imageDetails?: ImageViewDetails
+  onlyPasswordLogin?: boolean
+  successCallback?: () => void
 }
 
 type GlobalSnackbarState = {

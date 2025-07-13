@@ -24,13 +24,16 @@ const UserList = ({
   users?: User[]
   disabled?: boolean
   showRegister?: boolean
-  onClick: (user: User) => void
+  onClick?: (user: User) => void
   onRegister?: () => void
 }) => (
   <List>
     {users?.map((user, index) => (
       <ListItem disableGutters key={index}>
-        <ListItemButton disabled={disabled} onClick={() => onClick(user)}>
+        <ListItemButton
+          disabled={disabled}
+          onClick={() => onClick && onClick(user)}
+        >
           <ListItemIcon>
             <Avatar uid={user.uid} />
           </ListItemIcon>
