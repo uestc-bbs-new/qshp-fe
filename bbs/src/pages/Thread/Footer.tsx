@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Button, Stack } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 
 import { DEPRECATED_votePost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
@@ -60,6 +60,10 @@ const Footer = ({
 
   const [favoriteDialog, setFavoriteDialog] = useState(false)
   const [rateDialog, setRateDialog] = useState(false)
+
+  if (!state.user.uid) {
+    return <Box pt={1} />
+  }
   return (
     <Stack direction="row" flexWrap="wrap" mt={1}>
       {canReply && (
