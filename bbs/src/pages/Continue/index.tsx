@@ -19,13 +19,19 @@ import {
   Typography,
 } from '@mui/material'
 
-import { idasAuth, idasChooseUser } from '@/apis/auth'
+import { idasAuth, idasChooseUser, kErrStudentIdRenewed } from '@/apis/auth'
 import { User } from '@/common/interfaces/base'
 import { ContinueMode, kDefaultContinueMode } from '@/common/types/idas'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import routes from '@/routes/routes'
-import { gotoIdas, kIdasOrigin, kIdasVersion2, pages } from '@/utils/routes'
+import {
+  gotoIdas,
+  kIdasLogoutUrl,
+  kIdasOrigin,
+  kIdasVersion2,
+  pages,
+} from '@/utils/routes'
 import { persistedStates } from '@/utils/storage'
 
 import Back from './Back'
@@ -200,18 +206,37 @@ export const ContinueError = () => {
       <DialogContent sx={{ p: 0 }}>
         <CommonLayout>
           <Error error={error} sx={{ width: '90%' }} small />
-          <Button
-            variant="outlined"
-            sx={{ mt: 2 }}
-            onClick={() =>
-              gotoIdas({
-                mode,
-                continuePath: sanitizeContinuePath(searchParams.get('path')),
-              })
-            }
+          <Stack
+            direction="row"
+            justifyContent="center"
+            flexWrap="wrap"
+            alignItems="center"
+            mt={2}
+            spacing={2}
           >
-            重试
-          </Button>
+            {(error as any)?.code == kErrStudentIdRenewed && (
+              <Button
+                component={Link}
+                target="_blank"
+                external
+                href={kIdasLogoutUrl}
+                variant="contained"
+              >
+                退出统一身份认证系统
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              onClick={() =>
+                gotoIdas({
+                  mode,
+                  continuePath: sanitizeContinuePath(searchParams.get('path')),
+                })
+              }
+            >
+              重试
+            </Button>
+          </Stack>
         </CommonLayout>
       </DialogContent>
     </Dialog>

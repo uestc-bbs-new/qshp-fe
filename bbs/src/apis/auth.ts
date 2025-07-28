@@ -160,3 +160,4 @@ export const applyRenew = (params: EphemeralAuthorization) =>
   request.post<number[]>(`${authUrl}/renew`, params)
 
 export const kErrRenewSameStudentId = 10
+export const kErrStudentIdRenewed = 11

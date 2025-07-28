@@ -19,18 +19,14 @@ import {
 import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState, useSignInChange } from '@/states'
-import { gotoIdas, pages } from '@/utils/routes'
+import { gotoIdas, kIdasLogoutUrl, pages } from '@/utils/routes'
 
 import { WebmasterContact } from './CommonLayout'
 import UserList from './UserList'
 import { IdasResultEx } from './common'
 
 const IdasLogout = () => (
-  <Link
-    to="https://idas.uestc.edu.cn/authserver/logout"
-    external
-    target="_blank"
-  >
+  <Link to={kIdasLogoutUrl} external target="_blank">
     退出登录
   </Link>
 )
