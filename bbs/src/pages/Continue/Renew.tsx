@@ -135,7 +135,9 @@ export const RenewContinue = ({ idasResult }: { idasResult: IdasResultEx }) => {
   }
   return (
     <Stack alignItems="flex-start" px={2} maxWidth={500}>
-      <Typography variant="signinTitle">实名换绑</Typography>
+      <Typography variant="signinTitle">
+        {data?.new_bind ? '实名关联' : '实名换绑'}
+      </Typography>
       {isLoading && (
         <Stack justifyContent="center" alignItems="center" minHeight={150}>
           <CircularProgress />
@@ -178,13 +180,17 @@ export const RenewContinue = ({ idasResult }: { idasResult: IdasResultEx }) => {
       {data && (
         <>
           <Typography variant="h6" mt={2}>
-            下列账号将换绑至新学号，请确认：
+            {data?.new_bind
+              ? '下列账号将实名关联至您登录的学号，请确认：'
+              : '下列账号将换绑至新学号，请确认：'}
           </Typography>
           <UserList users={data.renew_users} />
           {renewSuccess ? (
             <>
               <Typography variant="h6" mb={1} textAlign="justify">
-                换绑成功！今后如需通过统一身份认证登录河畔、找回密码或注册新用户，请使用新学号。
+                {data?.new_bind
+                  ? '实名关联成功！今后您可通过统一身份认证登录或找回密码。'
+                  : '换绑成功！今后如需通过统一身份认证登录河畔、找回密码或注册新用户，请使用新学号。'}
               </Typography>
               <Button component={Link} to={pages.index()} variant="outlined">
                 返回首页
@@ -198,7 +204,7 @@ export const RenewContinue = ({ idasResult }: { idasResult: IdasResultEx }) => {
                 onClick={handleRenew}
                 sx={{ mb: 1 }}
               >
-                确认换绑
+                确认{data?.new_bind ? '关联' : '换绑'}
               </Button>
               {renewError && <Error error={renewError} />}
             </>
