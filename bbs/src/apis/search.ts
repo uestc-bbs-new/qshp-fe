@@ -30,11 +30,13 @@ export const searchSummary = async (query: string) => {
 export const searchThreads = async ({
   keyword,
   author,
+  fids,
   digest,
   page,
 }: {
   keyword?: string | null
   author?: string | null
+  fids?: string | null
   digest?: boolean
   page?: number
 }) => {
@@ -44,6 +46,7 @@ export const searchThreads = async ({
       params: {
         ...(keyword && { q: keyword }),
         ...(author && { author }),
+        ...(fids && { fids }),
         ...(digest && { digest: 1 }),
         ...(page && { page }),
       },

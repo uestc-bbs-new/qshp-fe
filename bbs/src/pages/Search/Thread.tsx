@@ -24,6 +24,7 @@ const Thread = () => {
   const initQuery = () => ({
     keyword: searchParams.get('q'),
     author: searchParams.get('author'),
+    fids: searchParams.get('fids'),
     digest: !!searchParams.get('digest'),
     page: parseInt(searchParams.get('page') || '') || 1,
   })
