@@ -45,6 +45,7 @@ export const RegisterForm = ({
   const formRef = useRef<HTMLFormElement>(null)
   const [userNameError, setUserNameError] = useState('')
   const [userNamePrompt, setUserNamePrompt] = useState('')
+  const [emailPrompt, setEmailPrompt] = useState('')
   const [emailError, setEmailError] = useState('')
   const [registerError, setRegisterError] = useState<unknown>()
   const passwordValid = useRef(false)
@@ -105,6 +106,11 @@ export const RegisterForm = ({
       setEmailError('邮箱地址太长。')
     } else if (isEmailValid(email)) {
       setEmailError('')
+      setEmailPrompt(
+        email.match(/@std\.uestc\.edu\.cn$/i)
+          ? '学生邮箱毕业后无法继续使用，建议您填写其他常用邮箱。'
+          : ''
+      )
     } else {
       setEmailError('请输入有效的邮箱地址。')
     }
@@ -196,7 +202,16 @@ export const RegisterForm = ({
             fullWidth
             name="email"
             error={!!emailError}
-            helperText={emailError}
+            helperText={
+              emailPrompt ? (
+                <span style={{ color: theme.palette.warning.main }}>
+                  {emailPrompt}
+                </span>
+              ) : (
+                emailError ||
+                '请准确填写您的常用邮箱，如果毕业后忘记河畔密码可通过邮箱找回。'
+              )
+            }
             onBlur={validateEmail}
             required
           />
