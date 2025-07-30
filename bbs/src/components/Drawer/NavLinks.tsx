@@ -31,7 +31,7 @@ import siteRoot from '@/utils/siteRoot'
 type NavLink = {
   link: string
   name: string
-  external: boolean
+  external?: boolean
 }
 
 type NavData<T extends boolean> = {
@@ -42,11 +42,10 @@ type NavData<T extends boolean> = {
 }
 
 const listServiceItems: NavLink[] = [
-  // {
-  //   link: `${siteRoot}/graduate_bind/frontend/index.html`,
-  //   name: '学号换绑',
-  //   external: true,
-  // },
+  {
+    link: pages.renew,
+    name: '实名换绑',
+  },
   {
     link: `${siteRoot}/member.php?mod=relevance`,
     name: '实名关联',

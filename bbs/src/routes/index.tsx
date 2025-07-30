@@ -53,11 +53,6 @@ const devPages: RouteObject[] = [
     id: 'settings',
     element: <Settings />,
   },
-  {
-    path: '/renew',
-    id: 'renew',
-    element: <Renew />,
-  },
 ]
 
 const devMessagesPages: RouteObject[] = [
@@ -139,6 +134,11 @@ routes.current = [
           ...(isPreviewRelease ? [] : betRoutes),
         ],
       },
+      {
+        path: '/renew',
+        id: 'renew',
+        element: <Renew />,
+      },
       ...(isPreviewRelease ? [] : devPages),
 
       // Legacy PHPWind handlers for backward compatibility.
@@ -195,6 +195,14 @@ routes.current = [
     path: '/resetpassword/email',
     id: 'resetpassword_email',
     element: <ResetPasswordEmailHome />,
+  },
+  {
+    path: '/graduate_bind/frontend',
+    loader: () => redirect(pages.renew),
+  },
+  {
+    path: '/graduate_bind/frontend/index.html',
+    loader: () => redirect(pages.renew),
   },
 ]
 
