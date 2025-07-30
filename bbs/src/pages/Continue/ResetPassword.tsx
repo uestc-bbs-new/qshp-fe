@@ -200,7 +200,11 @@ export const ResetPasswordHome = () => {
               </Button>
             </Stack>
             <Typography variant="h6" textAlign="justify" mt={6}>
-              毕业用户请通过
+              毕业用户请
+              <Link to={pages.resetPasswordByEmail}>
+                点击此处通过邮箱重置密码
+              </Link>
+              。若您注册时未填写有效邮箱，或遇到其他问题，请通过
               <WebmasterContact />
               联系站长。
             </Typography>
