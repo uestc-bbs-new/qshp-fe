@@ -34,6 +34,7 @@ import { useAppState } from '@/states'
 import { gotoIdas, pages } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
+import { saveCookiesForVpn } from '@/utils/vpn_cookie'
 
 import Captcha, { Captcha as CaptchaType } from '../Captcha'
 import Password from '../icons/Password'
@@ -144,6 +145,9 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       close()
       state.globalDialog?.successCallback &&
         state.globalDialog.successCallback()
+      if (isVpnProxy) {
+        saveCookiesForVpn()
+      }
     } catch (e_) {
       const e = e_ as
         | {

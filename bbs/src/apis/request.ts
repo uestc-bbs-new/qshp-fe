@@ -7,10 +7,13 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios'
 
+import { isVpnProxy } from '@/utils/siteRoot'
+
 import registerAuthAdoptLegacyInterceptors from './interceptors/authAdoptLegacy'
 import registerAuthHeaderInterceptors from './interceptors/authHeader'
 import registerSystemInterceptors from './interceptors/system'
 import registerUserInterceptors from './interceptors/user'
+import registerVpnInitInterceptors from './interceptors/vpnInit'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
 const commonUrl = '/star/api/v1'
@@ -209,6 +212,12 @@ const authConfig = {
 
 const authService = new AxiosWrapper(axios.create(authConfig))
 const authServiceWithUser = new AxiosWrapper(axios.create(authConfig))
+
+if (isVpnProxy) {
+  registerVpnInitInterceptors(service)
+  registerVpnInitInterceptors(authService)
+  registerVpnInitInterceptors(authServiceWithUser)
+}
 
 registerAuthHeaderInterceptors(service)
 registerAuthAdoptLegacyInterceptors(service.axios)

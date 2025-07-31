@@ -25,12 +25,14 @@ import { useAppState } from '@/states'
 import { UserState } from '@/states/reducers/stateReducer'
 import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
+import { isVpnProxy } from '@/utils/siteRoot'
 import { persistedStates } from '@/utils/storage'
 import {
   getSystemTheme,
   getTextFromThemeSetting,
   useSystemThemeChange,
 } from '@/utils/theme'
+import { clearSavedCookiesForVpn } from '@/utils/vpn_cookie'
 
 import { getTotalMessages } from '../../utils/messages'
 import Avatar from '../Avatar'
@@ -46,6 +48,9 @@ const MenuContent = ({ small }: { small?: boolean }) => {
 
   const logout = async () => {
     await signOut()
+    if (isVpnProxy) {
+      clearSavedCookiesForVpn()
+    }
     dispatch({ type: 'set user' })
   }
 
