@@ -196,6 +196,13 @@ routes.current = [
     id: 'resetpassword_email',
     element: <ResetPasswordEmailHome />,
   },
+
+  // Special redirects
+  {
+    path: '/freshman/guide',
+    loader: () => redirect(pages.thread(2344547)),
+  },
+  // Legacy redirects
   {
     path: '/graduate_bind/frontend',
     loader: () => redirect(pages.renew),
