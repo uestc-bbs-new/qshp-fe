@@ -1,3 +1,5 @@
+import { isVpnProxy } from './siteRoot'
+
 const kIdbName = 'newbbs_webvpn_cookie_tjufo823'
 const kAesKey = 'tsn/0[9)8g6%PpuhRSG&ypTCCNS*LyGT'
 const kAesIv = 'nni.u/0ip0,.90p9'
@@ -104,6 +106,9 @@ const getCookies = () => {
 }
 
 const initForVpn = async () => {
+  if (!isVpnProxy) {
+    return
+  }
   await Promise.all([initCrypto(), initKv()])
   let savedCookies: SavedCookies | undefined = undefined
   try {
