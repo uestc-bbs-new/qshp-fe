@@ -16,9 +16,9 @@ import {
   Typography,
 } from '@mui/material'
 
+import { Collection } from '@/apis/types/collection'
 import { getUserFavorites } from '@/apis/user'
 import { User } from '@/common/interfaces/base'
-import { Collection } from '@/common/interfaces/collection'
 import { UserFavorite } from '@/common/interfaces/user'
 import Avatar from '@/components/Avatar'
 import EmptyList from '@/components/EmptyList'

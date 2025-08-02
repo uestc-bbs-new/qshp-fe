@@ -1,7 +1,7 @@
+import { Collection } from '@/apis/types/collection'
 import { FieldOptional } from '@/utils/types'
 
 import { ExtCreditMap, User } from './base'
-import { Collection } from './collection'
 import {
   GenericList,
   ThreadBasics,

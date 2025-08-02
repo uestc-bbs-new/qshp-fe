@@ -1,7 +1,7 @@
 import { CollectionsBookmark } from '@mui/icons-material'
 import { Grid, Stack, Typography } from '@mui/material'
 
-import { Collection } from '@/common/interfaces/collection'
+import { Collection } from '@/apis/types/collection'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import Separated from '@/components/Separated'

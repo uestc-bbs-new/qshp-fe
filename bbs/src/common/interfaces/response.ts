@@ -1,5 +1,6 @@
+import { Collection } from '@/apis/types/collection'
+
 import { Attachment, AttachmentSummary, ExtCreditMap } from './base'
-import { Collection } from './collection'
 import { Forum, ForumDetails } from './forum'
 
 export type PaginationParams = {
