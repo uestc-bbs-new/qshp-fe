@@ -245,6 +245,14 @@ const Breadcrumbs = () => {
         'messages_posts',
         'messages_system',
       ].includes(activeRoute?.id ?? '') && messages(activeRoute, narrowView)}
+      {activeRoute?.id == 'settings' && [
+        <StyledRouterLink key="1" to={pages.settings()}>设置</StyledRouterLink>
+      ]}
+      {activeRoute?.id == 'renew' && [
+        <Typography key="1">设置</Typography>,
+        <Typography key="2">账号安全</Typography>,
+        <Typography key="3">实名换绑</Typography>,
+      ]}
     </MuiBreadcrumbs>
   )
 }
