@@ -9,6 +9,7 @@ import ThemeProvider from './components/ThemeProvider'
 import ImageViewDialog from './dialogs/ImageViewDialog'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
+import { BreadcrumbProvider } from './states/breadcrumb'
 import {
   UserCallbackDetails,
   registerUserCallback,
@@ -53,19 +54,23 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AppContext.Provider value={{ state, dispatch }}>
         <ThemeProvider theme={state.theme}>
-          <>
-            <RouterProvider router={router} />
-            {state.globalDialog?.kind == 'login' && <LoginDialog open />}
-            {state.globalDialog?.kind == 'register' && <RegisterDialog open />}
-            {state.globalDialog?.kind == 'image' &&
-              state.globalDialog?.imageDetails?.images && (
-                <ImageViewDialog
-                  open
-                  onClose={() => dispatch({ type: 'close dialog' })}
-                  details={state.globalDialog.imageDetails}
-                />
+          <BreadcrumbProvider>
+            <>
+              <RouterProvider router={router} />
+              {state.globalDialog?.kind == 'login' && <LoginDialog open />}
+              {state.globalDialog?.kind == 'register' && (
+                <RegisterDialog open />
               )}
-          </>
+              {state.globalDialog?.kind == 'image' &&
+                state.globalDialog?.imageDetails?.images && (
+                  <ImageViewDialog
+                    open
+                    onClose={() => dispatch({ type: 'close dialog' })}
+                    details={state.globalDialog.imageDetails}
+                  />
+                )}
+            </>
+          </BreadcrumbProvider>
         </ThemeProvider>
       </AppContext.Provider>
     </QueryClientProvider>

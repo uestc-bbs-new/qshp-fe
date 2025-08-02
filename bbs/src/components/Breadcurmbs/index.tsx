@@ -21,6 +21,7 @@ import { styled } from '@mui/material/styles'
 
 import routes from '@/routes/routes'
 import { useAppState } from '@/states'
+import { BreadcrumbState, useBreadcrumb } from '@/states/breadcrumb'
 import { State } from '@/states/reducers/stateReducer'
 import { isPreviewRelease } from '@/utils/releaseMode'
 import {
@@ -165,6 +166,26 @@ const messages = (route?: RouteObject, narrowView?: boolean) => {
   ]
 }
 
+const collection = (route: RouteObject, breadcrumb: BreadcrumbState) => {
+  return [
+    <Typography key="1">公共收藏夹</Typography>,
+    ...(route?.id == 'collection_content'
+      ? [
+          breadcrumb.collection ? (
+            <StyledRouterLink
+              key="2"
+              to={pages.collection(breadcrumb.collection.id)}
+            >
+              {breadcrumb.collection.name}
+            </StyledRouterLink>
+          ) : (
+            <TextSkeleton key="2" width={160} />
+          ),
+        ]
+      : []),
+  ]
+}
+
 const maybeJoinWithSpace = (a: string, b: string) => {
   if (a == '' || b == '') {
     return a + b
@@ -178,6 +199,7 @@ const maybeJoinWithSpace = (a: string, b: string) => {
 const Breadcrumbs = () => {
   const [searchParams] = useSearchParams()
   const { state } = useAppState()
+  const { breadcrumb } = useBreadcrumb()
 
   const location = useLocation()
   const matches = matchRoutes(routes.current, location)
@@ -245,6 +267,9 @@ const Breadcrumbs = () => {
         'messages_posts',
         'messages_system',
       ].includes(activeRoute?.id ?? '') && messages(activeRoute, narrowView)}
+      {activeRoute &&
+        ['collection_content'].includes(activeRoute.id ?? '') &&
+        collection(activeRoute, breadcrumb)}
       {activeRoute?.id == 'settings' && [
         <StyledRouterLink key="1" to={pages.settings()}>
           设置

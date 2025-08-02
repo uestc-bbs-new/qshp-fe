@@ -107,6 +107,7 @@ export const pages = {
     withSearchAndHash(`/forum/${forum_id}`, query),
   goto: (post_id: number) => `/goto/${post_id}`,
   post: (forum_id?: number) => `/post${forum_id ? `/${forum_id}` : ''}`,
+  collection: (id?: number) => `/collection${id ? `/${id}` : ''}`,
 
   messages: (subPage?: MessageGroup) =>
     `/messages${subPage ? `/${subPage}` : ''}`,
