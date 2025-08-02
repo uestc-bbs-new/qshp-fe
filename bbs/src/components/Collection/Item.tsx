@@ -1,7 +1,8 @@
 import { Stack, Typography } from '@mui/material'
 
 import { Collection } from '@/apis/types/collection'
-import { legacyPages } from '@/utils/routes'
+import { isDeveloper } from '@/states/settings'
+import { legacyPages, pages } from '@/utils/routes'
 
 import Avatar from '../Avatar'
 import Link from '../Link'
@@ -11,13 +12,17 @@ export const CollectionItemLite = ({ item }: { item: Collection }) => (
   <Stack direction="row" alignItems="center">
     <Avatar uid={item.uid} size={36} sx={{ mr: 2 }} />
     <Stack>
-      <Link
-        external
-        target="_blank"
-        to={legacyPages.collection(item.collection_id)}
-      >
-        {item.name}
-      </Link>
+      {isDeveloper() ? (
+        <Link to={pages.collection(item.collection_id)}>{item.name}</Link>
+      ) : (
+        <Link
+          external
+          target="_blank"
+          to={legacyPages.collection(item.collection_id)}
+        >
+          {item.name}
+        </Link>
+      )}
       <Typography variant="userItemDetails">
         <Stack direction="row" spacing={0.75}>
           <Separated separator={<span>·</span>}>

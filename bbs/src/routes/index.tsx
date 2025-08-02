@@ -7,6 +7,7 @@ import {
 
 import adminRoutes from '@/admin/routes'
 import betRoutes from '@/ext/bet/routes'
+import CollectionContent from '@/pages/Collection/Content'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import {
   EmailContinue,
@@ -54,6 +55,11 @@ const devPages: RouteObject[] = [
     path: '/settings/:id?',
     id: 'settings',
     element: <Settings />,
+  },
+  {
+    path: '/collection/:id?',
+    id: 'collection_content',
+    element: <CollectionContent />,
   },
 ]
 

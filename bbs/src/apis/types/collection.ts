@@ -1,3 +1,6 @@
+import { User } from '@/common/interfaces/base'
+import { PaginationParams, ThreadInList } from '@/common/interfaces/response'
+
 export type Collection = {
   collection_id: number
   uid: number
@@ -21,4 +24,14 @@ export type Collection = {
   keyword: string
 
   is_owner: boolean
+}
+
+export type CollectionDetails = Collection & {
+  collaborators?: User[]
+  other_collections?: Collection[]
+}
+
+export type CollectionQueryResponse = PaginationParams & {
+  threads?: ThreadInList[]
+  collection?: CollectionDetails
 }
