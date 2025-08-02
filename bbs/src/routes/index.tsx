@@ -47,6 +47,8 @@ const indexLoader = ({ request }: { request: Request }) => {
   return redirect('/new')
 }
 
+const freshmanGuideLoader = () => redirect(pages.thread(2344547))
+
 const devPages: RouteObject[] = [
   {
     path: '/settings/:id?',
@@ -200,7 +202,19 @@ routes.current = [
   // Special redirects
   {
     path: '/freshman/guide',
-    loader: () => redirect(pages.thread(2344547)),
+    loader: freshmanGuideLoader,
+  },
+  {
+    path: '/freshman_guide',
+    loader: freshmanGuideLoader,
+  },
+  {
+    path: '/freshman-guide',
+    loader: freshmanGuideLoader,
+  },
+  {
+    path: '/bus',
+    loader: () => redirect(pages.thread(1430861))
   },
   // Legacy redirects
   {
