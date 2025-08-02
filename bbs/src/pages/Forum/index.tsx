@@ -31,10 +31,10 @@ import Chip from '@/components/Chip'
 import PostEditor from '@/components/Editor/PostEditor'
 import Error from '@/components/Error'
 import Link, { MenuItemLink } from '@/components/Link'
+import ForumPagination from '@/components/Pagination/ForumPagination'
 import ThreadItem from '@/components/ThreadItem'
 import { useAppState, useSignInChange } from '@/states'
 import { pages } from '@/utils/routes'
-import { scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
 
 import Head from './ForumHead'
@@ -124,42 +124,6 @@ const Normal = ({ query, searchParams, onChange, children }: NormalProps) => {
     </>
   )
 }
-
-const ForumPagination = forwardRef(function ForumPagination(
-  {
-    count,
-    page,
-    onChange,
-  }: {
-    count: number
-    page: number
-    onChange: (_: React.ChangeEvent<unknown>, page: number) => void
-  },
-  ref
-) {
-  const thinView = useMediaQuery('(max-width: 560px)')
-  return count > 1 ? (
-    <Pagination
-      size="small"
-      count={count}
-      page={page}
-      onChange={onChange}
-      boundaryCount={thinView ? 1 : 2}
-      siblingCount={thinView ? 1 : 5}
-      variant="outlined"
-      shape="rounded"
-      style={{ margin: '20px' }}
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        ...scrollAnchorSx,
-      }}
-      ref={ref}
-    />
-  ) : (
-    <></>
-  )
-})
 
 const ThreadTypeFilter = ({
   forumId,
