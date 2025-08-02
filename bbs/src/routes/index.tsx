@@ -214,7 +214,7 @@ routes.current = [
   },
   {
     path: '/bus',
-    loader: () => redirect(pages.thread(1430861))
+    loader: () => redirect(pages.thread(1430861)),
   },
   // Legacy redirects
   {

@@ -246,7 +246,9 @@ const Breadcrumbs = () => {
         'messages_system',
       ].includes(activeRoute?.id ?? '') && messages(activeRoute, narrowView)}
       {activeRoute?.id == 'settings' && [
-        <StyledRouterLink key="1" to={pages.settings()}>设置</StyledRouterLink>
+        <StyledRouterLink key="1" to={pages.settings()}>
+          设置
+        </StyledRouterLink>,
       ]}
       {activeRoute?.id == 'renew' && [
         <Typography key="1">设置</Typography>,
