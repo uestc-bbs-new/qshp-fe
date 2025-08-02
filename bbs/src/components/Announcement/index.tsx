@@ -88,7 +88,7 @@ export const AnnouncementBody = ({
   const highlightColor = !item.highlight_color
     ? undefined
     : theme.palette.mode == 'dark'
-      ? item.dark_highlight_color ?? item.highlight_color
+      ? (item.dark_highlight_color ?? item.highlight_color)
       : item.highlight_color
   return (
     <Stack
