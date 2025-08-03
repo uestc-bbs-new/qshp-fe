@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 
 import { ThreadBasics, TopListKey } from '@/common/interfaces/response'
+import { useAppState } from '@/states'
 import { topListTitleMap } from '@/utils/constants'
 import { pages } from '@/utils/routes'
 
@@ -23,15 +24,36 @@ const kCount = 8
 const HeaderCardBase = ({
   header,
   list,
+  filteredCount,
 }: {
   header: React.ReactNode
   list: React.ReactNode
+  filteredCount?: number
 }) => (
   <Box className="relative overflow-hidden p-1" style={{ width: '100%' }}>
     <Paper elevation={3}>
       {header}
       {list}
     </Paper>
+    {!!filteredCount && (
+      <Typography
+        sx={{
+          position: 'absolute',
+          right: '0.25em',
+          bottom: '0.25em',
+          borderRadius: '100%',
+          width: '1.5em',
+          lineHeight: '1.5em',
+          height: '1.5em',
+          backgroundColor: 'rgba(0, 0, 0, 0.15)',
+          color: 'white',
+          textAlign: 'center',
+          transform: 'scale(0.72)',
+        }}
+      >
+        -{filteredCount}
+      </Typography>
+    )}
   </Box>
 )
 
@@ -106,21 +128,56 @@ const TopListView = ({
   </Stack>
 )
 
-const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => (
-  <HeaderCardBase
-    header={
-      <Box
-        className="pt-3 px-8 pb-2"
-        sx={(theme) => ({ ...theme.commonSx.headerCardGradient })}
-      >
-        <Typography sx={{ fontWeight: 'bold' }} variant="h6">
-          {topListTitleMap[id]}
-        </Typography>
-      </Box>
+const HeaderCard = ({ id, list }: { id: TopListKey; list: ThreadBasics[] }) => {
+  const { state } = useAppState()
+  const feSettings = state.feSettings
+  let filteredCount = 0
+  let unfilteredCount = 0
+  const filteredList = list.filter((thread) => {
+    let result = true
+    if (id == 'digest') {
+      return result
     }
-    list={<TopListView id={id} list={list} />}
-  />
-)
+    if (
+      feSettings?.user_blacklist?.some((item) => thread.author_id == item.uid)
+    ) {
+      result = false
+    } else if (feSettings?.forum_blacklist?.includes(thread.forum_id)) {
+      result = false
+    } else if (
+      feSettings?.keyword_blackilst?.some(
+        (item) =>
+          thread.subject.includes(item.kw) ||
+          (item.include_summary && thread.summary?.includes(item.kw))
+      )
+    ) {
+      result = false
+    }
+    if (result) {
+      ++unfilteredCount
+    } else if (unfilteredCount < kCount) {
+      ++filteredCount
+    }
+    return result
+  })
+  return (
+    <HeaderCardBase
+      header={
+        <Stack
+          direction="row"
+          className="pt-3 px-8 pb-2"
+          sx={(theme) => ({ ...theme.commonSx.headerCardGradient })}
+        >
+          <Typography sx={{ fontWeight: 'bold' }} variant="h6">
+            {topListTitleMap[id]}
+          </Typography>
+        </Stack>
+      }
+      list={<TopListView id={id} list={filteredList} />}
+      filteredCount={filteredCount}
+    />
+  )
+}
 
 export const TabbedHeaderCard = ({
   ids,

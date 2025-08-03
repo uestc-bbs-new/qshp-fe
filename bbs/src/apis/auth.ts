@@ -4,8 +4,13 @@ import request, {
   commonUrl,
 } from '@/apis/request'
 import { User } from '@/common/interfaces/base'
+import {
+  deleteUserFrontendCache,
+  updateUserFrontendCache,
+} from '@/states/settings'
 
 import { CaptchaConfiguration } from './types/common'
+import { UserFrontendSettings } from './types/user'
 
 const authUrl = `${commonUrl}/auth`
 
@@ -16,6 +21,9 @@ export type EphemeralAuthorization = {
 
 export type AuthorizationResult = {
   authorization: string
+  uid?: number
+  user_settings_version?: number
+  user_frontend_settings?: UserFrontendSettings
 }
 
 export type IdasAuthResult = Partial<AuthorizationResult> & {
@@ -39,6 +47,23 @@ const getCaptchaHeaders = (params?: CaptchaResult) => ({
   }),
 })
 
+async function wrapAuthResult<T extends Partial<AuthorizationResult>>(
+  result: T
+) {
+  if (
+    result.uid &&
+    result.user_settings_version != undefined &&
+    result.user_frontend_settings
+  ) {
+    await updateUserFrontendCache(
+      result.uid,
+      result.user_settings_version,
+      result.user_frontend_settings
+    )
+  }
+  return result
+}
+
 export const signIn = (
   params: {
     username: string
@@ -46,17 +71,19 @@ export const signIn = (
     keep_signed_in: boolean
   } & CaptchaResult
 ) => {
-  return authServiceWithUser.post<AuthorizationResult>(
-    `${authUrl}/signin`,
-    {
-      username: params.username,
-      password: params.password,
-      keep_signed_in: params.keep_signed_in,
-    },
-    {
-      headers: getCaptchaHeaders(params),
-    }
-  )
+  return authServiceWithUser
+    .post<AuthorizationResult>(
+      `${authUrl}/signin`,
+      {
+        username: params.username,
+        password: params.password,
+        keep_signed_in: params.keep_signed_in,
+      },
+      {
+        headers: getCaptchaHeaders(params),
+      }
+    )
+    .then(wrapAuthResult)
 }
 
 export const idasAuth = (params: {
@@ -65,7 +92,9 @@ export const idasAuth = (params: {
   signin?: boolean
   version?: number
 }) => {
-  return authServiceWithUser.post<IdasAuthResult>(`${authUrl}/idas`, params)
+  return authServiceWithUser
+    .post<IdasAuthResult>(`${authUrl}/idas`, params)
+    .then(wrapAuthResult)
 }
 
 export const idasChooseUser = (
@@ -73,10 +102,9 @@ export const idasChooseUser = (
     user_id: number
   }
 ) => {
-  return authServiceWithUser.post<AuthorizationResult>(
-    `${authUrl}/signin/user`,
-    params
-  )
+  return authServiceWithUser
+    .post<AuthorizationResult>(`${authUrl}/signin/user`, params)
+    .then(wrapAuthResult)
 }
 
 export const idasFreshman = (params: EphemeralAuthorization) => {
@@ -102,10 +130,9 @@ export const register = (
     invitation?: string
   }
 ) => {
-  return authServiceWithUser.post<AuthorizationResult>(
-    `${authUrl}/register`,
-    params
-  )
+  return authServiceWithUser
+    .post<AuthorizationResult>(`${authUrl}/register`, params)
+    .then(wrapAuthResult)
 }
 export const resetPassword = (
   params: EphemeralAuthorization & {
@@ -146,7 +173,7 @@ export const resetPasswordByEmail = (
   )
 
 export const signOut = () => {
-  return authService.post(`${authUrl}/signout`)
+  return authService.post(`${authUrl}/signout`).then(deleteUserFrontendCache)
 }
 
 export const checkRenew = () =>

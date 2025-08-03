@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 
+import { getUserFrontendSettings } from './apis/user'
 import LoginDialog from './components/Login/LoginDialog'
 import RegisterDialog from './components/Login/RegisterDialog'
 import ThemeProvider from './components/ThemeProvider'
@@ -10,6 +11,10 @@ import ImageViewDialog from './dialogs/ImageViewDialog'
 import router from './routes'
 import useAppStateContext, { AppContext } from './states'
 import { BreadcrumbProvider } from './states/breadcrumb'
+import {
+  getUserFrontendCache,
+  updateUserFrontendCache,
+} from './states/settings'
 import {
   UserCallbackDetails,
   registerUserCallback,
@@ -27,6 +32,8 @@ const queryClient = new QueryClient({
   },
 })
 
+let frontendSettingsUpdatePending = false
+
 function App() {
   const [state, dispatch] = useAppStateContext()
 
@@ -40,8 +47,36 @@ function App() {
       }
       dispatch({ type: 'set user', payload: details.user })
     }
+
+    const frontendSettingsCallback = async (details: UserCallbackDetails) => {
+      if (details.user?.settings_version != undefined) {
+        const cache = await getUserFrontendCache(details.user.uid)
+        if (
+          cache?._version != details.user.settings_version &&
+          !frontendSettingsUpdatePending
+        ) {
+          frontendSettingsUpdatePending = true
+          try {
+            const value = await getUserFrontendSettings()
+            await updateUserFrontendCache(
+              details.user.uid,
+              details.user.settings_version,
+              value
+            )
+            dispatch({ type: 'set feSettings', payload: value })
+          } finally {
+            frontendSettingsUpdatePending = false
+          }
+        }
+      }
+    }
+
     registerUserCallback(callback)
-    return () => unregisterUserCallback(callback)
+    registerUserCallback(frontendSettingsCallback)
+    return () => {
+      unregisterUserCallback(callback)
+      unregisterUserCallback(frontendSettingsCallback)
+    }
   }, [])
 
   useSystemThemeChange((theme) => {

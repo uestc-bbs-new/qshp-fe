@@ -1,3 +1,4 @@
+import { UserFrontendSettings } from '@/apis/types/user'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { Announcement } from '@/common/interfaces/response'
 import { getTotalMessages } from '@/utils/messages'
@@ -15,6 +16,7 @@ export type UserState = {
   new_pm_legacy?: boolean
   new_grouppm_legacy?: boolean
   new_notification?: number
+  settings_version?: number
 }
 
 type ThreadBreadcumbEntry = {
@@ -61,6 +63,7 @@ type TopListViewState = {
 export type State = {
   drawer: boolean
   user: UserState
+  feSettings?: UserFrontendSettings
   userBreadcumbs?: {
     uid?: number
     username?: string
@@ -169,6 +172,8 @@ export const stateReducer = (state: State, action: StateAction): State => {
         ...state,
         announcement: action.payload,
       }
+    case 'set feSettings':
+      return { ...state, feSettings: action.payload }
     default:
       return state
   }

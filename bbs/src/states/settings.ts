@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { createStore, get, set } from 'idb-keyval'
+import { createStore, del, get, set } from 'idb-keyval'
 
 import { useEffect, useRef } from 'react'
 
 import { getSystemSettings } from '@/apis/system'
+import { UserFrontendSettings } from '@/apis/types/user'
 import {
   Medal,
   SystemSettings,
@@ -94,6 +95,57 @@ export const useMedals = () => {
     }
   }, [currentVersion])
   return data
+}
+
+const kUserFrontendCache = '_user_frontend'
+type UserFrontendCache = {
+  _version: number
+  _uid: number
+  value: UserFrontendSettings
+}
+let currentUserFrontendCache: UserFrontendCache | undefined
+let userFrontendCacheInitialized = false
+
+export const initUserFrontendCache = async () => {
+  if (!userFrontendCacheInitialized) {
+    const result = await get<UserFrontendCache>(kUserFrontendCache, store)
+    userFrontendCacheInitialized = true
+    return result
+  }
+}
+initUserFrontendCache()
+export const getCachedUserFrontendSettings = (uid: number) => {
+  if (currentUserFrontendCache?._uid == uid) {
+    return currentUserFrontendCache
+  }
+}
+export const getUserFrontendCache = async (uid: number) => {
+  if (userFrontendCacheInitialized) {
+    return getCachedUserFrontendSettings(uid)
+  } else {
+    const result = await initUserFrontendCache()
+    if (uid == result?._uid) {
+      currentUserFrontendCache = result
+      return result
+    }
+  }
+}
+export const updateUserFrontendCache = async (
+  uid: number,
+  version: number,
+  value: UserFrontendSettings
+) => {
+  const cachedValue = {
+    _version: version,
+    _uid: uid,
+    value,
+  }
+  await set(kUserFrontendCache, cachedValue, store)
+  currentUserFrontendCache = cachedValue
+}
+export const deleteUserFrontendCache = async () => {
+  await del(kUserFrontendCache, store)
+  currentUserFrontendCache = undefined
 }
 
 const init = async () => {

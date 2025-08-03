@@ -13,6 +13,8 @@ import {
 } from '@/common/interfaces/user'
 import { unescapeSubject } from '@/utils/htmlEscape'
 
+import { UserFrontendSettings } from './types/user'
+
 export type CommonQueryParams = Partial<User> & {
   /** 是否获取用户概况（用户空间顶部显示的内容） */
   getUserSummary?: boolean
@@ -197,3 +199,6 @@ export const deleteUserFavorite = (options: {
     `${userApiBase}/favorites/delete`,
     options
   )
+
+export const getUserFrontendSettings = () =>
+  request.get<UserFrontendSettings>(`${userApiBase}/settings/frontend`)
