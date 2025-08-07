@@ -17,7 +17,9 @@ export const useWatermark = ({ text }: { text: string }) => {
       watermarkObserver.current = undefined
     }
     if (root.current) {
-      document.body.removeChild(root.current)
+      try {
+        document.body.removeChild(root.current)
+      } catch (_) {}
       root.current = undefined
     }
   }
@@ -63,7 +65,7 @@ export const useWatermark = ({ text }: { text: string }) => {
             [root.current].includes.call(record.removedNodes, root.current)
         )
       ) {
-        createNew()
+        setup()
       }
     })
     bodyObserver.current.observe(document.body, { childList: true })
