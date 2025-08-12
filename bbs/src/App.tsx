@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom'
 
 import LoginDialog from './components/Login/LoginDialog'
 import RegisterDialog from './components/Login/RegisterDialog'
+import Renew2025Dialog from './components/Login/Renew2025Dialog'
 import ThemeProvider from './components/ThemeProvider'
 import ImageViewDialog from './dialogs/ImageViewDialog'
 import router from './routes'
@@ -38,6 +39,9 @@ function App() {
         })
       }
       dispatch({ type: 'set user', payload: details.user })
+      if (details.user?.user_class == 'gtest') {
+        dispatch({ type: 'open dialog', payload: { kind: 'renew2025' } })
+      }
     }
     registerUserCallback(callback)
     return () => unregisterUserCallback(callback)
@@ -65,6 +69,9 @@ function App() {
                   details={state.globalDialog.imageDetails}
                 />
               )}
+            {state.globalDialog?.kind == 'renew2025' && (
+              <Renew2025Dialog open />
+            )}
           </>
         </ThemeProvider>
       </AppContext.Provider>

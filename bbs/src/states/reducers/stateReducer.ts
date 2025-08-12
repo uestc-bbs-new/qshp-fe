@@ -15,6 +15,7 @@ export type UserState = {
   new_pm_legacy?: boolean
   new_grouppm_legacy?: boolean
   new_notification?: number
+  user_class?: string
 }
 
 type ThreadBreadcumbEntry = {
@@ -35,7 +36,7 @@ export type ImageViewDetails = {
 }
 
 type GlobalDialogState = {
-  kind?: 'login' | 'register' | 'image'
+  kind?: 'login' | 'register' | 'image' | 'renew2025'
   prompt?: string
   imageDetails?: ImageViewDetails
   onlyPasswordLogin?: boolean
