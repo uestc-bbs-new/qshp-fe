@@ -39,7 +39,10 @@ function App() {
         })
       }
       dispatch({ type: 'set user', payload: details.user })
-      if (details.user?.user_class == 'gtest') {
+      if (
+        details.user?.user_class == 'gtest' &&
+        location.pathname != '/continue/renew'
+      ) {
         dispatch({ type: 'open dialog', payload: { kind: 'renew2025' } })
       }
     }
