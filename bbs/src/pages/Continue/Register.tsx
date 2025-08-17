@@ -175,13 +175,13 @@ export const RegisterForm = ({
             autoFocus
             name="username"
             helperText={
-              userNamePrompt ? (
+              userNameError ||
+              (userNamePrompt && (
                 <span style={{ color: theme.palette.warning.main }}>
                   {userNamePrompt}
                 </span>
-              ) : (
-                userNameError || '注册后不能随意修改用户名，请认真考虑后填写。'
-              )
+              )) ||
+              '注册后不能随意修改用户名，请认真考虑后填写。'
             }
             error={!!userNameError}
             onChange={suggestUserName}
