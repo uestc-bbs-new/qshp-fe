@@ -20,6 +20,7 @@ import {
   FormControlLabel,
   IconButton,
   Stack,
+  SxProps,
   TextField,
   Typography,
 } from '@mui/material'
@@ -34,6 +35,7 @@ import {
   setHotlistConfig,
 } from '@/apis/admin/toplist'
 import Avatar from '@/components/Avatar'
+import { ForumSelect } from '@/components/Editor/ForumSelect'
 import Link from '@/components/Link'
 import { globalCache, useForumList } from '@/states'
 import { chineseTime } from '@/utils/dayjs'
@@ -148,12 +150,14 @@ const ForumEntry = ({
   fid,
   editing,
   onRemove,
+  sx,
 }: {
   fid: number
   editing?: boolean
   onRemove?: () => void
+  sx?: SxProps
 }) => (
-  <Stack direction="row" alignItems="flex-end" flexShrink={0}>
+  <Stack direction="row" alignItems="flex-end" flexShrink={0} sx={sx}>
     <Link to={pages.forum(fid)} target="_blank">
       {globalCache.fidNameMap[fid]}
     </Link>
@@ -413,6 +417,32 @@ const Toplist = () => {
   const [list, setList] = useState<HotlistCandidate[]>()
   useForumList()
 
+  const [excludeFidEditing, setExcludeFidEditing] = useState(false)
+  const [forumSelectOpen, setForumSelectOpen] = useState(false)
+  const handleEditExcludeFid = () => setExcludeFidEditing(!excludeFidEditing)
+  const handleSelectExcludeFid = () => setForumSelectOpen(true)
+  const handleAddExcludeFid = (fid?: number) => {
+    if (!config || !fid || config.excluded_fids?.includes(fid)) {
+      return
+    }
+    setConfig(
+      Object.assign({}, config, {
+        excluded_fids: (config.excluded_fids || []).concat([fid]),
+      })
+    )
+    setForumSelectOpen(false)
+  }
+  const handleRemoveExcludeFid = (fid: number) => {
+    if (!config || !config.excluded_fids) {
+      return
+    }
+    setConfig(
+      Object.assign({}, config, {
+        excluded_fids: config.excluded_fids.filter((item) => item != fid),
+      })
+    )
+  }
+
   if (isLoading) {
     return (
       <Stack alignItems="center" my={3}>
@@ -425,12 +455,43 @@ const Toplist = () => {
       <Typography variant="h4">热门管理</Typography>
       {config && (
         <>
-          <Typography variant="h6">排除版块：</Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            my={1}
+          >
+            <Typography variant="h6">排除版块：</Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleEditExcludeFid}
+            >
+              {excludeFidEditing ? '完成' : '编辑'}
+            </Button>
+          </Stack>
           {config.excluded_fids ? (
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-              {config.excluded_fids.sort().map((fid) => (
-                <ForumEntry key={fid} fid={fid} />
+            <Stack direction="row" flexWrap="wrap" alignItems="center">
+              {config.excluded_fids.map((fid) => (
+                <ForumEntry
+                  key={fid}
+                  fid={fid}
+                  editing={excludeFidEditing}
+                  onRemove={() => handleRemoveExcludeFid(fid)}
+                  sx={{ m: 0.5 }}
+                />
               ))}
+              {excludeFidEditing && (
+                <Button
+                  onClick={handleSelectExcludeFid}
+                  variant="contained"
+                  size="small"
+                  sx={{ my: 1 }}
+                >
+                  <AddCircle />
+                  <Typography>添加</Typography>
+                </Button>
+              )}
             </Stack>
           ) : (
             <None />
@@ -586,6 +647,9 @@ const Toplist = () => {
           )}
           <pre>{JSON.stringify(config, null, 2)}</pre>
         </>
+      )}
+      {forumSelectOpen && (
+        <ForumSelect open onCompleted={handleAddExcludeFid} />
       )}
     </>
   )
