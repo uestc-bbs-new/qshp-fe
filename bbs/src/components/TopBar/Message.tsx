@@ -104,6 +104,7 @@ const MessagePopover = () => {
     <>
       <Tooltip
         title={<MessageTabs />}
+        enterTouchDelay={0}
         slotProps={{
           tooltip: { sx: { fontSize: '1em' } },
           popper: { placement: 'bottom-end' },
