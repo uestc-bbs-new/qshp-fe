@@ -1,16 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
-import React, { useRef, useState } from 'react'
+import React from 'react'
 
 import { MarkunreadOutlined } from '@mui/icons-material'
-import {
-  Badge,
-  Box,
-  ClickAwayListener,
-  Divider,
-  List,
-  MenuItem,
-} from '@mui/material'
+import { Badge, Box, Divider, List, MenuItem } from '@mui/material'
 
 import { getMessagesSummary } from '@/apis/messages'
 import Tooltip from '@/components/Tooltip'
@@ -107,53 +100,24 @@ export const MessageTabs = ({ small }: { small?: boolean }) => {
 
 const MessagePopover = () => {
   const { state } = useAppState()
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleToggle = () => setOpen(!open)
-  const handleClose = () => setOpen(false)
-  const enterTimeout = useRef<number>()
-  const enterDelay = 100
-  const handleMouseOver = () => {
-    if (enterTimeout.current) {
-      clearTimeout(enterTimeout.current)
-    }
-    enterTimeout.current = setTimeout(handleOpen, enterDelay)
-  }
-  const handleMouseLeave = () => {
-    clearTimeout(enterTimeout.current)
-    enterTimeout.current = undefined
-    handleClose()
-  }
-  // TODO: Maybe extract a separate component for reuse?
   return (
-    <ClickAwayListener onClickAway={handleClose}>
-      <div
-        onClick={handleToggle}
-        onMouseOver={handleMouseOver}
-        onMouseLeave={handleMouseLeave}
+    <>
+      <Tooltip
+        title={<MessageTabs />}
+        slotProps={{
+          tooltip: { sx: { fontSize: '1em' } },
+          popper: { placement: 'bottom-end' },
+        }}
       >
-        <Tooltip
-          title={<MessageTabs />}
-          slotProps={{
-            tooltip: { sx: { fontSize: '1em' } },
-            popper: { placement: 'bottom-end' },
-          }}
-          open={open}
-          onClose={handleClose}
-          disableFocusListener
-          disableHoverListener
-          disableTouchListener
+        <Badge
+          badgeContent={getTotalMessages(state.user)}
+          className="mx-3"
+          color="warning"
         >
-          <Badge
-            badgeContent={getTotalMessages(state.user)}
-            className="mx-3"
-            color="warning"
-          >
-            <MarkunreadOutlined className="text-white" />
-          </Badge>
-        </Tooltip>
-      </div>
-    </ClickAwayListener>
+          <MarkunreadOutlined className="text-white" />
+        </Badge>
+      </Tooltip>
+    </>
   )
 }
 
