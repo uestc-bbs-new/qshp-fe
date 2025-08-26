@@ -96,7 +96,7 @@ const Footer = ({
           举报
         </Button>
       )}
-      {isDeveloper() && !!post.is_first && (
+      {!!post.is_first && (
         <Button variant="text" onClick={() => setFavoriteDialog(true)}>
           收藏
           {!!threadDetails?.favorite_times &&
