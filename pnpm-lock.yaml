@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@mui/material@5.15.1':
+    hash: ye7wyz2ir4heish2lhauuoeza4
+    path: patches/@mui__material@5.15.1.patch
+
 importers:
 
   .:
@@ -68,7 +73,7 @@ importers:
         version: 5.15.1(@mui/material@5.15.1)(@types/react@18.2.45)(react@18.2.0)
       '@mui/material':
         specifier: ^5.15.1
-        version: 5.15.1(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
+        version: 5.15.1(patch_hash=ye7wyz2ir4heish2lhauuoeza4)(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.17.10
         version: 5.17.10(react@18.2.0)
@@ -1490,12 +1495,12 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.23.6
-      '@mui/material': 5.15.1(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
+      '@mui/material': 5.15.1(patch_hash=ye7wyz2ir4heish2lhauuoeza4)(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.45
       react: 18.2.0
     dev: false
 
-  /@mui/material@5.15.1(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0):
+  /@mui/material@5.15.1(patch_hash=ye7wyz2ir4heish2lhauuoeza4)(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-WA5DVyvacxDakVyAhNqu/rRT28ppuuUFFw1bLpmRzrCJ4uw/zLTATcd4WB3YbB+7MdZNEGG/SJNWTDLEIyn3xQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -1530,6 +1535,7 @@ packages:
       react-is: 18.2.0
       react-transition-group: 4.4.5(react-dom@18.2.0)(react@18.2.0)
     dev: false
+    patched: true
 
   /@mui/private-theming@5.15.1(@types/react@18.2.45)(react@18.2.0):
     resolution: {integrity: sha512-wTbzuy5KjSvCPE9UVJktWHJ0b/tD5biavY9wvF+OpYDLPpdXK52vc1hTDxSbdkHIFMkJExzrwO9GvpVAHZBnFQ==}

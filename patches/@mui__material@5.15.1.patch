@@ -1,0 +1,23 @@
+diff --git a/Tooltip/Tooltip.js b/Tooltip/Tooltip.js
+index 4e38a164648282102198f80cb9e7f115431aed07..5c199bae9e83f5a33fee0863358332f741b4052e 100644
+--- a/Tooltip/Tooltip.js
++++ b/Tooltip/Tooltip.js
+@@ -405,10 +405,16 @@ const Tooltip = /*#__PURE__*/React.forwardRef(function Tooltip(inProps, ref) {
+     prevUserSelect.current = document.body.style.WebkitUserSelect;
+     // Prevent iOS text selection on long-tap.
+     document.body.style.WebkitUserSelect = 'none';
+-    touchTimer.current = setTimeout(() => {
++		const timeoutEnter = () => {
+       document.body.style.WebkitUserSelect = prevUserSelect.current;
+       handleEnter(event);
+-    }, enterTouchDelay);
++    }
++    if (enterTouchDelay == 0) {
++      timeoutEnter()
++      touchTimer.current = null
++    } else {
++      touchTimer.current = setTimeout(timeoutEnter, enterTouchDelay);
++    }
+   };
+   const handleTouchEnd = event => {
+     if (children.props.onTouchEnd) {

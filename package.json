@@ -37,5 +37,10 @@
   },
   "dependencies": {
     "vite": "^6.2.6"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@mui/material@5.15.1": "patches/@mui__material@5.15.1.patch"
+    }
   }
 }
