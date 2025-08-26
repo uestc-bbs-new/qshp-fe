@@ -3,6 +3,15 @@ import { Announcement } from '@/common/interfaces/response'
 
 import { baseUrl } from './common'
 
+export type AdminPermissions = {
+  is_admin: boolean
+  announcement?: boolean
+  toplist?: boolean
+}
+
+export const getPermissions = () =>
+  request.get<AdminPermissions>(`${baseUrl}permissions`)
+
 const kAnnouncementUrl = `${baseUrl}global/announcement`
 
 export const getAnnouncement = () =>

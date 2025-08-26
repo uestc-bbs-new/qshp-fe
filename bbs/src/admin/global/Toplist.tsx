@@ -398,16 +398,15 @@ const OverrideSection = ({
 }
 
 const Toplist = () => {
-  const [config, setConfig] = useState<HotlistConfig>()
-  const { isLoading, refetch } = useQuery({
+  const { isLoading, refetch, data } = useQuery({
     queryKey: ['admin', 'toplist/hotlist/config'],
     queryFn: async () => {
       const result = await getHotlistConfig()
       setConfig(result)
       return result
     },
-    staleTime: Infinity,
   })
+  const [config, setConfig] = useState<HotlistConfig | undefined>(data)
   const [savePending, setSavePending] = useState(false)
   const [fetchPending, setFetchPending] = useState(false)
   const [anchorTimestamp, setAnchorTimestamp] = useState(0)
