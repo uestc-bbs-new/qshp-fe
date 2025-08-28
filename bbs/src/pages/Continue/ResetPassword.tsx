@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { useQuery } from '@tanstack/react-query'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   Alert,
@@ -199,7 +199,18 @@ export const ResetPasswordHome = () => {
                 进入统一身份认证平台
               </Button>
             </Stack>
-            <Typography variant="h6" textAlign="justify" mt={6}>
+            <Typography textAlign="justify" mt={2}>
+              注：毕业离校两年内，可使用统一身份认证系统中的
+              <Link
+                to="https://idas.uestc.edu.cn/retrieve-password/accountUnban/index.html"
+                target="_blank"
+                external
+              >
+                账号解禁
+              </Link>
+              功能自助申请解禁，然后点击上述按钮重置密码。
+            </Typography>
+            <Typography variant="h6" textAlign="justify" mt={4}>
               毕业用户请
               <Link to={pages.resetPasswordByEmail}>
                 点击此处通过邮箱重置密码
@@ -223,6 +234,19 @@ export const ResetPasswordEmailHome = () => {
   const [emailSent, setEmailSent] = useState(false)
   const captchaRef = useRef<CaptchaType>()
   const captchaToken = useRef<string>()
+  const kEmailRetryTimeout = 60
+  const [timeout, setRetryTimeout] = useState(kEmailRetryTimeout)
+  const timeoutRef = useRef<number>(timeout)
+  const retryInterval = useRef<number>()
+  useEffect(
+    () => () => {
+      if (retryInterval.current) {
+        clearInterval(retryInterval.current)
+        retryInterval.current = undefined
+      }
+    },
+    []
+  )
   const {
     isLoading,
     isError,
@@ -249,6 +273,7 @@ export const ResetPasswordEmailHome = () => {
       setErrorMessage(undefined)
     }
     setPending(true)
+    setEmailSent(false)
     try {
       await sendEmailToResetPassword({
         email,
@@ -259,6 +284,22 @@ export const ResetPasswordEmailHome = () => {
       })
       setApiError(null)
       setEmailSent(true)
+      if (retryInterval.current) {
+        clearInterval(retryInterval.current)
+        retryInterval.current = undefined
+      }
+      setRetryTimeout(kEmailRetryTimeout)
+      timeoutRef.current = kEmailRetryTimeout
+      retryInterval.current = setInterval(() => {
+        if (timeoutRef.current > 0) {
+          setRetryTimeout((timeout) => {
+            return (timeoutRef.current = timeout - 1)
+          })
+        } else {
+          clearInterval(retryInterval.current)
+          retryInterval.current = undefined
+        }
+      }, 1000)
     } catch (e: any) {
       if (e?.type == 'http' && e.status == 401) {
         e.type = 'api'
@@ -316,10 +357,14 @@ export const ResetPasswordEmailHome = () => {
                 <Button
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  disabled={pending || emailSent}
+                  disabled={pending || (emailSent && timeout > 0)}
                   onClick={handleSend}
                 >
-                  发送验证邮件
+                  {pending
+                    ? '请稍候...'
+                    : emailSent && timeout
+                      ? `邮件已发送 (${timeout})`
+                      : '发送验证邮件'}
                 </Button>
               </>
             )}
@@ -327,8 +372,10 @@ export const ResetPasswordEmailHome = () => {
             {apiError ? <Error error={apiError} small /> : <></>}
             {emailSent && (
               <Alert severity="info">
-                邮件已发送，请在邮箱中查看。如果未收到邮件，请检查垃圾邮件文件夹，或者将{' '}
-                <OfficialEmail /> 添加到白名单并重新发送验证邮件。
+                <Typography fontSize={16} textAlign="justify">
+                  邮件已发送，请在邮箱中查看。如果未收到邮件，请检查垃圾邮件文件夹，或者将{' '}
+                  <OfficialEmail /> 添加到白名单并重新发送验证邮件。
+                </Typography>
               </Alert>
             )}
             <Typography textAlign="justify" mt={5}>
@@ -336,7 +383,9 @@ export const ResetPasswordEmailHome = () => {
               <Link to={getIdasLink({ mode: 'resetpassword' })} external>
                 统一身份认证
               </Link>
-              验证后重置密码。
+              验证后重置密码。如果遇到问题，请通过
+              <WebmasterContact />
+              联系站长。
             </Typography>
             <Stack direction="row" justifyContent="flex-start"></Stack>
           </Stack>
