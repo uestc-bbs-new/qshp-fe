@@ -7,10 +7,8 @@ import { gotoIdas } from '@/utils/routes'
 import { TransparentBackdropBlurDialog } from './LoginDialog'
 
 const Renew2025Dialog = ({ open }: { open: boolean }) => {
-  const { dispatch } = useAppState()
-  const close = () => dispatch({ type: 'close dialog' })
   return (
-    <TransparentBackdropBlurDialog open={open} onClose={close}>
+    <TransparentBackdropBlurDialog open={open}>
       <Typography variant="h6" textAlign="justify">
         根据相关规定，您的账号需要使用 2025
         级研究生学号进行实名关联。请您点击以下按钮，通过统一身份认证系统完成实名关联：
