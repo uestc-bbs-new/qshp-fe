@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 
 import {
+  ArrowCircleDownOutlined,
+  ArrowCircleUpOutlined,
+  ArrowCircleUpTwoTone,
+} from '@mui/icons-material'
+import {
   Box,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
+  IconButton,
   List,
   ListItem,
   Stack,
@@ -182,6 +188,28 @@ const Announcement = () => {
   const handleDelete = (item: AnnouncementItem) => {
     setData(data?.filter((cur) => cur != item))
   }
+  const handleMove = (item: AnnouncementItem, direction: 'up' | 'down') => {
+    if (!data) {
+      return
+    }
+    const newData = data.slice()
+    const index = data.indexOf(item)
+    if (index == -1) {
+      return
+    }
+    if (direction == 'up' && index > 0) {
+      ;[newData[index], newData[index - 1]] = [
+        newData[index - 1],
+        newData[index],
+      ]
+    } else if (direction == 'down' && index < data.length - 1) {
+      ;[newData[index], newData[index + 1]] = [
+        newData[index + 1],
+        newData[index],
+      ]
+    }
+    setData(newData)
+  }
 
   const handleSave = () => {
     if (!data) {
@@ -206,8 +234,24 @@ const Announcement = () => {
                 sx={{ flexGrow: 1, flexShrink: 1 }}
               />
               <Stack flexGrow={0} flexShrink={0}>
-                <Button onClick={() => handleEdit(item)}>编辑</Button>
-                <Button onClick={() => handleDelete(item)}>删除</Button>
+                <Stack direction="row">
+                  <Button onClick={() => handleEdit(item)}>编辑</Button>
+                  <IconButton
+                    onClick={() => handleMove(item, 'up')}
+                    disabled={index == 0}
+                  >
+                    <ArrowCircleUpOutlined />
+                  </IconButton>
+                </Stack>
+                <Stack direction="row">
+                  <Button onClick={() => handleDelete(item)}>删除</Button>
+                  <IconButton
+                    onClick={() => handleMove(item, 'down')}
+                    disabled={index == data.length - 1}
+                  >
+                    <ArrowCircleDownOutlined />
+                  </IconButton>
+                </Stack>
               </Stack>
             </AnnouncementBox>
           </ListItem>
