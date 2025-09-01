@@ -187,6 +187,7 @@ const Thread = () => {
             threadId,
             commentPids,
             ratePids,
+            admin: query.a,
           })
           commentPids
             .concat(ratePids)

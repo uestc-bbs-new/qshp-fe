@@ -125,6 +125,7 @@ export const getPostDetails = (params: {
   commentPids?: number[]
   ratePids?: number[]
   page?: number
+  admin?: boolean
 }) => {
   return request.get<PostDetailsByPostId>(`${commonUrl}/post/details`, {
     params: {
@@ -138,6 +139,7 @@ export const getPostDetails = (params: {
           rate_pids: (params.ratePids || []).join(','),
         }),
       page: params.page,
+      ...(params.admin && { a: 1 }),
     },
   })
 }
