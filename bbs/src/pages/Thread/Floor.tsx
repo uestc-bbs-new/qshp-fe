@@ -133,6 +133,7 @@ const Floor = ({
   threadDetails,
   forumDetails,
   firstInPage,
+  admin,
   onReply,
   onComment,
   onEdit,
@@ -146,6 +147,7 @@ const Floor = ({
   threadDetails?: Thread
   forumDetails?: ForumDetails
   firstInPage?: boolean
+  admin?: boolean
   onReply: (post: PostFloor) => void
   onComment: (post: PostFloor) => void
   onEdit: (post: PostFloor) => void
@@ -305,7 +307,11 @@ const Floor = ({
                 !!postDetails?.commentsRefresh
               }
             >
-              <PostComments post={post} postDetails={postDetails} />
+              <PostComments
+                post={post}
+                postDetails={postDetails}
+                admin={admin}
+              />
             </PostExtraDetailsContainer>
             <PostExtraDetailsContainer
               loading={!!post.has_rate && !postDetails}

@@ -402,6 +402,7 @@ const Thread = () => {
                           threadDetails={threadDetails}
                           forumDetails={forumDetails}
                           firstInPage={index == 0}
+                          admin={query.a}
                           onReply={handleReply}
                           onComment={handleComment}
                           onEdit={handleEdit}

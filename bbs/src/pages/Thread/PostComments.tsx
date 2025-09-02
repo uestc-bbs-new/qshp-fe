@@ -26,9 +26,11 @@ import { PostExtraDetailsEx } from './types'
 const PostComments = ({
   post,
   postDetails,
+  admin,
 }: {
   post: PostFloor
   postDetails?: PostExtraDetailsEx
+  admin?: boolean
 }) => {
   const [page, setPage] = useState(1)
   const queryKey: [
@@ -56,6 +58,7 @@ const PostComments = ({
           threadId: post.thread_id,
           commentPids: [post.post_id],
           page,
+          admin,
         })
       )[post_id]
       return result
