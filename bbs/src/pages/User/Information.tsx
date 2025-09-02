@@ -207,24 +207,30 @@ const Information = ({
                   text={hideSensitiveFields ? '**********' : data.register_ip}
                 />
               )}
-              <FieldValueGrid
-                title="最后访问"
-                text={chineseTime(data.last_visit * 1000)}
-              />
-              <FieldValueGrid
-                title="上次活动"
-                text={chineseTime(data.last_activity * 1000)}
-              />
+              {!!data.last_visit && (
+                <FieldValueGrid
+                  title="最后访问"
+                  text={chineseTime(data.last_visit * 1000)}
+                />
+              )}
+              {!!data.last_activity && (
+                <FieldValueGrid
+                  title="上次活动"
+                  text={chineseTime(data.last_activity * 1000)}
+                />
+              )}
               {data.last_ip && (
                 <FieldValueGrid
                   title="上次访问 IP"
                   text={hideSensitiveFields ? '**********' : data.last_ip}
                 />
               )}
-              <FieldValueGrid
-                title="上次发表"
-                text={chineseTime(data.last_post * 1000)}
-              />
+              {!!data.last_post && (
+                <FieldValueGrid
+                  title="上次发表"
+                  text={chineseTime(data.last_post * 1000)}
+                />
+              )}
             </Grid>
           </Section>
         </>
