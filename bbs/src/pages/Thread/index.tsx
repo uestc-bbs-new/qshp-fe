@@ -42,6 +42,7 @@ import Link from '@/components/Link'
 import { PostRenderer } from '@/components/RichText'
 import { InternalStamp, ThreadStamp } from '@/components/Stamps'
 import { useAppState, useSignInChange } from '@/states'
+import { getTermWeek, kCalendarTid } from '@/utils/calendar'
 import { pages } from '@/utils/routes'
 import { scrollAnchorCss, scrollAnchorSx } from '@/utils/scrollAnchor'
 import { searchParamsAssign } from '@/utils/tools'
@@ -50,6 +51,7 @@ import Floor from './Floor'
 import { useWatermark } from './Watermark'
 import { ReportDialog } from './dialogs/Report'
 import ActionDialog from './dialogs/index'
+import CalendarPrompt from './extension/CalendarPrompt'
 import { ActionDialogType, PostDetailsByPostIdEx } from './types'
 
 const kEnforceInternalFids = [
@@ -458,6 +460,9 @@ const Thread = () => {
                           }
                         >
                           <Box pr={narrowView ? undefined : '1.5em'}>
+                            {threadId == kCalendarTid && item.position == 1 && (
+                              <CalendarPrompt />
+                            )}
                             <PostRenderer post={item} />
                           </Box>
                         </Floor>

@@ -33,6 +33,7 @@ import Settings from '@/pages/Settings'
 import Thread from '@/pages/Thread'
 import User from '@/pages/User'
 import { Welcome } from '@/pages/Welcome'
+import { kCalendarTid } from '@/utils/calendar'
 import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
 
@@ -215,6 +216,10 @@ routes.current = [
   {
     path: '/bus',
     loader: () => redirect(pages.thread(1430861)),
+  },
+  {
+    path: '/calendar',
+    loader: () => redirect(pages.thread(kCalendarTid)),
   },
   // Legacy redirects
   {
