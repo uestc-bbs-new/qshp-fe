@@ -9,6 +9,7 @@ import {
 
 import boatWheelImg from '@/assets/boat-wheel.png'
 import Link from '@/components/Link'
+import { kCalendarTid } from '@/utils/calendar'
 import { pages } from '@/utils/routes'
 
 type NavLink = {
@@ -24,7 +25,7 @@ const listServiceItems: NavLink[] = [
     external: false,
   },
   { link: pages.forum(305), name: '失物招领', external: false },
-  { link: pages.thread(1493930), name: '校历', external: false },
+  { link: pages.thread(kCalendarTid), name: '校历', external: false },
   {
     link: 'https://hq.uestc.edu.cn/web/detail.jsp?article_id=4645',
     name: '网上报修',
