@@ -13,7 +13,7 @@ import Turnstile, { BoundTurnstileObject } from 'react-turnstile'
 
 import { CircularProgress, Stack } from '@mui/material'
 
-import { CaptchaConfiguration } from '@/apis/types/common'
+import { CaptchaConfiguration } from '@/apis/captcha'
 import { useAppState } from '@/states'
 
 export const LazyHCaptcha = React.lazy(() => import('@hcaptcha/react-hcaptcha'))

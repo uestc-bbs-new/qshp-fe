@@ -28,7 +28,7 @@ import {
 } from '@mui/material'
 
 import { signIn } from '@/apis/auth'
-import { CaptchaConfiguration } from '@/apis/types/common'
+import { CaptchaConfiguration, parseCaptchaError } from '@/apis/captcha'
 import logo from '@/assets/qshp-logo-outlined.png'
 import { useAppState } from '@/states'
 import { gotoIdas, pages } from '@/utils/routes'
@@ -148,26 +148,12 @@ const LoginDialog = ({ open }: { open: boolean }) => {
       if (isVpnProxy) {
         saveCookiesForVpn()
       }
-    } catch (e_) {
-      const e = e_ as
-        | {
-            type: string
-            code: number
-            message: string
-            details: { data: CaptchaConfiguration[] }
-          }
-        | undefined
-      if (e?.type == 'api' && e?.code == 1) {
-        setCaptcha(
-          isVpnProxy
-            ? {
-                name: 'hcaptcha',
-                site: '52100d97-0777-4497-8852-e380d5b3430b',
-              }
-            : e.details.data[0]
-        )
+    } catch (e) {
+      const captchaRequired = parseCaptchaError(e)
+      if (captchaRequired) {
+        setCaptcha(captchaRequired)
       } else {
-        showError(e?.message || '登录失败！')
+        showError((e as { message: string })?.message || '登录失败！')
       }
       captchaRef.current?.reset()
     } finally {
