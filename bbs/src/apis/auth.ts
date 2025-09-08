@@ -5,7 +5,11 @@ import request, {
 } from '@/apis/request'
 import { User } from '@/common/interfaces/base'
 
-import { CaptchaConfiguration } from './types/common'
+import {
+  CaptchaConfiguration,
+  CaptchaResult,
+  getCaptchaHeaders,
+} from './captcha'
 
 const authUrl = `${commonUrl}/auth`
 
@@ -24,20 +28,6 @@ export type IdasAuthResult = Partial<AuthorizationResult> & {
   ephemeral_authorization: string
   remaining_registers?: number
 }
-
-type CaptchaResult = {
-  captcha_value?: string
-  captcha_type?: string
-}
-
-const getCaptchaHeaders = (params?: CaptchaResult) => ({
-  ...(params?.captcha_value && {
-    'X-UESTC-BBS-Captcha': params.captcha_value,
-  }),
-  ...(params?.captcha_type && {
-    'X-UESTC-BBS-Captcha-Type': params.captcha_type,
-  }),
-})
 
 export const signIn = (
   params: {
