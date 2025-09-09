@@ -11,6 +11,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import freshmanBonus2025 from '@/assets/2025_fresh_bonus.png'
 import {
   kSidebarWidth,
   useSidebarInMarginMediaQuery,
@@ -19,10 +20,13 @@ import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
+import Link from '@/components/Link'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
+import { isDeveloper } from '@/states/settings'
+import { useActiveRoute } from '@/utils/routes'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
@@ -31,6 +35,7 @@ const Layout = () => {
   const sidebarNotFit = useMediaQuery(
     `(max-width: ${kContentWidth + kSidebarWidth}px)`
   )
+  const activeRoute = useActiveRoute()
 
   return (
     <>
@@ -71,6 +76,27 @@ const Layout = () => {
             <KeyboardArrowUp />
           </Fab>
         </ScrollTop>
+
+        {isDeveloper() && activeRoute?.id != 'x_freshman_luckydraw' && (
+          <Fab
+            component={Link}
+            to="/freshman/luckydraw"
+            sx={{
+              position: 'fixed',
+              right: 8,
+              bottom: 120,
+              width: 96,
+              height: 96,
+            }}
+          >
+            <img
+              src={freshmanBonus2025}
+              css={{
+                width: '100%',
+              }}
+            />
+          </Fab>
+        )}
         {state.globalSnackbar && (
           <Snackbar
             key={state.globalSnackbar.key}

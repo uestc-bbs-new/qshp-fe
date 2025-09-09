@@ -7,6 +7,7 @@ import {
 
 import adminRoutes from '@/admin/routes'
 import betRoutes from '@/ext/bet/routes'
+import { LuckyDraw } from '@/ext/freshman'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
 import {
   EmailContinue,
@@ -55,6 +56,11 @@ const devPages: RouteObject[] = [
     path: '/settings/:id?',
     id: 'settings',
     element: <Settings />,
+  },
+  {
+    path: '/freshman/luckydraw',
+    id: 'x_freshman_luckydraw',
+    element: <LuckyDraw />,
   },
 ]
 

@@ -255,6 +255,8 @@ const Breadcrumbs = () => {
         <Typography key="2">账号安全</Typography>,
         <Typography key="3">实名换绑</Typography>,
       ]}
+      {activeRoute?.id == 'x_freshman_luckydraw'} && [
+      <Typography key="1">河畔刮刮卡</Typography>]
     </MuiBreadcrumbs>
   )
 }
