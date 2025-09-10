@@ -2,6 +2,7 @@ import { CaptchaResult, getCaptchaHeaders } from '@/apis/captcha'
 import request, { commonUrl } from '@/apis/request'
 
 const baseUrl = `${commonUrl}/x/freshman`
+const adminBase = `${baseUrl}/admin`
 
 export type LuckyDrawResult = {
   water?: number
@@ -22,3 +23,37 @@ export const verifyCode = (code: string, captcha?: CaptchaResult) =>
         }
       : undefined
   )
+
+export type LuckyDrawPrize = {
+  id: number
+  name: string
+  total: number
+  remaining: number
+  probability1: number
+  probability2: number
+  probability3: number
+}
+export type LuckyDrawUser = {
+  code: string
+  uid: number
+  username: string
+  water?: number
+  prize_name?: string
+  validation_time: number
+}
+export type LuckyDrawPrizes = {
+  prizes?: LuckyDrawPrize[]
+  users?: LuckyDrawUser[]
+}
+export const getPrizes = () =>
+  request.get<LuckyDrawPrizes>(`${adminBase}/prizes`)
+export const addPrize = (item: Omit<LuckyDrawPrize, 'id'>) =>
+  request.put(`${adminBase}/prize`, item)
+export const deletePrize = (id: number) =>
+  request.delete(`${adminBase}/prize/${id}`)
+export const updatePrize = (
+  id: number,
+  item: Omit<LuckyDrawPrize, 'id' | 'total' | 'remaining'> & {
+    total_delta?: number
+  }
+) => request.patch(`${adminBase}/prize/${id}`, item)

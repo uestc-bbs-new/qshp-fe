@@ -7,6 +7,9 @@ export type AdminPermissions = {
   is_admin: boolean
   announcement?: boolean
   toplist?: boolean
+  extensions?: {
+    freshman?: boolean
+  }
 }
 
 export const getPermissions = () =>

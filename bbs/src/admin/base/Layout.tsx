@@ -22,6 +22,7 @@ import pages from './pages'
 const list = [
   { text: '全局公告', to: pages.announcement(), permission: 'announcement' },
   { text: '首页列表', to: pages.toplist(), permission: 'toplist' },
+  { text: '线下刮刮卡', to: pages.freshman(), extPermission: 'freshman' },
   { text: '高级', to: pages.advanced() },
 ]
 
@@ -48,7 +49,12 @@ const Layout = () => {
     <Stack direction="row">
       <List sx={{ p: 1, mr: 2, flexGrow: 0, flexShrink: 0 }}>
         {list
-          .filter((item) => !item.permission || item.permission in data)
+          .filter((item) => {
+            if (item.extPermission) {
+              return data.extensions && item.extPermission in data.extensions
+            }
+            return !item.permission || item.permission in data
+          })
           .map((item, index) => (
             <ListItem disablePadding key={index}>
               <ListItemButton component={Link} to={item.to}>

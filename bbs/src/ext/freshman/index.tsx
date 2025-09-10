@@ -14,6 +14,7 @@ import {
   IconButton,
   Paper,
   Stack,
+  SxProps,
   TextField,
   Typography,
 } from '@mui/material'
@@ -29,7 +30,7 @@ import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { sleep } from '@/utils/misc'
 
-import { getStatus, verifyCode } from './api'
+import { LuckyDrawResult, getStatus, verifyCode } from './api'
 
 const kCircleSize = 420
 const kBorderWidth = 10
@@ -52,10 +53,20 @@ const rotate = keyframes`
     transform: rotate(360deg)
   }
 `
+const scaleIn = keyframes`
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`
 const kDiagonalCirclePos = 14.6447
 
 export const LuckyDraw = () => {
-  const { isLoading, isError, data } = useQuery({
+  const { isLoading, isError, data, refetch } = useQuery({
     queryKey: ['x', 'freshman', 'status'],
     queryFn: getStatus,
   })
@@ -63,6 +74,8 @@ export const LuckyDraw = () => {
   const [captchaConfig, setCaptchaConfig] = useState<CaptchaConfiguration>()
   const codeRef = useRef<HTMLInputElement>()
   const [animate, setAnimate] = useState(false)
+  const [luckyResult, setResult] = useState<LuckyDrawResult>()
+  const [resultOpen, setResultOpen] = useState(false)
   const { dispatch } = useAppState()
   const validatePrize = async (captcha?: CaptchaResult) => {
     const code = codeRef.current?.value
@@ -85,7 +98,8 @@ export const LuckyDraw = () => {
       if (remainingTime > 0) {
         await sleep(remainingTime)
       }
-      console.log(result)
+      setResult(result)
+      setResultOpen(true)
     } catch (e) {
       const captchaRequired = parseCaptchaError(e)
       if (captchaRequired) {
@@ -114,6 +128,10 @@ export const LuckyDraw = () => {
     })
   }
   const closeCaptcha = () => setCaptchaOpen(false)
+  const closeResult = async () => {
+    await refetch()
+    setResultOpen(false)
+  }
   return (
     <Paper sx={{ p: 2, my: 2 }}>
       <Stack alignItems="center">
@@ -125,41 +143,7 @@ export const LuckyDraw = () => {
         ) : isError ? (
           <Alert severity="error">网络不畅，请稍后刷新重试。</Alert>
         ) : data?.verified ? (
-          <Stack
-            alignItems="center"
-            my={3}
-            px={2}
-            pt={1}
-            pb={3}
-            border="3px dotted #bddb8a"
-            borderRadius={3}
-          >
-            {!!data.water && (
-              <Typography
-                variant="h6"
-                my={2}
-                sx={(theme) => ({
-                  color: theme.palette.mode == 'dark' ? '#f9d05f' : '#f9d05f',
-                })}
-              >
-                您已获得论坛积分奖励 {data.water} 水滴！
-              </Typography>
-            )}
-            {data.gift && (
-              <Typography variant="h6" my={2} color="#f2315f">
-                恭喜您获得{data.gift}！请
-                <Link
-                  to="/home.php?mod=spacecp&ac=pm&touid=248310"
-                  external
-                  target="_blank"
-                >
-                  私信
-                </Link>
-                联系站长领取奖励。
-              </Typography>
-            )}
-            <Typography>感谢您的参与！清水河畔更多精彩等你探索！</Typography>
-          </Stack>
+          <PrizeResult data={data} />
         ) : (
           <>
             <Typography variant="h6" fontWeight="normal" mt={1}>
@@ -297,6 +281,61 @@ export const LuckyDraw = () => {
           </DialogContent>
         </Dialog>
       )}
+      {luckyResult && resultOpen && (
+        <Dialog
+          open
+          onClose={closeResult}
+          PaperProps={{ sx: { animation: `${scaleIn} 1s ease` } }}
+        >
+          <DialogContent>
+            <PrizeResult data={luckyResult} sx={{ mt: 0, mb: 2 }} />
+            <Stack direction="row" justifyContent="center">
+              <Button variant="contained" onClick={closeResult}>
+                返回
+              </Button>
+            </Stack>
+          </DialogContent>
+        </Dialog>
+      )}
     </Paper>
   )
 }
+
+const PrizeResult = ({ data, sx }: { data: LuckyDrawResult; sx?: SxProps }) => (
+  <Stack
+    alignItems="center"
+    my={3}
+    px={2}
+    pt={1}
+    pb={3}
+    border="3px dotted #bddb8a"
+    borderRadius={3}
+    sx={sx}
+  >
+    {!!data.water && (
+      <Typography
+        variant="h6"
+        my={2}
+        sx={(theme) => ({
+          color: theme.palette.mode == 'dark' ? '#f9d05f' : '#f9d05f',
+        })}
+      >
+        您已获得论坛积分奖励 {data.water} 水滴！
+      </Typography>
+    )}
+    {data.gift && (
+      <Typography variant="h6" my={2} color="#f2315f">
+        恭喜您获得{data.gift}！请
+        <Link
+          to="/home.php?mod=spacecp&ac=pm&touid=248310"
+          external
+          target="_blank"
+        >
+          私信
+        </Link>
+        联系站长领取奖励。
+      </Typography>
+    )}
+    <Typography>感谢您的参与！清水河畔更多精彩等你探索！</Typography>
+  </Stack>
+)
