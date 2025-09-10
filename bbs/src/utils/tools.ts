@@ -42,3 +42,7 @@ export const handleEnter = (handler?: () => void) =>
         }
       }
     : undefined
+
+export const isMobileDevice = () => {
+  return window.innerWidth <= 768 // 可根据实际情况调整这个宽度阈值
+}

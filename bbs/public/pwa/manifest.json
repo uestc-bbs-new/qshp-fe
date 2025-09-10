@@ -25,10 +25,6 @@
   ],
   "start_url": "/new",
   "display": "standalone",
-  "display_overrides": [
-    "window-controls-overlay",
-    "standalone",
-    "minimal-ui"
-  ],
+  "display_overrides": ["window-controls-overlay", "standalone", "minimal-ui"],
   "theme_color": "#2174f1"
 }
