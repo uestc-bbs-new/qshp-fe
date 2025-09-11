@@ -106,9 +106,9 @@ const getCookies = () => {
 }
 
 const initForVpn = async () => {
-  if (!isVpnProxy) {
-    return
-  }
+  indexedDB.deleteDatabase(kIdbName)
+}
+const initForVpnReal = async () => {
   await Promise.all([initCrypto(), initKv()])
   let savedCookies: SavedCookies | undefined = undefined
   try {
@@ -143,8 +143,6 @@ const initForVpn = async () => {
 }
 
 export const initForVpnPromise = initForVpn()
-  .catch(() => {})
-  .then(() => console.log('vpn init promise done'))
 
 export const saveCookiesForVpn = async () => {
   const { cookies, wellknownCookies } = getCookies()
