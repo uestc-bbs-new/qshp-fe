@@ -1,13 +1,18 @@
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { KeyboardArrowUp } from '@mui/icons-material'
 import {
   Alert,
   Box,
+  Button,
   Fab,
+  Paper,
   Slide,
   Snackbar,
+  Stack,
   Toolbar,
+  Typography,
   useMediaQuery,
 } from '@mui/material'
 
@@ -27,6 +32,7 @@ import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
 import { isDeveloper } from '@/states/settings'
 import { useActiveRoute } from '@/utils/routes'
+import { isVpnProxy } from '@/utils/siteRoot'
 
 const Layout = () => {
   const { state, dispatch } = useAppState()
@@ -36,6 +42,7 @@ const Layout = () => {
     `(max-width: ${kContentWidth + kSidebarWidth}px)`
   )
   const activeRoute = useActiveRoute()
+  const [vpnPromptOpen, setVpnPromptOpen] = useState(isVpnProxy)
 
   return (
     <>
@@ -137,6 +144,43 @@ const Layout = () => {
             })
           }}
         />
+      )}
+      {vpnPromptOpen && (
+        <Paper
+          elevation={10}
+          sx={(theme) => ({
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            margin: 'auto',
+            width: 310,
+            maxWidth: '95%',
+            height: 160,
+            p: 2,
+            backgroundColor:
+              theme.palette.mode == 'dark' ? '#204ac1' : '#b8d1f7',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: '999',
+          })}
+        >
+          <Typography variant="h6" color="red">
+            温馨提示
+          </Typography>
+          <Typography my={1}>
+            清水河畔已开放外网访问，VPN 用户请直接通过 bbs.uestc.edu.cn
+            域名访问。
+          </Typography>
+          <Stack alignItems="center">
+            <Button onClick={() => setVpnPromptOpen(false)} variant="outlined">
+              关闭
+            </Button>
+          </Stack>
+        </Paper>
       )}
     </>
   )
