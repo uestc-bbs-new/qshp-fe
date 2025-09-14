@@ -206,6 +206,8 @@ const Breadcrumbs = () => {
             : ''
         document.title = `${name}个人空间 ${suffix}`
       }
+    } else if (activeRoute?.id == 'renew') {
+      document.title = `实名换绑${suffix}`
     } else {
       document.title = title
     }
