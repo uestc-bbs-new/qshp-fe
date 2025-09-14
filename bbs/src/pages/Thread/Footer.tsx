@@ -110,11 +110,9 @@ const Footer = ({
           post={post}
         />
       )}
-      {isDeveloper() && (
-        <Button variant="text" onClick={() => setRateDialog(true)}>
-          评分
-        </Button>
-      )}
+      <Button variant="text" onClick={() => setRateDialog(true)}>
+        评分
+      </Button>
       {rateDialog && (
         <RateDialog
           open
