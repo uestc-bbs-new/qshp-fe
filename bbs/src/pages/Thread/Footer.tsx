@@ -6,7 +6,6 @@ import { DEPRECATED_votePost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
-import { isDeveloper } from '@/states/settings'
 
 import { FavoriteDialog } from './dialogs/Favorite'
 import { RateDialog } from './dialogs/Rate'
