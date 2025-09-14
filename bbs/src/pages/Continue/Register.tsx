@@ -17,6 +17,7 @@ import {
   register,
 } from '@/apis/auth'
 import Error from '@/components/Error'
+import Link from '@/components/Link'
 import { RegisterContent } from '@/components/Login/Register'
 import { isEmailValid } from '@/utils/input'
 import { isPreviewRelease } from '@/utils/releaseMode'
@@ -35,10 +36,12 @@ export const RegisterForm = ({
   freshman,
   idasResult,
   onClose,
+  onSignIn,
 }: {
   freshman?: boolean
   idasResult: IdasResultEx
   onClose: () => void
+  onSignIn: () => void
 }) => {
   const theme = useTheme()
   const navigate = useNavigate()
@@ -152,97 +155,126 @@ export const RegisterForm = ({
     }
   }
   return (
-    <CommonForm
-      ref={formRef}
-      title={
-        <>
-          <Typography variant="signinTitle">注册</Typography>
-          {freshman && (
-            <Typography variant="h6" my={2}>
-              欢迎来到清水河畔！请填写信息完成注册：
-            </Typography>
-          )}
-        </>
-      }
-      onClose={onClose}
-    >
-      <tr>
-        <th>
-          <Typography>用户名</Typography>
-        </th>
-        <td>
-          <SignUpTextField
-            autoFocus
-            name="username"
-            helperText={
-              userNameError ||
-              (userNamePrompt && (
-                <span style={{ color: theme.palette.warning.main }}>
-                  {userNamePrompt}
-                </span>
-              )) ||
-              '注册后不能随意修改用户名，请认真考虑后填写。'
-            }
-            error={!!userNameError}
-            onChange={suggestUserName}
-            onBlur={validateUserName}
-            required
-            sx={{ width: '80%' }}
-          />
-        </td>
-      </tr>
-      <PasswordInput onValidated={(valid) => (passwordValid.current = valid)} />
-      <tr>
-        <th>
-          <Typography>Email</Typography>
-        </th>
-        <td>
-          <SignUpTextField
-            type="email"
-            fullWidth
-            name="email"
-            error={!!emailError}
-            helperText={
-              emailPrompt ? (
-                <span style={{ color: theme.palette.warning.main }}>
-                  {emailPrompt}
-                </span>
-              ) : (
-                emailError ||
-                '请准确填写您的常用邮箱，如果毕业后忘记河畔密码可通过邮箱找回。'
-              )
-            }
-            onBlur={validateEmail}
-            required
-          />
-        </td>
-      </tr>
-      <tr>
-        <th></th>
-        <td>
-          <Stack
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-            my={2}
-          >
-            <Button variant="contained" onClick={handleRegister}>
-              立即注册
-            </Button>
-            {!idasResult.users && !isPreviewRelease && (
-              <Button
-                variant="outlined"
-                sx={{ ml: 2 }}
-                onClick={goFreshmanOrBack}
-              >
-                到处逛逛，稍后注册
-              </Button>
+    <>
+      <CommonForm
+        ref={formRef}
+        title={
+          <>
+            <Typography variant="signinTitle">注册</Typography>
+            {freshman && (
+              <Typography variant="h6" my={2}>
+                欢迎来到清水河畔！请填写信息完成注册：
+              </Typography>
             )}
-          </Stack>
-          {registerError ? <Error error={registerError} small /> : <></>}
-        </td>
-      </tr>
-    </CommonForm>
+          </>
+        }
+        onClose={onClose}
+      >
+        <tr>
+          <th>
+            <Typography>用户名</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              autoFocus
+              name="username"
+              helperText={
+                userNameError ||
+                (userNamePrompt && (
+                  <span style={{ color: theme.palette.warning.main }}>
+                    {userNamePrompt}
+                  </span>
+                )) ||
+                '注册后不能随意修改用户名，请认真考虑后填写。'
+              }
+              error={!!userNameError}
+              onChange={suggestUserName}
+              onBlur={validateUserName}
+              required
+              sx={{ width: '80%' }}
+            />
+          </td>
+        </tr>
+        <PasswordInput
+          onValidated={(valid) => (passwordValid.current = valid)}
+        />
+        <tr>
+          <th>
+            <Typography>Email</Typography>
+          </th>
+          <td>
+            <SignUpTextField
+              type="email"
+              fullWidth
+              name="email"
+              error={!!emailError}
+              helperText={
+                emailPrompt ? (
+                  <span style={{ color: theme.palette.warning.main }}>
+                    {emailPrompt}
+                  </span>
+                ) : (
+                  emailError ||
+                  '请准确填写您的常用邮箱，如果毕业后忘记河畔密码可通过邮箱找回。'
+                )
+              }
+              onBlur={validateEmail}
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>
+            <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              flexWrap="wrap"
+              my={1}
+            >
+              <Button
+                variant="contained"
+                sx={{ my: 1 }}
+                onClick={handleRegister}
+              >
+                立即注册
+              </Button>
+              {!idasResult.users?.length &&
+                !!idasResult.remaining_registers &&
+                !isPreviewRelease && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2, my: 1 }}
+                    onClick={goFreshmanOrBack}
+                  >
+                    到处逛逛，稍后注册
+                  </Button>
+                )}
+              {!!idasResult.users?.length && (
+                <Button
+                  variant="outlined"
+                  sx={{ ml: 2, my: 1 }}
+                  onClick={onSignIn}
+                >
+                  登录已有帐号
+                </Button>
+              )}
+            </Stack>
+            {!!idasResult.users?.length && (
+              <Typography mb={1}>
+                您已在清水河畔注册过，
+                <Link to="javascript:void(0)" onClick={onSignIn}>
+                  点击此处
+                </Link>
+                查看或登录已有账号。
+              </Typography>
+            )}
+            {registerError ? <Error error={registerError} small /> : <></>}
+          </td>
+        </tr>
+      </CommonForm>
+    </>
   )
 }
 

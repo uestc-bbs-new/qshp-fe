@@ -136,6 +136,7 @@ const Continue = () => {
                   freshman={!idasResult.users}
                   idasResult={idasResult}
                   onClose={back}
+                  onSignIn={() => setPage('userList')}
                 />
               ) : (
                 <>
@@ -205,7 +206,7 @@ export const ContinueError = () => {
     <Dialog open fullScreen>
       <DialogContent sx={{ p: 0 }}>
         <CommonLayout>
-          <Error error={error} sx={{ width: '90%' }} small />
+          <Error error={error} sx={{ width: '90%', mt: 2 }} small />
           <Stack
             direction="row"
             justifyContent="center"
