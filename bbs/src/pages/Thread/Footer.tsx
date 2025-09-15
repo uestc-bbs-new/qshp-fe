@@ -64,7 +64,19 @@ const Footer = ({
     return <Box pt={1} />
   }
   return (
-    <Stack direction="row" flexWrap="wrap" mt={1}>
+    <Stack
+      direction="row"
+      flexWrap="wrap"
+      mt={1}
+      sx={{
+        '@media (max-width: 355px)': {
+          '& .MuiButton-root': {
+            minWidth: 48,
+            px: 1,
+          },
+        },
+      }}
+    >
       {canReply && (
         <>
           <Button variant="text" onClick={onComment}>
@@ -90,11 +102,6 @@ const Footer = ({
           </Button>
         </>
       )}
-      {post.author_id != state.user.uid && (
-        <Button variant="text" onClick={onReport}>
-          举报
-        </Button>
-      )}
       {!!post.is_first && (
         <Button variant="text" onClick={() => setFavoriteDialog(true)}>
           收藏
@@ -112,6 +119,15 @@ const Footer = ({
       <Button variant="text" onClick={() => setRateDialog(true)}>
         评分
       </Button>
+
+      <Box flexGrow={1} flexShrink={1} />
+
+      {post.author_id != state.user.uid && (
+        <Button variant="text" onClick={onReport}>
+          举报
+        </Button>
+      )}
+
       {rateDialog && (
         <RateDialog
           open
