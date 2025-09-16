@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify'
 
 import { FontSizeVariant, mapLegacyFontSize } from '@/utils/bbcode/bbcode'
 
+import { config } from '../../../../markdown-renderer/src/utils/domPurify'
 import {
   transformLegacyLinks,
   transformLink,
@@ -14,7 +15,7 @@ export const transformUserHtml = (
   sizeVariant?: FontSizeVariant
 ) => {
   const container = document.createElement('div')
-  container.innerHTML = DOMPurify.sanitize(html)
+  container.innerHTML = DOMPurify.sanitize(html, config) as string
   ;[].forEach.call(
     container.querySelectorAll('img'),
     (img: HTMLImageElement) => {

@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify'
 
+import { config } from '../utils/domPurify'
 import { html, htmlspecialchars } from '../utils/html'
 import siteRoot from '../utils/siteRoot'
 import { transformLegacyLinks, transformLink } from '../utils/transform'
@@ -369,9 +370,10 @@ export const beforeGetMarkdown = (currentMode: string, el: HTMLElement) => {
 export const transformPreviewHtml = (html: string, context: VditorContext) => {
   const container = document.createElement('div')
   container.innerHTML = DOMPurify.sanitize(html, {
+    ...config,
     ALLOWED_URI_REGEXP:
       /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|i|at?):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$)|s)/i,
-  })
+  }) as string
   ;[].forEach.call(
     container.querySelectorAll('img'),
     (img: HTMLImageElement) => {
