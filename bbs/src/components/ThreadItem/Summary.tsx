@@ -118,38 +118,45 @@ export const SummaryText = ({
   </>
 )
 
-export const SummaryAttachments = ({ item }: { item: SummaryItem }) => {
+export const SummaryAttachmentImage = ({
+  item,
+}: {
+  item: AttachmentSummary
+}) => {
   const { dispatch } = useAppState()
   return (
-    <>
-      {!!item.summary_attachments?.length && (
-        <Grid container>
-          {item.summary_attachments
-            .filter((item) => item.is_image)
-            .slice(0, kMaxAttachmentInSummary)
-            .map((item, index) => (
-              <SummaryAttachmentItem
-                item={item}
-                onClick={() => {
-                  dispatch({
-                    type: 'open dialog',
-                    payload: {
-                      kind: 'image',
-                      imageDetails: { images: [item] },
-                    },
-                  })
-                }}
-                key={index}
-              />
-            ))}
-          {item.summary_attachments.length > kMaxAttachmentInSummary && (
-            <SummaryAttachmentMore threadId={item.thread_id} />
-          )}
-        </Grid>
-      )}
-    </>
+    <SummaryAttachmentItem
+      item={item}
+      onClick={() => {
+        dispatch({
+          type: 'open dialog',
+          payload: {
+            kind: 'image',
+            imageDetails: { images: [item] },
+          },
+        })
+      }}
+    />
   )
 }
+
+export const SummaryAttachments = ({ item }: { item: SummaryItem }) => (
+  <>
+    {!!item.summary_attachments?.length && (
+      <Grid container>
+        {item.summary_attachments
+          .filter((item) => item.is_image)
+          .slice(0, kMaxAttachmentInSummary)
+          .map((item, index) => (
+            <SummaryAttachmentImage key={index} item={item} />
+          ))}
+        {item.summary_attachments.length > kMaxAttachmentInSummary && (
+          <SummaryAttachmentMore threadId={item.thread_id} />
+        )}
+      </Grid>
+    )}
+  </>
+)
 
 const Summary = ({ item }: { item: SummaryItem }) => {
   return (

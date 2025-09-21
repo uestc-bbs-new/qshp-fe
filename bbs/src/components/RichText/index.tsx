@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { Article, AttachFile } from '@mui/icons-material'
 import {
   Alert,
   CircularProgress,
+  Grid,
   Stack,
+  Tooltip,
   Typography,
   darken,
   getContrastRatio,
@@ -20,7 +23,17 @@ import bbcode2html, { FontSizeVariant } from '@/utils/bbcode/bbcode'
 import { chineseTime } from '@/utils/dayjs'
 
 import '../../../../markdown-renderer/src/renderer/richtext.css'
+import { VditorContext } from '../../../../markdown-renderer/src/renderer/types'
 import { getPreviewOptions } from '../../../../markdown-renderer/src/renderer/vditorConfig'
+import Link from '../Link'
+import {
+  PostExtraDetailsAccordian,
+  PostExtraDetailsContainer,
+} from '../Post/PostExtraDetails'
+import {
+  SummaryAttachmentGrid,
+  SummaryAttachmentImage,
+} from '../ThreadItem/Summary'
 import { onClickHandler } from './eventHandlers'
 import './legacy.css'
 import { transformUserHtml } from './transform'
@@ -212,55 +225,126 @@ const MarkdownPostRenderer = ({
     'loading'
   )
   const el = useRef<HTMLDivElement>(null)
+  const renderContext = useRef<VditorContext>()
+  const [orphanAttachments, setOrphanAttachments] = useState<Attachment[]>()
   useEffect(() => {
     ;(async () => {
       const Vditor = (await import('vditor')).default
-      el.current &&
-        Vditor.preview(
-          el.current,
-          message,
-          getPreviewOptions(state.theme, {
-            attachments: attachments || [],
-          })
-        )
-          .then(() => setLoadingState(''))
-          .catch(() => setLoadingState('error'))
+      if (!el.current) {
+        return
+      }
+      renderContext.current = {
+        attachments: attachments || [],
+        inlineAttachments: new Set(),
+      }
+      Vditor.preview(
+        el.current,
+        message,
+        getPreviewOptions(state.theme, renderContext.current)
+      )
+        .then(() => {
+          setOrphanAttachments(
+            renderContext.current?.attachments.filter(
+              (item) =>
+                !renderContext.current?.inlineAttachments?.has(
+                  item.attachment_id
+                )
+            )
+          )
+          setLoadingState('')
+        })
+        .catch(() => setLoadingState('error'))
     })()
   }, [message, attachments])
   const navigate = useNavigate()
   const { dispatch } = useAppState()
   return (
-    <div
-      className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
-      onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
-      css={
-        loadingState ? { minHeight: '48px', position: 'relative' } : undefined
-      }
-    >
-      {loadingState && (
-        <Alert
-          icon={loadingState == 'loading' ? false : undefined}
-          severity={loadingState == 'error' ? 'error' : 'info'}
-          sx={{ mb: 1, position: 'absolute', left: 0, top: 0, right: 0 }}
-        >
-          <Stack direction="row" alignItems="center">
-            {loadingState == 'loading' ? (
-              <>
-                <CircularProgress size="1.5em" />
-                <Typography ml={1} variant="threadItemSummary">
-                  内容加载中，若长时间未显示请刷新页面……
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography>加载失败，请刷新重试。</Typography>
-              </>
-            )}
-          </Stack>
-        </Alert>
+    <>
+      <div
+        className={`rich-text-content rich-text-content-markdown rich-text-theme-${state.theme}`}
+        onClickCapture={(e) => onClickHandler(e, navigate, dispatch)}
+        css={
+          loadingState ? { minHeight: '48px', position: 'relative' } : undefined
+        }
+      >
+        {loadingState && (
+          <Alert
+            icon={loadingState == 'loading' ? false : undefined}
+            severity={loadingState == 'error' ? 'error' : 'info'}
+            sx={{ mb: 1, position: 'absolute', left: 0, top: 0, right: 0 }}
+          >
+            <Stack direction="row" alignItems="center">
+              {loadingState == 'loading' ? (
+                <>
+                  <CircularProgress size="1.5em" />
+                  <Typography ml={1} variant="threadItemSummary">
+                    内容加载中，若长时间未显示请刷新页面……
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <Typography>加载失败，请刷新重试。</Typography>
+                </>
+              )}
+            </Stack>
+          </Alert>
+        )}
+        <Typography color="text.primary" ref={el}></Typography>
+      </div>
+      {!!orphanAttachments?.length && (
+        <PostExtraDetailsContainer loading={false} hasContent>
+          <PostExtraDetailsAccordian Icon={AttachFile} title="附件">
+            <Grid container>
+              {orphanAttachments.map((item) =>
+                item.is_image ? (
+                  <SummaryAttachmentImage
+                    key={item.attachment_id}
+                    item={item}
+                  />
+                ) : (
+                  <SummaryAttachmentGrid key={item.attachment_id}>
+                    <Tooltip
+                      key={item.attachment_id}
+                      title={
+                        <Stack>
+                          <Typography>{item.filename}</Typography>
+                        </Stack>
+                      }
+                    >
+                      <Link
+                        to={item.download_url ?? ''}
+                        external
+                        download={item.filename}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        flexDirection="column"
+                      >
+                        <Stack
+                          flexGrow={1}
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          <Article fontSize="large" htmlColor="#aaa" />
+                        </Stack>
+                        <Typography
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                          width="100%"
+                        >
+                          {item.filename}
+                        </Typography>
+                      </Link>
+                    </Tooltip>
+                  </SummaryAttachmentGrid>
+                )
+              )}
+            </Grid>
+          </PostExtraDetailsAccordian>
+        </PostExtraDetailsContainer>
       )}
-      <Typography color="text.primary" ref={el}></Typography>
-    </div>
+    </>
   )
 }
 
