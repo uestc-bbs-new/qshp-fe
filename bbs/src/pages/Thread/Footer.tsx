@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 
 import { Box, Button, Stack } from '@mui/material'
 
-import { DEPRECATED_votePost } from '@/apis/thread'
+import { parseApiError } from '@/apis/error'
+import { DEPRECATED_votePost, ratePost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
@@ -29,9 +30,10 @@ const Footer = ({
   onReport?: () => void
   onRateCompleted?: () => void
 }) => {
-  const canReply = forumDetails?.can_post_reply && threadDetails?.can_reply
+  const canReply =
+    (forumDetails?.can_post_reply && threadDetails?.can_reply) || true
 
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   const [support, setSupport] = useState(post.support)
   const [oppose, setOppose] = useState(post.oppose)
   useEffect(() => {
@@ -54,6 +56,33 @@ const Footer = ({
       } else {
         setOppose(oppose + 1)
       }
+    }
+  }
+
+  const [specialRatePending, setSpecialRatePending] = useState(false)
+  const handleSpecialRate = async () => {
+    setSpecialRatePending(true)
+    try {
+      await ratePost(post.post_id, {
+        credits: {
+          水滴: 50,
+          威望: 1,
+        },
+        reason: '清水河畔官方红包楼奖励🧧',
+        notify: true,
+      })
+      onRateCompleted && onRateCompleted()
+    } catch (e) {
+      const { message, severity } = parseApiError(e)
+      dispatch({
+        type: 'open snackbar',
+        payload: {
+          severity,
+          message,
+        },
+      })
+    } finally {
+      setSpecialRatePending(false)
     }
   }
 
@@ -119,6 +148,15 @@ const Footer = ({
       <Button variant="text" onClick={() => setRateDialog(true)}>
         评分
       </Button>
+      {forumDetails?.can_moderate && post.thread_id == 463952 && (
+        <Button
+          variant="text"
+          onClick={handleSpecialRate}
+          disabled={specialRatePending}
+        >
+          🧧红包楼奖励
+        </Button>
+      )}
 
       <Box flexGrow={1} flexShrink={1} />
 
