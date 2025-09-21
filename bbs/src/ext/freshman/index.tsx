@@ -26,9 +26,11 @@ import {
 } from '@/apis/captcha'
 import { parseApiError } from '@/apis/error'
 import Captcha from '@/components/Captcha'
+import Error from '@/components/Error'
 import Link from '@/components/Link'
 import { useAppState } from '@/states'
 import { sleep } from '@/utils/misc'
+import { pages } from '@/utils/routes'
 
 import { LuckyDrawResult, getStatus, verifyCode } from './api'
 
@@ -66,7 +68,7 @@ const scaleIn = keyframes`
 const kDiagonalCirclePos = 14.6447
 
 export const LuckyDraw = () => {
-  const { isLoading, isError, data, refetch } = useQuery({
+  const { isLoading, isError, error, data, refetch } = useQuery({
     queryKey: ['x', 'freshman', 'status'],
     queryFn: getStatus,
   })
@@ -141,7 +143,9 @@ export const LuckyDraw = () => {
         {isLoading ? (
           <CircularProgress sx={{ my: 20 }} />
         ) : isError ? (
-          <Alert severity="error">网络不畅，请稍后刷新重试。</Alert>
+          <Stack mt={4} mb={2}>
+            <Error error={error} />
+          </Stack>
         ) : data?.verified ? (
           <PrizeResult data={data} />
         ) : (
@@ -325,15 +329,28 @@ const PrizeResult = ({ data, sx }: { data: LuckyDrawResult; sx?: SxProps }) => (
     )}
     {data.gift && (
       <Typography variant="h6" my={2} color="#f2315f">
-        恭喜您获得{data.gift}！请
-        <Link
-          to="/home.php?mod=spacecp&ac=pm&touid=248310"
-          external
-          target="_blank"
-        >
-          私信
-        </Link>
-        联系站长领取奖励。
+        恭喜您获得{data.gift}！
+        {data.claim_text == '1' ? (
+          <>
+            请
+            <Link
+              to="/home.php?mod=spacecp&ac=pm&touid=248310"
+              external
+              target="_blank"
+            >
+              私信
+            </Link>
+            联系站长领取奖励。
+          </>
+        ) : data.claim_text == '2' ? (
+          <>
+            奖品定做中，请关注站内提醒与
+            <Link to={pages.forum(46)}>站务综合</Link>
+            公告，我们将尽快公布领奖方式。
+          </>
+        ) : (
+          data.claim_text
+        )}
       </Typography>
     )}
     <Typography>感谢您的参与！清水河畔更多精彩等你探索！</Typography>

@@ -18,6 +18,8 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -102,6 +104,11 @@ const EditConfirm = ({
   )
 }
 
+const kPrizeClaimMap: { [k: string]: string } = {
+  '1': '私信站长立即领取',
+  '2': '关注后续通知公告',
+}
+
 const PrizeRow = ({
   item,
   onRefresh,
@@ -127,6 +134,7 @@ const PrizeRow = ({
         probability1: currentItem.probability1 ?? 0,
         probability2: currentItem.probability2 ?? 0,
         probability3: currentItem.probability3 ?? 0,
+        claim_text: currentItem.claim_text,
       })
       onRefresh && onRefresh()
       setItem({})
@@ -176,6 +184,7 @@ const PrizeRow = ({
         probability1: currentItem.probability1 ?? 0,
         probability2: currentItem.probability2 ?? 0,
         probability3: currentItem.probability3 ?? 0,
+        claim_text: currentItem.claim_text,
       })
       onRefresh && onRefresh()
       setEditConfirm(false)
@@ -256,12 +265,28 @@ const PrizeRow = ({
             size="small"
             disabled={pending}
           />
+          <Select
+            size="small"
+            value={currentItem.claim_text ?? ''}
+            onChange={(e) =>
+              setItem({ ...currentItem, claim_text: e.target.value })
+            }
+          >
+            {Object.entries(kPrizeClaimMap).map(([k, v]) => (
+              <MenuItem value={k} key={k}>
+                {v}
+              </MenuItem>
+            ))}
+          </Select>
         </>
       ) : (
         <>
           <Typography>{currentItem.probability1}</Typography>
           <Typography>{currentItem.probability2}</Typography>
           <Typography>{currentItem.probability3}</Typography>
+          <Typography>
+            {kPrizeClaimMap[currentItem.claim_text ?? ''] ?? ''}
+          </Typography>
         </>
       )}
       <Stack direction="row" alignItems="center">
@@ -317,7 +342,7 @@ const Freshman = () => {
       <div
         css={{
           display: 'grid',
-          grid: 'auto-flow / 2fr 1fr 1fr 1fr 1fr 1fr max-content',
+          grid: 'auto-flow / 2fr 1fr 1fr 1fr 1fr 1fr 1fr max-content',
           alignItems: 'center',
           gap: '1em',
         }}
@@ -328,6 +353,7 @@ const Freshman = () => {
         <div>概率 1</div>
         <div>概率 2</div>
         <div>概率 3</div>
+        <div>领奖方式</div>
         <div>操作</div>
         {data.prizes?.map((item) => (
           <PrizeRow key={item.id} item={item} onRefresh={refetch} />

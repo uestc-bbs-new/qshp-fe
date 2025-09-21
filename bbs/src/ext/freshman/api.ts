@@ -7,6 +7,7 @@ const adminBase = `${baseUrl}/admin`
 export type LuckyDrawResult = {
   water?: number
   gift?: string
+  claim_text?: string
 }
 export type LuckyDrawStatus = {
   verified: boolean
@@ -32,6 +33,7 @@ export type LuckyDrawPrize = {
   probability1: number
   probability2: number
   probability3: number
+  claim_text?: string
 }
 export type LuckyDrawUser = {
   code: string
