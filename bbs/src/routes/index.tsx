@@ -57,11 +57,6 @@ const devPages: RouteObject[] = [
     id: 'settings',
     element: <Settings />,
   },
-  {
-    path: '/freshman/luckydraw',
-    id: 'x_freshman_luckydraw',
-    element: <LuckyDraw />,
-  },
 ]
 
 const devMessagesPages: RouteObject[] = [
@@ -147,6 +142,11 @@ routes.current = [
         path: '/renew',
         id: 'renew',
         element: <Renew />,
+      },
+      {
+        path: '/freshman/luckydraw',
+        id: 'x_freshman_luckydraw',
+        element: <LuckyDraw />,
       },
       ...(isPreviewRelease ? [] : devPages),
 
