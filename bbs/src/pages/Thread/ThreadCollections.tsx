@@ -10,7 +10,7 @@ import { legacyPages } from '@/utils/routes'
 import {
   PostExtraDetailsAccordian,
   PostExtraDetailsContainer,
-} from './PostExtraDetails'
+} from '../../components/Post/PostExtraDetails'
 
 const Item = ({ item }: { item: Collection }) => (
   <Stack direction="row" alignItems="center">

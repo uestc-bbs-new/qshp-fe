@@ -28,7 +28,7 @@ import Chip from '@/components/Chip'
 import Link from '@/components/Link'
 import { pages } from '@/utils/routes'
 
-import { PostExtraDetailsAccordian } from './PostExtraDetails'
+import { PostExtraDetailsAccordian } from '../../components/Post/PostExtraDetails'
 import { PostExtraDetailsEx } from './types'
 
 const kCreditNamesToPromote = ['威望', '奖励券']

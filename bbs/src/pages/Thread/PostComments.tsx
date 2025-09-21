@@ -20,7 +20,7 @@ import bbcode2html from '@/utils/bbcode/bbcode'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
-import { PostExtraDetailsAccordian } from './PostExtraDetails'
+import { PostExtraDetailsAccordian } from '../../components/Post/PostExtraDetails'
 import { PostExtraDetailsEx } from './types'
 
 const PostComments = ({
