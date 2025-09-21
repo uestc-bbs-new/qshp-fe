@@ -361,7 +361,23 @@ const Freshman = () => {
         <PrizeRow onRefresh={refetch} />
       </div>
       <Typography variant="h5" mt={4} mb={2}>
-        中奖用户
+        统计数据
+      </Typography>
+      <Stack>
+        <Typography>兑换尝试次数：{data.total_attempts}</Typography>
+        <Typography>
+          兑换码数量：{data.total_codes} (已兑换 {data.claimed_codes} 剩余{' '}
+          {data.total_codes - data.claimed_codes} /{' '}
+          {Math.round((data.claimed_codes / data.total_codes) * 1000) / 10}% )
+        </Typography>
+        <Typography>
+          中奖人数：{data.total_prize_users}，新生 {data.freshman_prize_users}
+          ，本科新生 {data.undergraduate_freshman_prize_users}，新注册用户{' '}
+          {data.new_register_prize_users}
+        </Typography>
+      </Stack>
+      <Typography variant="h5" mt={4} mb={2}>
+        中奖用户 ({data.total_prize_users})
       </Typography>
       <div
         css={{

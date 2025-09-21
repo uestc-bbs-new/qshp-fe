@@ -46,6 +46,13 @@ export type LuckyDrawUser = {
 export type LuckyDrawPrizes = {
   prizes?: LuckyDrawPrize[]
   users?: LuckyDrawUser[]
+  total_attempts: number
+  total_prize_users: number
+  freshman_prize_users: number
+  undergraduate_freshman_prize_users: number
+  new_register_prize_users: number
+  total_codes: number
+  claimed_codes: number
 }
 export const getPrizes = () =>
   request.get<LuckyDrawPrizes>(`${adminBase}/prizes`)
