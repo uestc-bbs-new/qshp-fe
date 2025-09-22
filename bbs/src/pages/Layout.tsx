@@ -84,7 +84,7 @@ const Layout = () => {
           </Fab>
         </ScrollTop>
 
-        {isDeveloper() && activeRoute?.id != 'x_freshman_luckydraw' && (
+        {activeRoute?.id != 'x_freshman_luckydraw' && (
           <Fab
             component={Link}
             to="/freshman/luckydraw"

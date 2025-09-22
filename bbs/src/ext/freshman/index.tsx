@@ -265,6 +265,15 @@ export const LuckyDraw = () => {
             </div>
           </>
         )}
+        <Typography variant="h6" my={2}>
+          活动说明参见
+          <Link to={pages.thread(2369410)}>
+            河畔18周年预热活动——”刮刮卡迎新生“
+          </Link>
+        </Typography>
+        <Typography color="#999" variant="body2">
+          *活动最终解释权归清水河畔管理组所有
+        </Typography>
       </Stack>
       {captchaConfig && (
         <Dialog open={captchaOpen}>
