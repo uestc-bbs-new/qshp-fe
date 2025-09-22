@@ -94,6 +94,10 @@ const Layout = () => {
               bottom: 120,
               width: 96,
               height: 96,
+              '@media (max-width: 560px)': {
+                width: 80,
+                height: 80,
+              },
             }}
           >
             <img
