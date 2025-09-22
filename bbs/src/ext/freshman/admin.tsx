@@ -364,6 +364,14 @@ const Freshman = () => {
         统计数据
       </Typography>
       <Stack>
+        <Typography>
+          奖品总数：{data.total_gifts}，剩余奖品：{data.remaining_gifts}（
+          {Math.round(
+            ((data.total_gifts - data.remaining_gifts) / data.total_gifts) *
+              1000
+          ) / 10}
+          %）
+        </Typography>
         <Typography>兑换尝试次数：{data.total_attempts}</Typography>
         <Typography>
           兑换码数量：{data.total_codes} (已兑换 {data.claimed_codes} 剩余{' '}
@@ -371,7 +379,9 @@ const Freshman = () => {
           {Math.round((data.claimed_codes / data.total_codes) * 1000) / 10}% )
         </Typography>
         <Typography>
-          中奖人数：{data.total_prize_users}，新生 {data.freshman_prize_users}
+          中奖人数：总计 {data.total_prize_users}，实物奖励{' '}
+          {data.claimed_codes_with_gift}
+          ，新生 {data.freshman_prize_users}
           ，本科新生 {data.undergraduate_freshman_prize_users}，新注册用户{' '}
           {data.new_register_prize_users}
         </Typography>

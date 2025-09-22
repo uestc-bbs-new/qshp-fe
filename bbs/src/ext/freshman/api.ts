@@ -53,6 +53,9 @@ export type LuckyDrawPrizes = {
   new_register_prize_users: number
   total_codes: number
   claimed_codes: number
+  claimed_codes_with_gift: number
+  total_gifts: number
+  remaining_gifts: number
 }
 export const getPrizes = () =>
   request.get<LuckyDrawPrizes>(`${adminBase}/prizes`)
