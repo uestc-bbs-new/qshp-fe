@@ -18,7 +18,6 @@ import { getSecuritySettings, kStatusUnbound } from '@/apis/settings'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { StyledField } from '@/components/StyledField'
-import { StyledSelect } from '@/components/StyledSelect'
 import { pages } from '@/utils/routes'
 
 const fieldSx = { width: 100, flexShrink: 0 }
@@ -31,6 +30,7 @@ const AccountSecurity = () => {
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
   const [email, setEmail] = useState('')
+  const [studentIdOrName, setStudentIdOrName] = useState('')
 
   const { data } = useQuery({
     queryKey: ['settings', 'security'],
@@ -108,14 +108,35 @@ const AccountSecurity = () => {
               </>
             )}
             {changeEmail ? (
-              <Stack direction="row" alignItems="center" my={3}>
-                <Typography sx={fieldSx}>邮箱</Typography>
-                <StyledField
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  sx={{ width: '40%' }}
-                />
-              </Stack>
+              <>
+                <Stack direction="row" alignItems="center" my={3}>
+                  <Typography sx={fieldSx}>邮箱</Typography>
+                  <StyledField
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    sx={{ width: '40%' }}
+                  />
+                </Stack>
+                <Stack direction="row" alignItems="center" mt={3}>
+                  <Typography sx={fieldSx}>关联学号/姓名</Typography>
+                  <StyledField
+                    value={studentIdOrName}
+                    onChange={(e) => setStudentIdOrName(e.target.value)}
+                    sx={{ width: '40%' }}
+                  />
+                </Stack>
+                <Typography
+                  ml={13}
+                  mt={1}
+                  mb={3}
+                  sx={{
+                    color: alpha(theme.palette.text.secondary, 0.3),
+                  }}
+                  fontSize={12}
+                >
+                  为了您的账号安全，修改邮箱时还需验证关联学号/姓名（选择其中任意一项输入）。
+                </Typography>
+              </>
             ) : (
               <Stack direction="row" alignItems="flex-start" my={3}>
                 <Typography sx={fieldSx}>邮箱</Typography>
