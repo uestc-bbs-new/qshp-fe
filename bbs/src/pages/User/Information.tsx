@@ -20,6 +20,7 @@ import { getUserProfile } from '@/apis/user'
 import { UserSummary } from '@/common/interfaces/user'
 import Link from '@/components/Link'
 import { UserHtmlRenderer } from '@/components/RichText'
+import Separated from '@/components/Separated'
 import { chineseTime } from '@/utils/dayjs'
 import { isPreviewRelease } from '@/utils/releaseMode'
 import { pages } from '@/utils/routes'
@@ -183,6 +184,17 @@ const Information = ({
               {data.signature_format == 'html' && (
                 <UserHtmlRenderer html={data.signature} />
               )}
+            </Section>
+          )}
+          {!!data.moderate_forums?.length && (
+            <Section title="管理版块">
+              <Separated separator="、">
+                {data.moderate_forums.map((forum) => (
+                  <Link key={forum.fid} to={pages.forum(forum.fid)}>
+                    {forum.name}
+                  </Link>
+                ))}
+              </Separated>
             </Section>
           )}
           <Section title="活跃概况">

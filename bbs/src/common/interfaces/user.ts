@@ -122,6 +122,11 @@ export type UserProfile = {
   custom_title: string
   signature: string
   signature_format: string
+
+  moderate_forums?: {
+    fid: number
+    name: string
+  }[]
 }
 
 export type FavoriteTargetType = 'tid' | 'fid' | 'gid' | 'albumid' | 'blogid'
