@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Box,
@@ -14,11 +14,23 @@ import {
   useTheme,
 } from '@mui/material'
 
+import { getWebAuthnChallenge } from '@/apis/auth'
 import { getSecuritySettings, kStatusUnbound } from '@/apis/settings'
 import Avatar from '@/components/Avatar'
 import Link from '@/components/Link'
 import { StyledField } from '@/components/StyledField'
+import { useAppState } from '@/states'
 import { pages } from '@/utils/routes'
+import { isVpnProxy } from '@/utils/siteRoot'
+
+const base64ToArrayBuffer = (base64: string) => {
+  const bin = atob(base64)
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < length; ++i) {
+    bytes[i] = bin.charCodeAt(i)
+  }
+  return bytes.buffer
+}
 
 const fieldSx = { width: 100, flexShrink: 0 }
 
@@ -37,11 +49,64 @@ const AccountSecurity = () => {
     queryFn: getSecuritySettings,
   })
 
+  const { state } = useAppState()
+
+  const [supportPasskey, setSupportPasskey] = useState(false)
+  useEffect(() => {
+    if (!!window.PublicKeyCredential?.getClientCapabilities && !isVpnProxy) {
+      ;(async () => {
+        const caps = await PublicKeyCredential.getClientCapabilities()
+        if ('passkeyPlatformAuthenticator' in caps) {
+          setSupportPasskey(true)
+        }
+      })()
+    }
+  }, [])
+  const setupWebAuthn = async () => {
+    const challenge = base64ToArrayBuffer(
+      (await getWebAuthnChallenge()).challenge
+    )
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
+        rp: { name: '清水河畔' },
+        user: {
+          displayName: state.user.username,
+          name: state.user.username,
+          id: new Uint32Array([state.user.uid]),
+        },
+        authenticatorSelection: {
+          residentKey: 'required',
+          requireResidentKey: true,
+        },
+      },
+    })
+  }
+
   return (
     <>
       <Box className="relative overflow-hidden p-2" sx={{ width: '100%' }}>
         <Paper elevation={3} sx={{ borderRadius: '10px', overflow: 'hidden' }}>
           <Box px={3}>
+            {supportPasskey && (
+              <Stack direction="row" alignItems="flex-start" my={3}>
+                <Typography sx={fieldSx}>快捷登录</Typography>
+                <Stack alignItems="flex-start">
+                  <Typography>
+                    您的浏览器支持快捷登录，配置后无需输入密码即可登录。注意：请在自己的个人设备上配置快捷登录，切勿在他人或公用设备上使用该功能。
+                  </Typography>
+                  <Button
+                    color="success"
+                    variant="contained"
+                    sx={{ mt: 1 }}
+                    onClick={setupWebAuthn}
+                  >
+                    立即配置
+                  </Button>
+                </Stack>
+              </Stack>
+            )}
             {!changePassword && (
               <Stack direction="row" alignItems="flex-start" my={3}>
                 <Typography sx={fieldSx}>河畔密码</Typography>

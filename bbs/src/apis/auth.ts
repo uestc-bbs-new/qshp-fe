@@ -151,3 +151,6 @@ export const applyRenew = (params: EphemeralAuthorization) =>
 
 export const kErrRenewSameStudentId = 10
 export const kErrStudentIdRenewed = 11
+
+export const getWebAuthnChallenge = () =>
+  request.get<{ challenge: string }>(`${authUrl}/webauthn/challenge`)
