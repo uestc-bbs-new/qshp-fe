@@ -14,8 +14,8 @@ import { UserSubPage, pages } from '@/utils/routes'
 
 import Favorites from './Favorites'
 import Friends from './Friends'
-import Information from './Information'
 import MessageBoard from './MessageBoard'
+import Profile from './Profile'
 import Side from './Side'
 import UserCard from './UserCard'
 import UserThreads from './UserThreads'
@@ -162,7 +162,7 @@ function User() {
         <Card>
           <>
             {activeTab == 'profile' && (
-              <Information
+              <Profile
                 userQuery={user}
                 queryOptions={queryOptions}
                 onLoad={onLoad}

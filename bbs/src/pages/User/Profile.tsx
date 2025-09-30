@@ -69,7 +69,7 @@ const FieldValueGrid = (props: FieldValueProps) => {
   )
 }
 
-const Information = ({
+const Profile = ({
   userQuery,
   queryOptions,
   userSummary,
@@ -253,4 +253,4 @@ const Information = ({
   )
 }
 
-export default Information
+export default Profile
