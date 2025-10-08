@@ -106,7 +106,11 @@ const getCookies = () => {
 }
 
 const initForVpn = async () => {
+  if (!isVpnProxy) {
+    return
+  }
   indexedDB.deleteDatabase(kIdbName)
+  // await initForVpnReal()
 }
 const initForVpnReal = async () => {
   await Promise.all([initCrypto(), initKv()])
