@@ -28,7 +28,6 @@ import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
-import { isDeveloper } from '@/states/settings'
 import { isVpnProxy } from '@/utils/siteRoot'
 
 const Layout = () => {
