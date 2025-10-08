@@ -16,7 +16,6 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import freshmanBonus2025 from '@/assets/2025_fresh_bonus.png'
 import {
   kSidebarWidth,
   useSidebarInMarginMediaQuery,
@@ -25,13 +24,11 @@ import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
-import Link from '@/components/Link'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
 import { isDeveloper } from '@/states/settings'
-import { useActiveRoute } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 
 const Layout = () => {
@@ -41,7 +38,6 @@ const Layout = () => {
   const sidebarNotFit = useMediaQuery(
     `(max-width: ${kContentWidth + kSidebarWidth}px)`
   )
-  const activeRoute = useActiveRoute()
   const [vpnPromptOpen, setVpnPromptOpen] = useState(isVpnProxy)
 
   return (
@@ -84,30 +80,6 @@ const Layout = () => {
           </Fab>
         </ScrollTop>
 
-        {activeRoute?.id != 'x_freshman_luckydraw' && (
-          <Fab
-            component={Link}
-            to="/freshman/luckydraw"
-            sx={{
-              position: 'fixed',
-              right: 8,
-              bottom: 120,
-              width: 96,
-              height: 96,
-              '@media (max-width: 560px)': {
-                width: 80,
-                height: 80,
-              },
-            }}
-          >
-            <img
-              src={freshmanBonus2025}
-              css={{
-                width: '100%',
-              }}
-            />
-          </Fab>
-        )}
         {state.globalSnackbar && (
           <Snackbar
             key={state.globalSnackbar.key}
