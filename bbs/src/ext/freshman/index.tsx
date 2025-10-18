@@ -74,7 +74,7 @@ export const LuckyDraw = () => {
   })
   const [captchaOpen, setCaptchaOpen] = useState(false)
   const [captchaConfig, setCaptchaConfig] = useState<CaptchaConfiguration>()
-  const codeRef = useRef<HTMLInputElement>()
+  const codeRef = useRef<HTMLInputElement>(null)
   const [animate, setAnimate] = useState(false)
   const [luckyResult, setResult] = useState<LuckyDrawResult>()
   const [resultOpen, setResultOpen] = useState(false)

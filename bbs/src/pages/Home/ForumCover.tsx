@@ -206,7 +206,7 @@ export const ForumGroup = ({
             ?.filter((item) => item.name)
             .map((item, index) =>
               narrowView ? (
-                <Grid item key={index} xs={6}>
+                <Grid key={index} size={6}>
                   <Button
                     component={Link}
                     to={pages.forum(item.fid)}
@@ -252,12 +252,10 @@ export const ForumGroup = ({
                 </Grid>
               ) : (
                 <Grid
-                  item
                   key={index}
-                  style={{ width: '100%' }}
-                  {...(toplistView
-                    ? { sm: 6, lg: 4, xl: 3 }
-                    : { sm: 6, lg: 4 })}
+                  size={
+                    toplistView ? { sm: 6, lg: 4, xl: 3 } : { sm: 6, lg: 4 }
+                  }
                 >
                   <ForumCover data={item} />
                 </Grid>

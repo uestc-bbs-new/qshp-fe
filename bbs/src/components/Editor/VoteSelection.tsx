@@ -27,7 +27,7 @@ export const VoteSelection = ({
 }) => {
   const initialPollDetails = valueRef?.current?.poll
   const [isVote, setVote] = useState(!!initialPollDetails)
-  const savedPollDetails = useRef<PostThreadPollDetails>()
+  const savedPollDetails = useRef<PostThreadPollDetails>(undefined)
   const [options, setOptions] = useState<string[]>(['', '', ''])
   const filterValidOptions = (options: string[]) =>
     options.map((item) => item.trim()).filter((item) => !!item)

@@ -3,9 +3,9 @@ import { useEffect, useRef } from 'react'
 import { htmlspecialchars } from '../../../../markdown-renderer/src/utils/html'
 
 export const useWatermark = ({ text }: { text: string }) => {
-  const root = useRef<HTMLDivElement>()
-  const bodyObserver = useRef<MutationObserver>()
-  const watermarkObserver = useRef<MutationObserver>()
+  const root = useRef<HTMLDivElement>(undefined)
+  const bodyObserver = useRef<MutationObserver>(undefined)
+  const watermarkObserver = useRef<MutationObserver>(undefined)
 
   const cleanup = () => {
     if (bodyObserver.current) {

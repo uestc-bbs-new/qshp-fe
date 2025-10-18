@@ -232,12 +232,12 @@ export const ResetPasswordEmailHome = () => {
   const [apiError, setApiError] = useState<unknown>()
   const [errorMessage, setErrorMessage] = useState<string>()
   const [emailSent, setEmailSent] = useState(false)
-  const captchaRef = useRef<CaptchaType>()
-  const captchaToken = useRef<string>()
+  const captchaRef = useRef<CaptchaType>(null)
+  const captchaToken = useRef<string>(undefined)
   const kEmailRetryTimeout = 60
   const [timeout, setRetryTimeout] = useState(kEmailRetryTimeout)
   const timeoutRef = useRef<number>(timeout)
-  const retryInterval = useRef<number>()
+  const retryInterval = useRef<number>(undefined)
   useEffect(
     () => () => {
       if (retryInterval.current) {

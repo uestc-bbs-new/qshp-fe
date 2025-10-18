@@ -40,7 +40,7 @@ function Favorites({
 }: SubPageCommonProps & { self: boolean }) {
   const [searchParams] = useSearchParams()
   const [collections, setCollections] = useState<Collection[]>()
-  const userInfo = useRef<Partial<User>>()
+  const userInfo = useRef<Partial<User>>(undefined)
   const initQuery = () => ({
     common: { ...userQuery, ...queryOptions },
     page: parseInt(searchParams.get('page') || '1') || 1,

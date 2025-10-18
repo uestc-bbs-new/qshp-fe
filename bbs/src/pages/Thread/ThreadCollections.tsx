@@ -43,7 +43,7 @@ const ThreadCollections = ({ collections }: { collections: Collection[] }) => (
     >
       <Grid container>
         {collections.map((item) => (
-          <Grid key={item.collection_id} item xs={12} sm={6} py={1} pr={1}>
+          <Grid key={item.collection_id} size={{ xs: 12, sm: 6 }} py={1} pr={1}>
             <Item item={item} />
           </Grid>
         ))}

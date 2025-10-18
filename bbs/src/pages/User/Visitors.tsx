@@ -45,11 +45,12 @@ export const VisitorList = ({
       <Grid container spacing={0.75}>
         {visitors?.map((user) => (
           <Grid
-            item
-            xs={4}
-            sm={wide ? 3 : undefined}
-            md={wide ? 2 : undefined}
-            lg={wide ? 1 : undefined}
+            size={{
+              xs: 4,
+              sm: wide ? 3 : undefined,
+              md: wide ? 2 : undefined,
+              lg: wide ? 1 : undefined,
+            }}
             key={user.uid}
           >
             <Stack

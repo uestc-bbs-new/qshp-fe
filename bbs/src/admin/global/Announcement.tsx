@@ -34,11 +34,11 @@ const EditDialog = ({
   open: boolean
   onClose: (item?: AnnouncementItem) => void
 }) => {
-  const titleRef = useRef<HTMLInputElement>()
-  const summaryRef = useRef<HTMLInputElement>()
-  const hrefRef = useRef<HTMLInputElement>()
-  const startTimeRef = useRef<HTMLInputElement>()
-  const endTimeRef = useRef<HTMLInputElement>()
+  const titleRef = useRef<HTMLInputElement>(null)
+  const summaryRef = useRef<HTMLInputElement>(null)
+  const hrefRef = useRef<HTMLInputElement>(null)
+  const startTimeRef = useRef<HTMLInputElement>(null)
+  const endTimeRef = useRef<HTMLInputElement>(null)
   const highlightColorRef = useRef<HTMLInputElement>(null)
   const darkHighlightColorRef = useRef<HTMLInputElement>(null)
 

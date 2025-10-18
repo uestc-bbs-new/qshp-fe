@@ -216,7 +216,7 @@ function Forum() {
     }
   }
   const [query, setQuery] = useState(initQuery())
-  const threadListTop = useRef<HTMLElement>()
+  const threadListTop = useRef<HTMLElement>(null)
 
   const {
     data: threadList,

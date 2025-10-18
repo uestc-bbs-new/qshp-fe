@@ -69,7 +69,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
   const [loading, setLoading] = useState(true)
   const vditorInitialized = useRef(false)
   const theme = () => (state.theme === 'light' ? 'classic' : 'dark')
-  const smilyAnchor = useRef<HTMLElement>()
+  const smilyAnchor = useRef<HTMLElement>(null)
   const [smilyOpen, setSmilyOpen] = useState(false)
   const closeSmily = () => setSmilyOpen(false)
   const [selectedSmilyKind, setSmilyKind] = useState(smilyData[0])
@@ -189,7 +189,7 @@ const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
             flexShrink={1}
           >
             {selectedSmilyKind.items.map((item, index) => (
-              <Grid key={index} item>
+              <Grid key={index}>
                 <IconButton
                   onClick={() => {
                     vditorContext.current.vditor?.insertValue(

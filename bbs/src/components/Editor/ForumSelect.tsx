@@ -201,10 +201,8 @@ const ForumButton = ({
   const hasSub = hasSubForumsThatCanPostThread(item)
   return (
     <Grid
-      item
       rowSpacing={0}
-      xs={thinView ? 6 : 4}
-      sm={3}
+      size={{ xs: thinView ? 6 : 4, sm: 3 }}
       onTouchStart={() => hasSub && setTimeout(() => setTooltipOpen(true), 300)}
     >
       {hasSub ? (

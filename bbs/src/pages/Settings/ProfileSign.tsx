@@ -206,10 +206,9 @@ const ProfileSign = () => {
         kind.items.some((item) => item.id == id)
       )
       if (!smilyKind) return match
-      return `<img src="${kSmilyBasePath}/${
-        smilyKind.path
-      }/${smilyKind.items.find((item) => item.id == id)
-        ?.path}" loading="lazy"/>`
+      return `<img src="${kSmilyBasePath}/${smilyKind.path}/${
+        smilyKind.items.find((item) => item.id == id)?.path
+      }" loading="lazy"/>`
     })
     previewSign = previewSign.replace(/\[\/s:(.*?)\]/g, '" />')
     setPreviewSign(previewSign)
@@ -405,7 +404,7 @@ const ProfileSign = () => {
                 sx={{ ml: 1 }}
               >
                 {smilyKind.items.map((item, index) => (
-                  <Grid key={index} item>
+                  <Grid key={index}>
                     <IconButton
                       onClick={() => {
                         if (inputRef.current === null) return

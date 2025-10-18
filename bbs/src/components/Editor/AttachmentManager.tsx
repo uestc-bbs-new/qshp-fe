@@ -52,7 +52,7 @@ const AttachmentManager = ({
         <AccordionDetails>
           <Grid container spacing={1}>
             {attachments.map((item, index) => (
-              <Grid key={item.attachment_id} xs={3} sm={2} md={1} item>
+              <Grid key={item.attachment_id} size={{ xs: 3, sm: 2, md: 1 }}>
                 <Stack alignItems="center">
                   <Box position="relative" width="100%" pb="100%">
                     <Stack

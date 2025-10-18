@@ -27,7 +27,7 @@ const Ad = ({ mb, singleColumn }: { mb?: number; singleColumn?: boolean }) => {
       {adData
         .filter((item) => !singleColumn || !!item.image || !!item.href)
         .map((item, index) => (
-          <Grid item xs={singleColumn ? 12 : 6} key={index}>
+          <Grid size={singleColumn ? 12 : 6} key={index}>
             <Link
               sx={(theme) => ({
                 display: 'block',

@@ -93,7 +93,7 @@ const LoginDialog = ({ open }: { open: boolean }) => {
   const { state, dispatch } = useAppState()
   const formRef = useRef<HTMLFormElement>(null)
   const [captcha, setCaptcha] = useState<CaptchaConfiguration>()
-  const captchaRef = useRef<CaptchaType>()
+  const captchaRef = useRef<CaptchaType>(null)
   const [signinPending, setSigninPending] = useState(false)
   const close = () => dispatch({ type: 'close dialog' })
   const narrowView = useMediaQuery('(max-width: 560px)')

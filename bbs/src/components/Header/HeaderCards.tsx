@@ -32,7 +32,7 @@ const HeaderCards = ({
       <Grid container spacing={tabbedTopView ? 1 : 2} mb={2}>
         {tabbedTopView ? (
           <>
-            <Grid item xs={6}>
+            <Grid size={6}>
               {renderTopLists && (
                 <TabbedHeaderCard
                   ids={['newreply', 'newthread']}
@@ -42,7 +42,7 @@ const HeaderCards = ({
               )}
               {renderSkeleton && <SkeletonColumn />}
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               {renderTopLists && (
                 <TabbedHeaderCard
                   ids={['digest', 'life', 'hotlist']}
@@ -54,7 +54,7 @@ const HeaderCards = ({
           </>
         ) : (
           topKeys.map((key) => (
-            <Grid key={key} item xs={4}>
+            <Grid key={key} size={4}>
               {renderTopLists && (
                 <HeaderCard id={key} list={topLists[key] || []} />
               )}

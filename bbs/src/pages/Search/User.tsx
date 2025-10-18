@@ -92,7 +92,7 @@ const User = () => {
       <Box>
         <Grid container spacing={2}>
           {data?.rows.map((item, index) => (
-            <Grid item xs={12} sm={6} lg={4} key={index}>
+            <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
               <UserItem data={item} key={item.uid} />
             </Grid>
           ))}

@@ -88,7 +88,7 @@ function MessageBoard({
 
   const navigate = useNavigate()
   const topRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     navigate(
       `${location.pathname}?${searchParamsAssign(searchParams, {
@@ -245,7 +245,7 @@ const CommentEditDialog = ({
   onClose?: (newNote?: string) => void
 }) => {
   const [pending, setPending] = useState(false)
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   const updateComment = () => {
     if (item && inputRef.current) {
       setPending(true)

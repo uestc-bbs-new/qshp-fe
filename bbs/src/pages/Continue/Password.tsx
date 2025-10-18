@@ -15,8 +15,8 @@ export const PasswordInput = ({
 }) => {
   const [passwordError, setPasswordError] = useState('')
   const [passwordError2, setPasswordError2] = useState('')
-  const password1 = useRef<HTMLInputElement>()
-  const password2 = useRef<HTMLInputElement>()
+  const password1 = useRef<HTMLInputElement>(null)
+  const password2 = useRef<HTMLInputElement>(null)
 
   const validatePassword = async (confirmPassword?: boolean) => {
     if (

@@ -86,7 +86,7 @@ const TopListView = ({
   }
 
   const location = useLocation()
-  const lastLocation = useRef<{ pathname?: string; search?: string }>()
+  const lastLocation = useRef<{ pathname?: string; search?: string }>(undefined)
   useEffect(() => {
     if (
       lastLocation.current &&

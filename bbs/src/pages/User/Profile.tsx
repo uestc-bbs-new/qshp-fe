@@ -63,7 +63,7 @@ const FieldValue = ({ title, text, children }: FieldValueProps) => (
 const FieldValueGrid = (props: FieldValueProps) => {
   const narrowView = useMediaQuery('(max-width: 640px)')
   return (
-    <Grid item xs={narrowView ? 12 : 6}>
+    <Grid size={narrowView ? 12 : 6}>
       <FieldValue {...props} />
     </Grid>
   )

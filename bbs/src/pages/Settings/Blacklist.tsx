@@ -48,7 +48,7 @@ const Blacklist = () => {
           />
           <Grid container spacing={3} sx={{ p: 3 }}>
             {Array.from(new Array(5)).map((_, index) => (
-              <Grid item xs={4} key={index} sx={{ py: 1 }}>
+              <Grid size={4} key={index} sx={{ py: 1 }}>
                 <BlacklistUser data={userInfo} />
               </Grid>
             ))}

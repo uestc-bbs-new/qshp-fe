@@ -20,7 +20,7 @@ const Comment = ({
   const { dispatch } = useAppState()
   const [dialogPending, setDialogPending] = useState(false)
   const [commentError, setCommentError] = useState('')
-  const commentMessage = useRef<HTMLInputElement>()
+  const commentMessage = useRef<HTMLInputElement>(null)
   const handleCommentChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) =>

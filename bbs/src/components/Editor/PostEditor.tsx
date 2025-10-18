@@ -126,8 +126,8 @@ const PostEditor = ({
   ]
   const editor = useRef<EditorHandle>(null)
   const [waitTimeout, setWaitTimeout] = useState<number>()
-  const timeoutInterval = useRef<number>()
-  const timeoutValue = useRef<number>()
+  const timeoutInterval = useRef<number>(undefined)
+  const timeoutValue = useRef<number>(undefined)
 
   const {
     props: snackbarProps,

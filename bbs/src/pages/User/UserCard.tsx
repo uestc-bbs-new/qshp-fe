@@ -294,7 +294,7 @@ const AddFriendDialog = ({
   onClose: ModalProps['onClose']
 }) => {
   const dialogRef = useRef<DialogHandle>(null)
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   return (
     <GeneralDialog
       open={open}

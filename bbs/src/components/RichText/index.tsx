@@ -225,7 +225,7 @@ const MarkdownPostRenderer = ({
     'loading'
   )
   const el = useRef<HTMLDivElement>(null)
-  const renderContext = useRef<VditorContext>()
+  const renderContext = useRef<VditorContext>(null)
   const [orphanAttachments, setOrphanAttachments] = useState<Attachment[]>()
   useEffect(() => {
     ;(async () => {

@@ -76,7 +76,7 @@ function Friends({
     },
   })
 
-  const queryRef = useRef<HTMLInputElement>()
+  const queryRef = useRef<HTMLInputElement>(null)
   const handleSearch = () => {
     const value = queryRef.current?.value.trim()
     if (value && query.query != value) {
@@ -275,7 +275,7 @@ const FriendNoteDialog = ({
   onClose?: (newNote?: string) => void
 }) => {
   const [pending, setPending] = useState(false)
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   const updateNote = () => {
     if (item && inputRef.current) {
       setPending(true)

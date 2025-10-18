@@ -126,7 +126,7 @@ const Conversation = ({
     },
   })
   const scrollContainer = useRef<HTMLUListElement>(null)
-  const lastScrollHeight = useRef<number>()
+  const lastScrollHeight = useRef<number>(undefined)
   useLayoutEffect(() => {
     if (!scrollContainer.current) {
       return
@@ -153,7 +153,7 @@ const Conversation = ({
     setQuery(initQuery())
   }, [chatId, uid])
 
-  const messageRef = useRef<HTMLTextAreaElement>()
+  const messageRef = useRef<HTMLTextAreaElement>(null)
   const [sendPending, setSendPending] = useState(false)
   const sendMessage = async () => {
     if (!messageRef.current?.value) {
