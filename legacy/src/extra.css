@@ -11,6 +11,6 @@
   max-width: min(100%, 800px);
 }
 
-.post-message-markdown.vditor-reset iframe {
-  min-width: 50%;
+.rich-text-content .vditor-reset iframe.iframe__video {
+  width: 60%;
 }
