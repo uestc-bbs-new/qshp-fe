@@ -106,6 +106,14 @@ const getCookies = () => {
 }
 
 const initForVpn = async () => {
+  if (location.hostname == 'bbs.uestcer.org') {
+    location.replace(
+      location.href.replace(
+        /^https?:\/*bbs.uestcer.org\//,
+        'https://bbs.u' + 'estc.edu.cn/'.substring(0)
+      )
+    )
+  }
   if (!isVpnProxy) {
     return
   }
