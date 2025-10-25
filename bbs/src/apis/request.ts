@@ -16,7 +16,7 @@ import registerUserInterceptors from './interceptors/user'
 import registerVpnInitInterceptors from './interceptors/vpnInit'
 
 const baseUrl = (import.meta.env.PROD ? '' : '/dev') + '/'
-const commonUrl = '/star/api/v1'
+const commonUrl = '/_'
 
 const apiResultCode = {
   success: 0,

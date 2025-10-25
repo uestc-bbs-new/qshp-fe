@@ -19,7 +19,7 @@ if (process.env['UESTC_BBS_DATA_SERVER']) {
     target: process.env['UESTC_BBS_DATA_SERVER'],
     changeOrigin: true,
   }
-  staticProxies['/star/api/v1/attachment/forum'] = {
+  staticProxies['/_/attachment/forum'] = {
     target: process.env['UESTC_BBS_DATA_SERVER'],
     changeOrigin: true,
   }
@@ -28,7 +28,7 @@ if (process.env['UESTC_BBS_STAGING']) {
   staticProxies['/dev'] = {
     target: 'https://bbs.uestc.edu.cn/',
     changeOrigin: true,
-    rewrite: (path) => path.replace(/^\/dev\/star/, '_star'),
+    rewrite: (path) => path.replace(/^\/dev\/_/, '__'),
   }
 }
 
