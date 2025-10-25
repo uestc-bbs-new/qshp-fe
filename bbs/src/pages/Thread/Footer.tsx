@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Box, Button, Stack } from '@mui/material'
 
 import { parseApiError } from '@/apis/error'
-import { DEPRECATED_votePost, ratePost } from '@/apis/thread'
+import { PostReviewResult, ratePost, reviewPost } from '@/apis/thread'
 import { ForumDetails } from '@/common/interfaces/forum'
 import { PostFloor, Thread } from '@/common/interfaces/response'
 import { useAppState } from '@/states'
@@ -44,18 +44,44 @@ const Footer = ({
   }, [post.oppose])
 
   const vote = async (supportPost: boolean) => {
-    if (
-      await DEPRECATED_votePost({
-        tid: post.thread_id,
-        pid: post.post_id,
-        support: supportPost,
-      })
-    ) {
-      if (supportPost) {
-        setSupport(support + 1)
-      } else {
-        setOppose(oppose + 1)
-      }
+    const result = await reviewPost({
+      tid: post.thread_id,
+      pid: post.post_id,
+      support: supportPost,
+    })
+    switch (result) {
+      case PostReviewResult.Success:
+        if (supportPost) {
+          setSupport(support + 1)
+        } else {
+          setOppose(oppose + 1)
+        }
+        break
+      case PostReviewResult.Cancelled:
+        if (supportPost) {
+          setSupport(support - 1)
+        } else {
+          setOppose(oppose - 1)
+        }
+        break
+      case PostReviewResult.Updated:
+        if (supportPost) {
+          setSupport(support + 1)
+          setOppose(oppose - 1)
+        } else {
+          setOppose(oppose + 1)
+          setSupport(support - 1)
+        }
+        break
+      case PostReviewResult.Locked:
+        dispatch({
+          type: 'open snackbar',
+          payload: {
+            severity: 'warning',
+            message: '您已评价过本帖。',
+          },
+        })
+        break
     }
   }
 

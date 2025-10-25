@@ -144,16 +144,6 @@ export const getPostDetails = (params: {
   })
 }
 
-export const DEPRECATED_votePost = (params: {
-  tid?: number
-  pid?: number
-  support: boolean
-}) => {
-  return request.post<boolean>(`${commonUrl}/post/vote`, undefined, {
-    params,
-  })
-}
-
 export enum PostReviewResult {
   Success = 0,
   Cancelled = 1,
