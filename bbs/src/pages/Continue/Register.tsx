@@ -28,6 +28,7 @@ import CommonLayout from './CommonLayout'
 import { CommonForm, SignUpTextField } from './Forms'
 import { PasswordInput } from './Password'
 import { IdasResultEx } from './common'
+import { checkPassword } from './utils'
 
 const kMinUserNameLength = 3
 const kMaxUserNameLength = 15
@@ -122,15 +123,29 @@ export const RegisterForm = ({
     if (!formRef.current) {
       return
     }
-    if (userNameError || !passwordValid.current || emailError) {
+    if (userNameError) {
+      setRegisterError({ message: '请输入有效的用户名。' })
+      return
+    }
+    if (emailError) {
+      setRegisterError({ message: '请输入有效的邮箱地址。' })
       return
     }
     const data = new FormData(formRef.current)
     const username = data.get('username')
     const password = data.get('password')
+    const password2 = data.get('password2')
     const email = data.get('email')
-    if (!username || !password || !email) {
+    if (!username || !password || !password2 || !email) {
+      setRegisterError({ message: '请将注册信息填写完整。' })
       return
+    }
+    if (!passwordValid.current) {
+      const result = checkPassword(password.toString(), password2.toString())
+      if (result.message) {
+        setRegisterError({ message: result.message })
+        return
+      }
     }
     let result: AuthorizationResult | undefined = undefined
     try {
