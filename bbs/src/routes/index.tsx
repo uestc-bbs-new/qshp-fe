@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import adminRoutes from '@/admin/routes'
+import Anniversary from '@/ext/anniversary'
 import betRoutes from '@/ext/bet/routes'
 import { LuckyDraw } from '@/ext/freshman'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
@@ -147,6 +148,11 @@ routes.current = [
         path: '/freshman/luckydraw',
         id: 'x_freshman_luckydraw',
         element: <LuckyDraw />,
+      },
+      {
+        path: 'anniversary/18',
+        id: 'x_anniversary_18',
+        element: <Anniversary />,
       },
       ...(isPreviewRelease ? [] : devPages),
 
