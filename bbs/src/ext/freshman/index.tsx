@@ -32,29 +32,11 @@ import { useAppState } from '@/states'
 import { sleep } from '@/utils/misc'
 import { pages } from '@/utils/routes'
 
+import { LuckyDrawPlate } from '../anniversary/luckydraw'
 import { LuckyDrawResult, getStatus, verifyCode } from './api'
 
-const kCircleSize = 420
-const kBorderWidth = 10
-const kDotSize = 12
 const inputButtonCommonCss = { width: '8em', fontSize: 16 }
-const divInnerCommonCss = { borderRadius: '100%', height: '100%' }
-const dotCommonCss: CSSObject = {
-  borderRadius: '100%',
-  width: kDotSize,
-  height: kDotSize,
-  backgroundColor: '#f9f8a8',
-  position: 'absolute',
-  transform: 'translate(-50%, -50%)',
-}
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg)
-  }
-  to {
-    transform: rotate(360deg)
-  }
-`
+
 const scaleIn = keyframes`
   from {
     transform: scale(0);
@@ -65,7 +47,6 @@ const scaleIn = keyframes`
     opacity: 1;
   }
 `
-const kDiagonalCirclePos = 14.6447
 
 export const LuckyDraw = () => {
   const { isLoading, isError, error, data, refetch } = useQuery({
@@ -153,116 +134,29 @@ export const LuckyDraw = () => {
             <Typography variant="h6" fontWeight="normal" mt={1}>
               线下获得实体刮刮卡的用户，请在此处输入兑换码抽奖。
             </Typography>
-            <div
-              css={{
-                width: kCircleSize,
-                maxWidth: '100%',
-                margin: '32px auto',
-              }}
-            >
-              <div css={{ paddingTop: '100%', position: 'relative' }}>
-                <div
-                  css={{
-                    ...divInnerCommonCss,
-                    position: 'absolute',
-                    width: '100%',
-                    left: 0,
-                    top: 0,
-                    boxSizing: 'border-box',
-                    border: `${kBorderWidth}px solid #fa364d`,
-                    ...(animate && {
-                      animation: `${rotate} 1s linear infinite`,
-                    }),
-                  }}
-                >
-                  <div
-                    css={{
-                      ...divInnerCommonCss,
-                      border: `${kBorderWidth}px solid #faa3b3`,
-                    }}
+            <LuckyDrawPlate animate={animate}>
+              <Paper sx={{ p: 2, boxShadow: '0 0 16px rgba(0, 0, 0, 0.5)' }}>
+                <Stack alignItems="center">
+                  <TextField
+                    label="填写兑换码"
+                    size="small"
+                    sx={{ ...inputButtonCommonCss, mb: 1 }}
+                    inputProps={{ sx: { textAlign: 'center' } }}
+                    disabled={animate}
+                    inputRef={codeRef}
+                  />
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    sx={inputButtonCommonCss}
+                    onClick={handlePrize}
+                    disabled={animate}
                   >
-                    <div
-                      css={{
-                        ...divInnerCommonCss,
-                        background:
-                          'repeating-conic-gradient(white 0 22.5deg, #f5db4d 22.5deg 45deg)',
-                      }}
-                    ></div>
-                  </div>
-                  <div css={dotCommonCss} style={{ left: 0, top: '50%' }} />
-                  <div
-                    css={dotCommonCss}
-                    style={{ left: '100%', top: '50%' }}
-                  />
-                  <div css={dotCommonCss} style={{ left: '50%', top: 0 }} />
-                  <div
-                    css={dotCommonCss}
-                    style={{ left: '50%', top: '100%' }}
-                  />
-                  <div
-                    css={dotCommonCss}
-                    style={{
-                      left: `${kDiagonalCirclePos}%`,
-                      top: `${kDiagonalCirclePos}%`,
-                    }}
-                  />
-                  <div
-                    css={dotCommonCss}
-                    style={{
-                      left: `${100 - kDiagonalCirclePos}%`,
-                      top: `${kDiagonalCirclePos}%`,
-                    }}
-                  />
-                  <div
-                    css={dotCommonCss}
-                    style={{
-                      left: `${kDiagonalCirclePos}%`,
-                      top: `${100 - kDiagonalCirclePos}%`,
-                    }}
-                  />
-                  <div
-                    css={dotCommonCss}
-                    style={{
-                      left: `${100 - kDiagonalCirclePos}%`,
-                      top: `${100 - kDiagonalCirclePos}%`,
-                    }}
-                  />
-                </div>
-                <Stack
-                  position="absolute"
-                  justifyContent="center"
-                  alignItems="center"
-                  width="100%"
-                  height="100%"
-                  left={0}
-                  top={0}
-                >
-                  <Paper
-                    sx={{ p: 2, boxShadow: '0 0 16px rgba(0, 0, 0, 0.5)' }}
-                  >
-                    <Stack alignItems="center">
-                      <TextField
-                        label="填写兑换码"
-                        size="small"
-                        sx={{ ...inputButtonCommonCss, mb: 1 }}
-                        inputProps={{ sx: { textAlign: 'center' } }}
-                        disabled={animate}
-                        inputRef={codeRef}
-                      />
-                      <Button
-                        variant="contained"
-                        color="warning"
-                        sx={inputButtonCommonCss}
-                        onClick={handlePrize}
-                        disabled={animate}
-                      >
-                        立即抽奖
-                      </Button>
-                    </Stack>
-                  </Paper>
+                    立即抽奖
+                  </Button>
                 </Stack>
-              </div>
-            </div>
+              </Paper>
+            </LuckyDrawPlate>
           </>
         )}
         <Typography variant="h6" my={2}>
