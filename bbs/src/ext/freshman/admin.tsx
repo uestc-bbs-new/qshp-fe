@@ -1,15 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 
-import {
-  Add,
-  CheckCircle,
-  Delete,
-  EditNote,
-  FastForward,
-} from '@mui/icons-material'
+import { Add, CheckCircle, Delete, EditNote } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -27,6 +20,7 @@ import {
 
 import Avatar from '@/components/Avatar'
 import Error from '@/components/Error'
+import Link from '@/components/Link'
 import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
