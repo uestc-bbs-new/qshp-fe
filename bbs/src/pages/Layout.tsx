@@ -28,6 +28,7 @@ import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
+import { useActiveRoute } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 
 const Layout = () => {
@@ -38,6 +39,7 @@ const Layout = () => {
     `(max-width: ${kContentWidth + kSidebarWidth}px)`
   )
   const [vpnPromptOpen, setVpnPromptOpen] = useState(isVpnProxy)
+  const route = useActiveRoute()
 
   return (
     <>
@@ -68,7 +70,10 @@ const Layout = () => {
             px={thinView ? 1 : 1.75}
             py={1.75}
           >
-            <Announcement />
+            {!(
+              ['thread', 'x_anniversary_18'].includes(route?.id ?? '') &&
+              thinView
+            ) && <Announcement />}
             <Breadcrumbs />
             <Outlet />
           </Box>
