@@ -1,4 +1,5 @@
 import Index from '.'
+import Anniversary from '../ext/anniversary/admin'
 import Freshman from '../ext/freshman/admin'
 import Advanced from './advanced'
 import Layout from './base/Layout'
@@ -12,3 +13,4 @@ export const ToplistRoute = { element: <Toplist /> }
 export const AdvancedRoute = { element: <Advanced /> }
 
 export const xFreshmanRoute = { element: <Freshman /> }
+export const xAnniversaryRoute = { element: <Anniversary /> }

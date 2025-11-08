@@ -159,6 +159,8 @@ export const pages = {
   resetPasswordByEmail: `/resetpassword/email`,
   renew: `/renew`,
   welcome: '/welcome',
+
+  xAnniversary: (code?: string) => `/anniversary/18${code ? '?s=' + code : ''}`,
 }
 
 export const legacyPages = {

@@ -1,4 +1,5 @@
 import {
+  Params,
   RouteObject,
   ScrollRestoration,
   createBrowserRouter,
@@ -50,6 +51,13 @@ const indexLoader = ({ request }: { request: Request }) => {
   return redirect('/new')
 }
 
+const shortLinkLoader = ({ params }: { params: Params }) => {
+  if (params.id?.match(/[0-9a-z_-]{16}/i)) {
+    return redirect(pages.xAnniversary(params.id))
+  }
+  throw new Response('Not Found', { status: 404 })
+}
+
 const freshmanGuideLoader = () => redirect(pages.thread(2344547))
 
 const devPages: RouteObject[] = [
@@ -85,6 +93,7 @@ routes.current = [
     children: [
       { path: '*', id: '404', element: <NotFound /> },
       { path: '/', loader: indexLoader },
+      { path: '/s/:id', loader: shortLinkLoader, errorElement: <NotFound /> },
       { path: '/new', id: 'index', element: <Home /> },
       { path: '/search/:type?', id: 'search', element: <Search /> },
       { path: '/post/:fid?', id: 'post', element: <Edit /> },

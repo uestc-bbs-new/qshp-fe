@@ -22,7 +22,12 @@ import pages from './pages'
 const list = [
   { text: '全局公告', to: pages.announcement(), permission: 'announcement' },
   { text: '首页列表', to: pages.toplist(), permission: 'toplist' },
-  { text: '线下刮刮卡', to: pages.freshman(), extPermission: 'freshman' },
+  { text: '迎新刮刮卡', to: pages.freshman(), extPermission: 'freshman' },
+  {
+    text: '周年庆刮刮卡',
+    to: pages.anniversary(),
+    extPermission: 'anniversary',
+  },
   { text: '高级', to: pages.advanced() },
 ]
 

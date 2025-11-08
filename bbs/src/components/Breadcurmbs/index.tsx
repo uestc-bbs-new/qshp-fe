@@ -260,6 +260,9 @@ const Breadcrumbs = () => {
       {activeRoute?.id == 'x_freshman_luckydraw' && [
         <Typography key="1">河畔刮刮卡</Typography>,
       ]}
+      {activeRoute?.id == 'x_anniversary_18' && [
+        <Typography key="1">十八周年庆</Typography>,
+      ]}
     </MuiBreadcrumbs>
   )
 }
