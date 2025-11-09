@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { setConfig } from 'dompurify'
 
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -49,6 +48,7 @@ import { pages } from '@/utils/routes'
 import {
   LuckyDrawConfig,
   LuckyDrawPrize,
+  LuckyDrawPrizes,
   PrizeSortMethod,
   addPrize,
   deletePrize,
@@ -339,14 +339,110 @@ const Anniversary = () => {
   const [sort, setSort] = useState<PrizeSortMethod>()
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin', 'x', 'freshman', 'prizes', sort],
-    queryFn: async () => {
-      const result = await getPrizes({ sort })
-      setConfig(result.config)
-      return result
-    },
+    queryFn: async () => await getPrizes({ sort }),
   })
+
+  if (isLoading) {
+    return (
+      <Stack alignItems="center" my={5}>
+        <CircularProgress />
+      </Stack>
+    )
+  }
+  if (isError) {
+    return <Error error={error} />
+  }
+  if (!data) {
+    return <></>
+  }
+  return (
+    <Box>
+      <PrizeAdmin data={data} refetch={refetch} />
+      <PrizeStat data={data} />
+      <Config data={data} refetch={refetch} />
+      <PrizeUsers data={data} sort={sort} setSort={setSort} />
+    </Box>
+  )
+}
+
+const PrizeAdmin = ({
+  data,
+  refetch,
+}: {
+  data: LuckyDrawPrizes
+  refetch: () => void
+}) => (
+  <>
+    <Typography variant="h5" mb={2}>
+      奖品列表
+    </Typography>
+    <div
+      css={{
+        display: 'grid',
+        grid: 'auto-flow / 2fr 1fr 1fr 1fr 1fr 1fr 1fr max-content',
+        alignItems: 'center',
+        gap: '1em',
+      }}
+    >
+      <div>名称</div>
+      <div>总数</div>
+      <div>剩余</div>
+      <div>概率 1</div>
+      <div>概率 2</div>
+      <div>概率 3</div>
+      <div>领奖方式</div>
+      <div>操作</div>
+      {data.prizes?.map((item) => (
+        <PrizeRow key={item.id} item={item} onRefresh={refetch} />
+      ))}
+      <PrizeRow onRefresh={refetch} />
+    </div>
+  </>
+)
+
+const PrizeStat = ({ data }: { data: LuckyDrawPrizes }) => (
+  <>
+    <Typography variant="h5" mt={4} mb={2}>
+      统计数据
+    </Typography>
+    <Stack>
+      <Typography>
+        奖品总数：{data.total_gifts}，剩余奖品：{data.remaining_gifts}（
+        {Math.round(
+          ((data.total_gifts - data.remaining_gifts) / data.total_gifts) * 1000
+        ) / 10}
+        %）
+      </Typography>
+      <Typography>兑换尝试次数：{data.total_attempts}</Typography>
+      <Typography>
+        兑换码数量：{data.total_codes} (已兑换 {data.claimed_codes} 剩余{' '}
+        {data.total_codes - data.claimed_codes} /{' '}
+        {Math.round((data.claimed_codes / data.total_codes) * 1000) / 10}% )
+      </Typography>
+      <Typography>
+        中奖人数：总计 {data.total_prize_users}，实物奖励{' '}
+        {data.claimed_codes_with_gift}
+        ，新生 {data.freshman_prize_users}
+        ，本科新生 {data.undergraduate_freshman_prize_users}，新注册用户{' '}
+        {data.new_register_prize_users}
+      </Typography>
+    </Stack>
+  </>
+)
+
+const Config = ({
+  data,
+  refetch,
+}: {
+  data: LuckyDrawPrizes
+  refetch: () => void
+}) => {
   const [config, setConfig] = useState<LuckyDrawConfig>()
   const [saveConfigPending, setSaveConfigPending] = useState(false)
+
+  useEffect(() => {
+    setConfig(data.config)
+  }, [data])
 
   const saveConfig = async () => {
     if (!config) {
@@ -377,71 +473,8 @@ const Anniversary = () => {
     })
   }
 
-  if (isLoading) {
-    return (
-      <Stack alignItems="center" my={5}>
-        <CircularProgress />
-      </Stack>
-    )
-  }
-  if (isError) {
-    return <Error error={error} />
-  }
-  if (!data) {
-    return <></>
-  }
   return (
-    <Box>
-      <Typography variant="h5" mb={2}>
-        奖品列表
-      </Typography>
-      <div
-        css={{
-          display: 'grid',
-          grid: 'auto-flow / 2fr 1fr 1fr 1fr 1fr 1fr 1fr max-content',
-          alignItems: 'center',
-          gap: '1em',
-        }}
-      >
-        <div>名称</div>
-        <div>总数</div>
-        <div>剩余</div>
-        <div>概率 1</div>
-        <div>概率 2</div>
-        <div>概率 3</div>
-        <div>领奖方式</div>
-        <div>操作</div>
-        {data.prizes?.map((item) => (
-          <PrizeRow key={item.id} item={item} onRefresh={refetch} />
-        ))}
-        <PrizeRow onRefresh={refetch} />
-      </div>
-      <Typography variant="h5" mt={4} mb={2}>
-        统计数据
-      </Typography>
-      <Stack>
-        <Typography>
-          奖品总数：{data.total_gifts}，剩余奖品：{data.remaining_gifts}（
-          {Math.round(
-            ((data.total_gifts - data.remaining_gifts) / data.total_gifts) *
-              1000
-          ) / 10}
-          %）
-        </Typography>
-        <Typography>兑换尝试次数：{data.total_attempts}</Typography>
-        <Typography>
-          兑换码数量：{data.total_codes} (已兑换 {data.claimed_codes} 剩余{' '}
-          {data.total_codes - data.claimed_codes} /{' '}
-          {Math.round((data.claimed_codes / data.total_codes) * 1000) / 10}% )
-        </Typography>
-        <Typography>
-          中奖人数：总计 {data.total_prize_users}，实物奖励{' '}
-          {data.claimed_codes_with_gift}
-          ，新生 {data.freshman_prize_users}
-          ，本科新生 {data.undergraduate_freshman_prize_users}，新注册用户{' '}
-          {data.new_register_prize_users}
-        </Typography>
-      </Stack>
+    <>
       <Typography variant="h5" mt={4} mb={2}>
         配置
       </Typography>
@@ -499,69 +532,82 @@ const Anniversary = () => {
           保存
         </Button>
       </Stack>
-      <Typography variant="h5" mt={4} mb={2}>
-        中奖用户 ({data.total_prize_users})
-      </Typography>
-      <div
-        css={{
-          display: 'grid',
-          grid: 'auto-flow / 1fr 1fr 1fr max-content max-content max-content',
-          alignItems: 'center',
-          gap: '1em',
-        }}
-      >
-        <SortableColumn
-          sort={sort}
-          setSort={setSort}
-          label="用户名"
-          sort1={PrizeSortMethod.ByUser}
-        />
-        <SortableColumn
-          sort={sort}
-          setSort={setSort}
-          label="水滴"
-          sort1={PrizeSortMethod.ByWaterDesc}
-          sort2={PrizeSortMethod.ByWaterAsc}
-        />
-        <div onClick={() => setSort(undefined)}>奖品</div>
-        <div>兑换码</div>
-        <SortableColumn
-          sort={sort}
-          setSort={setSort}
-          label="扫码时间"
-          sort1={PrizeSortMethod.ByDatelineDesc}
-          sort2={PrizeSortMethod.ByDatelineAsc}
-        />
-        <SortableColumn
-          sort={sort}
-          setSort={setSort}
-          label="奖品核销"
-          sort1={PrizeSortMethod.ClaimedFirst}
-          sort2={PrizeSortMethod.NotClaimedFirst}
-          Icon1={CheckCircle}
-          Icon2={Pending}
-        />
-        {data.users?.map((item, index) => (
-          <React.Fragment key={index}>
-            <Link to={pages.user({ uid: item.uid })}>
-              <Stack direction="row" alignItems="center">
-                <Avatar uid={item.uid} size={24} />
-                <Typography ml={1}>{item.username}</Typography>
-              </Stack>
-            </Link>
-            <Typography>{item.water}</Typography>
-            <Typography>{item.prize_name}</Typography>
-            <Typography>{item.code2}</Typography>
-            <Typography>
-              {chineseTime(item.validation_time, { full: true, seconds: true })}
-            </Typography>
-            <Typography>{item.claimed ? '已核销' : ''}</Typography>
-          </React.Fragment>
-        ))}
-      </div>
-    </Box>
+    </>
   )
 }
+
+const PrizeUsers = ({
+  data,
+  sort,
+  setSort,
+}: {
+  data: LuckyDrawPrizes
+  sort?: PrizeSortMethod
+  setSort: (sort?: PrizeSortMethod) => void
+}) => (
+  <>
+    <Typography variant="h5" mt={4} mb={2}>
+      中奖用户 ({data.total_prize_users})
+    </Typography>
+    <div
+      css={{
+        display: 'grid',
+        grid: 'auto-flow / 1fr 1fr 1fr max-content max-content max-content',
+        alignItems: 'center',
+        gap: '1em',
+      }}
+    >
+      <SortableColumn
+        sort={sort}
+        setSort={setSort}
+        label="用户名"
+        sort1={PrizeSortMethod.ByUser}
+      />
+      <SortableColumn
+        sort={sort}
+        setSort={setSort}
+        label="水滴"
+        sort1={PrizeSortMethod.ByWaterDesc}
+        sort2={PrizeSortMethod.ByWaterAsc}
+      />
+      <div onClick={() => setSort(undefined)}>奖品</div>
+      <div>兑换码</div>
+      <SortableColumn
+        sort={sort}
+        setSort={setSort}
+        label="扫码时间"
+        sort1={PrizeSortMethod.ByDatelineDesc}
+        sort2={PrizeSortMethod.ByDatelineAsc}
+      />
+      <SortableColumn
+        sort={sort}
+        setSort={setSort}
+        label="奖品核销"
+        sort1={PrizeSortMethod.ClaimedFirst}
+        sort2={PrizeSortMethod.NotClaimedFirst}
+        Icon1={CheckCircle}
+        Icon2={Pending}
+      />
+      {data.users?.map((item, index) => (
+        <React.Fragment key={index}>
+          <Link to={pages.user({ uid: item.uid })}>
+            <Stack direction="row" alignItems="center">
+              <Avatar uid={item.uid} size={24} />
+              <Typography ml={1}>{item.username}</Typography>
+            </Stack>
+          </Link>
+          <Typography>{item.water}</Typography>
+          <Typography>{item.prize_name}</Typography>
+          <Typography>{item.code2}</Typography>
+          <Typography>
+            {chineseTime(item.validation_time, { full: true, seconds: true })}
+          </Typography>
+          <Typography>{item.claimed ? '已核销' : ''}</Typography>
+        </React.Fragment>
+      ))}
+    </div>
+  </>
+)
 
 const UserChooser = ({ onChoose }: { onChoose?: (user: User) => void }) => {
   const [loading, setLoading] = useState(false)
