@@ -35,10 +35,7 @@ import {
 
 import { searchSummary } from '@/apis/search'
 import { User } from '@/common/interfaces/base'
-import {
-  SearchSummaryResponse,
-  SearchSummaryUser,
-} from '@/common/interfaces/search'
+import { SearchSummaryUser } from '@/common/interfaces/search'
 import Avatar from '@/components/Avatar'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
@@ -46,12 +43,14 @@ import { chineseTime } from '@/utils/dayjs'
 import { pages } from '@/utils/routes'
 
 import {
+  ClaimLogSortMethod,
   LuckyDrawConfig,
   LuckyDrawPrize,
   LuckyDrawPrizes,
   PrizeSortMethod,
   addPrize,
   deletePrize,
+  getClaimLog,
   getPrizes,
   updateConfig,
   updatePrize,
@@ -341,6 +340,7 @@ const Anniversary = () => {
     queryKey: ['admin', 'x', 'freshman', 'prizes', sort],
     queryFn: async () => await getPrizes({ sort }),
   })
+  const [activeList, setActiveList] = useState(1)
 
   if (isLoading) {
     return (
@@ -360,7 +360,42 @@ const Anniversary = () => {
       <PrizeAdmin data={data} refetch={refetch} />
       <PrizeStat data={data} />
       <Config data={data} refetch={refetch} />
-      <PrizeUsers data={data} sort={sort} setSort={setSort} />
+      <Stack direction="row" mt={4} mb={2} alignItems="stretch">
+        <Stack
+          justifyContent="center"
+          onClick={() => setActiveList(1)}
+          borderBottom="2px solid transparent"
+          pb={1}
+          sx={{ borderBottomColor: activeList == 1 ? '#2174f1' : undefined }}
+        >
+          <Typography
+            variant="h5"
+            color={activeList == 1 ? 'primary' : undefined}
+          >
+            中奖用户 ({data.total_prize_users})
+          </Typography>
+        </Stack>
+        <Stack
+          justifyContent="center"
+          onClick={() => setActiveList(2)}
+          borderBottom="2px solid transparent"
+          pb={1}
+          sx={{ borderBottomColor: activeList == 2 ? '#2174f1' : undefined }}
+          ml={2}
+        >
+          <Typography
+            variant="h6"
+            color={activeList == 2 ? 'primary' : undefined}
+          >
+            核销记录
+          </Typography>
+        </Stack>
+      </Stack>
+      {activeList == 1 ? (
+        <PrizeUsers data={data} sort={sort} setSort={setSort} />
+      ) : (
+        <PrizeClaims />
+      )}
     </Box>
   )
 }
@@ -500,12 +535,7 @@ const Config = ({
               mr={1}
               my={1}
             >
-              <Link to={pages.user({ uid: item.uid })} target="_blank">
-                <Stack direction="row" alignItems="center">
-                  <Avatar uid={item.uid} size={24} />
-                  <Typography ml={1}>{item.username}</Typography>
-                </Stack>
-              </Link>
+              <UserItem item={item} />
               <IconButton onClick={() => removeVerifier(item.uid)}>
                 <RemoveCircle />
               </IconButton>
@@ -546,9 +576,6 @@ const PrizeUsers = ({
   setSort: (sort?: PrizeSortMethod) => void
 }) => (
   <>
-    <Typography variant="h5" mt={4} mb={2}>
-      中奖用户 ({data.total_prize_users})
-    </Typography>
     <div
       css={{
         display: 'grid',
@@ -682,7 +709,7 @@ const UserChooser = ({ onChoose }: { onChoose?: (user: User) => void }) => {
   )
 }
 
-const SortableColumn = ({
+const SortableColumn = <T,>({
   sort,
   setSort,
   label,
@@ -691,11 +718,11 @@ const SortableColumn = ({
   Icon1,
   Icon2,
 }: {
-  sort?: PrizeSortMethod
-  setSort: (sort?: PrizeSortMethod) => void
+  sort?: T
+  setSort: (sort?: T) => void
   label: string
-  sort1: PrizeSortMethod
-  sort2?: PrizeSortMethod
+  sort1: T
+  sort2?: T
   Icon1?: React.ElementType
   Icon2?: React.ElementType
 }) => {
@@ -788,6 +815,82 @@ const WaterInput = ({
         onChange={(e) => handleChange(e, true)}
       />
     </Stack>
+  )
+}
+
+const UserItem = ({ item }: { item: User }) => (
+  <Link to={pages.user({ uid: item.uid })} target="_blank">
+    <Stack direction="row" alignItems="center">
+      <Avatar uid={item.uid} size={24} />
+      <Typography ml={1}>{item.username}</Typography>
+    </Stack>
+  </Link>
+)
+
+const PrizeClaims = () => {
+  const [sort, setSort] = useState<ClaimLogSortMethod>()
+  const { data } = useQuery({
+    queryKey: ['admin', 'x', 'freshman', 'claim/log', sort],
+    queryFn: async () => await getClaimLog(sort),
+  })
+  return (
+    <>
+      {!!data?.list?.length && (
+        <div
+          css={{
+            display: 'grid',
+            grid: 'auto-flow / 1fr 1fr 1fr 1fr 1fr 1fr',
+            alignItems: 'center',
+            gap: '1em',
+          }}
+        >
+          <SortableColumn
+            sort={sort}
+            setSort={setSort}
+            label="核销人"
+            sort1={ClaimLogSortMethod.ByAdminUser}
+          />
+          <SortableColumn
+            sort={sort}
+            setSort={setSort}
+            label="中奖用户"
+            sort1={ClaimLogSortMethod.ByUser}
+          />
+          <SortableColumn
+            sort={sort}
+            setSort={setSort}
+            label="奖品"
+            sort1={ClaimLogSortMethod.ByGift}
+          />
+          <div>编码</div>
+          <div onClick={() => setSort(undefined)}>时间</div>
+          <SortableColumn
+            sort={sort}
+            setSort={setSort}
+            label="操作"
+            sort1={ClaimLogSortMethod.ByOperation}
+          />
+          {data?.list?.map((item, index) => (
+            <React.Fragment key={index}>
+              <UserItem
+                item={{ uid: item.admin_uid, username: item.admin_username }}
+              />
+              <UserItem item={item} />
+              <Typography>{item.gift}</Typography>
+              <Typography>{item.code2}</Typography>
+              <Typography>
+                {chineseTime(item.dateline, { full: true, seconds: true })}
+              </Typography>
+              {item.operation == 1 ? (
+                <Typography color="#80c080">核销</Typography>
+              ) : (
+                <Typography color="#c08080">撤回</Typography>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
 

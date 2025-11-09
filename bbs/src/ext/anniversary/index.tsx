@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { Close } from '@mui/icons-material'
+import { CardGiftcard, Close } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -185,7 +185,7 @@ const Index = () => {
                   <PrizeResultList data={data} />
                 )}
                 <Typography variant="h6" fontWeight="normal" mt={1}>
-                  线下获得实体刮刮卡的用户，请在此处扫码抽奖。
+                  线下获得实体刮刮卡后请在此处扫码抽奖。
                 </Typography>
                 <Typography variant="body2">
                   （也可使用微信或其他扫码 App 扫描刮刮卡上的二维码）
@@ -420,15 +420,25 @@ const PrizeResultList = ({ data }: { data: LuckyDrawStatus }) => {
               <React.Fragment key={index}>
                 <div>
                   <Typography variant="h6" color="#59a4dd">
-                    {item.gift}
+                    <CardGiftcard
+                      sx={{
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                        mr: 1,
+                        fontSize: '0.9em',
+                      }}
+                    />
+                    <span css={{ verticalAlign: 'middle' }}>{item.gift}</span>
                   </Typography>
-                  <Typography variant="body2">{item.code2}</Typography>
+                  <Typography variant="body2" sx={{ color: '#999' }}>
+                    {item.code2}
+                  </Typography>
                 </div>
-                <div>
+                <div css={{ textAlign: 'center' }}>
                   {item.claimed ? (
-                    <>已领取</>
+                    <Typography sx={{ color: '#5caf5c' }}>已领取</Typography>
                   ) : item.claim_text == '1' ? (
-                    <>现场领取</>
+                    <Typography sx={{ color: '#db6a13' }}>现场领取</Typography>
                   ) : item.claim_text == '2' ? (
                     <>关注后续公告</>
                   ) : (
@@ -459,7 +469,7 @@ const PrizeResultList = ({ data }: { data: LuckyDrawStatus }) => {
 
 const UserBarcode = () => {
   const barcode = useRef<HTMLCanvasElement>(null)
-  const qrcode = useRef<QRCode>(null)
+  const qrcode = useRef<QRCode | null>(null)
   const { state } = useAppState()
   const [src, setSrc] = useState('')
   const kSize = 160
@@ -479,7 +489,12 @@ const UserBarcode = () => {
   return (
     <Stack
       alignItems="center"
-      sx={{ backgroundColor: '#eee', p: 2, borderRadius: 2, mb: 1 }}
+      sx={(theme) => ({
+        backgroundColor: theme.palette.mode == 'dark' ? '#888' : '#eee',
+        p: 2,
+        borderRadius: 2,
+        mb: 1,
+      })}
     >
       <Typography variant="h5">{state.user.username}</Typography>
       <Typography variant="h5" mb={1}>

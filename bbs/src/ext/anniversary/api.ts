@@ -142,3 +142,29 @@ export const claimUpdate = (code: string, action?: 'cancel' | 'claim') =>
   request.post<GiftListToVerify>(`${adminBase}/claim`, undefined, {
     params: { code, action: action == 'cancel' ? 2 : 1 },
   })
+
+export enum ClaimLogSortMethod {
+  ByUser = 1,
+  ByAdminUser = 2,
+  ByGift = 3,
+  ByOperation = 4,
+}
+export type ClaimLogResponse = {
+  list?: ClaimLog[]
+}
+export type ClaimLog = {
+  uid: number
+  username: string
+  admin_uid: number
+  admin_username: string
+  gift: string
+  code2: string
+  operation: number
+  dateline: number
+}
+export const getClaimLog = (sort?: number) =>
+  request.get<ClaimLogResponse>(`${adminBase}/claim/log`, {
+    params: {
+      ...(sort && { sort }),
+    },
+  })

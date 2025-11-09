@@ -263,6 +263,10 @@ const Breadcrumbs = () => {
       {activeRoute?.id == 'x_anniversary_18' && [
         <Typography key="1">十八周年庆</Typography>,
       ]}
+      {activeRoute?.id == 'x_anniversary_18_verify' && [
+        <Typography key="1">十八周年庆</Typography>,
+        <Typography key="2">奖品核销</Typography>,
+      ]}
     </MuiBreadcrumbs>
   )
 }

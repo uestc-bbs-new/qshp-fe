@@ -53,8 +53,11 @@ const Verify = () => {
 
   return (
     <Stack alignItems="center">
-      <Typography variant="h4" color="#59a4dd" my={2}>
-        清水河畔十八周年（奖品核销）
+      <Typography variant="h4" color="#59a4dd" mt={2}>
+        清水河畔十八周年
+      </Typography>
+      <Typography variant="h6" mb={2}>
+        （奖品核销）
       </Typography>
 
       <QrScanner
