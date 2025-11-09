@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Close } from '@mui/icons-material'
 import {
   Alert,
+  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -29,8 +30,11 @@ import { parseApiError } from '@/apis/error'
 import Captcha from '@/components/Captcha'
 import Error from '@/components/Error'
 import Link from '@/components/Link'
+import { useAppState, useSignInChange } from '@/states'
+import QRCode from '@/third_party/qrcodejs'
 import { sleep } from '@/utils/misc'
 import { pages } from '@/utils/routes'
+import { siteDomain } from '@/utils/siteRoot'
 import { searchParamsAssign } from '@/utils/tools'
 
 import {
@@ -38,6 +42,7 @@ import {
   LuckyDrawStatus,
   getStatus,
   kSpecialCode,
+  kSpecialCode2,
   verifyCode,
 } from './api'
 import { LuckyDrawPlate } from './luckydraw'
@@ -65,6 +70,7 @@ const Index = () => {
   const [captchaConfig, setCaptchaConfig] = useState<CaptchaConfiguration>()
   const barcodeRef = useRef<string>('')
   const code2Ref = useRef<HTMLInputElement>()
+  const currentMethod = useRef(false)
   const [animate, setAnimate] = useState(!!directScan)
   const [luckyResult, setResult] = useState<LuckyDrawResult>()
   const [resultError, setResultError] = useState<{
@@ -78,11 +84,28 @@ const Index = () => {
     const start = Date.now()
     const minAnimate = 3000
     try {
-      if (barcodeRef.current == kSpecialCode) {
+      const code = currentMethod.current
+        ? code2Ref.current?.value
+        : barcodeRef.current
+      if (code == (currentMethod.current ? kSpecialCode2 : kSpecialCode)) {
+        await sleep(1000)
+        setResultError(undefined)
         setSpecialPrompt(true)
         return
       }
-      const result = await verifyCode(barcodeRef.current, captcha)
+      if (currentMethod.current && (!code || !code.match(/^[0-9a-z]{10}$/i))) {
+        setResultError({
+          message: '请准确输入刮刮卡上的兑换码。',
+          severity: 'error',
+        })
+        setResult(undefined)
+        setResultOpen(true)
+        return
+      }
+      if (!code) {
+        return
+      }
+      const result = await verifyCode(code, currentMethod.current, captcha)
       const remainingTime = minAnimate - (Date.now() - start)
       if (remainingTime > 0) {
         await sleep(remainingTime)
@@ -104,7 +127,14 @@ const Index = () => {
       setAnimate(false)
     }
   }
-  const handlePrize = () => validatePrize()
+  const validateByBarcode = () => {
+    currentMethod.current = false
+    validatePrize()
+  }
+  const validateByCode2 = () => {
+    currentMethod.current = true
+    validatePrize()
+  }
   const submitWithCaptcha = (code: string) => {
     setCaptchaOpen(false)
     validatePrize({
@@ -131,9 +161,10 @@ const Index = () => {
   useEffect(() => {
     if (data && directScan) {
       barcodeRef.current = directScan
-      validatePrize()
+      validateByBarcode()
     }
   }, [data])
+  useSignInChange(refetch)
   return (
     <Paper sx={{ p: 2, my: 2 }}>
       <Stack alignItems="center">
@@ -164,6 +195,7 @@ const Index = () => {
             <LuckyDrawPlate animate={animate}>
               <Paper sx={{ p: 0, boxShadow: '0 0 16px rgba(0, 0, 0, 0.5)' }}>
                 <QrScanner
+                  text="刮刮卡扫码"
                   disabled={animate}
                   onError={(err) => setScanError(err)}
                   onDetected={(text) => {
@@ -172,7 +204,7 @@ const Index = () => {
                     )
                     if (match) {
                       barcodeRef.current = match[1]
-                      validatePrize()
+                      validateByBarcode()
                       return true
                     }
                   }}
@@ -187,6 +219,29 @@ const Index = () => {
                 )}
               </Alert>
             )}
+            {data?.allow_code2 && (
+              <>
+                <Typography mb={1}>您也可以输入兑换码进行抽奖：</Typography>
+                <Stack direction="row" alignItems="center">
+                  <TextField
+                    label="填写兑换码"
+                    size="small"
+                    sx={{ width: '10em', mr: 1 }}
+                    inputProps={{ sx: { textAlign: 'center' } }}
+                    disabled={animate}
+                    inputRef={code2Ref}
+                  />
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={validateByCode2}
+                    disabled={animate}
+                  >
+                    立即抽奖
+                  </Button>
+                </Stack>
+              </>
+            )}
           </>
         )}
         <Typography variant="h6" my={2}>
@@ -195,6 +250,17 @@ const Index = () => {
             河畔18周年预热活动——”刮刮卡迎新生“
           </Link>
         </Typography>
+        {data?.is_verifier && (
+          <Button
+            component={Link}
+            to={pages.xAnniversaryVerify}
+            variant="contained"
+            color="success"
+            sx={{ mb: 2, fontSize: '1.25em' }}
+          >
+            奖品核销
+          </Button>
+        )}
         <Typography color="#999" variant="body2">
           *活动最终解释权归清水河畔管理组所有
         </Typography>
@@ -290,7 +356,8 @@ const PrizeResult = ({ data, sx }: { data: LuckyDrawResult; sx?: SxProps }) => (
     {!!data.water && (
       <Typography
         variant="h6"
-        my={2}
+        mt={2}
+        mb={1}
         sx={(theme) => ({
           color: theme.palette.mode == 'dark' ? '#f9d05f' : '#f9d05f',
         })}
@@ -299,62 +366,136 @@ const PrizeResult = ({ data, sx }: { data: LuckyDrawResult; sx?: SxProps }) => (
       </Typography>
     )}
     {data.gift && (
-      <Typography variant="h6" my={2} color="#f2315f">
-        恭喜您获得{data.gift}！
-        {data.claim_text == '1' ? (
-          <>请在活动现场领取奖品。</>
-        ) : data.claim_text == '2' ? (
-          <>
-            请关注站内提醒与
-            <Link to={pages.forum(46)}>站务综合</Link>
-            公告，我们将尽快公布领奖方式。
-          </>
-        ) : (
-          data.claim_text
-        )}
-      </Typography>
-    )}
-    <Typography>感谢您的参与！清水河畔更多精彩等你探索！</Typography>
-  </ResultBox>
-)
-
-const PrizeResultList = ({ data }: { data: LuckyDrawStatus }) => (
-  <ResultBox>
-    {!!data.total_water && (
-      <Typography
-        variant="h6"
-        my={2}
-        sx={(theme) => ({
-          color: theme.palette.mode == 'dark' ? '#f9d05f' : '#f9d05f',
-        })}
-      >
-        您已获得论坛积分奖励 {data.total_water} 水滴！
-      </Typography>
-    )}
-    {data.gifts
-      ?.filter((item) => item.gift)
-      .map((item, index) => (
-        <Typography variant="h6" my={2} color="#f2315f" key={index}>
-          恭喜您获得{item.gift}！
-          {item.claimed ? (
-            <>您已领取奖品。</>
-          ) : item.claim_text == '1' ? (
+      <>
+        <Typography variant="h6" my={1} color="#f2315f">
+          恭喜您获得{data.gift}！
+          {data.claim_text == '1' ? (
             <>请在活动现场领取奖品。</>
-          ) : item.claim_text == '2' ? (
+          ) : data.claim_text == '2' ? (
             <>
               请关注站内提醒与
               <Link to={pages.forum(46)}>站务综合</Link>
               公告，我们将尽快公布领奖方式。
             </>
           ) : (
-            item.claim_text
+            data.claim_text
           )}
         </Typography>
-      ))}
-    <Typography>
-      感谢您的参与！继续参与活动可获得更多刮刮卡，清水河畔更多精彩等你探索！
-    </Typography>
+        {data.claim_text == '1' && <UserBarcode />}
+      </>
+    )}
+    <Typography>感谢您的参与！清水河畔更多精彩等你探索！</Typography>
   </ResultBox>
 )
+
+const PrizeResultList = ({ data }: { data: LuckyDrawStatus }) => {
+  const giftList = data.gifts?.filter((item) => item.gift)
+  return (
+    <ResultBox>
+      {!!data.total_water && (
+        <Typography
+          variant="h6"
+          my={1}
+          sx={(theme) => ({
+            color: theme.palette.mode == 'dark' ? '#f9d05f' : '#f9d05f',
+          })}
+        >
+          您已获得论坛积分奖励 {data.total_water} 水滴！
+        </Typography>
+      )}
+      {!!giftList?.length && (
+        <>
+          <Typography variant="h6" color="#f2315f" my={1}>
+            恭喜您获得以下奖品：
+          </Typography>
+          <div
+            css={{
+              display: 'grid',
+              grid: 'auto-flow / 1fr max-content',
+              alignItems: 'center',
+              gap: '1em',
+            }}
+          >
+            {giftList.map((item, index) => (
+              <React.Fragment key={index}>
+                <div>
+                  <Typography variant="h6" color="#59a4dd">
+                    {item.gift}
+                  </Typography>
+                  <Typography variant="body2">{item.code2}</Typography>
+                </div>
+                <div>
+                  {item.claimed ? (
+                    <>已领取</>
+                  ) : item.claim_text == '1' ? (
+                    <>现场领取</>
+                  ) : item.claim_text == '2' ? (
+                    <>关注后续公告</>
+                  ) : (
+                    <>{item.claim_text}</>
+                  )}
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+          {giftList?.some(
+            (item) => !item.claimed && item.claim_text != '2'
+          ) && (
+            <>
+              <Typography my={1}>
+                请在活动现场出示个人二维码或刮刮卡领奖
+              </Typography>
+              <UserBarcode />
+            </>
+          )}
+        </>
+      )}
+      <Typography>
+        感谢您的参与！继续参与活动可获得更多刮刮卡，清水河畔更多精彩等你探索！
+      </Typography>
+    </ResultBox>
+  )
+}
+
+const UserBarcode = () => {
+  const barcode = useRef<HTMLCanvasElement>(null)
+  const qrcode = useRef<QRCode>(null)
+  const { state } = useAppState()
+  const [src, setSrc] = useState('')
+  const kSize = 160
+  useEffect(() => {
+    if (barcode.current && !qrcode.current) {
+      qrcode.current = new QRCode(barcode.current, {
+        width: kSize,
+        height: kSize,
+      })
+      setSrc(
+        qrcode.current.makeCode(
+          `https://${siteDomain}${pages.user({ uid: state.user.uid })}`
+        )
+      )
+    }
+  }, [barcode.current, state.user.uid])
+  return (
+    <Stack
+      alignItems="center"
+      sx={{ backgroundColor: '#eee', p: 2, borderRadius: 2, mb: 1 }}
+    >
+      <Typography variant="h5">{state.user.username}</Typography>
+      <Typography variant="h5" mb={1}>
+        UID: {state.user.uid}
+      </Typography>
+      <canvas ref={barcode} style={{ display: 'none' }} />
+      {src && (
+        <div css={{ backgroundColor: 'white', padding: 12 }}>
+          <img
+            src={src}
+            css={{ display: 'block', width: kSize, maxWidth: '100%' }}
+          />
+        </div>
+      )}
+    </Stack>
+  )
+}
 
 export default Index

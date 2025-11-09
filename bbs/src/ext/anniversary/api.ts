@@ -1,5 +1,6 @@
 import { CaptchaResult, getCaptchaHeaders } from '@/apis/captcha'
 import request, { commonUrl } from '@/apis/request'
+import { User } from '@/common/interfaces/base'
 
 const baseUrl = `${commonUrl}/x/anniversary`
 const adminBase = `${baseUrl}/admin`
@@ -24,12 +25,18 @@ export type LuckyDrawResult = {
 export type LuckyDrawStatus = {
   total_water?: number
   gifts?: LuckyDrawGift[]
+  allow_code2?: boolean
+  is_verifier?: boolean
 }
 
 export const getStatus = () => request.get<LuckyDrawStatus>(`${baseUrl}/status`)
-export const verifyCode = (code: string, captcha?: CaptchaResult) =>
+export const verifyCode = (
+  code: string,
+  method2?: boolean,
+  captcha?: CaptchaResult
+) =>
   request.post<LuckyDrawResult>(
-    `${baseUrl}/verify/${encodeURIComponent(code)}`,
+    `${baseUrl}/verify/${encodeURIComponent(code)}${method2 ? '/1' : ''}`,
     null,
     captcha
       ? {
@@ -58,6 +65,17 @@ export type LuckyDrawUser = {
   validation_time: number
   claimed?: boolean
 }
+export type LuckyDrawConfig = {
+  allow_code2?: boolean
+  verifier_uids?: number[]
+  verifier_users?: User[]
+  water_min1?: number
+  water_min2?: number
+  water_min3?: number
+  water_max1?: number
+  water_max2?: number
+  water_max3?: number
+}
 export type LuckyDrawPrizes = {
   prizes?: LuckyDrawPrize[]
   users?: LuckyDrawUser[]
@@ -71,9 +89,24 @@ export type LuckyDrawPrizes = {
   claimed_codes_with_gift: number
   total_gifts: number
   remaining_gifts: number
+
+  config: LuckyDrawConfig
 }
-export const getPrizes = () =>
-  request.get<LuckyDrawPrizes>(`${adminBase}/prizes`)
+export enum PrizeSortMethod {
+  ByPrize = 0,
+  ByWaterDesc = 1,
+  ByWaterAsc = 2,
+  ByDatelineDesc = 3,
+  ByDatelineAsc = 4,
+  NotClaimedFirst = 5,
+  ClaimedFirst = 6,
+  ByUser = 7,
+}
+export const getPrizes = ({ sort }: { sort?: PrizeSortMethod }) =>
+  request.get<LuckyDrawPrizes>(
+    `${adminBase}/prizes`,
+    sort ? { params: { sort } } : undefined
+  )
 export const addPrize = (item: Omit<LuckyDrawPrize, 'id'>) =>
   request.put(`${adminBase}/prize`, item)
 export const deletePrize = (id: number) =>
@@ -84,3 +117,28 @@ export const updatePrize = (
     total_delta?: number
   }
 ) => request.patch(`${adminBase}/prize/${id}`, item)
+export const updateConfig = (config: LuckyDrawConfig) =>
+  request.put(`${adminBase}/config`, config)
+
+export type GiftToVerify = {
+  uid: number
+  username: string
+  code: string
+  code2: string
+  gift: string
+  claimed?: boolean
+}
+export type GiftListToVerify = {
+  gifts?: GiftToVerify[]
+}
+export type GiftVerifyQuery = {
+  uid?: number
+  code?: string
+  code2?: string
+}
+export const claimQuery = (query: GiftVerifyQuery) =>
+  request.get<GiftListToVerify>(`${adminBase}/claim`, { params: query })
+export const claimUpdate = (code: string, action?: 'cancel' | 'claim') =>
+  request.post<GiftListToVerify>(`${adminBase}/claim`, undefined, {
+    params: { code, action: action == 'cancel' ? 2 : 1 },
+  })

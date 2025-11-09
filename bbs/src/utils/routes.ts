@@ -66,6 +66,8 @@ export const kIdasVersion2 = 2
 const kIdasContinueBase = `${kIdasOrigin}/continue`
 export const kIdasLogoutUrl = `${kIdasServerBase}/logout`
 
+const xAnniversaryBase = '/anniversary/18'
+
 type IdasLinkOptions = {
   mode?: ContinueMode
   version?: number
@@ -160,7 +162,9 @@ export const pages = {
   renew: `/renew`,
   welcome: '/welcome',
 
-  xAnniversary: (code?: string) => `/anniversary/18${code ? '?s=' + code : ''}`,
+  xAnniversary: (code?: string) =>
+    `${xAnniversaryBase}${code ? '?s=' + code : ''}`,
+  xAnniversaryVerify: `${xAnniversaryBase}/verify`,
 }
 
 export const legacyPages = {

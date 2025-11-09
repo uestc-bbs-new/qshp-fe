@@ -8,6 +8,7 @@ import {
 
 import adminRoutes from '@/admin/routes'
 import Anniversary from '@/ext/anniversary'
+import AnniversaryVerify from '@/ext/anniversary/verify'
 import betRoutes from '@/ext/bet/routes'
 import { LuckyDraw } from '@/ext/freshman'
 import Continue, { ContinueError, ContinueLoader } from '@/pages/Continue'
@@ -162,6 +163,11 @@ routes.current = [
         path: 'anniversary/18',
         id: 'x_anniversary_18',
         element: <Anniversary />,
+      },
+      {
+        path: 'anniversary/18/verify',
+        id: 'x_anniversary_18_verify',
+        element: <AnniversaryVerify />,
       },
       ...(isPreviewRelease ? [] : devPages),
 

@@ -22,10 +22,12 @@ export type QrScanError = {
 }
 
 export const QrScanner = ({
+  text,
   disabled,
   onDetected,
   onError,
 }: {
+  text: string
   disabled?: boolean
   onDetected?: (text: string) => boolean | undefined
   onError?: (error: QrScanError) => void
@@ -91,7 +93,7 @@ export const QrScanner = ({
             style={loading || disabled ? { opacity: 0.3 } : undefined}
           >
             <QrCode2 sx={{ fontSize: 48 }} />
-            <Typography variant="h6">刮刮卡扫码</Typography>
+            <Typography variant="h6">{text}</Typography>
           </Stack>
           {loading && (
             <CircularProgress
