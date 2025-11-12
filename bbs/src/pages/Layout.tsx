@@ -16,6 +16,8 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
+import anniversaryButtonBg from '@/assets/anniversary_button_bg.jpg'
+import anniversaryButtonTexture from '@/assets/anniversary_button_texture.png'
 import {
   kSidebarWidth,
   useSidebarInMarginMediaQuery,
@@ -24,11 +26,12 @@ import { kContentWidth } from '@/common/ui/base'
 import Announcement from '@/components/Announcement'
 import Breadcrumbs from '@/components/Breadcurmbs'
 import Drawer from '@/components/Drawer'
+import Link from '@/components/Link'
 import ScrollTop from '@/components/ScrollTop'
 import TopBar from '@/components/TopBar'
 import { TopListDialog } from '@/components/TopList/TopListView'
 import { useAppState } from '@/states'
-import { useActiveRoute } from '@/utils/routes'
+import { pages, useActiveRoute } from '@/utils/routes'
 import { isVpnProxy } from '@/utils/siteRoot'
 
 const Layout = () => {
@@ -40,6 +43,9 @@ const Layout = () => {
   )
   const [vpnPromptOpen, setVpnPromptOpen] = useState(isVpnProxy)
   const route = useActiveRoute()
+  const showAnniversaryFab =
+    Date.now() < 1763186400000 && // new Date('2025-11-15 14:00').getTime()
+    Date.now() > 1762999200000 // new Date('2025-11-13 10:00').getTime()
 
   return (
     <>
@@ -83,6 +89,78 @@ const Layout = () => {
             <KeyboardArrowUp />
           </Fab>
         </ScrollTop>
+
+        {showAnniversaryFab &&
+          route?.id != 'x_anniversary_18' &&
+          route?.id != 'x_anniversary_18_verify' && (
+            <Fab
+              component={Link}
+              to={pages.xAnniversary()}
+              sx={{
+                position: 'fixed',
+                right: 8,
+                bottom: 120,
+                width: 96,
+                height: 96,
+                '@media (max-width: 560px)': {
+                  width: 80,
+                  height: 80,
+                },
+              }}
+            >
+              <Stack
+                sx={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '100%',
+                  width: '100%',
+                  height: '100%',
+                  boxSizing: 'border-box',
+                  backgroundColor: '#bde3ef',
+                  background: `url(${anniversaryButtonBg}) center / 100%`,
+                  border: '3px solid #e7f7ff',
+                  lineHeight: '1.5em',
+                }}
+              >
+                <div
+                  css={{
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginTop: 4,
+                    '@media (max-width: 560px)': {
+                      transform: 'scale(0.833)',
+                    },
+                  }}
+                >
+                  <span css={{ color: '#1a87a6' }}>18</span>
+                  <span css={{ color: '#5378ad' }}>周年</span>
+                </div>
+                <div
+                  css={{
+                    background: `url(${anniversaryButtonTexture}) center / 80% 90% no-repeat, linear-gradient(#f0f0f0, #e0e0e0)`,
+                    width: '36%',
+                    height: '12%',
+                    marginTop: 6,
+                    marginBottom: 6,
+                    boxShadow: '0.7px 1px 2px #ccc',
+                    borderRadius: 3,
+                    transform: 'skewX(-10deg)',
+                  }}
+                />
+                <div
+                  css={{
+                    fontSize: '16px',
+                    color: '#d95000',
+                    '@media (max-width: 560px)': {
+                      transform: 'scale(0.833)',
+                    },
+                  }}
+                >
+                  刮刮卡
+                </div>
+              </Stack>
+            </Fab>
+          )}
 
         {state.globalSnackbar && (
           <Snackbar

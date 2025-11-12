@@ -7,7 +7,6 @@ import { useSearchParams } from 'react-router-dom'
 import { CardGiftcard, Close } from '@mui/icons-material'
 import {
   Alert,
-  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -181,11 +180,13 @@ const Index = () => {
           <>
             {!directScan && (
               <>
-                {(!!data?.total_water || data?.gifts) && (
+                {!!data?.total_water || data?.gifts ? (
                   <PrizeResultList data={data} />
+                ) : (
+                  <PromptText />
                 )}
                 <Typography variant="h6" fontWeight="normal" mt={1}>
-                  线下获得实体刮刮卡后请在此处扫码抽奖。
+                  获得实体刮刮卡后请在此处扫码抽奖。
                 </Typography>
                 <Typography variant="body2">
                   （也可使用微信或其他扫码 App 扫描刮刮卡上的二维码）
@@ -213,9 +214,18 @@ const Index = () => {
             </LuckyDrawPlate>
             {scanError && (
               <Alert severity="error">
-                <Typography>{scanError.message}</Typography>
+                <Typography>
+                  {scanError.detail?.includes('NotAllowedError')
+                    ? '请授予相机权限以便进行扫码。'
+                    : scanError.detail?.includes('Error getting userMedia')
+                      ? '调用摄像头失败，请在手机浏览器中访问。'
+                      : ''}
+                  {scanError.message}
+                </Typography>
                 {scanError.detail && (
-                  <Typography variant="body2">{scanError.detail}</Typography>
+                  <Typography variant="caption">
+                    ({scanError.detail})
+                  </Typography>
                 )}
               </Alert>
             )}
@@ -244,12 +254,7 @@ const Index = () => {
             )}
           </>
         )}
-        <Typography variant="h6" my={2}>
-          活动说明参见
-          <Link to={pages.thread(2369410)}>
-            河畔18周年预热活动——”刮刮卡迎新生“
-          </Link>
-        </Typography>
+        {(!!data?.total_water || data?.gifts) && <PromptText />}
         {data?.is_verifier && (
           <Button
             component={Link}
@@ -510,6 +515,41 @@ const UserBarcode = () => {
         </div>
       )}
     </Stack>
+  )
+}
+
+const PromptText = () => {
+  const now = Date.now()
+  const beforeStart = now < 1763172000000 // new Date('2025-11-15 10:00').getTime()
+  const afterEnd = now > 1763186400000 // new Date('2025-11-15 14:00').getTime()
+  return (
+    <>
+      {beforeStart && (
+        <Typography
+          variant="h5"
+          my={2}
+          textAlign="center"
+          color="#ff8080"
+          fontWeight="bold"
+        >
+          11 月 15 日（周六）11:00
+          <br />
+          让我们共聚清水河校区
+          <span style={{ display: 'inline-block' }}>学生活动中心门口，</span>
+          <br />
+          庆祝河畔十八周年生日！
+        </Typography>
+      )}
+      {afterEnd && (
+        <Typography variant="h6" my={2} textAlign="center">
+          活动已结束，感谢您的参与!
+        </Typography>
+      )}
+      <Typography variant="h6" my={2}>
+        活动详细说明请参见
+        <Link to={pages.thread(2397048)}>清水河畔十八周年庆！</Link>
+      </Typography>
+    </>
   )
 }
 

@@ -247,9 +247,8 @@ const PrizeResult = ({ data, sx }: { data: LuckyDrawResult; sx?: SxProps }) => (
           </>
         ) : data.claim_text == '2' ? (
           <>
-            奖品定做中，请关注站内提醒与
-            <Link to={pages.forum(46)}>站务综合</Link>
-            公告，我们将尽快公布领奖方式。
+            请于 11 月 15 日在学生活动中心门口河畔十八周年庆现场领取奖品，参见
+            <Link to={pages.thread(2394769)}>河畔迎新刮刮卡奖励发放公告</Link>。
           </>
         ) : (
           data.claim_text
