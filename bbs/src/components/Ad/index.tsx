@@ -9,10 +9,10 @@ type AdItem = {
 
 const Ad = ({ mb, singleColumn }: { mb?: number; singleColumn?: boolean }) => {
   const adData: AdItem[] = []
-  if (Date.now() <= new Date(2025, 9 - 1, 25, 23, 59, 59, 999).getTime()) {
+  if (Date.now() <= new Date(2025, 12 - 1, 13, 23, 59, 59).getTime()) {
     adData.push({
-      image: 'https://bbs.uestc.edu.cn/data/attachment/common/fe/20250911_.jpg',
-      href: '/thread/2362573',
+      image: 'https://bbs.uestc.edu.cn/data/attachment/common/fe/20251114.jpg',
+      href: '/thread/2398430',
     })
   }
 
